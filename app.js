@@ -10,26 +10,6 @@ import {
   off
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
-window.__APP_JS_LOADED__ = true;
-
-window.addEventListener("error", e => {
-  console.error("JS ERROR:", e.message, e.filename, e.lineno, e.colno);
-  const err = document.getElementById("loginError");
-  if (err) {
-    err.innerText = "خطأ في ملف الجافا: " + e.message;
-    err.classList.remove("hidden");
-  }
-});
-
-window.addEventListener("unhandledrejection", e => {
-  console.error("PROMISE ERROR:", e.reason);
-  const err = document.getElementById("loginError");
-  if (err) {
-    err.innerText = "خطأ غير متوقع: " + (e.reason?.message || e.reason);
-    err.classList.remove("hidden");
-  }
-});
-
 const firebaseConfig = {
   apiKey: "AIzaSyCnLAY7zQyBy7gUuL9wszt9aEhiJgvRmxI",
   authDomain: "shop-d52dc.firebaseapp.com",
@@ -84,14 +64,15 @@ let scannerLock = false;
 let currentCustomerHistoryName = "";
 let currentCustomerHistoryPhone = "";
 
+document.addEventListener("DOMContentLoaded", async () => {
+  lucide.createIcons();
+  bindBaseEvents();
+  bindOnlineOfflineEvents();
+  await initApp();
+});
+
 function qs(id) {
   return document.getElementById(id);
-}
-
-function safeLucide() {
-  try {
-    if (window.lucide) lucide.createIcons();
-  } catch {}
 }
 
 function clone(obj) {
@@ -127,25 +108,6 @@ function pathClientMerchantPayments() { return `${baseClientPath()}/merchantPaym
 function pathClientCounters() { return `${baseClientPath()}/counters`; }
 function pathClientSettings() { return `${baseClientPath()}/settings`; }
 function pathClientBackups() { return `${baseClientPath()}/backups`; }
-
-document.addEventListener("DOMContentLoaded", async () => {
-  safeLucide();
-
-  const loginButton = qs("loginBtn");
-  if (loginButton) {
-    loginButton.onclick = handleLicenseLogin;
-  }
-
-  bindBaseEvents();
-  bindOnlineOfflineEvents();
-
-  try {
-    await initApp();
-  } catch (err) {
-    console.error(err);
-    showLogin("خطأ أثناء تشغيل التطبيق: " + (err?.message || err));
-  }
-});
 
 function bindBaseEvents() {
   qs("loginBtn")?.addEventListener("click", handleLicenseLogin);
@@ -195,10 +157,21 @@ function bindBaseEvents() {
   qs("discountType")?.addEventListener("change", calculateTotal);
   qs("setStoreLogo")?.addEventListener("input", e => previewStoreLogo(e.target.value));
 
-  qs("paymentMethod")?.addEventListener("change", () => handlePaymentMethodUi("paymentMethod", "transferAccountSelect"));
-  qs("manualPaymentMethod")?.addEventListener("change", () => handlePaymentMethodUi("manualPaymentMethod", "transferAccountSelectManual"));
-  qs("merchantPaymentMethod")?.addEventListener("change", () => handlePaymentMethodUi("merchantPaymentMethod", "merchantPaymentAccount"));
-  qs("expensePaymentMethod")?.addEventListener("change", () => handlePaymentMethodUi("expensePaymentMethod", "expenseAccount"));
+  qs("paymentMethod")?.addEventListener("change", () => {
+    handlePaymentMethodUi("paymentMethod", "transferAccountSelect");
+  });
+
+  qs("manualPaymentMethod")?.addEventListener("change", () => {
+    handlePaymentMethodUi("manualPaymentMethod", "transferAccountSelectManual");
+  });
+
+  qs("merchantPaymentMethod")?.addEventListener("change", () => {
+    handlePaymentMethodUi("merchantPaymentMethod", "merchantPaymentAccount");
+  });
+
+  qs("expensePaymentMethod")?.addEventListener("change", () => {
+    handlePaymentMethodUi("expensePaymentMethod", "expenseAccount");
+  });
 
   qs("barcodeImageInputPos")?.addEventListener("change", e => scanBarcodeFromImage(e, "pos"));
   qs("barcodeImageInputInvoice")?.addEventListener("change", e => scanBarcodeFromImage(e, "invoice"));
@@ -209,6 +182,7 @@ function bindBaseEvents() {
 
   qs("customerName")?.addEventListener("input", handleCustomerInput);
   qs("customerPhone")?.addEventListener("input", handleCustomerInput);
+
   qs("manualCustomerName")?.addEventListener("input", handleManualCustomerInput);
   qs("manualCustomerPhone")?.addEventListener("input", handleManualCustomerInput);
 
@@ -229,21 +203,52 @@ function bindBaseEvents() {
   qs("bulkPrintInvoicesBtn")?.addEventListener("click", () => exportBulkInvoices("print"));
   qs("bulkExportInvoicesPdfBtn")?.addEventListener("click", () => exportBulkInvoices("pdf"));
   qs("bulkExportInvoicesImagesBtn")?.addEventListener("click", () => exportBulkInvoices("image"));
-  qs("bulkExportInvoicesExcelBtn")?.addEventListener("click", exportInvoicesExcel);
+  qs("bulkExportInvoicesExcelBtn")?.addEventListener("click", () => exportInvoicesExcel());
 
   qs("bulkPrintPurchasesBtn")?.addEventListener("click", () => exportBulkPurchases("print"));
   qs("bulkExportPurchasesPdfBtn")?.addEventListener("click", () => exportBulkPurchases("pdf"));
   qs("bulkExportPurchasesImagesBtn")?.addEventListener("click", () => exportBulkPurchases("image"));
-  qs("bulkExportPurchasesExcelBtn")?.addEventListener("click", exportPurchasesExcel);
+  qs("bulkExportPurchasesExcelBtn")?.addEventListener("click", () => exportPurchasesExcel());
 
   qs("renderSalesReportBtn")?.addEventListener("click", renderSalesReport);
+  qs("printSalesReportBtn")?.addEventListener("click", () => exportTableArea("salesReportPrintableArea", "print", "تقرير_المبيعات"));
+  qs("exportSalesReportPdfBtn")?.addEventListener("click", () => exportTableArea("salesReportPrintableArea", "pdf", "تقرير_المبيعات"));
+  qs("exportSalesReportImageBtn")?.addEventListener("click", () => exportTableArea("salesReportPrintableArea", "image", "تقرير_المبيعات"));
+  qs("exportSalesReportExcelBtn")?.addEventListener("click", () => exportSalesReportExcel());
+
   qs("renderStockReportBtn")?.addEventListener("click", renderStockReport);
+  qs("printStockReportBtn")?.addEventListener("click", () => exportTableArea("stockReportPrintableArea", "print", "تقرير_البضاعة_الناقصة"));
+  qs("exportStockReportPdfBtn")?.addEventListener("click", () => exportTableArea("stockReportPrintableArea", "pdf", "تقرير_البضاعة_الناقصة"));
+  qs("exportStockReportImageBtn")?.addEventListener("click", () => exportTableArea("stockReportPrintableArea", "image", "تقرير_البضاعة_الناقصة"));
+  qs("exportStockReportExcelBtn")?.addEventListener("click", () => exportStockReportExcel());
+
   qs("renderProfitReportBtn")?.addEventListener("click", renderProfitReport);
+  qs("printProfitReportBtn")?.addEventListener("click", () => exportTableArea("profitReportPrintableArea", "print", "تقرير_المرابح_والأرصدة"));
+  qs("exportProfitReportPdfBtn")?.addEventListener("click", () => exportTableArea("profitReportPrintableArea", "pdf", "تقرير_المرابح_والأرصدة"));
+  qs("exportProfitReportImageBtn")?.addEventListener("click", () => exportTableArea("profitReportPrintableArea", "image", "تقرير_المرابح_والأرصدة"));
+  qs("exportProfitReportExcelBtn")?.addEventListener("click", () => exportProfitReportExcel());
+
+  qs("printSummaryReportBtn")?.addEventListener("click", () => exportTableArea("summaryReportPrintableArea", "print", "التقرير_المختصر"));
+  qs("exportSummaryReportPdfBtn")?.addEventListener("click", () => exportTableArea("summaryReportPrintableArea", "pdf", "التقرير_المختصر"));
+  qs("exportSummaryReportImageBtn")?.addEventListener("click", () => exportTableArea("summaryReportPrintableArea", "image", "التقرير_المختصر"));
+  qs("exportSummaryReportExcelBtn")?.addEventListener("click", () => exportSummaryReportExcel());
+
+  qs("printCustomersBtn")?.addEventListener("click", () => exportTableArea("customersPrintableArea", "print", "تقرير_العملاء"));
+  qs("exportCustomersPdfBtn")?.addEventListener("click", () => exportTableArea("customersPrintableArea", "pdf", "تقرير_العملاء"));
+  qs("exportCustomersImageBtn")?.addEventListener("click", () => exportTableArea("customersPrintableArea", "image", "تقرير_العملاء"));
+  qs("exportCustomersExcelBtn")?.addEventListener("click", () => exportCustomersExcel());
+
+  qs("printExpensesBtn")?.addEventListener("click", () => exportTableArea("expensesPrintableArea", "print", "تقرير_المصروفات"));
+  qs("exportExpensesPdfBtn")?.addEventListener("click", () => exportTableArea("expensesPrintableArea", "pdf", "تقرير_المصروفات"));
+  qs("exportExpensesImageBtn")?.addEventListener("click", () => exportTableArea("expensesPrintableArea", "image", "تقرير_المصروفات"));
+  qs("exportExpensesExcelBtn")?.addEventListener("click", () => exportExpensesExcel());
+
+  qs("printMerchantPaymentsBtn")?.addEventListener("click", () => exportTableArea("merchantPaymentsPrintableArea", "print", "تقرير_دفعات_التجار"));
+  qs("exportMerchantPaymentsPdfBtn")?.addEventListener("click", () => exportTableArea("merchantPaymentsPrintableArea", "pdf", "تقرير_دفعات_التجار"));
+  qs("exportMerchantPaymentsImageBtn")?.addEventListener("click", () => exportTableArea("merchantPaymentsPrintableArea", "image", "تقرير_دفعات_التجار"));
+  qs("exportMerchantPaymentsExcelBtn")?.addEventListener("click", () => exportMerchantPaymentsExcel());
 
   qs("addAccountBtn")?.addEventListener("click", addTransferAccount);
-
-  qs("loadMoreProductsBtn")?.addEventListener("click", loadMoreProducts);
-  qs("loadMoreInvoicesBtn")?.addEventListener("click", loadMoreInvoices);
 
   document.addEventListener("click", e => {
     const posResults = qs("posSearchResults");
@@ -274,6 +279,9 @@ function bindBaseEvents() {
       backFromInvoicePage();
     }
   });
+
+  qs("loadMoreProductsBtn")?.addEventListener("click", loadMoreProducts);
+  qs("loadMoreInvoicesBtn")?.addEventListener("click", loadMoreInvoices);
 }
 
 function bindOnlineOfflineEvents() {
@@ -292,12 +300,10 @@ async function initApp() {
   updatePendingSyncBadge();
   await bootSessionState();
 }
+
 function showToast(message, type = "info") {
   const toast = qs("toast");
-  if (!toast) {
-    alert(message);
-    return;
-  }
+  if (!toast) return;
 
   toast.textContent = message;
   toast.className = "toast show";
@@ -334,7 +340,6 @@ function updateLoader(text = "جاري المعالجة...", progress = 50) {
 function hideLoader() {
   const loader = qs("loader");
   const circle = qs("progressCircle");
-
   if (circle) {
     circle.style.setProperty("--progress", 100);
     circle.setAttribute("data-progress", 100);
@@ -372,9 +377,8 @@ function showExpired(message = "انتهى وقت المفتاح أو عدد ا�
   qs("invoicePage")?.classList.add("hidden");
   qs("loginPage")?.classList.add("hidden");
   qs("licenseExpiredPage")?.classList.remove("hidden");
-
   if (qs("expiredMessage")) qs("expiredMessage").innerText = message;
-  safeLucide();
+  lucide.createIcons();
 }
 
 function showApp() {
@@ -403,20 +407,17 @@ function clearLocalSession() {
 
 function getDurationMs(type, value) {
   if (type === "unlimited") return null;
-
   const n = Number(value || 0);
   if (type === "minute") return n * 60 * 1000;
   if (type === "hour") return n * 60 * 60 * 1000;
   if (type === "day") return n * 24 * 60 * 60 * 1000;
   if (type === "month") return n * 30 * 24 * 60 * 60 * 1000;
   if (type === "year") return n * 365 * 24 * 60 * 60 * 1000;
-
   return null;
 }
 
 function formatDateTime(dateString) {
   if (!dateString) return "غير محدد";
-
   try {
     return new Date(dateString).toLocaleString("ar-EG");
   } catch {
@@ -426,7 +427,6 @@ function formatDateTime(dateString) {
 
 function formatDateOnly(dateString) {
   if (!dateString) return "-";
-
   try {
     return new Date(dateString).toLocaleDateString("ar-EG");
   } catch {
@@ -457,7 +457,6 @@ function durationTypeLabel(type) {
     year: "سنوات",
     unlimited: "غير محدود"
   };
-
   return map[type] || type || "-";
 }
 
@@ -519,25 +518,22 @@ function money(value, withName = false, settings = null) {
   const symbol = st?.currencySymbol || "₪";
   const name = st?.currencyName || "شيكل";
   const amount = Number(value || 0).toFixed(2);
-
   return withName ? `${amount} ${name} ${symbol}` : `${amount} ${symbol}`;
 }
 
 async function getClientSettings() {
   const settings = await idbGet("meta", "settings");
-  const session = getLocalSession();
-
   if (settings) {
     return {
       currencyName: settings.currencyName || "شيكل",
       currencySymbol: settings.currencySymbol || "₪",
-      appMode: session?.appMode || settings.appMode || "online",
+      appMode: getLocalSession()?.appMode || settings.appMode || "online",
       paymentInfo: settings.paymentInfo || ""
     };
   }
 
   const fallback = getLocalSettings();
-  fallback.appMode = session?.appMode || fallback.appMode || "online";
+  fallback.appMode = getLocalSession()?.appMode || fallback.appMode || "online";
   return fallback;
 }
 
@@ -558,15 +554,14 @@ async function updateCurrencyUI() {
 
 function updateConnectionUI() {
   const el = qs("connectionStatus");
+  if (!el) return;
 
-  if (el) {
-    if (navigator.onLine) {
-      el.className = "connection-pill connection-online";
-      el.innerHTML = `<i data-lucide="wifi" size="16"></i> متصل`;
-    } else {
-      el.className = "connection-pill connection-offline";
-      el.innerHTML = `<i data-lucide="wifi-off" size="16"></i> غير متصل`;
-    }
+  if (navigator.onLine) {
+    el.className = "connection-pill connection-online";
+    el.innerHTML = `<i data-lucide="wifi" size="16"></i> متصل`;
+  } else {
+    el.className = "connection-pill connection-offline";
+    el.innerHTML = `<i data-lucide="wifi-off" size="16"></i> غير متصل`;
   }
 
   const last = localStorage.getItem(LAST_SYNC_KEY);
@@ -574,7 +569,7 @@ function updateConnectionUI() {
     qs("syncStatusText").innerText = last ? `آخر مزامنة: ${formatDateTime(last)}` : "آخر مزامنة: -";
   }
 
-  safeLucide();
+  lucide.createIcons();
 }
 
 function getPendingQueue() {
@@ -600,7 +595,6 @@ function addPendingSync(action) {
     ...action,
     queuedAt: new Date().toISOString()
   });
-
   setPendingQueue(queue);
 }
 
@@ -616,7 +610,6 @@ function updatePendingSyncBadge() {
 
 async function syncPendingAndCloud(manual = false) {
   const session = getLocalSession();
-
   if (!session || session.appMode !== "online") return;
 
   if (!navigator.onLine) {
@@ -635,9 +628,7 @@ async function syncPendingAndCloud(manual = false) {
 
     for (let i = 0; i < queue.length; i++) {
       const item = queue[i];
-      const progress = Math.min(88, Math.round(((i + 1) / Math.max(queue.length, 1)) * 80));
-
-      updateLoader(`جاري رفع البيانات... ${i + 1}/${queue.length}`, progress);
+      updateLoader(`جاري رفع البيانات... ${i + 1}/${queue.length}`, Math.min(90, Math.round(((i + 1) / Math.max(queue.length, 1)) * 90)));
 
       if (item.type === "set") {
         await set(ref(db, item.path), item.payload);
@@ -650,7 +641,6 @@ async function syncPendingAndCloud(manual = false) {
 
     setPendingQueue([]);
 
-    updateLoader("جاري رفع آخر نسخة...", 90);
     await uploadOfflineDataToCloud(false);
 
     localStorage.setItem(LAST_SYNC_KEY, new Date().toISOString());
@@ -701,7 +691,6 @@ function startLicenseWatcher() {
 
   licenseWatcher = setInterval(async () => {
     const session = getLocalSession();
-
     if (!session) {
       clearInterval(licenseWatcher);
       return;
@@ -782,9 +771,9 @@ async function bootSessionState() {
     hideLoader();
   }
 }
+
 async function ensureClientDefaults() {
   const stores = await idbGetAll("stores");
-
   if (!stores.length) {
     await idbSet("stores", {
       id: "default",
@@ -795,20 +784,18 @@ async function ensureClientDefaults() {
   }
 
   const settings = await idbGet("meta", "settings");
-  const session = getLocalSession();
-
   if (!settings) {
     await idbSet("meta", {
       id: "settings",
       currencyName: "شيكل",
       currencySymbol: "₪",
-      appMode: session?.appMode || "online",
+      appMode: getLocalSession()?.appMode || "online",
       paymentInfo: ""
     });
-  } else {
+  } else if (settings.appMode !== getLocalSession()?.appMode) {
     await idbSet("meta", {
       ...settings,
-      appMode: session?.appMode || settings.appMode || "online"
+      appMode: getLocalSession()?.appMode || "online"
     });
   }
 
@@ -824,7 +811,6 @@ async function ensureClientDefaults() {
 
   const active = localStorage.getItem("activeStoreId");
   const activeStore = active ? await idbGet("stores", active) : null;
-
   if (!active || !activeStore) {
     currentStoreId = "default";
     localStorage.setItem("activeStoreId", "default");
@@ -838,7 +824,6 @@ async function refreshSessionFromLicense() {
   if (!session?.key || !isOnline()) return;
 
   const snap = await get(ref(db, `${pathLicenses()}/${sanitizeKey(session.key)}`));
-
   if (!snap.exists()) {
     clearLocalSession();
     showExpired("تم حذف المفتاح");
@@ -864,6 +849,7 @@ async function refreshSessionFromLicense() {
   }
 
   const appMode = lic.appMode || "online";
+  const allowOfflineFallback = lic.allowOfflineFallback === true;
 
   const newSession = {
     ...session,
@@ -872,7 +858,7 @@ async function refreshSessionFromLicense() {
     startedAt,
     expiresAt,
     appMode,
-    allowOfflineFallback: lic.allowOfflineFallback === true,
+    allowOfflineFallback,
     rememberSession: lic.rememberSession !== false,
     firstVerified: true
   };
@@ -913,7 +899,6 @@ function attachRealtimeListeners() {
   merchantPaymentsListenerRef = ref(db, pathClientMerchantPayments());
 
   const session = getLocalSession();
-
   if (session?.key) {
     licenseListenerRef = ref(db, `${pathLicenses()}/${sanitizeKey(session.key)}`);
     onValue(licenseListenerRef, async () => {
@@ -924,96 +909,49 @@ function attachRealtimeListeners() {
   onValue(storesListenerRef, async snap => {
     const items = snap.exists() ? Object.values(snap.val() || {}) : [];
     await idbClear("stores");
-
-    for (const item of items) {
-      await idbSet("stores", item);
-    }
-
+    for (const item of items) await idbSet("stores", item);
     await loadCurrentStore();
-
-    if (!qs("tab-stores")?.classList.contains("hidden")) {
-      await renderStoresList();
-    }
+    if (!qs("tab-stores")?.classList.contains("hidden")) renderStoresList();
   });
 
   onValue(productsListenerRef, async snap => {
     const items = snap.exists() ? Object.values(snap.val() || {}) : [];
     await idbClear("products");
-
-    for (const item of items) {
-      await idbSet("products", item);
-    }
-
-    if (!qs("tab-products")?.classList.contains("hidden")) {
-      await renderProducts();
-    }
-
+    for (const item of items) await idbSet("products", item);
+    if (!qs("tab-products")?.classList.contains("hidden")) renderProducts();
     const q = qs("posSearch")?.value.trim();
-    if (q) await searchPosProducts();
+    if (q) searchPosProducts();
   });
 
   onValue(invoicesListenerRef, async snap => {
     const items = snap.exists() ? Object.values(snap.val() || {}) : [];
     await idbClear("invoices");
-
-    for (const item of items) {
-      await idbSet("invoices", item);
-    }
-
-    if (!qs("tab-invoices")?.classList.contains("hidden")) {
-      await renderInvoices();
-    }
-
-    if (!qs("tab-reports")?.classList.contains("hidden")) {
-      await renderReports();
-    }
-
-    if (!qs("tab-customers")?.classList.contains("hidden")) {
-      await renderCustomersPage();
-    }
+    for (const item of items) await idbSet("invoices", item);
+    if (!qs("tab-invoices")?.classList.contains("hidden")) renderInvoices();
+    if (!qs("tab-reports")?.classList.contains("hidden")) renderReports();
+    if (!qs("tab-customers")?.classList.contains("hidden")) renderCustomersPage();
   });
 
   onValue(purchasesListenerRef, async snap => {
     const items = snap.exists() ? Object.values(snap.val() || {}) : [];
     await idbClear("purchases");
-
-    for (const item of items) {
-      await idbSet("purchases", item);
-    }
-
-    if (!qs("tab-purchases")?.classList.contains("hidden")) {
-      await renderPurchases();
-    }
-
-    if (!qs("tab-reports")?.classList.contains("hidden")) {
-      await renderReports();
-    }
+    for (const item of items) await idbSet("purchases", item);
+    if (!qs("tab-purchases")?.classList.contains("hidden")) renderPurchases();
+    if (!qs("tab-reports")?.classList.contains("hidden")) renderReports();
   });
 
   onValue(expensesListenerRef, async snap => {
     const items = snap.exists() ? Object.values(snap.val() || {}) : [];
     await idbClear("expenses");
-
-    for (const item of items) {
-      await idbSet("expenses", item);
-    }
-
-    if (!qs("tab-expenses")?.classList.contains("hidden")) {
-      await renderExpenses();
-    }
+    for (const item of items) await idbSet("expenses", item);
+    if (!qs("tab-expenses")?.classList.contains("hidden")) renderExpenses();
   });
 
   onValue(merchantPaymentsListenerRef, async snap => {
     const items = snap.exists() ? Object.values(snap.val() || {}) : [];
     await idbClear("merchantPayments");
-
-    for (const item of items) {
-      await idbSet("merchantPayments", item);
-    }
-
-    if (!qs("tab-merchant-payments")?.classList.contains("hidden")) {
-      await renderMerchantPayments();
-    }
+    for (const item of items) await idbSet("merchantPayments", item);
+    if (!qs("tab-merchant-payments")?.classList.contains("hidden")) renderMerchantPayments();
   });
 }
 
@@ -1038,7 +976,6 @@ function detachRealtimeListeners() {
 async function handleLicenseLogin() {
   const key = qs("licenseKeyInput")?.value.trim();
   const err = qs("loginError");
-
   if (err) err.classList.add("hidden");
 
   if (!key) {
@@ -1066,7 +1003,6 @@ async function handleLicenseLogin() {
     }
 
     const lic = snap.val();
-
     if ((lic.status || "active") === "inactive") {
       showLogin("هذا المفتاح غير مفعل");
       return;
@@ -1125,11 +1061,7 @@ async function handleLicenseLogin() {
     updateLoader("جاري تجهيز البيانات...", 75);
 
     await ensureClientDefaults();
-
-    if (session.appMode === "online") {
-      await syncCloudToOffline();
-    }
-
+    if (session.appMode === "online") await syncCloudToOffline();
     await loadCurrentStore();
     await updateCurrencyUI();
 
@@ -1141,14 +1073,13 @@ async function handleLicenseLogin() {
     if (qs("licenseKeyInput")) qs("licenseKeyInput").value = "";
 
     updateLoader("تم الدخول بنجاح...", 100);
-
     showApp();
     switchTab("pos");
     updateLicenseUIFromSession();
     startLicenseWatcher();
     showToast("تم تسجيل الدخول بنجاح", "success");
-  } catch (err2) {
-    console.error(err2);
+  } catch (err) {
+    console.error(err);
     showLogin("حدث خطأ أثناء تسجيل الدخول");
   } finally {
     hideLoader();
@@ -1162,7 +1093,6 @@ function goToLoginFromExpired() {
 function activateNav(tabId) {
   document.querySelectorAll(".tab-content").forEach(c => c.classList.add("hidden"));
   document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-
   qs(`tab-${tabId}`)?.classList.remove("hidden");
   document.querySelector(`[data-tab="${tabId}"]`)?.classList.add("active");
 }
@@ -1183,7 +1113,7 @@ async function switchTab(tabId) {
   if (tabId === "stores") await renderStoresList();
   if (tabId === "settings") await loadSettingsPage();
 
-  safeLucide();
+  lucide.createIcons();
 }
 
 async function createNewStore() {
@@ -1194,7 +1124,6 @@ async function createNewStore() {
 
   try {
     const id = "store_" + Date.now();
-
     await saveEntity("stores", id, {
       id,
       name,
@@ -1203,7 +1132,6 @@ async function createNewStore() {
     });
 
     if (qs("newStoreName")) qs("newStoreName").value = "";
-
     toggleModal("storeModal", false);
     showToast("تم إنشاء المحل", "success");
     await renderStoresList();
@@ -1235,23 +1163,21 @@ async function renderStoresList() {
             <h4 class="font-black text-lg">${escapeHtml(store.name)}</h4>
             <p class="text-xs text-gray-400">تاريخ الإنشاء: ${new Date(store.createdAt).toLocaleDateString("ar-EG")}</p>
           </div>
-          ${
-            active
-              ? '<span class="text-sm bg-emerald-100 text-emerald-700 px-3 py-2 rounded-lg font-black">الحالي</span>'
-              : `<button onclick="switchStore('${store.id}')" class="text-sm bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg font-black">دخول</button>`
+          ${active
+            ? '<span class="text-sm bg-emerald-100 text-emerald-700 px-3 py-2 rounded-lg font-black">الحالي</span>'
+            : `<button onclick="switchStore('${store.id}')" class="text-sm bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg font-black">دخول</button>`
           }
         </div>
       </div>
     `;
   });
 
-  safeLucide();
+  lucide.createIcons();
 }
 
 async function switchStore(id) {
   currentStoreId = id;
   localStorage.setItem("activeStoreId", id);
-
   showLoader("جاري تبديل المحل...", 50);
 
   try {
@@ -1265,6 +1191,7 @@ async function switchStore(id) {
     hideLoader();
   }
 }
+
 function safeVariants(variants) {
   return Array.isArray(variants)
     ? variants.map(v => ({
@@ -1280,17 +1207,15 @@ function variantsTotal(variants) {
 
 function getVariantsFromForm() {
   const rows = [...document.querySelectorAll(".variant-row")];
-
   return rows.map(row => ({
-    name: row.querySelector(".variant-name")?.value.trim() || "",
-    qty: Number(row.querySelector(".variant-qty")?.value || 0)
+    name: row.querySelector(".variant-name").value.trim(),
+    qty: Number(row.querySelector(".variant-qty").value || 0)
   })).filter(v => v.name);
 }
 
 function renderVariantsForm(variants = []) {
   const box = qs("variantsBox");
   if (!box) return;
-
   box.innerHTML = "";
   safeVariants(variants).forEach(v => addVariantRow(v.name, v.qty));
 }
@@ -1303,7 +1228,7 @@ function addVariantRow(name = "", qty = "") {
   row.className = "variant-row grid grid-cols-[1fr_120px_50px] gap-3 items-center";
   row.innerHTML = `
     <input type="text" class="variant-name w-full p-3 bg-gray-50 border rounded-xl" placeholder="اسم الصنف / المقاس" value="${escapeHtmlAttr(name)}">
-    <input type="number" class="variant-qty w-full p-3 bg-gray-50 border rounded-xl text-center" placeholder="الكمية" value="${escapeHtmlAttr(qty)}">
+    <input type="number" class="variant-qty w-full p-3 bg-gray-50 border rounded-xl text-center" placeholder="الكمية" value="${qty}">
     <button type="button" class="bg-red-50 text-red-600 rounded-xl h-full font-bold">✕</button>
   `;
 
@@ -1312,7 +1237,7 @@ function addVariantRow(name = "", qty = "") {
     syncStockWithVariants();
   };
 
-  row.querySelector(".variant-qty")?.addEventListener("input", syncStockWithVariants);
+  row.querySelector(".variant-qty").addEventListener("input", syncStockWithVariants);
   box.appendChild(row);
 }
 
@@ -1320,7 +1245,6 @@ function syncStockWithVariants() {
   const variants = getVariantsFromForm();
   const total = variantsTotal(variants);
   const stockInput = qs("prodStock");
-
   if (!stockInput) return;
 
   const currentStock = Number(stockInput.value || 0);
@@ -1335,7 +1259,6 @@ function fillProductForm(p = null) {
   if (qs("prodStock")) qs("prodStock").value = p?.stock ?? "";
   if (qs("prodCost")) qs("prodCost").value = p?.cost ?? "";
   if (qs("prodPrice")) qs("prodPrice").value = p?.price ?? "";
-
   renderVariantsForm(p?.variants || []);
 }
 
@@ -1348,7 +1271,6 @@ function resetProductForm() {
   if (qs("prodStock")) qs("prodStock").value = "";
   if (qs("prodCost")) qs("prodCost").value = "";
   if (qs("prodPrice")) qs("prodPrice").value = "";
-
   renderVariantsForm([]);
 }
 
@@ -1393,10 +1315,8 @@ async function saveProduct() {
 
   try {
     await saveEntity("products", id, product);
-
     resetProductForm();
     toggleModal("productModal", false);
-
     showToast(existingId ? "تم تعديل المنتج" : "تم حفظ المنتج", "success");
     await renderProducts();
     await renderStockReport();
@@ -1409,16 +1329,14 @@ async function renderProducts() {
   const table = qs("productsTable");
   const loading = qs("productsLoading");
   const moreWrap = qs("productsLoadMoreWrap");
-
-  if (!table) return;
+  if (!table || !loading || !moreWrap) return;
 
   const search = qs("inventorySearch")?.value.toLowerCase() || "";
 
   table.innerHTML = "";
-  loading?.classList.remove("hidden");
+  loading.classList.remove("hidden");
 
   const products = await getAllProducts();
-
   const filtered = products
     .filter(p =>
       p.storeId === currentStoreId &&
@@ -1459,13 +1377,9 @@ async function renderProducts() {
     `;
   });
 
-  loading?.classList.add("hidden");
-
-  if (moreWrap) {
-    moreWrap.classList.toggle("hidden", visible.length >= filtered.length);
-  }
-
-  safeLucide();
+  loading.classList.add("hidden");
+  moreWrap.classList.toggle("hidden", visible.length >= filtered.length);
+  lucide.createIcons();
 }
 
 function showProductBarcode(code, title) {
@@ -1474,7 +1388,6 @@ function showProductBarcode(code, title) {
 
   const svg = qs("productBarcodeSvg");
   if (!svg) return;
-
   svg.innerHTML = "";
 
   try {
@@ -1506,11 +1419,9 @@ async function loadMoreProducts() {
 
 async function editProduct(id) {
   showLoader("جاري تحميل بيانات المنتج...", 50);
-
   try {
     const p = await getEntity("products", id);
     if (!p) return;
-
     if (qs("modalTitle")) qs("modalTitle").innerText = "تعديل المنتج";
     fillProductForm(p);
     toggleModal("productModal", true);
@@ -1523,7 +1434,6 @@ async function deleteProduct(id) {
   if (!confirm("حذف المنتج؟")) return;
 
   showLoader("جاري حذف المنتج...", 50);
-
   try {
     await deleteEntity("products", id);
     showToast("تم حذف المنتج", "success");
@@ -1537,7 +1447,6 @@ async function deleteProduct(id) {
 async function searchPosProducts() {
   const query = qs("posSearch")?.value.toLowerCase().trim() || "";
   const results = qs("posSearchResults");
-
   if (!results) return;
 
   if (query.length < 1) {
@@ -1546,7 +1455,6 @@ async function searchPosProducts() {
   }
 
   const products = await getAllProducts();
-
   const filtered = products.filter(p =>
     p.storeId === currentStoreId &&
     (
@@ -1601,16 +1509,13 @@ function addToCart(product) {
 
   if (existing) {
     const available = getAvailableQtyForLine(existing, safeProduct);
-
     if (existing.qty + 1 > available) {
       alert("نفذ المخزون!");
       return;
     }
-
     existing.qty += 1;
   } else {
     const available = getAvailableQtyForProduct(defaultVariant, safeProduct);
-
     if (available < 1) {
       alert("المنتج غير متوفر!");
       return;
@@ -1637,12 +1542,10 @@ function addToCart(product) {
 
 function getAvailableQtyForProduct(variantName, productLike) {
   const variants = safeVariants(productLike.variants);
-
   if (variantName && variants.length) {
     const found = variants.find(v => v.name === variantName);
     return Number(found?.qty || 0);
   }
-
   return Number(productLike.stock || 0);
 }
 
@@ -1656,10 +1559,7 @@ function updateCartLineKey(line) {
 
 function renderVariantSelect(line) {
   const variants = safeVariants(line.variants);
-
-  if (!variants.length) {
-    return `<span class="text-gray-400">-</span>`;
-  }
+  if (!variants.length) return `<span class="text-gray-400">-</span>`;
 
   return `
     <select onchange="changeCartVariant('${line.lineKey}', this.value)" class="bg-gray-50 border rounded-lg p-2 text-sm">
@@ -1671,7 +1571,6 @@ function renderVariantSelect(line) {
 function renderCart() {
   const tbody = qs("cartTable");
   const empty = qs("cartEmptyMsg");
-
   if (!tbody || !empty) return;
 
   tbody.innerHTML = "";
@@ -1695,17 +1594,13 @@ function renderCart() {
             </div>
           </td>
           <td class="p-4 font-black text-emerald-700 whitespace-nowrap">${money(Number(item.price) * item.qty)}</td>
-          <td class="p-4 whitespace-nowrap">
-            <button onclick="removeFromCart('${item.lineKey}')" class="text-red-500">
-              <i data-lucide="trash-2" size="16"></i>
-            </button>
-          </td>
+          <td class="p-4 whitespace-nowrap"><button onclick="removeFromCart('${item.lineKey}')" class="text-red-500"><i data-lucide="trash-2" size="16"></i></button></td>
         </tr>
       `;
     });
   }
 
-  safeLucide();
+  lucide.createIcons();
   calculateTotal();
 }
 
@@ -1718,7 +1613,6 @@ async function changeCartVariant(lineKey, variantName) {
   if (!fresh) return;
 
   const available = getAvailableQtyForProduct(variantName, fresh);
-
   if (available < line.qty) {
     alert("الكمية الحالية أكبر من المتوفر لهذا الصنف");
     return;
@@ -1730,17 +1624,14 @@ async function changeCartVariant(lineKey, variantName) {
   updateCartLineKey(line);
 
   const duplicates = new Map();
-
   cart = cart.reduce((arr, item) => {
     const key = item.lineKey;
-
     if (duplicates.has(key)) {
       duplicates.get(key).qty += item.qty;
     } else {
       duplicates.set(key, item);
       arr.push(item);
     }
-
     return arr;
   }, []);
 
@@ -1759,19 +1650,14 @@ async function changeQty(lineKey, delta) {
   line.stock = Number(fresh.stock || 0);
 
   const available = getAvailableQtyForLine(line, fresh);
-
   if (line.qty + delta > available) {
     alert("الكمية غير كافية!");
     return;
   }
 
   line.qty += delta;
-
-  if (line.qty <= 0) {
-    removeFromCart(lineKey);
-  } else {
-    renderCart();
-  }
+  if (line.qty <= 0) removeFromCart(lineKey);
+  else renderCart();
 }
 
 function removeFromCart(lineKey) {
@@ -1802,11 +1688,9 @@ function calculateTotal() {
 }
 
 function updateCreateInvoiceButton() {
-  const btn = qs("createInvoiceBtn");
-
-  if (btn) {
-    btn.innerText = editingInvoiceId ? "حفظ تعديل الفاتورة" : "إنشاء فاتورة";
-    btn.disabled = isCheckoutBusy;
+  if (qs("createInvoiceBtn")) {
+    qs("createInvoiceBtn").innerText = editingInvoiceId ? "حفظ تعديل الفاتورة" : "إنشاء فاتورة";
+    qs("createInvoiceBtn").disabled = isCheckoutBusy;
   }
 }
 async function getNextInvoiceNumber() {
@@ -1844,7 +1728,7 @@ async function applyStockChange(items, direction) {
       if (item.selectedVariant && v.name === item.selectedVariant) {
         return {
           ...v,
-          qty: Math.max(0, Number(v.qty || 0) + direction * Number(item.qty || 0))
+          qty: Math.max(0, Number(v.qty || 0) + (direction * Number(item.qty || 0)))
         };
       }
       return v;
@@ -1852,7 +1736,7 @@ async function applyStockChange(items, direction) {
 
     const updated = {
       ...p,
-      stock: Math.max(0, currentStock + direction * Number(item.qty || 0)),
+      stock: Math.max(0, currentStock + (direction * Number(item.qty || 0))),
       variants: updatedVariants,
       updatedAt: new Date().toISOString()
     };
@@ -1928,7 +1812,7 @@ async function handlePaymentMethodUi(methodId, accountSelectId) {
 
 async function buildInvoicePayload(id) {
   const settings = await getClientSettings();
-  const subtotalValue = cart.reduce((s, i) => s + Number(i.price) * i.qty, 0);
+  const subtotalValue = cart.reduce((s, i) => s + (Number(i.price) * i.qty), 0);
   const discountValue = calculateDiscountValue(subtotalValue);
   const totalValue = Math.max(0, subtotalValue - discountValue);
   const account = parseAccountValue(qs("transferAccountSelect")?.value || "");
@@ -1956,7 +1840,7 @@ async function buildInvoicePayload(id) {
     subtotal: subtotalValue,
     discount: discountValue,
     total: totalValue,
-    totalCost: cart.reduce((s, i) => s + Number(i.cost || 0) * i.qty, 0),
+    totalCost: cart.reduce((s, i) => s + (Number(i.cost) * i.qty), 0),
     source: "pos",
     updatedAt: new Date().toISOString()
   };
@@ -2173,7 +2057,6 @@ async function viewInvoice(id) {
     const itemArea = qs("invPageItems");
     if (itemArea) {
       itemArea.innerHTML = "";
-
       (inv.items || []).forEach((i, index) => {
         itemArea.innerHTML += `
           <tr>
@@ -2193,7 +2076,7 @@ async function viewInvoice(id) {
     if (qs("invPageTotal")) qs("invPageTotal").innerText = `${Number(inv.total || 0).toFixed(2)} ${inv.currencySymbol || "₪"}`;
 
     renderInvoiceBarcode(id);
-    safeLucide();
+    lucide.createIcons();
     window.scrollTo({ top: 0, behavior: "smooth" });
   } finally {
     hideLoader();
@@ -2287,11 +2170,13 @@ async function shareCurrentInvoice() {
     } catch {}
   }
 
-  const url = inv.phone
-    ? `https://wa.me/${normalizePhoneForSend(inv.phone, "auto", "")}?text=${encodeURIComponent(message)}`
-    : `https://wa.me/?text=${encodeURIComponent(message)}`;
-
-  window.open(url, "_blank");
+  if (inv.phone) {
+    const url = `https://wa.me/${normalizePhoneForSend(inv.phone, "auto", "")}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+  } else {
+    const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+  }
 }
 
 async function renderInvoices() {
@@ -2301,10 +2186,10 @@ async function renderInvoices() {
   const loading = qs("invoicesLoading");
   const moreWrap = qs("invoicesLoadMoreWrap");
 
-  if (!table) return;
+  if (!table || !loading || !moreWrap) return;
 
   table.innerHTML = "";
-  loading?.classList.remove("hidden");
+  loading.classList.remove("hidden");
 
   const invoices = await getAllInvoices();
 
@@ -2355,11 +2240,8 @@ async function renderInvoices() {
     `;
   });
 
-  loading?.classList.add("hidden");
-
-  if (moreWrap) {
-    moreWrap.classList.toggle("hidden", visible.length >= filtered.length);
-  }
+  loading.classList.add("hidden");
+  moreWrap.classList.toggle("hidden", visible.length >= filtered.length);
 }
 
 async function resetInvoicesAndRender() {
@@ -2371,6 +2253,7 @@ async function loadMoreInvoices() {
   invoicesCurrentLimit += invoicePageSize;
   await renderInvoices();
 }
+
 async function openPurchaseModal() {
   if (qs("purchaseModalTitle")) qs("purchaseModalTitle").innerText = "إضافة فاتورة شراء";
   if (qs("editPurchaseId")) qs("editPurchaseId").value = "";
@@ -2381,12 +2264,13 @@ async function openPurchaseModal() {
   if (qs("purchaseSalePrice")) qs("purchaseSalePrice").value = "";
   if (qs("purchaseAddToStock")) qs("purchaseAddToStock").checked = true;
   if (qs("purchaseNotes")) qs("purchaseNotes").value = "";
+
   toggleModal("purchaseModal", true);
 }
-
 async function savePurchase() {
   const existingId = qs("editPurchaseId")?.value || "";
-  const id = existingId || "pur_" + Date.now();
+  const id = existingId || ("pur_" + Date.now());
+
   const supplier = qs("purchaseSupplier")?.value.trim() || "";
   const itemName = qs("purchaseItemName")?.value.trim() || "";
   const qty = Number(qs("purchaseQty")?.value || 0);
@@ -2429,7 +2313,7 @@ async function savePurchase() {
 
     if (addToStock && !existingId) {
       const productId = "p_" + Date.now();
-      await saveEntity("products", productId, {
+      const product = {
         id: productId,
         storeId: currentStoreId,
         supplier,
@@ -2441,7 +2325,9 @@ async function savePurchase() {
         variants: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
-      });
+      };
+
+      await saveEntity("products", productId, product);
     }
 
     toggleModal("purchaseModal", false);
@@ -2473,6 +2359,7 @@ async function editPurchase(id) {
 
 async function deletePurchase(id) {
   if (!confirm("حذف فاتورة الشراء؟")) return;
+
   showLoader("جاري حذف فاتورة الشراء...", 40);
 
   try {
@@ -2542,7 +2429,8 @@ async function openMerchantPaymentModal() {
 
 async function saveMerchantPayment() {
   const existingId = qs("editMerchantPaymentId")?.value || "";
-  const id = existingId || "mp_" + Date.now();
+  const id = existingId || ("mp_" + Date.now());
+
   const merchantName = qs("merchantPaymentName")?.value.trim() || "";
   const amount = Number(qs("merchantPaymentAmount")?.value || 0);
   const payment = qs("merchantPaymentMethod")?.value || "cash";
@@ -2605,11 +2493,13 @@ async function editMerchantPayment(id) {
   if (qs("merchantPaymentAccount")) qs("merchantPaymentAccount").value = found ? buildAccountValue(found) : "";
 
   if (qs("merchantPaymentNotes")) qs("merchantPaymentNotes").value = item.notes || "";
+
   toggleModal("merchantPaymentModal", true);
 }
 
 async function deleteMerchantPayment(id) {
   if (!confirm("حذف دفعة التاجر؟")) return;
+
   showLoader("جاري حذف دفعة التاجر...", 40);
 
   try {
@@ -2626,12 +2516,15 @@ async function renderMerchantPayments() {
   const table = qs("merchantPaymentsTable");
   if (!table) return;
 
+  const range = qs("merchantPaymentsReportRange")?.value || "all";
+  const specificDate = qs("merchantPaymentsSpecificDate")?.value || "";
+
   table.innerHTML = "";
 
   const items = await getAllMerchantPayments();
 
   items
-    .filter(i => i.storeId === currentStoreId)
+    .filter(i => i.storeId === currentStoreId && inRangeByFilter(i.createdAt, range, specificDate))
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .forEach(i => {
       table.innerHTML += `
@@ -2672,7 +2565,8 @@ async function openExpenseModal() {
 
 async function saveExpense() {
   const existingId = qs("editExpenseId")?.value || "";
-  const id = existingId || "exp_" + Date.now();
+  const id = existingId || ("exp_" + Date.now());
+
   const name = qs("expenseName")?.value.trim() || "";
   const amount = Number(qs("expenseAmount")?.value || 0);
   const payment = qs("expensePaymentMethod")?.value || "cash";
@@ -2682,6 +2576,12 @@ async function saveExpense() {
   if (!name || amount <= 0) {
     alert("أدخل اسم المصروف والمبلغ");
     return;
+  }
+
+  let oldCreatedAt = null;
+  if (existingId) {
+    const old = await getEntity("expenses", existingId);
+    oldCreatedAt = old?.createdAt || null;
   }
 
   const payload = {
@@ -2695,7 +2595,7 @@ async function saveExpense() {
     transferAccountName: account.transferAccountName,
     transferAccountNumber: account.transferAccountNumber,
     notes,
-    createdAt: new Date().toISOString(),
+    createdAt: oldCreatedAt || new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
 
@@ -2729,11 +2629,13 @@ async function editExpense(id) {
   if (qs("expenseAccount")) qs("expenseAccount").value = found ? buildAccountValue(found) : "";
 
   if (qs("expenseNotes")) qs("expenseNotes").value = item.notes || "";
+
   toggleModal("expenseModal", true);
 }
 
 async function deleteExpense(id) {
   if (!confirm("حذف المصروف؟")) return;
+
   showLoader("جاري حذف المصروف...", 40);
 
   try {
@@ -2750,12 +2652,15 @@ async function renderExpenses() {
   const table = qs("expensesTable");
   if (!table) return;
 
+  const range = qs("expensesReportRange")?.value || "all";
+  const specificDate = qs("expensesSpecificDate")?.value || "";
+
   table.innerHTML = "";
 
   const items = await getAllExpenses();
 
   items
-    .filter(i => i.storeId === currentStoreId)
+    .filter(i => i.storeId === currentStoreId && inRangeByFilter(i.createdAt, range, specificDate))
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .forEach(i => {
       table.innerHTML += `
@@ -2816,6 +2721,7 @@ async function openScanner(target) {
   scannerLock = false;
 
   if (!qs("scannerModal")) return;
+
   qs("scannerModal").classList.remove("hidden");
 
   if (qs("scannerTitle")) {
@@ -2825,38 +2731,106 @@ async function openScanner(target) {
       "مسح الباركود";
   }
 
-  try {
-    if (!scanner) scanner = new Html5Qrcode("reader");
-    const devices = await Html5Qrcode.getCameras();
-    const chosen = rankRearCamera(devices || []);
+  if (!history.state || !history.state.scannerOpen) {
+    history.pushState({ scannerOpen: true }, "");
+    scannerHistoryPushed = true;
+  }
 
-    if (!chosen?.id) {
+  try {
+    if (!scanner) {
+      scanner = new Html5Qrcode("reader");
+    }
+
+    const devices = await Html5Qrcode.getCameras();
+    const cameraDevices = devices || [];
+
+    if (!cameraDevices.length) {
       alert("لم يتم العثور على كاميرا");
       await closeScanner();
       return;
     }
 
+    const chosen = rankRearCamera(cameraDevices);
+    const rearCameraId = chosen?.id || cameraDevices[0].id;
+
+    await startScannerWithRearCamera(rearCameraId);
+  } catch (err) {
+    console.error(err);
+    alert("تعذر الحصول على صلاحية الكاميرا.");
+    await closeScanner();
+  }
+}
+
+async function startScannerWithRearCamera(rearCameraId) {
+  if (!scanner || !rearCameraId) return;
+
+  try {
     await scanner.start(
-      { deviceId: { exact: chosen.id } },
-      { fps: 10, qrbox: { width: 250, height: 170 } },
+      { deviceId: { exact: rearCameraId } },
+      {
+        fps: 10,
+        qrbox: { width: 250, height: 170 },
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.QR_CODE,
+          Html5QrcodeSupportedFormats.CODE_128,
+          Html5QrcodeSupportedFormats.CODE_39,
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.EAN_8,
+          Html5QrcodeSupportedFormats.UPC_A,
+          Html5QrcodeSupportedFormats.UPC_E
+        ]
+      },
       async decodedText => {
         if (scannerLock) return;
         scannerLock = true;
         indicateScannerSuccess();
         await handleScanResult(decodedText);
-        setTimeout(closeScanner, 220);
+        setTimeout(async () => {
+          await closeScanner();
+        }, 220);
       },
       () => {}
     );
+
+    setTimeout(async () => {
+      try {
+        const track = scanner?.getRunningTrack?.();
+        scannerTrack = track || null;
+        const capabilities = track?.getCapabilities?.();
+        const hasTorch = !!capabilities?.torch;
+        torchSupported = hasTorch;
+
+        qs("scannerTorchBtn")?.classList.toggle("hidden", !hasTorch);
+        qs("scannerTorchQuickBtn")?.classList.toggle("hidden", !hasTorch);
+      } catch {
+        torchSupported = false;
+        qs("scannerTorchBtn")?.classList.add("hidden");
+        qs("scannerTorchQuickBtn")?.classList.add("hidden");
+      }
+    }, 500);
   } catch (err) {
     console.error(err);
-    alert("تعذر تشغيل الكاميرا");
+    alert("تعذر بدء الكاميرا الخلفية");
     await closeScanner();
   }
 }
 
 async function toggleScannerTorch() {
   if (!scannerTrack || !torchSupported) return;
+
+  try {
+    scannerTorchOn = !scannerTorchOn;
+    await scannerTrack.applyConstraints({
+      advanced: [{ torch: scannerTorchOn }]
+    });
+
+    if (qs("scannerTorchBtn")) {
+      qs("scannerTorchBtn").innerText = scannerTorchOn ? "إيقاف الفلاش" : "تشغيل / إيقاف الفلاش";
+    }
+  } catch (err) {
+    console.error(err);
+    alert("الفلاش غير مدعوم على هذا الجهاز أو المتصفح");
+  }
 }
 
 async function handleScanResult(text) {
@@ -2869,8 +2843,12 @@ async function handleScanResult(text) {
       String(p.code || "").trim().toLowerCase() === scanned.toLowerCase()
     );
 
-    if (found) addToCart(found);
-    else alert("لم يتم العثور على منتج بهذا الكود");
+    if (found) {
+      addToCart(found);
+    } else {
+      alert("لم يتم العثور على منتج بهذا الكود");
+    }
+
     return;
   }
 
@@ -2881,13 +2859,24 @@ async function handleScanResult(text) {
   }
 
   const idMatch = scanned.match(/INV-(\d+)/i) || scanned.match(/^(\d+)$/);
-  if (idMatch) await viewInvoice(idMatch[1]);
-  else alert("تعذر قراءة رقم الفاتورة من الكود");
+  if (idMatch) {
+    await viewInvoice(idMatch[1]);
+  } else {
+    alert("تعذر قراءة رقم الفاتورة من الكود");
+  }
 }
 
-async function closeScanner() {
+async function closeScanner(fromPopState = false) {
   try {
-    if (scanner && scanner.isScanning) await scanner.stop();
+    if (scannerTrack && torchSupported && scannerTorchOn) {
+      await scannerTrack.applyConstraints({ advanced: [{ torch: false }] });
+    }
+  } catch {}
+
+  try {
+    if (scanner && scanner.isScanning) {
+      await scanner.stop();
+    }
   } catch {}
 
   scannerTrack = null;
@@ -2895,7 +2884,23 @@ async function closeScanner() {
   torchSupported = false;
   scannerLock = false;
 
+  qs("scannerTorchBtn")?.classList.add("hidden");
+  qs("scannerTorchQuickBtn")?.classList.add("hidden");
+
+  if (qs("scannerTorchBtn")) {
+    qs("scannerTorchBtn").innerText = "تشغيل / إيقاف الفلاش";
+  }
+
   qs("scannerModal")?.classList.add("hidden");
+  qs("scannerFrameBox")?.classList.remove("show");
+  qs("scannerFrameBox")?.classList.add("hidden");
+
+  if (scannerHistoryPushed && !fromPopState) {
+    scannerHistoryPushed = false;
+    history.back();
+  } else if (fromPopState) {
+    scannerHistoryPushed = false;
+  }
 }
 
 async function scanBarcodeFromImage(event, target) {
@@ -2906,6 +2911,7 @@ async function scanBarcodeFromImage(event, target) {
 
   try {
     showLoader("جاري قراءة الصورة...", 40);
+
     const tempId = "temp-reader-" + Date.now();
     const tempDiv = document.createElement("div");
     tempDiv.id = tempId;
@@ -2926,65 +2932,48 @@ async function scanBarcodeFromImage(event, target) {
     hideLoader();
   }
 }
-
-function inRangeByFilter(dateString, filter, specificDate = "") {
-  if (!dateString) return false;
-  const d = new Date(dateString);
-  if (isNaN(d.getTime())) return false;
-
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-  const week = new Date(today);
-  week.setDate(week.getDate() - 6);
-  const month = new Date(now.getFullYear(), now.getMonth(), 1);
-  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-  const year = new Date(now.getFullYear(), 0, 1);
-  const nextYear = new Date(now.getFullYear() + 1, 0, 1);
-
-  if (filter === "all") return true;
-  if (filter === "specific") {
-    if (!specificDate) return false;
-    const s = new Date(specificDate + "T00:00:00");
-    const e = new Date(specificDate + "T23:59:59.999");
-    return d >= s && d <= e;
-  }
-  if (filter === "today" || filter === "day") return d >= today && d < tomorrow;
-  if (filter === "week") return d >= week && d < tomorrow;
-  if (filter === "month") return d >= month && d < nextMonth;
-  if (filter === "year") return d >= year && d < nextYear;
-
-  return true;
-}
-
 async function renderReports() {
   const filter = qs("reportFilter")?.value || "today";
+
   const invoices = await getAllInvoices();
   const purchases = await getAllPurchases();
   const expenses = await getAllExpenses();
   const merchantPayments = await getAllMerchantPayments();
 
-  let sales = 0, costs = 0, count = 0, purchaseTotal = 0, expenseTotal = 0, merchantPaidTotal = 0;
+  let sales = 0;
+  let costs = 0;
+  let count = 0;
+  let purchaseTotal = 0;
+  let expenseTotal = 0;
+  let merchantPaidTotal = 0;
 
   invoices.forEach(inv => {
-    if (inv.storeId !== currentStoreId || !inRangeByFilter(inv.date, filter)) return;
+    if (inv.storeId !== currentStoreId) return;
+    if (!inRangeByFilter(inv.date, filter)) return;
+
     sales += Number(inv.total || 0);
     costs += Number(inv.totalCost || 0);
     count++;
   });
 
   purchases.forEach(p => {
-    if (p.storeId !== currentStoreId || !inRangeByFilter(p.createdAt, filter)) return;
+    if (p.storeId !== currentStoreId) return;
+    if (!inRangeByFilter(p.createdAt, filter)) return;
+
     purchaseTotal += Number(p.amount || 0);
   });
 
   expenses.forEach(e => {
-    if (e.storeId !== currentStoreId || !inRangeByFilter(e.createdAt, filter)) return;
+    if (e.storeId !== currentStoreId) return;
+    if (!inRangeByFilter(e.createdAt, filter)) return;
+
     expenseTotal += Number(e.amount || 0);
   });
 
   merchantPayments.forEach(m => {
-    if (m.storeId !== currentStoreId || !inRangeByFilter(m.createdAt, filter)) return;
+    if (m.storeId !== currentStoreId) return;
+    if (!inRangeByFilter(m.createdAt, filter)) return;
+
     merchantPaidTotal += Number(m.amount || 0);
   });
 
@@ -2995,164 +2984,438 @@ async function renderReports() {
   if (qs("repCount")) qs("repCount").innerText = count;
 }
 
-async function renderSalesReport() { await renderReports(); }
-async function renderStockReport() {}
-async function renderProfitReport() { await renderReports(); }
-async function renderCustomersPage() {}
+function inRangeByFilter(dateString, filter, specificDate = "") {
+  if (!dateString) return false;
 
-async function getTransferAccounts() {
-  const row = await idbGet("meta", "transferAccounts");
-  return Array.isArray(row?.items) ? row.items : [];
+  const d = new Date(dateString);
+  if (isNaN(d.getTime())) return false;
+
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfTomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const startOfWeek = new Date(startOfToday);
+  startOfWeek.setDate(startOfWeek.getDate() - 6);
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  const startOfYear = new Date(now.getFullYear(), 0, 1);
+  const startOfNextYear = new Date(now.getFullYear() + 1, 0, 1);
+
+  if (filter === "all") return true;
+
+  if (filter === "specific") {
+    if (!specificDate) return false;
+    const s = new Date(specificDate + "T00:00:00");
+    const e = new Date(specificDate + "T23:59:59.999");
+    return d >= s && d <= e;
+  }
+
+  if (filter === "today" || filter === "day") {
+    return d >= startOfToday && d < startOfTomorrow;
+  }
+
+  if (filter === "week") {
+    return d >= startOfWeek && d < startOfTomorrow;
+  }
+
+  if (filter === "month") {
+    return d >= startOfMonth && d < startOfNextMonth;
+  }
+
+  if (filter === "year") {
+    return d >= startOfYear && d < startOfNextYear;
+  }
+
+  return true;
 }
 
-async function setTransferAccounts(items) {
-  await idbSet("meta", { id: "transferAccounts", items: Array.isArray(items) ? items : [] });
+async function getSalesReportRows() {
+  const range = qs("salesReportRange")?.value || "day";
+  const specificDate = qs("salesReportSpecificDate")?.value || "";
+  const paymentFilter = qs("salesReportPaymentFilter")?.value || "all";
+  const invoices = await getAllInvoices();
+
+  const rows = [];
+
+  invoices
+    .filter(inv =>
+      inv.storeId === currentStoreId &&
+      inRangeByFilter(inv.date, range, specificDate) &&
+      (paymentFilter === "all" || inv.payment === paymentFilter)
+    )
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .forEach(inv => {
+      (inv.items || []).forEach(item => {
+        rows.push({
+          date: inv.date,
+          customer: inv.customer || "-",
+          phone: inv.phone || "-",
+          itemName: item.name || "-",
+          qty: Number(item.qty || 0),
+          price: Number(item.price || 0),
+          payment: inv.payment || "cash",
+          account: buildTransferLine(inv) || "اختياري",
+          total: Number(item.qty || 0) * Number(item.price || 0),
+          invoiceId: inv.id
+        });
+      });
+    });
+
+  return rows;
 }
 
-async function addTransferAccount() {
-  const type = qs("accountTypeInput")?.value.trim();
-  const owner = qs("accountOwnerInput")?.value.trim();
-  const number = qs("accountNumberInput")?.value.trim() || "";
+async function renderSalesReport() {
+  const table = qs("salesReportTable");
+  if (!table) return;
 
-  if (!type || !owner) {
-    alert("يرجى إدخال اسم الجهة واسم صاحب الحساب");
+  table.innerHTML = "";
+
+  const rows = await getSalesReportRows();
+  let total = 0;
+  let qty = 0;
+  const invoiceIds = new Set();
+  const paymentCount = {};
+
+  rows.forEach(row => {
+    total += Number(row.total || 0);
+    qty += Number(row.qty || 0);
+    invoiceIds.add(row.invoiceId);
+    paymentCount[row.payment] = (paymentCount[row.payment] || 0) + 1;
+
+    table.innerHTML += `
+      <tr class="border-b">
+        <td class="p-4 border">${new Date(row.date).toLocaleString("ar-EG")}</td>
+        <td class="p-4 border">${escapeHtml(row.customer)}</td>
+        <td class="p-4 border">${escapeHtml(row.phone)}</td>
+        <td class="p-4 border">${escapeHtml(row.itemName)}</td>
+        <td class="p-4 border">${row.qty}</td>
+        <td class="p-4 border">${money(row.price)}</td>
+        <td class="p-4 border">${paymentLabel(row.payment)}</td>
+        <td class="p-4 border">${escapeHtml(row.account)}</td>
+        <td class="p-4 border font-black text-emerald-700">${money(row.total)}</td>
+      </tr>
+    `;
+  });
+
+  const topPayment = Object.entries(paymentCount).sort((a, b) => b[1] - a[1])[0]?.[0] || "-";
+
+  if (qs("salesReportTotal")) qs("salesReportTotal").innerText = money(total);
+  if (qs("salesReportQty")) qs("salesReportQty").innerText = qty;
+  if (qs("salesReportInvoicesCount")) qs("salesReportInvoicesCount").innerText = invoiceIds.size;
+  if (qs("salesReportTopPayment")) qs("salesReportTopPayment").innerText = topPayment === "-" ? "-" : paymentLabel(topPayment);
+  if (qs("salesReportPeriodText")) qs("salesReportPeriodText").innerText = qs("salesReportRange")?.selectedOptions?.[0]?.textContent || "-";
+}
+
+async function renderStockReport() {
+  const table = qs("stockReportTable");
+  if (!table) return;
+
+  const limit = Number(qs("lowStockLimit")?.value || 5);
+  const products = await getAllProducts();
+
+  table.innerHTML = "";
+
+  products
+    .filter(p => p.storeId === currentStoreId && Number(p.stock || 0) <= limit)
+    .sort((a, b) => Number(a.stock || 0) - Number(b.stock || 0))
+    .forEach(p => {
+      table.innerHTML += `
+        <tr class="border-b">
+          <td class="p-4">${escapeHtml(p.code || "-")}</td>
+          <td class="p-4">${escapeHtml(p.supplier || "-")}</td>
+          <td class="p-4 font-black">${escapeHtml(p.name || "-")}</td>
+          <td class="p-4 text-red-600 font-black">${Number(p.stock || 0)}</td>
+          <td class="p-4">${money(p.cost || 0)}</td>
+          <td class="p-4">${money(p.price || 0)}</td>
+          <td class="p-4">ناقص</td>
+        </tr>
+      `;
+    });
+}
+
+async function renderProfitReport() {
+  const range = qs("profitReportRange")?.value || "month";
+  const specificDate = qs("profitReportSpecificDate")?.value || "";
+
+  const invoices = await getAllInvoices();
+  const expenses = await getAllExpenses();
+  const merchantPayments = await getAllMerchantPayments();
+
+  let totalSales = 0;
+  let totalCost = 0;
+  let expenseTotal = 0;
+  let merchantTotal = 0;
+  const balances = new Map();
+
+  invoices.forEach(inv => {
+    if (inv.storeId !== currentStoreId) return;
+    if (!inRangeByFilter(inv.date, range, specificDate)) return;
+
+    totalSales += Number(inv.total || 0);
+    totalCost += Number(inv.totalCost || 0);
+
+    const key = inv.payment === "cash" ? "cash" : (inv.transferAccountId || "direct_unknown");
+    const old = balances.get(key) || {
+      payment: inv.payment || "cash",
+      type: inv.transferAccountType || "",
+      owner: inv.transferAccountName || "",
+      number: inv.transferAccountNumber || "",
+      amount: 0
+    };
+
+    old.amount += Number(inv.total || 0);
+    balances.set(key, old);
+  });
+
+  expenses.forEach(e => {
+    if (e.storeId !== currentStoreId) return;
+    if (!inRangeByFilter(e.createdAt, range, specificDate)) return;
+
+    expenseTotal += Number(e.amount || 0);
+
+    const key = e.payment === "cash" ? "cash" : (e.transferAccountId || "direct_unknown");
+    const old = balances.get(key) || {
+      payment: e.payment || "cash",
+      type: e.transferAccountType || "",
+      owner: e.transferAccountName || "",
+      number: e.transferAccountNumber || "",
+      amount: 0
+    };
+
+    old.amount -= Number(e.amount || 0);
+    balances.set(key, old);
+  });
+
+  merchantPayments.forEach(m => {
+    if (m.storeId !== currentStoreId) return;
+    if (!inRangeByFilter(m.createdAt, range, specificDate)) return;
+
+    merchantTotal += Number(m.amount || 0);
+
+    const key = m.payment === "cash" ? "cash" : (m.transferAccountId || "direct_unknown");
+    const old = balances.get(key) || {
+      payment: m.payment || "cash",
+      type: m.transferAccountType || "",
+      owner: m.transferAccountName || "",
+      number: m.transferAccountNumber || "",
+      amount: 0
+    };
+
+    old.amount -= Number(m.amount || 0);
+    balances.set(key, old);
+  });
+
+  if (qs("profitTotalSales")) qs("profitTotalSales").innerText = money(totalSales);
+  if (qs("profitTotalCost")) qs("profitTotalCost").innerText = money(totalCost);
+  if (qs("profitExpenses")) qs("profitExpenses").innerText = money(expenseTotal);
+  if (qs("profitMerchantPayments")) qs("profitMerchantPayments").innerText = money(merchantTotal);
+  if (qs("profitNet")) qs("profitNet").innerText = money(totalSales - totalCost - expenseTotal - merchantTotal);
+
+  const table = qs("balancesReportTable");
+  if (table) {
+    table.innerHTML = "";
+
+    [...balances.values()].forEach(b => {
+      table.innerHTML += `
+        <tr class="border-b">
+          <td class="p-4">${paymentLabel(b.payment)}</td>
+          <td class="p-4">${escapeHtml(b.payment === "cash" ? "كاش" : `${b.type || "-"} - ${b.owner || "-"}`)}</td>
+          <td class="p-4">${escapeHtml(b.number || "-")}</td>
+          <td class="p-4 font-black ${b.amount >= 0 ? "text-emerald-700" : "text-red-600"}">${money(b.amount)}</td>
+        </tr>
+      `;
+    });
+  }
+}
+
+async function renderCustomersPage() {
+  const table = qs("customersTable");
+  if (!table) return;
+
+  const search = qs("customersSearch")?.value.trim().toLowerCase() || "";
+  const range = qs("customersReportRange")?.value || "all";
+  const specificDate = qs("customersSpecificDate")?.value || "";
+  const invoices = await getAllInvoices();
+
+  const map = new Map();
+
+  invoices
+    .filter(inv => inv.storeId === currentStoreId && inRangeByFilter(inv.date, range, specificDate))
+    .forEach(inv => {
+      const name = String(inv.customer || "عميل نقدي").trim();
+      const phone = String(inv.phone || "").trim();
+      const key = `${name}__${phone}`;
+
+      const old = map.get(key) || {
+        name,
+        phone,
+        count: 0,
+        paid: 0,
+        unpaid: 0,
+        total: 0,
+        lastDate: inv.date
+      };
+
+      const amount = Number(inv.total || 0);
+      old.count++;
+      old.total += amount;
+
+      if (inv.status === "paid") old.paid += amount;
+      else old.unpaid += amount;
+
+      if (new Date(inv.date) > new Date(old.lastDate)) old.lastDate = inv.date;
+
+      map.set(key, old);
+    });
+
+  let customers = [...map.values()];
+
+  if (search) {
+    customers = customers.filter(c =>
+      c.name.toLowerCase().includes(search) ||
+      c.phone.toLowerCase().includes(search)
+    );
+  }
+
+  customers.sort((a, b) => new Date(b.lastDate) - new Date(a.lastDate));
+
+  table.innerHTML = "";
+
+  let paidTotal = 0;
+  let unpaidTotal = 0;
+  let grandTotal = 0;
+
+  customers.forEach(c => {
+    paidTotal += c.paid;
+    unpaidTotal += c.unpaid;
+    grandTotal += c.total;
+
+    table.innerHTML += `
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-4 font-black">${escapeHtml(c.name || "-")}</td>
+        <td class="p-4">${escapeHtml(c.phone || "-")}</td>
+        <td class="p-4">${c.count}</td>
+        <td class="p-4 text-green-700 font-black">${money(c.paid)}</td>
+        <td class="p-4 text-red-600 font-black">${money(c.unpaid)}</td>
+        <td class="p-4 text-emerald-700 font-black">${money(c.total)}</td>
+        <td class="p-4 text-xs text-gray-400">${new Date(c.lastDate).toLocaleString("ar-EG")}</td>
+        <td class="p-4">
+          <button onclick="openCustomerHistory('${escapeJs(c.name)}','${escapeJs(c.phone)}')" class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg text-xs font-black">عرض السجل</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  if (qs("customersCount")) qs("customersCount").innerText = customers.length;
+  if (qs("customersPaidTotal")) qs("customersPaidTotal").innerText = money(paidTotal);
+  if (qs("customersUnpaidTotal")) qs("customersUnpaidTotal").innerText = money(unpaidTotal);
+  if (qs("customersGrandTotal")) qs("customersGrandTotal").innerText = money(grandTotal);
+}
+
+async function getCustomerSuggestions(query) {
+  const invoices = await getAllInvoices();
+  const q = String(query || "").trim().toLowerCase();
+  if (!q) return [];
+
+  const map = new Map();
+
+  invoices
+    .filter(inv => inv.storeId === currentStoreId)
+    .forEach(inv => {
+      const name = String(inv.customer || "").trim();
+      const phone = String(inv.phone || "").trim();
+      const key = `${name}__${phone}`;
+      if (!name && !phone) return;
+
+      if ((name.toLowerCase().includes(q)) || (phone.toLowerCase().includes(q))) {
+        if (!map.has(key)) {
+          map.set(key, { name, phone, lastDate: inv.date });
+        } else if (new Date(inv.date) > new Date(map.get(key).lastDate)) {
+          map.set(key, { name, phone, lastDate: inv.date });
+        }
+      }
+    });
+
+  return [...map.values()]
+    .sort((a, b) => new Date(b.lastDate) - new Date(a.lastDate))
+    .slice(0, 10);
+}
+
+async function handleCustomerInput() {
+  const box = qs("customerSuggestions");
+  if (!box) return;
+
+  const q = (qs("customerName")?.value || qs("customerPhone")?.value || "").trim();
+  if (q.length < 2) {
+    box.classList.add("hidden");
     return;
   }
 
-  const accounts = await getTransferAccounts();
-  accounts.push({ id: "acc_" + Date.now(), type, owner, number });
-  await setTransferAccounts(accounts);
+  const suggestions = await getCustomerSuggestions(q);
+  box.innerHTML = "";
 
-  if (qs("accountTypeInput")) qs("accountTypeInput").value = "";
-  if (qs("accountOwnerInput")) qs("accountOwnerInput").value = "";
-  if (qs("accountNumberInput")) qs("accountNumberInput").value = "";
+  if (!suggestions.length) {
+    box.classList.add("hidden");
+    return;
+  }
 
-  await renderTransferAccountsList();
-  await fillAllAccountSelects();
-}
-
-async function deleteTransferAccount(accountId) {
-  const accounts = await getTransferAccounts();
-  await setTransferAccounts(accounts.filter(acc => acc.id !== accountId));
-  await renderTransferAccountsList();
-  await fillAllAccountSelects();
-}
-
-async function renderTransferAccountsList() {
-  const container = qs("accountsList");
-  if (!container) return;
-
-  const accounts = await getTransferAccounts();
-  container.innerHTML = accounts.length ? "" : `<div class="text-sm text-gray-500 text-center bg-gray-50 rounded-xl p-4">لا توجد جهات دفع مضافة</div>`;
-
-  accounts.forEach(account => {
-    container.innerHTML += `
-      <div class="flex items-center justify-between gap-3 bg-white border rounded-2xl p-4">
-        <div>
-          <div class="font-black">${escapeHtml(account.type)} - ${escapeHtml(account.owner)}</div>
-          <div class="text-xs text-gray-400">${escapeHtml(account.number || "بدون رقم")}</div>
-        </div>
-        <button onclick="deleteTransferAccount('${account.id}')" class="bg-red-50 text-red-600 px-3 py-2 rounded-xl font-black text-xs">حذف</button>
+  suggestions.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "suggest-item";
+    div.innerHTML = `
+      <div>
+        <div class="font-black">${escapeHtml(item.name || "بدون اسم")}</div>
+        <div class="text-xs text-gray-400">${escapeHtml(item.phone || "-")}</div>
       </div>
+      <div class="text-xs text-emerald-700">اختيار</div>
     `;
-  });
-}
-
-async function fillTransferAccountsSelect(selectId = "transferAccountSelect") {
-  const select = qs(selectId);
-  if (!select) return;
-
-  const accounts = await getTransferAccounts();
-  select.innerHTML = `<option value="">اختياري</option>`;
-
-  accounts.forEach(account => {
-    const option = document.createElement("option");
-    option.value = buildAccountValue(account);
-    option.textContent = `${account.type} - ${account.owner}${account.number ? " - " + account.number : ""}`;
-    select.appendChild(option);
-  });
-}
-
-async function fillAllAccountSelects() {
-  await fillTransferAccountsSelect("transferAccountSelect");
-  await fillTransferAccountsSelect("transferAccountSelectManual");
-  await fillTransferAccountsSelect("merchantPaymentAccount");
-  await fillTransferAccountsSelect("expenseAccount");
-}
-
-async function loadSettingsPage() {
-  const store = await idbGet("stores", currentStoreId);
-  const settings = await getClientSettings();
-
-  if (store) {
-    if (qs("setStoreName")) qs("setStoreName").value = store.name || "";
-    if (qs("setStoreLogo")) qs("setStoreLogo").value = store.logo || "";
-    setImageOrHide(qs("settingsLogoPreview"), store.logo);
-  }
-
-  if (qs("currencyNameInput")) qs("currencyNameInput").value = settings.currencyName || "شيكل";
-  if (qs("currencySymbolInput")) qs("currencySymbolInput").value = settings.currencySymbol || "₪";
-  if (qs("paymentInfoInput")) qs("paymentInfoInput").value = settings.paymentInfo || "";
-
-  await renderTransferAccountsList();
-  await fillAllAccountSelects();
-  updateLicenseUIFromSession();
-}
-
-async function saveSettings() {
-  showLoader("جاري حفظ الإعدادات...", 35);
-
-  try {
-    const settingsPayload = {
-      id: "settings",
-      currencyName: qs("currencyNameInput")?.value.trim() || "شيكل",
-      currencySymbol: qs("currencySymbolInput")?.value.trim() || "₪",
-      paymentInfo: qs("paymentInfoInput")?.value.trim() || "",
-      appMode: getLocalSession()?.appMode || "online",
-      updatedAt: new Date().toISOString()
+    div.onclick = () => {
+      if (qs("customerName")) qs("customerName").value = item.name || "";
+      if (qs("customerPhone")) qs("customerPhone").value = item.phone || "";
+      box.classList.add("hidden");
     };
+    box.appendChild(div);
+  });
 
-    const store = await getEntity("stores", currentStoreId);
-    if (store) {
-      await saveEntity("stores", currentStoreId, {
-        ...store,
-        name: qs("setStoreName")?.value.trim() || "المحل الرئيسي",
-        logo: qs("setStoreLogo")?.value.trim() || "",
-        updatedAt: new Date().toISOString()
-      });
-    }
+  box.classList.remove("hidden");
+}
 
-    await idbSet("meta", settingsPayload);
-    setLocalSettings(settingsPayload);
-    await loadCurrentStore();
-    await updateCurrencyUI();
-    showToast("تم حفظ الإعدادات بنجاح", "success");
-  } finally {
-    hideLoader();
+async function handleManualCustomerInput() {
+  const box = qs("manualCustomerSuggestions");
+  if (!box) return;
+
+  const q = (qs("manualCustomerName")?.value || qs("manualCustomerPhone")?.value || "").trim();
+  if (q.length < 2) {
+    box.classList.add("hidden");
+    return;
   }
-}
 
-async function logoutUser() {
-  detachRealtimeListeners();
-  clearLocalSession();
-  localStorage.removeItem("activeStoreId");
-  if (licenseWatcher) clearInterval(licenseWatcher);
-  showLogin("تم تسجيل الخروج بنجاح");
-}
+  const suggestions = await getCustomerSuggestions(q);
+  box.innerHTML = "";
 
-function toggleModal(id, show) {
-  qs(id)?.classList.toggle("hidden", !show);
-  document.body.style.overflow = show ? "hidden" : "";
-  safeLucide();
-}
+  if (!suggestions.length) {
+    box.classList.add("hidden");
+    return;
+  }
 
-async function openManualInvoiceModal() {
-  await fillTransferAccountsSelect("transferAccountSelectManual");
-  toggleModal("manualInvoiceModal", true);
-}
+  suggestions.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "suggest-item";
+    div.innerHTML = `
+      <div>
+        <div class="font-black">${escapeHtml(item.name || "بدون اسم")}</div>
+        <div class="text-xs text-gray-400">${escapeHtml(item.phone || "-")}</div>
+      </div>
+      <div class="text-xs text-emerald-700">اختيار</div>
+    `;
+    div.onclick = () => {
+      if (qs("manualCustomerName")) qs("manualCustomerName").value = item.name || "";
+      if (qs("manualCustomerPhone")) qs("manualCustomerPhone").value = item.phone || "";
+      box.classList.add("hidden");
+    };
+    box.appendChild(div);
+  });
 
-async function saveManualInvoice() {
-  alert("دالة الفاتورة اليدوية جاهزة للربط لاحقاً");
+  box.classList.remove("hidden");
 }
 
 function openNoteModal(note) {
@@ -3171,204 +3434,1052 @@ async function saveInvoiceStatus() {
   const status = qs("statusSelect")?.value || "paid";
   if (!id) return;
 
-  const inv = await getEntity("invoices", id);
-  if (!inv) return;
+  showLoader("جاري تحديث الحالة...", 40);
 
-  await saveEntity("invoices", id, { ...inv, status, updatedAt: new Date().toISOString() });
-  toggleModal("statusModal", false);
-  await renderInvoices();
+  try {
+    const inv = await getEntity("invoices", id);
+    if (!inv) return;
+
+    await saveEntity("invoices", id, {
+      ...inv,
+      status,
+      updatedAt: new Date().toISOString()
+    });
+
+    toggleModal("statusModal", false);
+    await renderInvoices();
+    await renderCustomersPage();
+
+    if (qs("invoicePage") && !qs("invoicePage").classList.contains("hidden") && String(currentInvoiceId) === String(id)) {
+      await viewInvoice(id);
+    }
+
+    showToast("تم تحديث الحالة", "success");
+  } finally {
+    hideLoader();
+  }
 }
 
 async function openCustomerHistory(name, phone = "") {
-  alert(`سجل العميل: ${name} ${phone}`);
+  currentCustomerHistoryName = name;
+  currentCustomerHistoryPhone = phone;
+
+  const range = qs("customerHistoryRange")?.value || "all";
+  const invoices = await getAllInvoices();
+
+  const filtered = invoices
+    .filter(inv =>
+      inv.storeId === currentStoreId &&
+      String(inv.customer || "").trim() === String(name || "").trim() &&
+      String(inv.phone || "").trim() === String(phone || "").trim() &&
+      inRangeByFilter(inv.date, range)
+    )
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  let paid = 0;
+  let unpaid = 0;
+  let total = 0;
+
+  filtered.forEach(inv => {
+    const t = Number(inv.total || 0);
+    total += t;
+    if (inv.status === "paid") paid += t;
+    else unpaid += t;
+  });
+
+  if (qs("customerHistoryTitle")) qs("customerHistoryTitle").innerText = `${name || "بدون اسم"}${phone ? " - " + phone : ""}`;
+  if (qs("custPaidTotal")) qs("custPaidTotal").innerText = money(paid);
+  if (qs("custUnpaidTotal")) qs("custUnpaidTotal").innerText = money(unpaid);
+  if (qs("custGrandTotal")) qs("custGrandTotal").innerText = money(total);
+
+  const tbody = qs("customerHistoryTable");
+  if (tbody) {
+    tbody.innerHTML = "";
+
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-gray-400">لا يوجد سجل لهذا العميل ضمن الفترة المحددة</td></tr>`;
+    } else {
+      filtered.forEach(inv => {
+        tbody.innerHTML += `
+          <tr class="border-t">
+            <td class="p-4 font-black">#${inv.id}</td>
+            <td class="p-4 text-sm">${new Date(inv.date).toLocaleString("ar-EG")}</td>
+            <td class="p-4"><span class="status-pill ${statusClass(inv.status || "paid")}">${statusLabel(inv.status || "paid")}</span></td>
+            <td class="p-4 font-black">${Number(inv.total || 0).toFixed(2)} ${escapeHtml(inv.currencySymbol || "₪")}</td>
+            <td class="p-4 text-xs">${escapeHtml(buildTransferLine(inv) || "اختياري")}</td>
+            <td class="p-4">
+              ${inv.notes ? `<button onclick="openNoteModal('${escapeJs(inv.notes)}')" class="text-slate-700 bg-slate-100 px-3 py-1 rounded-lg text-xs font-black">عرض</button>` : `<span class="text-gray-300">-</span>`}
+            </td>
+          </tr>
+        `;
+      });
+    }
+  }
+
+  toggleModal("customerHistoryModal", true);
 }
+async function createAggregateInvoiceForCustomer() {
+  if (!currentCustomerHistoryName) return;
 
-async function createAggregateInvoiceForCustomer() {}
-async function sendDebtMessageToCustomer() {}
-function normalizePhoneForSend(phone) { return String(phone || "").replace(/[^\d]/g, ""); }
+  const statusFilter = qs("customerInvoiceAggregateStatus")?.value || "all";
+  const rangeFilter = qs("customerInvoiceAggregateRange")?.value || "all";
 
-async function exportBulkInvoices(type) { alert("تصدير الفواتير سيضاف في النسخة التالية"); }
-async function exportBulkPurchases(type) { alert("تصدير المشتريات سيضاف في النسخة التالية"); }
-async function exportInvoicesExcel() {}
-async function exportPurchasesExcel() {}
-async function exportSalesReportExcel() {}
-async function exportStockReportExcel() {}
-async function exportProfitReportExcel() {}
-async function exportSummaryReportExcel() {}
-async function exportCustomersExcel() {}
-async function exportExpensesExcel() {}
-async function exportMerchantPaymentsExcel() {}
+  const invoices = await getAllInvoices();
 
-function exportRowsToPdf() {}
-function exportRowsToImage() {}
+  const customerInvoices = invoices.filter(inv =>
+    inv.storeId === currentStoreId &&
+    String(inv.customer || "").trim() === String(currentCustomerHistoryName).trim() &&
+    String(inv.phone || "").trim() === String(currentCustomerHistoryPhone || "").trim() &&
+    (statusFilter === "all" || inv.status === statusFilter) &&
+    inRangeByFilter(inv.date, rangeFilter)
+  );
 
-async function downloadBackupFile() {
-  const data = {
-    backupVersion: BACKUP_VERSION,
-    createdAt: new Date().toISOString(),
-    stores: await getAllStores(),
-    products: await getAllProducts(),
-    invoices: await getAllInvoices(),
-    purchases: await getAllPurchases(),
-    expenses: await getAllExpenses(),
-    merchantPayments: await getAllMerchantPayments(),
-    settings: await getClientSettings(),
-    transferAccounts: await getTransferAccounts()
+  if (!customerInvoices.length) {
+    alert("لا يوجد فواتير مطابقة لهذا العميل");
+    return;
+  }
+
+  const total = customerInvoices.reduce((s, inv) => s + Number(inv.total || 0), 0);
+  const settings = await getClientSettings();
+  const nextId = await getNextInvoiceNumber();
+
+  const invoice = {
+    id: String(nextId),
+    storeId: currentStoreId,
+    date: new Date().toISOString(),
+    customer: currentCustomerHistoryName,
+    phone: currentCustomerHistoryPhone || "",
+    payment: "cash",
+    status: "unpaid",
+    notes: `فاتورة مجمعة للعميل - عدد الفواتير: ${customerInvoices.length}`,
+    discountType: "fixed",
+    discountRaw: 0,
+    transferAccountId: "",
+    transferAccountType: "",
+    transferAccountName: "",
+    transferAccountNumber: "",
+    currencyName: settings.currencyName,
+    currencySymbol: settings.currencySymbol,
+    items: customerInvoices.map(inv => ({
+      lineKey: `agg_${inv.id}`,
+      id: `agg_${inv.id}`,
+      name: `دفعة من الفاتورة #${inv.id}`,
+      code: `AGG-${inv.id}`,
+      supplier: "",
+      price: Number(inv.total || 0),
+      cost: 0,
+      stock: 0,
+      variants: [],
+      selectedVariant: "",
+      qty: 1
+    })),
+    subtotal: total,
+    discount: 0,
+    total,
+    totalCost: 0,
+    source: "manual",
+    updatedAt: new Date().toISOString()
   };
 
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  await saveEntity("invoices", invoice.id, invoice);
+  toggleModal("customerHistoryModal", false);
+  showToast("تم إنشاء فاتورة مجمعة", "success");
+  await renderInvoices();
+  await viewInvoice(invoice.id);
+}
+
+function normalizePhoneForSend(phone, mode, customPrefix) {
+  let clean = String(phone || "").replace(/[^\d]/g, "");
+  if (!clean) return "";
+
+  if (mode === "custom") {
+    const prefix = String(customPrefix || "").replace(/[^\d]/g, "");
+    return prefix + clean.replace(/^0+/, "");
+  }
+
+  if (mode === "970" || mode === "972") {
+    return mode + clean.replace(/^0+/, "");
+  }
+
+  return clean;
+}
+
+async function sendDebtMessageToCustomer() {
+  if (!currentCustomerHistoryName) return;
+
+  const invoices = await getAllInvoices();
+  const debts = invoices.filter(inv =>
+    inv.storeId === currentStoreId &&
+    String(inv.customer || "").trim() === String(currentCustomerHistoryName).trim() &&
+    String(inv.phone || "").trim() === String(currentCustomerHistoryPhone || "").trim() &&
+    inv.status === "unpaid"
+  );
+
+  const total = debts.reduce((s, i) => s + Number(i.total || 0), 0);
+  const app = qs("messageTargetApp")?.value || "whatsapp";
+  const prefixMode = qs("messageCountryPrefixMode")?.value || "970";
+  const customPrefix = qs("messageCustomPrefix")?.value || "";
+  const settings = await getClientSettings();
+
+  const phone = normalizePhoneForSend(currentCustomerHistoryPhone || "", prefixMode, customPrefix);
+  if (!phone) {
+    alert("رقم العميل غير صالح");
+    return;
+  }
+
+  const message =
+`مرحباً ${currentCustomerHistoryName}
+عليك دفعات غير مكتملة بعدد ${debts.length}
+إجمالي المطلوب: ${money(total, false, settings)}
+${settings.paymentInfo ? "\n\n" + settings.paymentInfo : ""}
+يرجى التواصل لإتمام السداد.`;
+
+  if (app === "sms") {
+    window.location.href = `sms:${phone}?body=${encodeURIComponent(message)}`;
+    return;
+  }
+
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
+}
+
+async function loadSettingsPage() {
+  const store = await idbGet("stores", currentStoreId);
+  const settings = await getClientSettings();
+
+  if (store) {
+    if (qs("setStoreName")) qs("setStoreName").value = store.name || "";
+    if (qs("setStoreLogo")) qs("setStoreLogo").value = store.logo || "";
+    setImageOrHide(qs("settingsLogoPreview"), store.logo);
+  }
+
+  if (qs("currencyNameInput")) qs("currencyNameInput").value = settings.currencyName || "شيكل";
+  if (qs("currencySymbolInput")) qs("currencySymbolInput").value = settings.currencySymbol || "₪";
+  if (qs("paymentInfoInput")) qs("paymentInfoInput").value = settings.paymentInfo || "";
+
+  await renderTransferAccountsList();
+  await fillTransferAccountsSelect("transferAccountSelect");
+  await fillTransferAccountsSelect("transferAccountSelectManual");
+  await fillTransferAccountsSelect("merchantPaymentAccount");
+  await fillTransferAccountsSelect("expenseAccount");
+
+  updateLicenseUIFromSession();
+
+  if (qs("setCurrentSystemMode")) {
+    qs("setCurrentSystemMode").innerText = settings.appMode === "offline" ? "أوفلاين" : "أونلاين";
+  }
+
+  if (qs("offlineSyncWrap")) {
+    qs("offlineSyncWrap").classList.toggle("hidden", getLocalSession()?.appMode !== "online");
+  }
+}
+
+async function saveSettings() {
+  showLoader("جاري حفظ الإعدادات...", 35);
+
+  try {
+    const currencyName = qs("currencyNameInput")?.value.trim() || "شيكل";
+    const currencySymbol = qs("currencySymbolInput")?.value.trim() || "₪";
+    const paymentInfo = qs("paymentInfoInput")?.value.trim() || "";
+    const session = getLocalSession();
+
+    const store = await getEntity("stores", currentStoreId);
+    if (store) {
+      await saveEntity("stores", currentStoreId, {
+        ...store,
+        name: qs("setStoreName")?.value.trim() || "المحل الرئيسي",
+        logo: qs("setStoreLogo")?.value.trim() || "",
+        updatedAt: new Date().toISOString()
+      });
+    }
+
+    const settingsPayload = {
+      id: "settings",
+      currencyName,
+      currencySymbol,
+      paymentInfo,
+      appMode: session?.appMode || "online",
+      updatedAt: new Date().toISOString()
+    };
+
+    await idbSet("meta", settingsPayload);
+    setLocalSettings(settingsPayload);
+
+    if (isOnline() && session?.appMode === "online") {
+      await update(ref(db, pathClientSettings()), {
+        currencyName,
+        currencySymbol,
+        paymentInfo,
+        appMode: session?.appMode || "online",
+        updatedAt: new Date().toISOString()
+      });
+    } else if (session?.appMode === "online") {
+      addPendingSync({
+        type: "set",
+        path: pathClientSettings(),
+        payload: {
+          currencyName,
+          currencySymbol,
+          paymentInfo,
+          appMode: session?.appMode || "online",
+          updatedAt: new Date().toISOString()
+        }
+      });
+    }
+
+    await loadCurrentStore();
+    await updateCurrencyUI();
+    renderCart();
+    await resetInvoicesAndRender();
+    await renderPurchases();
+    await renderExpenses();
+    await renderMerchantPayments();
+    await renderReports();
+    updateLicenseUIFromSession();
+
+    showToast("تم حفظ الإعدادات بنجاح", "success");
+  } finally {
+    hideLoader();
+  }
+}
+
+async function logoutUser() {
+  const session = getLocalSession();
+
+  if (session?.key && isOnline() && session.appMode === "online") {
+    try {
+      const licRef = ref(db, `${pathLicenses()}/${sanitizeKey(session.key)}`);
+      const snap = await get(licRef);
+      if (snap.exists()) {
+        const lic = snap.val();
+        const used = Math.max(0, Number(lic.usedLogins || 0) - 1);
+        await update(licRef, {
+          usedLogins: used,
+          lastLogoutAt: new Date().toISOString()
+        });
+      }
+    } catch {}
+  }
+
+  detachRealtimeListeners();
+  clearLocalSession();
+  localStorage.removeItem("activeStoreId");
+  if (licenseWatcher) clearInterval(licenseWatcher);
+  showLogin("تم تسجيل الخروج بنجاح");
+}
+
+function toggleModal(id, show) {
+  qs(id)?.classList.toggle("hidden", !show);
+
+  if (show) {
+    document.body.style.overflow = "hidden";
+  } else {
+    const anyOpen = [...document.querySelectorAll(".modal-wrap")].some(m => !m.classList.contains("hidden"));
+    if (!anyOpen) document.body.style.overflow = "";
+  }
+
+  lucide.createIcons();
+}
+
+async function getTransferAccounts() {
+  const row = await idbGet("meta", "transferAccounts");
+  return Array.isArray(row?.items) ? row.items : [];
+}
+
+async function setTransferAccounts(items) {
+  await idbSet("meta", { id: "transferAccounts", items: Array.isArray(items) ? items : [] });
+
+  const session = getLocalSession();
+  if (session?.appMode === "online") {
+    const payload = { items: Array.isArray(items) ? items : [] };
+    if (isOnline()) {
+      await set(ref(db, `${pathClientSettings()}/transferAccounts`), payload);
+    } else {
+      addPendingSync({
+        type: "set",
+        path: `${pathClientSettings()}/transferAccounts`,
+        payload
+      });
+    }
+  }
+}
+
+async function addTransferAccount() {
+  const type = qs("accountTypeInput")?.value.trim();
+  const owner = qs("accountOwnerInput")?.value.trim();
+  const number = qs("accountNumberInput")?.value.trim() || "";
+
+  if (!type || !owner) {
+    alert("يرجى إدخال اسم الجهة واسم صاحب الحساب");
+    return;
+  }
+
+  const accounts = await getTransferAccounts();
+  const exists = accounts.some(acc => acc.type === type && acc.owner === owner && acc.number === number);
+
+  if (exists) {
+    alert("هذه الجهة موجودة مسبقاً");
+    return;
+  }
+
+  accounts.push({
+    id: "acc_" + Date.now(),
+    type,
+    owner,
+    number
+  });
+
+  await setTransferAccounts(accounts);
+
+  if (qs("accountTypeInput")) qs("accountTypeInput").value = "";
+  if (qs("accountOwnerInput")) qs("accountOwnerInput").value = "";
+  if (qs("accountNumberInput")) qs("accountNumberInput").value = "";
+
+  await renderTransferAccountsList();
+  await fillAllAccountSelects();
+  showToast("تمت إضافة الجهة", "success");
+}
+
+async function deleteTransferAccount(accountId) {
+  const accounts = await getTransferAccounts();
+  const filtered = accounts.filter(acc => acc.id !== accountId);
+
+  await setTransferAccounts(filtered);
+  await renderTransferAccountsList();
+  await fillAllAccountSelects();
+
+  showToast("تم حذف الجهة", "success");
+}
+
+async function renderTransferAccountsList() {
+  const container = qs("accountsList");
+  if (!container) return;
+
+  const accounts = await getTransferAccounts();
+  container.innerHTML = "";
+
+  if (!accounts.length) {
+    container.innerHTML = `<div class="text-sm text-gray-500 text-center bg-gray-50 rounded-xl p-4">لا توجد جهات دفع مضافة</div>`;
+    return;
+  }
+
+  accounts.forEach(account => {
+    const row = document.createElement("div");
+    row.className = "flex items-center justify-between gap-3 bg-white border rounded-2xl p-4";
+    row.innerHTML = `
+      <div class="min-w-0">
+        <div class="inline-flex bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-black mb-2">${escapeHtml(account.type)}</div>
+        <div class="font-black text-gray-800 line-clamp-1">${escapeHtml(account.owner)}</div>
+        <div class="text-xs text-gray-400">${escapeHtml(account.number || "بدون رقم")}</div>
+      </div>
+      <button class="bg-red-50 text-red-600 px-3 py-2 rounded-xl font-black text-xs">حذف</button>
+    `;
+    row.querySelector("button").onclick = () => deleteTransferAccount(account.id);
+    container.appendChild(row);
+  });
+}
+
+async function fillTransferAccountsSelect(selectId = "transferAccountSelect") {
+  const select = qs(selectId);
+  if (!select) return;
+
+  const accounts = await getTransferAccounts();
+
+  select.innerHTML = `<option value="">اختياري</option>`;
+
+  accounts.forEach(account => {
+    const option = document.createElement("option");
+    option.value = buildAccountValue(account);
+    option.textContent = `${account.type} - ${account.owner}${account.number ? " - " + account.number : ""}`;
+    select.appendChild(option);
+  });
+}
+
+async function fillAllAccountSelects() {
+  await fillTransferAccountsSelect("transferAccountSelect");
+  await fillTransferAccountsSelect("transferAccountSelectManual");
+  await fillTransferAccountsSelect("merchantPaymentAccount");
+  await fillTransferAccountsSelect("expenseAccount");
+}
+
+async function openManualInvoiceModal() {
+  await fillTransferAccountsSelect("transferAccountSelectManual");
+
+  if (qs("editManualInvoiceId")) qs("editManualInvoiceId").value = "";
+  if (qs("manualCustomerName")) qs("manualCustomerName").value = "";
+  if (qs("manualCustomerPhone")) qs("manualCustomerPhone").value = "";
+  if (qs("manualInvoiceAmount")) qs("manualInvoiceAmount").value = "";
+  if (qs("manualInvoiceStatus")) qs("manualInvoiceStatus").value = "unpaid";
+  if (qs("manualPaymentMethod")) qs("manualPaymentMethod").value = "cash";
+  if (qs("transferAccountSelectManual")) {
+    qs("transferAccountSelectManual").value = "";
+    qs("transferAccountSelectManual").classList.add("hidden");
+  }
+  if (qs("manualInvoiceNotes")) qs("manualInvoiceNotes").value = "";
+
+  qs("manualCustomerSuggestions")?.classList.add("hidden");
+  toggleModal("manualInvoiceModal", true);
+}
+
+async function saveManualInvoice() {
+  const editId = qs("editManualInvoiceId")?.value || "";
+  const customer = qs("manualCustomerName")?.value.trim() || "";
+  const phone = qs("manualCustomerPhone")?.value.trim() || "";
+  const amount = parseFloat(qs("manualInvoiceAmount")?.value) || 0;
+  const status = qs("manualInvoiceStatus")?.value || "unpaid";
+  const payment = qs("manualPaymentMethod")?.value || "cash";
+  const notes = qs("manualInvoiceNotes")?.value.trim() || "";
+  const account = parseAccountValue(qs("transferAccountSelectManual")?.value || "");
+
+  if (!customer || amount <= 0) {
+    alert("يرجى إدخال الاسم والمبلغ");
+    return;
+  }
+
+  const settings = await getClientSettings();
+  const invoiceId = editId || String(await getNextInvoiceNumber());
+
+  const payload = {
+    id: invoiceId,
+    storeId: currentStoreId,
+    date: new Date().toISOString(),
+    customer,
+    phone,
+    payment,
+    status,
+    notes,
+    discountType: "fixed",
+    discountRaw: 0,
+    transferAccountId: account.transferAccountId,
+    transferAccountType: account.transferAccountType,
+    transferAccountName: account.transferAccountName,
+    transferAccountNumber: account.transferAccountNumber,
+    currencyName: settings.currencyName,
+    currencySymbol: settings.currencySymbol,
+    items: [{
+      lineKey: `manual_${invoiceId}`,
+      id: `manual_${invoiceId}`,
+      name: "فاتورة يدوية",
+      code: `MAN-${invoiceId}`,
+      supplier: "",
+      price: amount,
+      cost: 0,
+      stock: 0,
+      variants: [],
+      selectedVariant: "",
+      qty: 1
+    }],
+    subtotal: amount,
+    discount: 0,
+    total: amount,
+    totalCost: 0,
+    source: "manual",
+    updatedAt: new Date().toISOString()
+  };
+
+  showLoader("جاري حفظ الفاتورة اليدوية...", 50);
+
+  try {
+    await saveEntity("invoices", invoiceId, payload);
+    toggleModal("manualInvoiceModal", false);
+    showToast(editId ? "تم تعديل الفاتورة اليدوية" : "تم إنشاء الفاتورة اليدوية", "success");
+    await renderInvoices();
+    await renderCustomersPage();
+  } finally {
+    hideLoader();
+  }
+}
+
+function getSelectedRangeForBulk(prefix) {
+  return {
+    range: qs(prefix)?.value || "all",
+    specificDate: qs(prefix.replace("Range", "SpecificDate"))?.value || ""
+  };
+}
+
+async function buildInvoiceExportRows(range, specificDate = "") {
+  const invoices = await getAllInvoices();
+  const rows = [];
+
+  invoices
+    .filter(inv => inv.storeId === currentStoreId && inRangeByFilter(inv.date, range, specificDate))
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .forEach(inv => {
+      (inv.items || []).forEach(item => {
+        rows.push([
+          formatDateOnly(inv.date),
+          inv.customer || "-",
+          inv.phone || "-",
+          item.name || "-",
+          Number(item.qty || 0),
+          Number(item.price || 0).toFixed(2),
+        paymentLabel(inv.payment || "cash"),
+        buildTransferLine(inv) || "اختياري",
+        (Number(item.qty || 0) * Number(item.price || 0)).toFixed(2)
+      ]);
+    });
+  });
+
+  return rows;
+}
+
+async function exportBulkInvoices(type) {
+  const range = qs("bulkExportRange")?.value || "all";
+  const specificDate = qs("bulkExportSpecificDate")?.value || "";
+  const rows = await buildInvoiceExportRows(range, specificDate);
+
+  const title = "تقرير المبيعات";
+  const columns = [
+    "التاريخ",
+    "اسم الزبون",
+    "رقم الزبون",
+    "الصنف",
+    "الكمية",
+    "السعر",
+    "الدفع",
+    "الجهة",
+    "الإجمالي"
+  ];
+
+  if (!rows.length) {
+    alert("لا توجد بيانات للتصدير");
+    return;
+  }
+
+  if (type === "print") {
+    printRowsTable(title, columns, rows);
+    return;
+  }
+
+  if (type === "pdf") {
+    exportRowsToPdf({
+      title,
+      columns,
+      rows,
+      fileName: "تقرير_المبيعات"
+    });
+    return;
+  }
+
+  if (type === "image") {
+    exportRowsToImage({
+      title,
+      columns,
+      rows,
+      fileName: "تقرير_المبيعات"
+    });
+  }
+}
+
+async function exportInvoicesExcel() {
+  const range = qs("bulkExportRange")?.value || "all";
+  const specificDate = qs("bulkExportSpecificDate")?.value || "";
+  const rows = await buildInvoiceExportRows(range, specificDate);
+
+  exportRowsToCsv({
+    fileName: "تقرير_المبيعات",
+    columns: [
+      "التاريخ",
+      "اسم الزبون",
+      "رقم الزبون",
+      "الصنف",
+      "الكمية",
+      "السعر",
+      "الدفع",
+      "الجهة",
+      "الإجمالي"
+    ],
+    rows
+  });
+}
+
+async function buildPurchasesExportRows(range, specificDate = "") {
+  const purchases = await getAllPurchases();
+  const rows = [];
+
+  purchases
+    .filter(p =>
+      p.storeId === currentStoreId &&
+      inRangeByFilter(p.createdAt, range, specificDate)
+    )
+    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+    .forEach(p => {
+      rows.push([
+        formatDateOnly(p.createdAt),
+        p.supplier || "-",
+        p.itemName || "-",
+        Number(p.qty || 0),
+        Number(p.wholesalePrice || 0).toFixed(2),
+        Number(p.salePrice || 0).toFixed(2),
+        Number(p.amount || 0).toFixed(2),
+        p.addToStock ? "نعم" : "لا",
+        p.notes || "-"
+      ]);
+    });
+
+  return rows;
+}
+
+async function exportBulkPurchases(type) {
+  const range = qs("bulkPurchasesRange")?.value || "all";
+  const specificDate = qs("bulkPurchasesSpecificDate")?.value || "";
+  const rows = await buildPurchasesExportRows(range, specificDate);
+
+  const title = "تقرير مشتريات الموردين";
+  const columns = [
+    "التاريخ",
+    "المورد",
+    "الصنف",
+    "الكمية",
+    "سعر الجملة",
+    "سعر البيع",
+    "الإجمالي",
+    "دخل المخزون",
+    "ملاحظات"
+  ];
+
+  if (!rows.length) {
+    alert("لا توجد بيانات للتصدير");
+    return;
+  }
+
+  if (type === "print") {
+    printRowsTable(title, columns, rows);
+    return;
+  }
+
+  if (type === "pdf") {
+    exportRowsToPdf({
+      title,
+      columns,
+      rows,
+      fileName: "تقرير_المشتريات"
+    });
+    return;
+  }
+
+  if (type === "image") {
+    exportRowsToImage({
+      title,
+      columns,
+      rows,
+      fileName: "تقرير_المشتريات"
+    });
+  }
+}
+
+async function exportPurchasesExcel() {
+  const range = qs("bulkPurchasesRange")?.value || "all";
+  const specificDate = qs("bulkPurchasesSpecificDate")?.value || "";
+  const rows = await buildPurchasesExportRows(range, specificDate);
+
+  exportRowsToCsv({
+    fileName: "تقرير_المشتريات",
+    columns: [
+      "التاريخ",
+      "المورد",
+      "الصنف",
+      "الكمية",
+      "سعر الجملة",
+      "سعر البيع",
+      "الإجمالي",
+      "دخل المخزون",
+      "ملاحظات"
+    ],
+    rows
+  });
+}
+
+function exportRowsToCsv({ fileName, columns, rows }) {
+  const csvRows = [];
+  csvRows.push(columns.join(","));
+
+  rows.forEach(row => {
+    csvRows.push(
+      row.map(v => {
+        const text = String(v ?? "").replaceAll('"', '""');
+        return `"${text}"`;
+      }).join(",")
+    );
+  });
+
+  const blob = new Blob(["\uFEFF" + csvRows.join("\n")], {
+    type: "text/csv;charset=utf-8;"
+  });
+
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `backup_${Date.now()}.json`;
+  a.download = `${fileName}_${Date.now()}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 }
 
-async function saveCloudBackup() {
-  if (!navigator.onLine || getLocalSession()?.appMode !== "online") {
-    alert("هذه العملية تحتاج إنترنت ونسخة أونلاين");
+function printRowsTable(title, columns, rows, summary = []) {
+  const html = buildPrintableTableHtml(title, columns, rows, summary);
+
+  const w = window.open("", "_blank");
+  w.document.write(`
+    <html lang="ar" dir="rtl">
+      <head>
+        <meta charset="UTF-8">
+        <title>${escapeHtml(title)}</title>
+        <style>
+          body{font-family:Arial,Tahoma,sans-serif;direction:rtl;padding:20px;color:#111827}
+          h1{text-align:center;color:#047857}
+          table{width:100%;border-collapse:collapse;margin-top:16px;font-size:12px}
+          th,td{border:1px solid #d1d5db;padding:8px;text-align:center}
+          th{background:#ecfdf5;color:#047857}
+          .summary{margin-top:14px;border:1px solid #d1d5db;border-radius:12px;padding:10px}
+          .summary div{margin:6px 0}
+        </style>
+      </head>
+      <body>${html}</body>
+    </html>
+  `);
+  w.document.close();
+  w.focus();
+  w.print();
+}
+
+function buildPrintableTableHtml(title, columns, rows, summary = []) {
+  const summaryHtml = summary.length
+    ? `<div class="summary">${summary.map(s => `<div><b>${escapeHtml(s[0])}:</b> ${escapeHtml(s[1])}</div>`).join("")}</div>`
+    : "";
+
+  return `
+    <h1>${escapeHtml(title)}</h1>
+    ${summaryHtml}
+    <table>
+      <thead>
+        <tr>${columns.map(c => `<th>${escapeHtml(c)}</th>`).join("")}</tr>
+      </thead>
+      <tbody>
+        ${rows.map(row => `
+          <tr>${row.map(cell => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function exportRowsToPdf({ title, columns, rows, fileName, summary = [] }) {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({
+    orientation: "landscape",
+    unit: "pt",
+    format: "a4"
+  });
+
+  pdf.setFontSize(14);
+  pdf.text(title, pdf.internal.pageSize.getWidth() / 2, 28, { align: "center" });
+
+  let startY = 48;
+
+  if (summary.length) {
+    pdf.setFontSize(9);
+    summary.forEach((s, index) => {
+      pdf.text(`${s[0]}: ${s[1]}`, 40, startY + index * 14);
+    });
+    startY += summary.length * 14 + 10;
+  }
+
+  pdf.autoTable({
+    head: [columns],
+    body: rows,
+    startY,
+    styles: {
+      fontSize: 8,
+      halign: "center",
+      cellPadding: 5
+    },
+    headStyles: {
+      fillColor: [4, 120, 87],
+      textColor: [255, 255, 255]
+    },
+    margin: { top: 40, right: 25, left: 25 },
+    didDrawPage: () => {
+      pdf.setFontSize(8);
+      pdf.text(
+        `تاريخ التصدير: ${new Date().toLocaleString("ar-EG")}`,
+        40,
+        pdf.internal.pageSize.getHeight() - 18
+      );
+    }
+  });
+
+  pdf.save(`${fileName}_${Date.now()}.pdf`);
+}
+
+function exportRowsToImage({ title, columns, rows, fileName, summary = [] }) {
+  const wrap = document.createElement("div");
+  wrap.style.position = "fixed";
+  wrap.style.right = "-99999px";
+  wrap.style.top = "0";
+  wrap.style.width = "1200px";
+  wrap.style.background = "#ffffff";
+  wrap.style.padding = "24px";
+  wrap.style.direction = "rtl";
+  wrap.style.fontFamily = "Arial,Tahoma,sans-serif";
+
+  wrap.innerHTML = buildPrintableTableHtml(title, columns, rows, summary);
+  document.body.appendChild(wrap);
+
+  html2canvas(wrap, {
+    scale: 2,
+    backgroundColor: "#ffffff"
+  }).then(canvas => {
+    const a = document.createElement("a");
+    a.download = `${fileName}_${Date.now()}.png`;
+    a.href = canvas.toDataURL("image/png");
+    a.click();
+    wrap.remove();
+  }).catch(() => {
+    wrap.remove();
+    alert("تعذر تصدير الصورة");
+  });
+}
+
+async function exportTableArea(areaId, type, fileName) {
+  const area = qs(areaId);
+  if (!area) return;
+
+  if (type === "print") {
+    const w = window.open("", "_blank");
+    w.document.write(`
+      <html lang="ar" dir="rtl">
+        <head>
+          <meta charset="UTF-8">
+          <title>${fileName}</title>
+          <style>
+            body{font-family:Arial,Tahoma,sans-serif;direction:rtl;padding:20px}
+            table{width:100%;border-collapse:collapse;font-size:12px}
+            th,td{border:1px solid #d1d5db;padding:8px;text-align:center}
+            th{background:#ecfdf5;color:#047857}
+          </style>
+        </head>
+        <body>${area.innerHTML}</body>
+      </html>
+    `);
+    w.document.close();
+    w.focus();
+    w.print();
     return;
   }
 
-  await set(ref(db, `${pathClientBackups()}/backup_${Date.now()}`), {
-    createdAt: new Date().toISOString(),
-    stores: await getAllStores(),
-    products: await getAllProducts(),
-    invoices: await getAllInvoices()
-  });
+  if (type === "image") {
+    html2canvas(area, {
+      scale: 2,
+      backgroundColor: "#ffffff"
+    }).then(canvas => {
+      const a = document.createElement("a");
+      a.download = `${fileName}_${Date.now()}.png`;
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    });
+    return;
+  }
 
-  showToast("تم حفظ النسخة الاحتياطية", "success");
+  if (type === "pdf") {
+    const rows = [];
+    const table = area.querySelector("table");
+    if (!table) {
+      alert("لا يوجد جدول للتصدير");
+      return;
+    }
+
+    const columns = [...table.querySelectorAll("thead th")].map(th => th.innerText.trim());
+    [...table.querySelectorAll("tbody tr")].forEach(tr => {
+      rows.push([...tr.querySelectorAll("td")].map(td => td.innerText.trim()));
+    });
+
+    exportRowsToPdf({
+      title: fileName,
+      columns,
+      rows,
+      fileName
+    });
+  }
 }
 
-async function restoreBackupFromFile(event) {
-  alert("الاستعادة ستضاف في النسخة التالية");
-  event.target.value = "";
-}
-
-async function downloadOfflinePackage() { await downloadBackupFile(); }
-async function importOfflinePackage(event) { await restoreBackupFromFile(event); }
-
-async function uploadOfflineDataToCloud(showToastAfter = true) {
-  const session = getLocalSession();
-  if (!session || session.appMode !== "online" || !navigator.onLine) return;
-
-  for (const x of await getAllStores()) await set(ref(db, `${pathClientStores()}/${x.id}`), x);
-  for (const x of await getAllProducts()) await set(ref(db, `${pathClientProducts()}/${x.id}`), x);
-  for (const x of await getAllInvoices()) await set(ref(db, `${pathClientInvoices()}/${x.id}`), x);
-  for (const x of await getAllPurchases()) await set(ref(db, `${pathClientPurchases()}/${x.id}`), x);
-  for (const x of await getAllExpenses()) await set(ref(db, `${pathClientExpenses()}/${x.id}`), x);
-  for (const x of await getAllMerchantPayments()) await set(ref(db, `${pathClientMerchantPayments()}/${x.id}`), x);
-
-  localStorage.setItem(LAST_SYNC_KEY, new Date().toISOString());
-  updateConnectionUI();
-  if (showToastAfter) showToast("تمت المزامنة", "success");
-}
-function openOfflineDb() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(LOCAL_OFFLINE_DB_NAME, LOCAL_OFFLINE_DB_VERSION);
-
-    req.onupgradeneeded = () => {
-      const dbx = req.result;
-      ["stores", "products", "invoices", "purchases", "expenses", "merchantPayments", "meta"].forEach(name => {
-        if (!dbx.objectStoreNames.contains(name)) dbx.createObjectStore(name, { keyPath: "id" });
-      });
-    };
-
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-}
-
-async function idbGet(storeName, id) {
-  const dbx = await openOfflineDb();
-  return new Promise((resolve, reject) => {
-    const tx = dbx.transaction(storeName, "readonly");
-    const req = tx.objectStore(storeName).get(id);
-    req.onsuccess = () => resolve(req.result || null);
-    req.onerror = () => reject(req.error);
-  });
-}
-
-async function idbGetAll(storeName) {
-  const dbx = await openOfflineDb();
-  return new Promise((resolve, reject) => {
-    const tx = dbx.transaction(storeName, "readonly");
-    const req = tx.objectStore(storeName).getAll();
-    req.onsuccess = () => resolve(req.result || []);
-    req.onerror = () => reject(req.error);
-  });
-}
-
-async function idbSet(storeName, value) {
-  const dbx = await openOfflineDb();
-  return new Promise((resolve, reject) => {
-    const tx = dbx.transaction(storeName, "readwrite");
-    const req = tx.objectStore(storeName).put(value);
-    req.onsuccess = () => resolve();
-    req.onerror = () => reject(req.error);
-  });
-}
-
-async function idbDelete(storeName, id) {
-  const dbx = await openOfflineDb();
-  return new Promise((resolve, reject) => {
-    const tx = dbx.transaction(storeName, "readwrite");
-    const req = tx.objectStore(storeName).delete(id);
-    req.onsuccess = () => resolve();
-    req.onerror = () => reject(req.error);
-  });
-}
-
-async function idbClear(storeName) {
-  const dbx = await openOfflineDb();
-  return new Promise((resolve, reject) => {
-    const tx = dbx.transaction(storeName, "readwrite");
-    const req = tx.objectStore(storeName).clear();
-    req.onsuccess = () => resolve();
-    req.onerror = () => reject(req.error);
-  });
-}
-
-async function loadCurrentStore() {
-  const store = await idbGet("stores", currentStoreId);
-  if (!store) return;
-
-  if (qs("sideStoreName")) qs("sideStoreName").innerText = store.name || "اسم المحل";
-  setImageOrHide(qs("sideLogo"), store.logo);
-  if (qs("invPageStoreName")) qs("invPageStoreName").innerText = store.name || "المحل";
-  setImageOrHide(qs("invPageLogo"), store.logo);
-}
-
-async function syncCloudToOffline() {
-  const session = getLocalSession();
-  if (!navigator.onLine || session?.appMode !== "online" || !baseClientPath()) return;
-
-  const [storesSnap, productsSnap, invoicesSnap, purchasesSnap, expensesSnap, merchantsSnap] = await Promise.all([
-    get(ref(db, pathClientStores())),
-    get(ref(db, pathClientProducts())),
-    get(ref(db, pathClientInvoices())),
-    get(ref(db, pathClientPurchases())),
-    get(ref(db, pathClientExpenses())),
-    get(ref(db, pathClientMerchantPayments()))
+async function exportSalesReportExcel() {
+  const rowsData = await getSalesReportRows();
+  const rows = rowsData.map(r => [
+    formatDateOnly(r.date),
+    r.customer,
+    r.phone,
+    r.itemName,
+    r.qty,
+    r.price.toFixed(2),
+    paymentLabel(r.payment),
+    r.account,
+    r.total.toFixed(2)
   ]);
 
-  await idbClear("stores");
-  await idbClear("products");
-  await idbClear("invoices");
-  await idbClear("purchases");
-  await idbClear("expenses");
-  await idbClear("merchantPayments");
-
-  for (const x of storesSnap.exists() ? Object.values(storesSnap.val() || {}) : []) await idbSet("stores", x);
-  for (const x of productsSnap.exists() ? Object.values(productsSnap.val() || {}) : []) await idbSet("products", x);
-  for (const x of invoicesSnap.exists() ? Object.values(invoicesSnap.val() || {}) : []) await idbSet("invoices", x);
-  for (const x of purchasesSnap.exists() ? Object.values(purchasesSnap.val() || {}) : []) await idbSet("purchases", x);
-  for (const x of expensesSnap.exists() ? Object.values(expensesSnap.val() || {}) : []) await idbSet("expenses", x);
-  for (const x of merchantsSnap.exists() ? Object.values(merchantsSnap.val() || {}) : []) await idbSet("merchantPayments", x);
+  exportRowsToCsv({
+    fileName: "تقرير_المبيعات",
+    columns: ["التاريخ", "اسم الزبون", "رقم الزبون", "الصنف", "الكمية", "السعر", "الدفع", "الجهة", "الإجمالي"],
+    rows
+  });
 }
 
-async function getEntity(kind, id) { return await idbGet(kind, id); }
+async function exportStockReportExcel() {
+  const limit = Number(qs("lowStockLimit")?.value || 5);
+  const products = await getAllProducts();
+
+  const rows = products
+    .filter(p => p.storeId === currentStoreId && Number(p.stock || 0) <= limit)
+    .map(p => [
+      p.code || "-",
+      p.supplier || "-",
+      p.name || "-",
+      Number(p.stock || 0),
+      Number(p.cost || 0).toFixed(2),
+      Number(p.price || 0).toFixed(2),
+      "ناقص"
+    ]);
+
+  exportRowsToCsv({
+    fileName: "تقرير_البضاعة_الناقصة",
+    columns: ["الكود", "المورد", "المنتج", "الكمية الحالية", "سعر الجملة", "سعر البيع", "الحالة"],
+    rows
+  });
+}
+
+async function exportProfitReportExcel() {
+  const table = qs("balancesReportTable");
+  const rows = [];
+
+  if (table) {
+    [...table.querySelectorAll("tr")].forEach(tr => {
+      rows.push([...tr.querySelectorAll("td")].map(td => td.innerText.trim()));
+    });
+  }
+
+  exportRowsToCsv({
+    fileName: "تقرير_المرابح_والأرصدة",
+    columns: ["طريقة الدفع", "اسم الجهة", "الرقم / الحساب", "الرصيد"],
+    rows
+  });
+}
+
+async function exportSummaryReportExcel() {
+  const rows = [
+    ["إجمالي البيع بسعر الجملة", qs("repWholesaleSales")?.innerText || "0"],
+    ["إجمالي المبيعات", qs("repTotalSales")?.innerText || "0"],
+    ["صافي الربح", qs("repTotalProfit")?.innerText || "0"],
+    ["المشتريات", qs("repPurchases")?.innerText || "0"],
+    ["عدد العمليات", qs("repCount")?.innerText || "0"]
+  ];
+
+  exportRowsToCsv({
+    fileName: "التقرير_المختصر",
+    columns: ["البند", "القيمة"],
+    rows
+  });
+}
+async function getEntity(kind, id) {
+  return await idbGet(kind, id);
+}
 
 async function saveEntity(kind, id, payload) {
   await idbSet(kind, payload);
@@ -3388,12 +4499,37 @@ async function saveEntity(kind, id, payload) {
   if (isOnline() && session?.appMode === "online") {
     await set(ref(db, `${pathMap[kind]}/${id}`), payload);
   } else if (session?.appMode === "online") {
-    addPendingSync({ type: "set", path: `${pathMap[kind]}/${id}`, payload });
+    addPendingSync({
+      type: "set",
+      path: `${pathMap[kind]}/${id}`,
+      payload
+    });
   }
 }
 
 async function deleteEntity(kind, id) {
   await idbDelete(kind, id);
+
+  const session = getLocalSession();
+  const pathMap = {
+    stores: pathClientStores(),
+    products: pathClientProducts(),
+    invoices: pathClientInvoices(),
+    purchases: pathClientPurchases(),
+    expenses: pathClientExpenses(),
+    merchantPayments: pathClientMerchantPayments()
+  };
+
+  if (!pathMap[kind]) return;
+
+  if (isOnline() && session?.appMode === "online") {
+    await remove(ref(db, `${pathMap[kind]}/${id}`));
+  } else if (session?.appMode === "online") {
+    addPendingSync({
+      type: "remove",
+      path: `${pathMap[kind]}/${id}`
+    });
+  }
 }
 
 async function getAllStores() { return await idbGetAll("stores"); }
@@ -3404,35 +4540,125 @@ async function getAllExpenses() { return await idbGetAll("expenses"); }
 async function getAllMerchantPayments() { return await idbGetAll("merchantPayments"); }
 
 function escapeHtmlAttr(str) {
-  return String(str ?? "").replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("'", "&#039;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+  return String(str ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
+
 function escapeHtml(str) {
-  return String(str ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+  return String(str ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
+
 function escapeJs(str) {
-  return String(str ?? "").replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, "\\n").replace(/\r/g, "");
+  return String(str ?? "")
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'")
+    .replace(/\n/g, "\\n")
+    .replace(/\r/g, "");
 }
 
-Object.assign(window, {
-  handleLicenseLogin, goToLoginFromExpired, switchTab, createNewStore, switchStore,
-  openNewProduct, saveProduct, showProductBarcode, resetProductsAndRender, loadMoreProducts, editProduct, deleteProduct,
-  searchPosProducts, changeCartVariant, changeQty, removeFromCart, calculateTotal, checkout,
-  editInvoice, deleteInvoice, viewInvoice, backFromInvoicePage, printInvoicePage, exportInvoicePage, resetInvoicesAndRender, loadMoreInvoices,
-  openPurchaseModal, savePurchase, editPurchase, deletePurchase,
-  openMerchantPaymentModal, saveMerchantPayment, editMerchantPayment, deleteMerchantPayment,
-  openExpenseModal, saveExpense, editExpense, deleteExpense,
-  openScanner, toggleScannerTorch, closeScanner, scanBarcodeFromImage,
-  saveSettings, logoutUser, toggleModal, addVariantRow, syncStockWithVariants, previewStoreLogo,
-  downloadBackupFile, saveCloudBackup, restoreBackupFromFile,
-  openStatusModal, openCustomerHistory, openNoteModal, openManualInvoiceModal, saveManualInvoice,
-  createAggregateInvoiceForCustomer, sendDebtMessageToCustomer,
-  renderReports, renderSalesReport, renderStockReport, renderProfitReport, renderCustomersPage,
-  exportBulkInvoices, exportBulkPurchases, exportInvoicesExcel, exportPurchasesExcel,
-  exportSalesReportExcel, exportStockReportExcel, exportProfitReportExcel, exportSummaryReportExcel,
-  exportCustomersExcel, exportExpensesExcel, exportMerchantPaymentsExcel,
-  addTransferAccount, deleteTransferAccount, syncPendingAndCloud, uploadOfflineDataToCloud
-});
+window.handleLicenseLogin = handleLicenseLogin;
+window.goToLoginFromExpired = goToLoginFromExpired;
+window.switchTab = switchTab;
+window.createNewStore = createNewStore;
+window.switchStore = switchStore;
 
-updateConnectionUI();
-updatePendingSyncBadge();
-safeLucide();
+window.openNewProduct = openNewProduct;
+window.saveProduct = saveProduct;
+window.showProductBarcode = showProductBarcode;
+window.resetProductsAndRender = resetProductsAndRender;
+window.loadMoreProducts = loadMoreProducts;
+window.editProduct = editProduct;
+window.deleteProduct = deleteProduct;
+
+window.searchPosProducts = searchPosProducts;
+window.changeCartVariant = changeCartVariant;
+window.changeQty = changeQty;
+window.removeFromCart = removeFromCart;
+window.calculateTotal = calculateTotal;
+window.checkout = checkout;
+
+window.editInvoice = editInvoice;
+window.deleteInvoice = deleteInvoice;
+window.viewInvoice = viewInvoice;
+window.backFromInvoicePage = backFromInvoicePage;
+window.printInvoicePage = printInvoicePage;
+window.exportInvoicePage = exportInvoicePage;
+window.resetInvoicesAndRender = resetInvoicesAndRender;
+window.loadMoreInvoices = loadMoreInvoices;
+
+window.openPurchaseModal = openPurchaseModal;
+window.savePurchase = savePurchase;
+window.editPurchase = editPurchase;
+window.deletePurchase = deletePurchase;
+
+window.openMerchantPaymentModal = openMerchantPaymentModal;
+window.saveMerchantPayment = saveMerchantPayment;
+window.editMerchantPayment = editMerchantPayment;
+window.deleteMerchantPayment = deleteMerchantPayment;
+
+window.openExpenseModal = openExpenseModal;
+window.saveExpense = saveExpense;
+window.editExpense = editExpense;
+window.deleteExpense = deleteExpense;
+
+window.openScanner = openScanner;
+window.toggleScannerTorch = toggleScannerTorch;
+window.closeScanner = closeScanner;
+window.scanBarcodeFromImage = scanBarcodeFromImage;
+
+window.saveSettings = saveSettings;
+window.logoutUser = logoutUser;
+window.toggleModal = toggleModal;
+window.addVariantRow = addVariantRow;
+window.syncStockWithVariants = syncStockWithVariants;
+window.previewStoreLogo = previewStoreLogo;
+
+window.downloadBackupFile = downloadBackupFile;
+window.saveCloudBackup = saveCloudBackup;
+window.restoreBackupFromFile = restoreBackupFromFile;
+
+window.openStatusModal = openStatusModal;
+window.openCustomerHistory = openCustomerHistory;
+window.openNoteModal = openNoteModal;
+window.openManualInvoiceModal = openManualInvoiceModal;
+window.saveManualInvoice = saveManualInvoice;
+
+window.createAggregateInvoiceForCustomer = createAggregateInvoiceForCustomer;
+window.sendDebtMessageToCustomer = sendDebtMessageToCustomer;
+
+window.renderReports = renderReports;
+window.renderSalesReport = renderSalesReport;
+window.renderStockReport = renderStockReport;
+window.renderProfitReport = renderProfitReport;
+window.renderCustomersPage = renderCustomersPage;
+
+window.exportBulkInvoices = exportBulkInvoices;
+window.exportBulkPurchases = exportBulkPurchases;
+window.exportInvoicesExcel = exportInvoicesExcel;
+window.exportPurchasesExcel = exportPurchasesExcel;
+window.exportSalesReportExcel = exportSalesReportExcel;
+window.exportStockReportExcel = exportStockReportExcel;
+window.exportProfitReportExcel = exportProfitReportExcel;
+window.exportSummaryReportExcel = exportSummaryReportExcel;
+window.exportCustomersExcel = exportCustomersExcel;
+window.exportExpensesExcel = exportExpensesExcel;
+window.exportMerchantPaymentsExcel = exportMerchantPaymentsExcel;
+
+window.addTransferAccount = addTransferAccount;
+window.deleteTransferAccount = deleteTransferAccount;
+
+window.syncPendingAndCloud = syncPendingAndCloud;
+window.uploadOfflineDataToCloud = uploadOfflineDataToCloud;
+
+try { updateConnectionUI(); } catch {}
+try { updatePendingSyncBadge(); } catch {}
+try { lucide?.createIcons?.(); } catch {}
