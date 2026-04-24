@@ -1,12 +1,16 @@
-/* patch.js v4.1.0
-   تعديلات خارجية فوق index.html + app.js
-   بدون تغيير شكل الكود الأصلي
+/* patch.js v4.1.2-stable-login
+   مبني على patch.js v4.1.0 النظيف
+   يحافظ على تسجيل الدخول كما هو
+   يضيف عداد مزامنة + مزامنة تلقائية بعد رجوع النت
+   يصلح النوافذ على الجوال
+   يخصم المصروفات من الربح
+   بدون تحديث ملفات الموقع من الاستضافة
 */
 
 (function () {
   "use strict";
 
-  const PATCH_VERSION = "4.1.0";
+  const PATCH_VERSION = "4.1.2-stable-login";
   const PREFIX = "DFDFG";
   const DB_NAME = `${PREFIX}_offline_cashier_db_v6`;
   const DB_VERSION = 6;
@@ -19,6 +23,7 @@
 
   let syncRunning = false;
   let observerStarted = false;
+  let mutationPatched = false;
 
   function $(id) {
     return document.getElementById(id);
@@ -320,6 +325,10 @@
         box-shadow: 0 10px 22px rgba(29,78,216,.22);
       }
 
+      .patch-sync-btn:disabled {
+        opacity: .65;
+      }
+
       .patch-sync-count {
         position: absolute;
         top: -7px;
@@ -507,12 +516,6 @@
         color: #fff;
       }
 
-      .patch-section-title {
-        font-size: 24px;
-        font-weight: 900;
-        color: #111827;
-      }
-
       .patch-grid-stats {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -595,6 +598,14 @@
         display: none !important;
       }
 
+      .patch-profit-note {
+        display: block;
+        margin-top: 6px;
+        font-size: 11px;
+        font-weight: 800;
+        opacity: .9;
+      }
+
       @media (max-width: 900px) {
         .patch-grid-stats {
           grid-template-columns: 1fr 1fr;
@@ -665,17 +676,21 @@
 
         .modal-wrap {
           align-items: flex-start !important;
-          padding: 10px !important;
-          overflow-y: auto;
+          justify-content: center !important;
+          padding: 84px 10px 18px !important;
+          overflow-y: auto !important;
+          overscroll-behavior: contain;
         }
 
         .modal-card {
           width: 100% !important;
           max-width: 100% !important;
-          max-height: calc(100vh - 20px);
-          overflow-y: auto;
+          max-height: calc(100dvh - 104px) !important;
+          overflow-y: auto !important;
+          -webkit-overflow-scrolling: touch;
           border-radius: 22px !important;
           padding: 18px !important;
+          margin: 0 auto !important;
         }
       }
     `;
@@ -710,14 +725,14 @@
     overlay.innerHTML = `
       <div id="patchSyncCircle" class="patch-sync-circle" style="--p:0">0%</div>
       <div>
-        <div id="patchSyncTitle" class="patch-sync-title">جاري مزامنة البيانات</div>
+        <div id="patchSyncTitle" class="patch-sync-title">جاري تصدير البيانات للسحابة</div>
         <div id="patchSyncSub" class="patch-sync-sub">يرجى عدم إغلاق الصفحة حتى اكتمال رفع البيانات</div>
       </div>
     `;
     document.body.appendChild(overlay);
   }
 
-  async function showSyncLoader(title = "جاري مزامنة البيانات", sub = "يرجى عدم إغلاق الصفحة حتى اكتمال رفع البيانات") {
+  async function showSyncLoader(title = "جاري تصدير البيانات للسحابة", sub = "يتم رفع البيانات المحفوظة على الجهاز إلى Firebase") {
     createSyncOverlay();
 
     const overlay = $("patchSyncOverlay");
@@ -739,7 +754,7 @@
     }
   }
 
-  async function finishSyncLoader(successText = "اكتملت المزامنة") {
+  async function finishSyncLoader(successText = "اكتمل تصدير البيانات للسحابة") {
     const overlay = $("patchSyncOverlay");
     const circle = $("patchSyncCircle");
     const titleEl = $("patchSyncTitle");
@@ -983,13 +998,10 @@
     const current = payment.value || "cash";
     payment.innerHTML = `
       <option value="cash">كاش</option>
-      <option value="bank">بنك</option>
-      <option value="jawwalpay">جوال باي</option>
-      <option value="app">تطبيق دفع</option>
+      <option value="account">حساب دفع</option>
     `;
 
-    payment.value = current;
-    if (!payment.value) payment.value = "cash";
+    payment.value = current === "cash" ? "cash" : "account";
   }
 
   function improvePlaceholders() {
@@ -1006,9 +1018,9 @@
       purchaseSupplier: "اسم المورد / التاجر",
       purchaseAmount: "إجمالي فاتورة المشتريات",
       purchaseNotes: "الصنف، الكمية، السعر بالجملة، أو ملاحظات",
-      accountTypeInput: "مثال: بنك فلسطين / جوال باي / محفظة",
-      accountOwnerInput: "رقم التحويل أو اسم الحساب",
-      paymentInfoInput: "أضف طرق الدفع مثل: بنك فلسطين - رقم الحساب، جوال باي - رقم المحفظة"
+      accountTypeInput: "اسم الحساب",
+      accountOwnerInput: "رقم الحساب / رقم التحويل",
+      paymentInfoInput: "أضف الحسابات من الأسفل، وستظهر في فاتورة المبيعات"
     };
 
     Object.entries(map).forEach(([id, val]) => {
@@ -1027,11 +1039,23 @@
     wrap.id = "posTransferAccountWrap";
     wrap.innerHTML = `
       <select id="posTransferAccount" class="input">
-        <option value="">حساب الدفع / رقم التحويل</option>
+        <option value="cash">كاش</option>
       </select>
     `;
 
     payment.insertAdjacentElement("afterend", wrap);
+
+    payment.addEventListener("change", () => {
+      const select = $("posTransferAccount");
+      if (!select) return;
+
+      if (payment.value === "cash") {
+        select.value = "cash";
+      } else if (select.value === "cash") {
+        const first = qa("option", select).find(o => o.value !== "cash");
+        if (first) select.value = first.value;
+      }
+    });
 
     fillPaymentAccountsSelect();
   }
@@ -1049,9 +1073,10 @@
     const select = $("posTransferAccount");
     if (!select) return;
 
+    const current = select.value;
     const accounts = await getTransferAccountsSafe();
 
-    select.innerHTML = `<option value="">حساب الدفع / رقم التحويل</option>`;
+    select.innerHTML = `<option value="cash">كاش</option>`;
 
     accounts.forEach(acc => {
       const type = acc.type || "";
@@ -1061,6 +1086,10 @@
       option.textContent = `${type} - ${owner}`;
       select.appendChild(option);
     });
+
+    if (current && qa("option", select).some(o => o.value === current)) {
+      select.value = current;
+    }
   }
 
   async function readIndexedDbAll(storeName) {
@@ -1240,7 +1269,6 @@
     `;
 
     main.appendChild(section);
-
     $("patchCustomersSearch")?.addEventListener("input", renderCustomersTab);
   }
 
@@ -1274,14 +1302,7 @@
       if (search && !name.toLowerCase().includes(search) && !phone.toLowerCase().includes(search)) return;
 
       if (!map.has(key)) {
-        map.set(key, {
-          name,
-          phone,
-          count: 0,
-          paid: 0,
-          unpaid: 0,
-          total: 0
-        });
+        map.set(key, { name, phone, count: 0, paid: 0, unpaid: 0, total: 0 });
       }
 
       const row = map.get(key);
@@ -1507,6 +1528,8 @@
     toast("تم حفظ المصروف وخصمه من الأرباح");
     renderExpensesTab();
     patchReportsCards();
+    patchMainReportProfit();
+    maybeAutoSyncAfterMutation();
   }
 
   function editExpense(id) {
@@ -1531,6 +1554,8 @@
     toast("تم حذف المصروف");
     renderExpensesTab();
     patchReportsCards();
+    patchMainReportProfit();
+    maybeAutoSyncAfterMutation();
   }
 
   async function renderExpensesTab() {
@@ -1668,7 +1693,10 @@
 
     reports.appendChild(box);
 
-    $("patchReportsFilter")?.addEventListener("change", patchReportsCards);
+    $("patchReportsFilter")?.addEventListener("change", () => {
+      patchReportsCards();
+      patchMainReportProfit();
+    });
   }
 
   async function patchReportsCards() {
@@ -1695,6 +1723,41 @@
 
     renderLowStockTable(products);
     renderPaymentBalances(filteredInvoices);
+  }
+
+  async function patchMainReportProfit() {
+    const filter = $("reportFilter")?.value || "today";
+    const invoices = await getInvoicesSafe();
+
+    let sales = 0;
+    let cost = 0;
+
+    invoices.forEach(inv => {
+      if (!inRange(inv.date || inv.createdAt, filter)) return;
+      sales += Number(inv.total || 0);
+      cost += Number(inv.totalCost || 0);
+    });
+
+    const expenses = getExpenses()
+      .filter(exp => inRange(exp.createdAt, filter))
+      .reduce((s, exp) => s + Number(exp.amount || 0), 0);
+
+    const netProfit = sales - cost - expenses;
+
+    if ($("repTotalProfit")) {
+      $("repTotalProfit").textContent = money(netProfit);
+
+      const card = $("repTotalProfit").closest(".card");
+      if (card) {
+        let note = card.querySelector(".patch-profit-note");
+        if (!note) {
+          note = document.createElement("span");
+          note.className = "patch-profit-note";
+          card.appendChild(note);
+        }
+        note.textContent = `بعد خصم المصروفات: ${money(expenses)}`;
+      }
+    }
   }
 
   function renderLowStockTable(products) {
@@ -1765,6 +1828,7 @@
   function paymentLabel(value) {
     const map = {
       cash: "كاش",
+      account: "حساب دفع",
       bank: "بنك",
       jawwalpay: "جوال باي",
       app: "تطبيق دفع"
@@ -2065,6 +2129,7 @@
     window.toggleModal?.("patchMerchantPaymentModal", false);
     toast("تم حفظ دفعة التاجر");
     renderMerchantPayments();
+    maybeAutoSyncAfterMutation();
   }
 
   function renderMerchantPayments() {
@@ -2096,6 +2161,7 @@
     setMerchantPayments(getMerchantPayments().filter(x => x.id !== id));
     addOutboxOperation("حذف دفعة تاجر");
     renderMerchantPayments();
+    maybeAutoSyncAfterMutation();
   }
 
   function createExportArea() {
@@ -2149,6 +2215,11 @@
       w.document.close();
       w.focus();
       w.print();
+      return;
+    }
+
+    if (!window.html2canvas) {
+      alert("مكتبة تصدير الصور غير محملة");
       return;
     }
 
@@ -2296,8 +2367,8 @@
   }
 
   function patchSwitchTab() {
-    if (window.__patchSwitchTabV4) return;
-    window.__patchSwitchTabV4 = true;
+    if (window.__patchSwitchTabV412) return;
+    window.__patchSwitchTabV412 = true;
 
     const oldSwitchTab = window.switchTab;
 
@@ -2321,7 +2392,10 @@
         updateSyncBadge();
         fillPaymentAccountsSelect();
         hideOrShowPatchBars();
-        if (tabId === "reports") patchReportsCards();
+        if (tabId === "reports") {
+          patchReportsCards();
+          patchMainReportProfit();
+        }
       }, 120);
 
       return result;
@@ -2329,8 +2403,8 @@
   }
 
   function patchDataMutations() {
-    if (window.__patchMutationsV4) return;
-    window.__patchMutationsV4 = true;
+    if (mutationPatched) return;
+    mutationPatched = true;
 
     const names = [
       "checkout",
@@ -2366,17 +2440,13 @@
         }
 
         if (isOnlineMode()) {
-          if (navigator.onLine) {
-            addOutboxOperation(`تغيير من ${name}`);
-            setTimeout(() => autoSync("تم حفظ عملية جديدة، جاري مزامنتها..."), 300);
-          } else {
-            addOutboxOperation(`عملية محفوظة أوفلاين من ${name}`);
-            toast("تم الحفظ على الجهاز، وسيتم الرفع عند رجوع الإنترنت");
-          }
+          addOutboxOperation(navigator.onLine ? `تغيير من ${name}` : `عملية محفوظة أوفلاين من ${name}`);
+          maybeAutoSyncAfterMutation();
         }
 
         setTimeout(() => {
           patchReportsCards();
+          patchMainReportProfit();
           renderExpensesTab();
         }, 300);
 
@@ -2387,7 +2457,15 @@
 
   function applyPaymentAccountToCurrentInvoiceForm() {
     const select = $("posTransferAccount");
-    if (!select || !select.value) return;
+    const payment = $("paymentMethod");
+    if (!select || !payment) return;
+
+    if (!select.value || select.value === "cash") {
+      payment.value = "cash";
+      return;
+    }
+
+    payment.value = "account";
 
     const [type, owner] = select.value.split("|||");
 
@@ -2400,8 +2478,8 @@
   }
 
   function patchSaveEntityForInvoiceAccount() {
-    if (window.__patchInvoiceAccountV4) return;
-    window.__patchInvoiceAccountV4 = true;
+    if (window.__patchInvoiceAccountV412) return;
+    window.__patchInvoiceAccountV412 = true;
 
     const oldViewInvoice = window.viewInvoice;
 
@@ -2412,31 +2490,6 @@
           fillPaymentAccountsSelect();
         }, 100);
         return result;
-      };
-    }
-  }
-
-  function patchUploadSync() {
-    if (window.__patchUploadSyncV4) return;
-    window.__patchUploadSyncV4 = true;
-
-    const oldUpload = window.uploadOfflineDataToCloud;
-
-    if (typeof oldUpload === "function") {
-      window.uploadOfflineDataToCloud = async function patchedUpload(...args) {
-        await showSyncLoader("جاري مزامنة البيانات", "يتم رفع البيانات المحفوظة على الجهاز إلى الأونلاين");
-
-        try {
-          const result = await oldUpload.apply(this, args);
-          clearOutbox();
-          await finishSyncLoader("اكتملت مزامنة البيانات");
-          toast("تمت المزامنة بنجاح");
-          return result;
-        } catch (err) {
-          $("patchSyncOverlay")?.classList.remove("show");
-          toast("تعذرت المزامنة، ستبقى البيانات محفوظة على الجهاز");
-          throw err;
-        }
       };
     }
   }
@@ -2459,10 +2512,10 @@
       return;
     }
 
-    await autoSync("جاري مزامنة البيانات يدويًا...");
+    await autoSync("جاري تصدير البيانات للسحابة...");
   }
 
-  async function autoSync(title = "جاري مزامنة البيانات...") {
+  async function autoSync(title = "جاري تصدير البيانات للسحابة...") {
     if (syncRunning) return;
     if (!shouldSync()) return;
 
@@ -2481,8 +2534,8 @@
       }
 
       clearOutbox();
-      await finishSyncLoader("اكتملت مزامنة البيانات");
-      toast("تم رفع البيانات أونلاين");
+      await finishSyncLoader("اكتمل تصدير البيانات للسحابة");
+      toast("تم رفع البيانات للسحابة");
     } catch (err) {
       console.error(err);
       $("patchSyncOverlay")?.classList.remove("show");
@@ -2494,18 +2547,36 @@
     }
   }
 
+  function maybeAutoSyncAfterMutation() {
+    updateSyncBadge();
+
+    if (!isOnlineMode()) return;
+
+    if (navigator.onLine) {
+      setTimeout(() => {
+        autoSync("جاري تصدير البيانات للسحابة...");
+      }, 500);
+    } else {
+      toast("تم الحفظ أوفلاين، وتمت إضافة العملية لزر المزامنة");
+    }
+  }
+
   function bindNetworkEvents() {
     window.addEventListener("online", () => {
       updateNetworkUi();
+      updateSyncBadge();
       toast("عاد الاتصال بالإنترنت");
 
       if (getOutbox().length > 0 && isOnlineMode()) {
-        setTimeout(() => autoSync("عاد الإنترنت، جاري مزامنة البيانات..."), 700);
+        setTimeout(() => {
+          autoSync("عاد الإنترنت، جاري تصدير البيانات للسحابة...");
+        }, 800);
       }
     });
 
     window.addEventListener("offline", () => {
       updateNetworkUi();
+      updateSyncBadge();
       toast("أنت الآن غير متصل، سيستمر الحفظ على الجهاز");
     });
   }
@@ -2515,7 +2586,6 @@
     const mainVisible = $("mainApp") && !$("mainApp").classList.contains("hidden");
 
     if (loginVisible || !mainVisible) {
-      $("patchTopbar")?.classList.remove("patch-force-show");
       $("patchBottomNav")?.classList.add("patch-hidden-important");
       $("patchTopbar")?.classList.add("patch-hidden-important");
     } else {
@@ -2567,7 +2637,6 @@
     if (readyEnough || tries <= 0) {
       patchSwitchTab();
       patchDataMutations();
-      patchUploadSync();
       patchSaveEntityForInvoiceAccount();
 
       setTimeout(() => {
@@ -2577,11 +2646,12 @@
         fillPaymentAccountsSelect();
         addDetailedPurchasesUi();
         patchReportsCards();
+        patchMainReportProfit();
 
         if (getOutbox().length > 0 && shouldSync()) {
-          autoSync("جاري مزامنة العمليات السابقة...");
+          autoSync("جاري تصدير العمليات السابقة للسحابة...");
         }
-      }, 700);
+      }, 900);
 
       return;
     }
@@ -2616,6 +2686,13 @@
     updateNetworkUi();
     updateSyncBadge();
     hideOrShowPatchBars();
+
+    $("reportFilter")?.addEventListener("change", () => {
+      setTimeout(() => {
+        patchReportsCards();
+        patchMainReportProfit();
+      }, 250);
+    });
 
     console.log("patch.js loaded", PATCH_VERSION);
   }
