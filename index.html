@@ -3,83 +3,99 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>نظام الكاشير</title>
+  <title>نظام الكاشير الاحترافي</title>
 
   <link rel="manifest" href="./manifest.webmanifest" />
-  <meta name="theme-color" content="#1d4ed8" />
+  <meta name="theme-color" content="#047857" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="نظام الكاشير" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap');
 
     :root{
-      --primary:#1d4ed8;
-      --primary-dark:#1e40af;
-      --soft:#eff6ff;
-      --bg:#f3f4f8;
+      --primary:#047857;
+      --primary-2:#10b981;
+      --primary-dark:#064e3b;
+      --primary-soft:#ecfdf5;
+      --primary-border:#a7f3d0;
+      --bg:#f4f8f6;
       --card:#ffffff;
-      --text:#111827;
-      --muted:#6b7280;
+      --text:#0f172a;
+      --muted:#64748b;
       --danger:#dc2626;
       --success:#16a34a;
       --warning:#d97706;
-      --shadow:0 8px 28px rgba(0,0,0,.06);
-      --radius:20px;
+      --shadow:0 16px 42px rgba(4,120,87,.10);
+      --shadow-soft:0 8px 24px rgba(15,23,42,.06);
+      --radius:22px;
+      --sidebar-width:292px;
     }
 
     *{box-sizing:border-box}
 
+    html{
+      scroll-behavior:smooth;
+      height:100%;
+    }
+
     body{
       font-family:'Cairo',sans-serif;
-      background:var(--bg);
+      background:
+        radial-gradient(circle at top right, rgba(16,185,129,.16), transparent 30%),
+        radial-gradient(circle at bottom left, rgba(4,120,87,.10), transparent 34%),
+        linear-gradient(180deg,#f8fffb 0%,#f1f5f4 100%);
       color:var(--text);
       margin:0;
+      min-height:100%;
+      overflow-x:hidden;
     }
 
     .hidden{display:none!important}
 
     .card{
-      background:#fff;
-      border-radius:20px;
-      box-shadow:var(--shadow);
+      background:rgba(255,255,255,.96);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow-soft);
+      border:1px solid rgba(4,120,87,.08);
     }
 
     .soft-card{
-      background:linear-gradient(180deg,#ffffff 0%,#fbfcff 100%);
-      border:1px solid #eef2ff;
-      border-radius:18px;
-      box-shadow:0 10px 26px rgba(30,64,175,.05);
+      background:linear-gradient(180deg,#ffffff 0%,#f8fffb 100%);
+      border:1px solid #d1fae5;
+      border-radius:20px;
+      box-shadow:0 10px 26px rgba(4,120,87,.05);
     }
 
     .btn-primary{
-      background:var(--primary);
+      background:linear-gradient(135deg,#10b981,#047857);
       color:#fff;
       border:none;
       border-radius:16px;
-      font-weight:800;
+      font-weight:900;
       transition:.2s;
+      box-shadow:0 12px 26px rgba(4,120,87,.22);
     }
 
-    .btn-primary:hover{background:var(--primary-dark)}
+    .btn-primary:hover{
+      transform:translateY(-1px);
+      background:linear-gradient(135deg,#059669,#064e3b);
+    }
 
     .btn-soft{
-      background:#eff6ff;
-      color:var(--primary);
-      border:1px solid #dbeafe;
+      background:#ecfdf5;
+      color:#047857;
+      border:1px solid #a7f3d0;
       border-radius:16px;
-      font-weight:700;
+      font-weight:800;
     }
 
     .btn-danger{
@@ -87,15 +103,15 @@
       color:#b91c1c;
       border:1px solid #fecaca;
       border-radius:16px;
-      font-weight:700;
+      font-weight:800;
     }
 
     .btn-success{
-      background:#ecfdf5;
+      background:#dcfce7;
       color:#166534;
       border:1px solid #bbf7d0;
       border-radius:16px;
-      font-weight:700;
+      font-weight:800;
     }
 
     .btn-warning{
@@ -103,7 +119,7 @@
       color:#c2410c;
       border:1px solid #fed7aa;
       border-radius:16px;
-      font-weight:700;
+      font-weight:800;
     }
 
     .input{
@@ -111,8 +127,9 @@
       padding:14px 16px;
       border:none;
       outline:none;
-      background:#f9fafb;
-      border-radius:14px;
+      background:#f8fafc;
+      border-radius:16px;
+      color:#0f172a;
     }
 
     .input-bordered{
@@ -121,12 +138,199 @@
       border:1px solid #e5e7eb;
       outline:none;
       background:#fff;
-      border-radius:14px;
+      border-radius:16px;
+      color:#0f172a;
     }
 
     .input:focus,.input-bordered:focus{
-      box-shadow:0 0 0 3px rgba(29,78,216,.12);
-      border-color:#bfdbfe;
+      box-shadow:0 0 0 4px rgba(4,120,87,.12);
+      border-color:#6ee7b7;
+    }
+
+    .app-shell{
+      min-height:100vh;
+      display:flex;
+      background:transparent;
+    }
+
+    .sidebar-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,.46);
+      z-index:88;
+      display:none;
+    }
+
+    .sidebar-backdrop.show{
+      display:block;
+    }
+
+    .side-nav{
+      width:var(--sidebar-width);
+      min-width:var(--sidebar-width);
+      min-height:100vh;
+      position:sticky;
+      top:0;
+      align-self:flex-start;
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.97),rgba(240,253,244,.94)),
+        radial-gradient(circle at top,rgba(16,185,129,.18),transparent 40%);
+      backdrop-filter:blur(20px);
+      border-left:1px solid #d1fae5;
+      box-shadow:-10px 0 32px rgba(15,23,42,.05);
+      z-index:90;
+      overflow-y:auto;
+    }
+
+    .sidebar-brand{
+      padding:22px;
+      border-bottom:1px solid #d1fae5;
+    }
+
+    .brand-icon{
+      width:60px;
+      height:60px;
+      border-radius:20px;
+      background:linear-gradient(135deg,#10b981,#047857);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 16px 28px rgba(4,120,87,.25);
+    }
+
+    .nav-group{
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .nav-title{
+      padding:8px 12px 2px;
+      font-size:11px;
+      font-weight:900;
+      color:#64748b;
+    }
+
+    .nav-btn{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      width:100%;
+      padding:13px 14px;
+      border-radius:18px;
+      color:#334155;
+      font-weight:800;
+      transition:.2s;
+      white-space:nowrap;
+      text-align:right;
+    }
+
+    .nav-btn:hover{
+      background:#ecfdf5;
+      color:#047857;
+    }
+
+    .nav-btn.active{
+      background:linear-gradient(135deg,#10b981,#047857);
+      color:#fff;
+      box-shadow:0 10px 24px rgba(4,120,87,.20);
+    }
+
+    .main-panel{
+      flex:1;
+      min-width:0;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .top-status-bar{
+      position:sticky;
+      top:0;
+      z-index:70;
+      background:rgba(255,255,255,.86);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(167,243,208,.75);
+      box-shadow:0 8px 28px rgba(4,120,87,.06);
+    }
+
+    .hamburger-btn{
+      width:44px;
+      height:44px;
+      border-radius:16px;
+      background:#ecfdf5;
+      color:#047857;
+      border:1px solid #a7f3d0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+    }
+
+    .sync-badge{
+      min-width:21px;
+      height:21px;
+      padding:0 7px;
+      border-radius:999px;
+      background:#ef4444;
+      color:#fff;
+      font-size:11px;
+      font-weight:900;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      margin-inline-start:6px;
+    }
+
+    .sync-badge.hidden{
+      display:none!important;
+    }
+
+    .connection-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 13px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+    }
+
+    .connection-online{
+      background:#dcfce7;
+      color:#166534;
+      border:1px solid #bbf7d0;
+    }
+
+    .connection-offline{
+      background:#fee2e2;
+      color:#991b1b;
+      border:1px solid #fecaca;
+    }
+
+    .hero-strip{
+      background:
+        linear-gradient(135deg,rgba(4,120,87,.96),rgba(16,185,129,.90)),
+        radial-gradient(circle at left,rgba(255,255,255,.18),transparent 36%);
+      color:#fff;
+      border-radius:28px;
+      padding:22px;
+      box-shadow:0 18px 38px rgba(4,120,87,.22);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero-strip::after{
+      content:"";
+      position:absolute;
+      width:180px;
+      height:180px;
+      border-radius:50%;
+      background:rgba(255,255,255,.12);
+      left:-60px;
+      top:-60px;
     }
 
     .loading-overlay{
@@ -150,18 +354,19 @@
       display:flex;
       justify-content:center;
       align-items:center;
+      box-shadow:0 12px 30px rgba(4,120,87,.18);
     }
 
     .progress-circle::before{
       content:attr(data-progress) '%';
-      font-weight:800;
+      font-weight:900;
       color:var(--primary);
     }
 
     .mini-loader{
       width:30px;
       height:30px;
-      border:3px solid #dbeafe;
+      border:3px solid #d1fae5;
       border-top-color:var(--primary);
       border-radius:50%;
       animation:spin .8s linear infinite;
@@ -175,18 +380,7 @@
     }
 
     .mobile-table-scroll table{
-      min-width:900px;
-    }
-
-    .nav-btn{
-      border-radius:16px;
-      transition:.2s;
-    }
-
-    .nav-btn.active{
-      background:var(--primary);
-      color:#fff;
-      box-shadow:0 8px 20px rgba(29,78,216,.18);
+      min-width:920px;
     }
 
     .status-pill{
@@ -196,7 +390,7 @@
       padding:6px 12px;
       border-radius:999px;
       font-size:12px;
-      font-weight:800;
+      font-weight:900;
       border:none;
       cursor:pointer;
     }
@@ -260,7 +454,7 @@
       opacity:0;
       transition:.25s ease;
       text-align:center;
-      font-weight:700;
+      font-weight:800;
       font-size:14px;
     }
 
@@ -272,19 +466,27 @@
     .modal-wrap{
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,.5);
+      background:rgba(0,0,0,.52);
       display:flex;
-      align-items:center;
+      align-items:flex-start;
       justify-content:center;
-      padding:16px;
+      padding:18px;
+      padding-top:max(18px, env(safe-area-inset-top));
+      padding-bottom:max(18px, env(safe-area-inset-bottom));
       z-index:150;
+      overflow-y:auto;
+      -webkit-overflow-scrolling:touch;
     }
 
     .modal-card{
       background:#fff;
-      border-radius:24px;
+      border-radius:26px;
       width:100%;
-      box-shadow:0 20px 50px rgba(0,0,0,.18);
+      box-shadow:0 24px 58px rgba(0,0,0,.20);
+      margin:auto 0;
+      max-height:calc(100vh - 36px);
+      overflow-y:auto;
+      -webkit-overflow-scrolling:touch;
     }
 
     .customer-suggestions,
@@ -315,7 +517,7 @@
     }
 
     .suggest-item:hover{
-      background:#eff6ff;
+      background:#ecfdf5;
     }
 
     .invoice-page{
@@ -338,17 +540,17 @@
     .invoice-inner{padding:18px}
 
     .invoice-topbar{
-      background:linear-gradient(135deg,#eff6ff 0%,#ffffff 100%);
-      border-bottom:1px solid #e5e7eb;
+      background:linear-gradient(135deg,#ecfdf5 0%,#ffffff 100%);
+      border-bottom:1px solid #d1fae5;
       padding:18px;
     }
 
     .invoice-title{
       text-align:center;
       font-size:28px;
-      font-weight:800;
+      font-weight:900;
       margin:10px 0 0;
-      color:#0f172a;
+      color:#064e3b;
     }
 
     .invoice-head{
@@ -359,8 +561,8 @@
     }
 
     .invoice-box{
-      background:#fafcff;
-      border:1px solid #e5eefc;
+      background:#fbfffd;
+      border:1px solid #d1fae5;
       border-radius:16px;
       padding:14px;
     }
@@ -390,8 +592,8 @@
 
     .invoice-brand-name{
       font-size:20px;
-      font-weight:800;
-      color:#0f172a;
+      font-weight:900;
+      color:#064e3b;
     }
 
     .invoice-meta-row,
@@ -406,8 +608,8 @@
 
     .invoice-meta-label,
     .invoice-customer-label{
-      font-weight:800;
-      color:#0f172a;
+      font-weight:900;
+      color:#064e3b;
     }
 
     .invoice-meta-value,
@@ -419,13 +621,13 @@
 
     .invoice-code{
       color:var(--primary);
-      font-weight:800;
+      font-weight:900;
       text-align:left;
     }
 
     .invoice-table-wrap{
       margin-top:16px;
-      border:1px solid #e5e7eb;
+      border:1px solid #d1fae5;
       border-radius:16px;
       overflow:hidden;
     }
@@ -438,11 +640,11 @@
     }
 
     .invoice-table th{
-      background:#f8fafc;
-      color:var(--primary);
-      border-bottom:2px solid #dbeafe;
+      background:#ecfdf5;
+      color:#047857;
+      border-bottom:2px solid #a7f3d0;
       padding:10px 8px;
-      font-weight:800;
+      font-weight:900;
     }
 
     .invoice-table td{
@@ -461,8 +663,8 @@
     .invoice-summary-box{
       width:280px;
       max-width:100%;
-      background:#fafcff;
-      border:1px solid #e5eefc;
+      background:#fbfffd;
+      border:1px solid #d1fae5;
       border-radius:16px;
       padding:14px;
     }
@@ -474,22 +676,22 @@
       margin-bottom:8px;
       align-items:center;
       font-size:13px;
-      font-weight:700;
+      font-weight:800;
       color:#334155;
     }
 
     .invoice-summary-final{
-      border:1px solid #dbeafe;
-      background:#eff6ff;
+      border:1px solid #a7f3d0;
+      background:#ecfdf5;
       padding:10px 12px;
       border-radius:12px;
       margin-top:8px;
     }
 
     .invoice-total-blue{
-      color:var(--primary);
+      color:#047857;
       font-size:18px;
-      font-weight:800;
+      font-weight:900;
     }
 
     .invoice-footer-note{
@@ -509,33 +711,97 @@
     }
 
     .kpi-card{
-      border-radius:22px;
+      border-radius:24px;
       padding:22px;
       color:#fff;
-      box-shadow:0 12px 30px rgba(0,0,0,.12);
+      box-shadow:0 14px 34px rgba(0,0,0,.14);
       min-height:132px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .kpi-card::after{
+      content:"";
+      position:absolute;
+      width:110px;
+      height:110px;
+      border-radius:999px;
+      background:rgba(255,255,255,.13);
+      left:-30px;
+      top:-30px;
     }
 
     .kpi-title{
-      opacity:.86;
-      font-weight:700;
+      opacity:.88;
+      font-weight:800;
       font-size:14px;
     }
 
     .kpi-value{
       font-size:28px;
-      font-weight:800;
+      font-weight:900;
       margin-top:10px;
       word-break:break-word;
     }
 
     .backup-drop{
-      border:2px dashed #bfdbfe;
-      background:#f8fbff;
+      border:2px dashed #a7f3d0;
+      background:#f0fdf4;
       border-radius:18px;
       padding:18px;
       text-align:center;
       color:#475569;
+    }
+
+    @media (max-width: 1024px){
+      .hamburger-btn{
+        display:flex;
+      }
+
+      .side-nav{
+        position:fixed;
+        top:0;
+        right:0;
+        transform:translateX(110%);
+        transition:.25s ease;
+        z-index:100;
+        height:100vh;
+        max-height:100vh;
+      }
+
+      .side-nav.open{
+        transform:translateX(0);
+      }
+
+      .app-shell{
+        display:block;
+      }
+
+      .main-panel{
+        min-height:100vh;
+      }
+    }
+
+    @media (max-width: 640px){
+      .modal-wrap{
+        padding:10px;
+        align-items:flex-start;
+      }
+
+      .modal-card{
+        margin:0;
+        max-height:calc(100vh - 20px);
+        border-radius:22px;
+      }
+
+      .mobile-table-scroll table{
+        min-width:780px;
+      }
+
+      .hero-strip{
+        border-radius:22px;
+        padding:18px;
+      }
     }
 
     @media (max-width: 900px){
@@ -581,7 +847,7 @@
 
 <div id="loader" class="loading-overlay hidden">
   <div class="progress-circle" id="progressCircle" data-progress="0" style="--progress:0"></div>
-  <p class="mt-4 font-bold text-blue-700" id="loaderText">جاري المعالجة...</p>
+  <p class="mt-4 font-bold text-emerald-700" id="loaderText">جاري المعالجة...</p>
 </div>
 
 <div class="toast-wrap">
@@ -592,10 +858,10 @@
 <div id="loginPage" class="min-h-screen flex items-center justify-center p-4">
   <div class="card w-full max-w-md p-8">
     <div class="text-center mb-6">
-      <div class="bg-blue-700 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white shadow-lg">
+      <div class="brand-icon mx-auto mb-4">
         <i data-lucide="key-round" size="32"></i>
       </div>
-      <h1 class="text-2xl font-bold text-gray-800">دخول بالمفتاح</h1>
+      <h1 class="text-2xl font-black text-gray-800">دخول بالمفتاح</h1>
       <p class="text-gray-500 text-sm mt-2">أول دخول يحتاج إنترنت، وبعدها يتم الدخول مباشرة إذا كان المفتاح محفوظًا وصالحًا</p>
     </div>
 
@@ -621,7 +887,7 @@
     <div class="bg-red-100 text-red-600 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-4">
       <i data-lucide="shield-x" size="38"></i>
     </div>
-    <h2 class="text-2xl font-bold mb-3">انتهى وقت المفتاح أو أصبح غير صالح</h2>
+    <h2 class="text-2xl font-black mb-3">انتهى وقت المفتاح أو أصبح غير صالح</h2>
     <p id="expiredMessage" class="text-gray-600 mb-6">تم انتهاء الوقت أو عدد الاستخدامات المتاحة لهذا المفتاح.</p>
 
     <div class="flex flex-col md:flex-row gap-3 justify-center">
@@ -635,980 +901,1026 @@
 </div>
 
 <!-- MAIN APP -->
-<div id="mainApp" class="hidden min-h-screen flex flex-col md:flex-row">
-  <nav id="sideNav" class="bg-white border-l w-full md:w-72 flex-shrink-0 flex md:flex-col border-b md:border-b-0 overflow-x-auto no-print">
-    <div class="p-6 border-b hidden md:block">
-      <div class="flex flex-col items-center text-center gap-3">
-        <img id="sideLogo" src="" class="w-16 h-16 rounded-2xl object-cover shadow-sm hidden">
-        <div>
-          <h2 id="sideStoreName" class="font-bold text-gray-800">اسم المحل</h2>
-          <div class="mt-2 flex items-center justify-center gap-2 flex-wrap">
-            <span class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">نشط الآن</span>
-            <span id="licensePlanBadge" class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">نسختك —</span>
+<div id="mainApp" class="hidden app-shell">
+
+  <div id="sidebarBackdrop" class="sidebar-backdrop no-print" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <nav id="sideNav" class="side-nav no-print">
+    <div class="sidebar-brand">
+      <div class="flex items-center gap-3">
+        <div class="brand-icon">
+          <i data-lucide="store" size="30"></i>
+        </div>
+
+        <div class="min-w-0">
+          <h2 id="sideStoreName" class="font-black text-gray-800 text-lg truncate">اسم المحل</h2>
+          <div class="mt-2 flex items-center gap-2 flex-wrap">
+            <span class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-black">نشط الآن</span>
+            <span id="licensePlanBadge" class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-black">نسختك —</span>
           </div>
         </div>
+
+        <button onclick="closeSidebar()" class="hamburger-btn mr-auto lg:hidden">
+          <i data-lucide="x"></i>
+        </button>
       </div>
 
-      <div class="mt-4 bg-blue-50 rounded-2xl p-3 text-right space-y-2">
+      <div class="mt-4 flex justify-center">
+        <img id="sideLogo" src="" class="w-20 h-20 rounded-3xl object-cover shadow-sm hidden">
+      </div>
+
+      <div class="mt-4 bg-emerald-50 rounded-3xl p-4 text-right space-y-2">
         <div>
           <div class="text-xs text-gray-500">المفتاح الحالي</div>
-          <div id="sideLicenseKey" class="font-bold text-blue-700 text-sm break-all">-</div>
+          <div id="sideLicenseKey" class="font-black text-emerald-700 text-sm break-all">-</div>
         </div>
         <div>
           <div class="text-xs text-gray-500">الوقت المتبقي</div>
-          <div id="sideLicenseRemaining" class="font-bold text-green-700 text-sm">-</div>
+          <div id="sideLicenseRemaining" class="font-black text-green-700 text-sm">-</div>
         </div>
         <div>
           <div class="text-xs text-gray-500">نوع النسخة</div>
-          <div id="sideModeText" class="font-bold text-sm text-slate-700">-</div>
+          <div id="sideModeText" class="font-black text-sm text-slate-700">-</div>
         </div>
         <div>
           <div class="text-xs text-gray-500">العملة</div>
-          <div id="sideCurrencyText" class="font-bold text-sm text-slate-700">₪ شيكل</div>
+          <div id="sideCurrencyText" class="font-black text-sm text-slate-700">₪ شيكل</div>
         </div>
       </div>
     </div>
 
-    <div class="flex md:flex-col p-3 gap-1 overflow-x-auto" id="navButtonsWrap">
-      <button onclick="switchTab('pos')" class="nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap" data-tab="pos">
+    <div class="nav-group" id="navButtonsWrap">
+      <div class="nav-title">الرئيسية</div>
+
+      <button onclick="switchTab('pos'); closeSidebar()" class="nav-btn" data-tab="pos">
         <i data-lucide="shopping-cart"></i> <span>الكاشير</span>
       </button>
 
-      <button onclick="switchTab('products')" class="nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap" data-tab="products">
+      <button onclick="switchTab('products'); closeSidebar()" class="nav-btn" data-tab="products">
         <i data-lucide="package"></i> <span>المخزون</span>
       </button>
 
-      <button onclick="switchTab('invoices')" class="nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap" data-tab="invoices">
+      <button onclick="switchTab('invoices'); closeSidebar()" class="nav-btn" data-tab="invoices">
         <i data-lucide="receipt-text"></i> <span>الفواتير</span>
       </button>
 
-      <button onclick="switchTab('purchases')" class="nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap" data-tab="purchases">
+      <div class="nav-title">الموردين والحسابات</div>
+
+      <button onclick="switchTab('purchases'); closeSidebar()" class="nav-btn" data-tab="purchases">
         <i data-lucide="shopping-bag"></i> <span>مشتريات الموردين</span>
       </button>
 
-      <button onclick="switchTab('merchant-payments')" class="nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap" data-tab="merchant-payments">
+      <button onclick="switchTab('merchant-payments'); closeSidebar()" class="nav-btn" data-tab="merchant-payments">
         <i data-lucide="hand-coins"></i> <span>دفعات التجار</span>
       </button>
 
-      <button onclick="switchTab('customers')" class="nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap" data-tab="customers">
+      <button onclick="switchTab('customers'); closeSidebar()" class="nav-btn" data-tab="customers">
         <i data-lucide="users"></i> <span>العملاء</span>
       </button>
 
-      <button onclick="switchTab('expenses')" class="nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap" data-tab="expenses">
+      <button onclick="switchTab('expenses'); closeSidebar()" class="nav-btn" data-tab="expenses">
         <i data-lucide="wallet-cards"></i> <span>المصروفات</span>
       </button>
 
-      <button onclick="switchTab('sales-report')" class="nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap" data-tab="sales-report">
+      <div class="nav-title">التقارير</div>
+
+      <button onclick="switchTab('sales-report'); closeSidebar()" class="nav-btn" data-tab="sales-report">
         <i data-lucide="file-spreadsheet"></i> <span>تقرير المبيعات</span>
       </button>
 
-      <button onclick="switchTab('stock-report')" class="nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap" data-tab="stock-report">
+      <button onclick="switchTab('stock-report'); closeSidebar()" class="nav-btn" data-tab="stock-report">
         <i data-lucide="triangle-alert"></i> <span>البضاعة الناقصة</span>
       </button>
 
-      <button onclick="switchTab('profit-report')" class="nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap" data-tab="profit-report">
+      <button onclick="switchTab('profit-report'); closeSidebar()" class="nav-btn" data-tab="profit-report">
         <i data-lucide="trending-up"></i> <span>المرابح والأرصدة</span>
       </button>
 
-      <button onclick="switchTab('reports')" class="nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap" data-tab="reports">
-        <i data-lucide="pie-chart"></i> <span>التقارير المختصرة</span>
+      <button onclick="switchTab('reports'); closeSidebar()" class="nav-btn" data-tab="reports">
+        <i data-lucide="bar-chart-3"></i> <span>كل التقارير</span>
       </button>
 
-      <button onclick="switchTab('stores')" class="nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap" data-tab="stores">
+      <div class="nav-title">النظام</div>
+
+      <button onclick="switchTab('stores'); closeSidebar()" class="nav-btn" data-tab="stores">
         <i data-lucide="store"></i> <span>المحلات</span>
       </button>
 
-      <button onclick="switchTab('settings')" class="nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap" data-tab="settings">
+      <button onclick="switchTab('settings'); closeSidebar()" class="nav-btn" data-tab="settings">
         <i data-lucide="settings"></i> <span>الإعدادات</span>
       </button>
     </div>
   </nav>
 
-  <main class="flex-grow p-4 md:p-8 overflow-y-auto no-print">
+  <!-- MAIN PANEL -->
+  <main class="main-panel no-print">
 
-    <!-- POS -->
-    <section id="tab-pos" class="tab-content grid grid-cols-1 xl:grid-cols-4 gap-6">
-      <div class="xl:col-span-3 space-y-4">
-        <div class="card p-4 flex flex-wrap gap-3 items-center">
-          <div class="relative flex-grow min-w-[260px]">
-            <i data-lucide="search" class="absolute right-4 top-3.5 text-gray-400" size="20"></i>
-            <input type="text" id="posSearch" placeholder="ابحث بالاسم أو الكود..." class="w-full pr-12 p-3.5 bg-gray-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500">
-            <div id="posSearchResults" class="absolute top-full mt-2 left-0 right-0 bg-white border rounded-2xl shadow-2xl z-[100] hidden max-h-80 overflow-y-auto p-2"></div>
+    <!-- TOP STATUS BAR -->
+    <div class="top-status-bar px-4 md:px-8 py-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2 flex-wrap">
+          <button id="openSidebarBtn" onclick="openSidebar()" class="hamburger-btn">
+            <i data-lucide="menu"></i>
+          </button>
+
+          <div>
+            <div class="text-xs text-gray-500 font-bold">لوحة التحكم</div>
+            <div class="text-lg font-black text-emerald-900">نظام الكاشير الاحترافي</div>
           </div>
-
-          <button onclick="openScanner('pos')" class="p-3.5 bg-blue-50 text-blue-700 rounded-2xl hover:bg-blue-100" title="فتح كاميرا مسح الباركود">
-            <i data-lucide="scan-barcode"></i>
-          </button>
-
-          <button onclick="toggleScannerTorch()" id="scannerTorchQuickBtn" class="p-3.5 bg-amber-50 text-amber-700 rounded-2xl hover:bg-amber-100 hidden" title="تشغيل / إيقاف الفلاش">
-            <i data-lucide="flashlight"></i>
-          </button>
-
-          <label class="p-3.5 bg-purple-50 text-purple-600 rounded-2xl hover:bg-purple-100 cursor-pointer" title="اختيار صورة باركود من الجهاز">
-            <i data-lucide="image-plus"></i>
-            <input type="file" id="barcodeImageInputPos" accept="image/*" class="hidden">
-          </label>
         </div>
 
-        <div class="card overflow-hidden">
-          <div class="mobile-table-scroll">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span id="connectionStatus" class="connection-pill connection-online">
+            <i data-lucide="wifi" size="16"></i>
+            متصل
+          </span>
+
+          <span id="syncStatusText" class="text-xs font-black text-gray-500">
+            آخر مزامنة: -
+          </span>
+
+          <button id="manualSyncBtn" class="btn-soft px-4 py-2 flex items-center gap-2">
+            <i data-lucide="refresh-cw" size="17"></i>
+            مزامنة
+            <span id="pendingSyncBadge" class="sync-badge hidden">0</span>
+          </button>
+
+          <button id="downloadBackupTopBtn" class="btn-soft px-4 py-2 flex items-center gap-2">
+            <i data-lucide="download" size="17"></i>
+            نسخة احتياطية
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 md:p-8 space-y-6">
+
+      <div class="hero-strip">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl md:text-3xl font-black">مرحبًا بك في نظام الكاشير</h1>
+            <p class="text-white/80 mt-2 font-semibold">مبيعات، مخزون، موردين، عملاء، مصروفات، تقارير، ومزامنة ذكية.</p>
+          </div>
+
+          <div class="flex gap-2 flex-wrap">
+            <button onclick="switchTab('pos')" class="bg-white text-emerald-700 px-4 py-3 rounded-2xl font-black shadow">
+              فاتورة جديدة
+            </button>
+            <button onclick="switchTab('reports')" class="bg-emerald-950/30 text-white px-4 py-3 rounded-2xl font-black border border-white/20">
+              عرض التقارير
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- POS -->
+      <section id="tab-pos" class="tab-content grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <div class="xl:col-span-3 space-y-4">
+          <div class="card p-4 flex flex-wrap gap-3 items-center">
+            <div class="relative flex-grow min-w-[260px]">
+              <i data-lucide="search" class="absolute right-4 top-3.5 text-gray-400" size="20"></i>
+              <input type="text" id="posSearch" placeholder="ابحث بالاسم أو الكود..." class="w-full pr-12 p-3.5 bg-gray-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500">
+              <div id="posSearchResults" class="absolute top-full mt-2 left-0 right-0 bg-white border rounded-2xl shadow-2xl z-[100] hidden max-h-80 overflow-y-auto p-2"></div>
+            </div>
+
+            <button onclick="openScanner('pos')" class="p-3.5 bg-emerald-50 text-emerald-700 rounded-2xl hover:bg-emerald-100" title="فتح كاميرا مسح الباركود">
+              <i data-lucide="scan-barcode"></i>
+            </button>
+
+            <button onclick="toggleScannerTorch()" id="scannerTorchQuickBtn" class="p-3.5 bg-amber-50 text-amber-700 rounded-2xl hover:bg-amber-100 hidden" title="تشغيل / إيقاف الفلاش">
+              <i data-lucide="flashlight"></i>
+            </button>
+
+            <label class="p-3.5 bg-purple-50 text-purple-600 rounded-2xl hover:bg-purple-100 cursor-pointer" title="اختيار صورة باركود من الجهاز">
+              <i data-lucide="image-plus"></i>
+              <input type="file" id="barcodeImageInputPos" accept="image/*" class="hidden">
+            </label>
+          </div>
+
+          <div class="card overflow-hidden">
+            <div class="mobile-table-scroll">
+              <table class="w-full text-right">
+                <thead class="bg-gray-50 text-gray-500 text-sm">
+                  <tr>
+                    <th class="p-4">المنتج</th>
+                    <th class="p-4">الصنف</th>
+                    <th class="p-4">السعر</th>
+                    <th class="p-4">الكمية</th>
+                    <th class="p-4">المجموع</th>
+                    <th class="p-4"></th>
+                  </tr>
+                </thead>
+                <tbody id="cartTable"></tbody>
+              </table>
+            </div>
+
+            <div id="cartEmptyMsg" class="p-20 text-center text-gray-400 flex flex-col items-center gap-3">
+              <i data-lucide="shopping-bag" size="48"></i>
+              <p>ابدأ بإضافة المنتجات للفاتورة</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="card p-6 space-y-5">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="font-black text-lg text-gray-700">إجمالي الطلب</h3>
+              <span id="posCurrencyBadge" class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-black">₪ شيكل</span>
+            </div>
+
+            <div class="relative">
+              <input type="text" id="customerName" class="input" placeholder="اسم العميل">
+              <div id="customerSuggestions" class="customer-suggestions hidden"></div>
+            </div>
+
+            <input type="tel" id="customerPhone" class="input" placeholder="رقم الزبون">
+
+            <select id="paymentMethod" class="input">
+              <option value="cash">كاش</option>
+              <option value="direct">بنكي مباشر</option>
+            </select>
+
+            <select id="transferAccountSelect" class="input hidden">
+              <option value="">اختيار جهة التحويل اختياري</option>
+            </select>
+
+            <select id="invoiceStatus" class="input">
+              <option value="paid">مكتمل</option>
+              <option value="unpaid">غير مكتمل</option>
+            </select>
+
+            <textarea id="invoiceNotes" rows="3" class="input-bordered" placeholder="ملاحظات اختيارية"></textarea>
+
+            <div class="border rounded-2xl p-3 space-y-3">
+              <div class="font-black text-sm text-slate-700">الخصم</div>
+              <div class="grid grid-cols-2 gap-2">
+                <select id="discountType" class="input-bordered">
+                  <option value="fixed">مبلغ ثابت</option>
+                  <option value="percent">نسبة مئوية %</option>
+                </select>
+                <input type="number" id="posDiscount" class="input-bordered" value="0" placeholder="الخصم">
+              </div>
+            </div>
+
+            <div class="border-t pt-4 space-y-2">
+              <div class="flex justify-between text-gray-500"><span>المجموع:</span> <span id="subtotal">0.00 ₪</span></div>
+              <div class="flex justify-between text-gray-500"><span>الخصم:</span> <span id="discountPreview">0.00 ₪</span></div>
+              <div class="flex justify-between font-black text-2xl text-emerald-700 pt-2 border-t"><span>الإجمالي:</span> <span id="finalTotal">0.00 ₪</span></div>
+            </div>
+
+            <button id="createInvoiceBtn" class="w-full btn-primary py-4 rounded-2xl font-black shadow-lg transition-all">
+              إنشاء فاتورة
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRODUCTS -->
+      <section id="tab-products" class="tab-content hidden space-y-6">
+        <div class="flex flex-wrap justify-between items-center gap-4">
+          <h2 class="text-2xl font-black">المخزون والمنتجات</h2>
+          <button id="openNewProductBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
+            <i data-lucide="plus"></i> إضافة منتج
+          </button>
+        </div>
+
+        <div class="card p-4">
+          <input type="text" id="inventorySearch" placeholder="بحث في المخزون..." class="input mb-4">
+
+          <div id="productsLoading" class="hidden py-10 flex flex-col items-center gap-3">
+            <div class="mini-loader"></div>
+            <p class="text-sm text-gray-500">جاري تحميل المنتجات...</p>
+          </div>
+
+          <div class="overflow-x-auto">
             <table class="w-full text-right">
-              <thead class="bg-gray-50 text-gray-500 text-sm">
+              <thead class="bg-gray-50 border-b">
                 <tr>
+                  <th class="p-4">الكود</th>
+                  <th class="p-4">المورد / التاجر</th>
                   <th class="p-4">المنتج</th>
-                  <th class="p-4">الصنف</th>
-                  <th class="p-4">السعر</th>
-                  <th class="p-4">الكمية</th>
-                  <th class="p-4">المجموع</th>
-                  <th class="p-4"></th>
+                  <th class="p-4">الجملة</th>
+                  <th class="p-4">البيع</th>
+                  <th class="p-4">المخزون</th>
+                  <th class="p-4">الأصناف/المقاسات</th>
+                  <th class="p-4">الإجراءات</th>
                 </tr>
               </thead>
-              <tbody id="cartTable"></tbody>
+              <tbody id="productsTable"></tbody>
             </table>
           </div>
 
-          <div id="cartEmptyMsg" class="p-20 text-center text-gray-400 flex flex-col items-center gap-3">
-            <i data-lucide="shopping-bag" size="48"></i>
-            <p>ابدأ بإضافة المنتجات للفاتورة</p>
+          <div id="productsLoadMoreWrap" class="hidden pt-4 text-center">
+            <button id="loadMoreProductsBtn" class="btn-soft px-5 py-2 rounded-xl font-black">تحميل المزيد</button>
           </div>
         </div>
-      </div>
+      </section>
+<!-- INVOICES -->
+      <section id="tab-invoices" class="tab-content hidden space-y-6">
+        <div class="flex flex-wrap justify-between items-center gap-4">
+          <h2 class="text-2xl font-black">الفواتير</h2>
 
-      <div class="space-y-4">
-        <div class="card p-6 space-y-5">
-          <div class="flex items-center justify-between gap-2">
-            <h3 class="font-bold text-lg text-gray-700">إجمالي الطلب</h3>
-            <span id="posCurrencyBadge" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-bold">₪ شيكل</span>
+          <div class="flex gap-2 flex-wrap">
+            <input type="text" id="invSearchQuery" placeholder="بحث برقم الفاتورة أو الاسم أو رقم الزبون..." class="p-3 bg-white border rounded-xl w-72">
+
+            <select id="invoiceStatusFilter" class="p-3 bg-white border rounded-xl">
+              <option value="all">كل الحالات</option>
+              <option value="paid">مكتمل</option>
+              <option value="unpaid">غير مكتمل</option>
+            </select>
+
+            <button onclick="openScanner('invoice')" class="p-3 bg-emerald-50 text-emerald-700 rounded-xl" title="مسح باركود الفاتورة">
+              <i data-lucide="scan-line"></i>
+            </button>
+
+            <label class="p-3 bg-purple-50 text-purple-600 rounded-xl cursor-pointer" title="اختيار صورة باركود فاتورة">
+              <i data-lucide="image-plus"></i>
+              <input type="file" id="barcodeImageInputInvoice" accept="image/*" class="hidden">
+            </label>
+
+            <button onclick="openManualInvoiceModal()" class="btn-primary px-4 py-3 rounded-xl">
+              <i data-lucide="plus"></i> فاتورة مباشرة
+            </button>
           </div>
+        </div>
 
-          <div class="relative">
-            <input type="text" id="customerName" class="input" placeholder="اسم العميل">
-            <div id="customerSuggestions" class="customer-suggestions hidden"></div>
+        <div class="card p-4">
+          <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
+            <select id="bulkExportRange" class="input-bordered">
+              <option value="day">اليوم</option>
+              <option value="week">الأسبوع</option>
+              <option value="month">الشهر</option>
+              <option value="year">السنة</option>
+              <option value="all">كل السجل</option>
+              <option value="specific">يوم محدد</option>
+            </select>
+
+            <input type="date" id="bulkExportSpecificDate" class="input-bordered">
+
+            <button id="bulkPrintInvoicesBtn" class="btn-soft py-3">طباعة جدول</button>
+            <button id="bulkExportInvoicesPdfBtn" class="btn-danger py-3">PDF جدول</button>
+            <button id="bulkExportInvoicesImagesBtn" class="btn-success py-3">صورة جدول</button>
+            <button id="bulkExportInvoicesExcelBtn" class="btn-warning py-3">Excel</button>
           </div>
-
-          <input type="tel" id="customerPhone" class="input" placeholder="رقم الزبون">
-
-          <select id="paymentMethod" class="input">
-            <option value="cash">كاش</option>
-            <option value="bank">بنك</option>
-            <option value="wallet">محفظة</option>
-            <option value="jawwalpay">جوال باي</option>
-            <option value="app">تطبيق</option>
-          </select>
-
-          <select id="transferAccountSelect" class="input">
-            <option value="">حساب التحويل اختياري</option>
-          </select>
-
-          <select id="invoiceStatus" class="input">
-            <option value="paid">مكتمل</option>
-            <option value="unpaid">غير مكتمل</option>
-          </select>
-
-          <textarea id="invoiceNotes" rows="3" class="input-bordered" placeholder="ملاحظات اختيارية"></textarea>
-
-          <div class="border rounded-2xl p-3 space-y-3">
-            <div class="font-bold text-sm text-slate-700">الخصم</div>
-            <div class="grid grid-cols-2 gap-2">
-              <select id="discountType" class="input-bordered">
-                <option value="fixed">مبلغ ثابت</option>
-                <option value="percent">نسبة مئوية %</option>
-              </select>
-              <input type="number" id="posDiscount" class="input-bordered" value="0" placeholder="الخصم">
-            </div>
-          </div>
-
-          <div class="border-t pt-4 space-y-2">
-            <div class="flex justify-between text-gray-500"><span>المجموع:</span> <span id="subtotal">0.00 ₪</span></div>
-            <div class="flex justify-between text-gray-500"><span>الخصم:</span> <span id="discountPreview">0.00 ₪</span></div>
-            <div class="flex justify-between font-bold text-2xl text-blue-700 pt-2 border-t"><span>الإجمالي:</span> <span id="finalTotal">0.00 ₪</span></div>
-          </div>
-
-          <button id="createInvoiceBtn" class="w-full btn-primary py-4 rounded-2xl font-bold shadow-lg transition-all">
-            إنشاء فاتورة
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- PRODUCTS -->
-    <section id="tab-products" class="tab-content hidden space-y-6">
-      <div class="flex flex-wrap justify-between items-center gap-4">
-        <h2 class="text-2xl font-bold">المخزون والمنتجات</h2>
-        <button id="openNewProductBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
-          <i data-lucide="plus"></i> إضافة منتج
-        </button>
-      </div>
-
-      <div class="card p-4">
-        <input type="text" id="inventorySearch" placeholder="بحث في المخزون..." class="input mb-4">
-
-        <div id="productsLoading" class="hidden py-10 flex flex-col items-center gap-3">
-          <div class="mini-loader"></div>
-          <p class="text-sm text-gray-500">جاري تحميل المنتجات...</p>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-right">
-            <thead class="bg-gray-50 border-b">
-              <tr>
-                <th class="p-4">الكود</th>
-                <th class="p-4">المورد / التاجر</th>
-                <th class="p-4">المنتج</th>
-                <th class="p-4">الجملة</th>
-                <th class="p-4">البيع</th>
-                <th class="p-4">المخزون</th>
-                <th class="p-4">الأصناف/المقاسات</th>
-                <th class="p-4">الإجراءات</th>
-              </tr>
-            </thead>
-            <tbody id="productsTable"></tbody>
-          </table>
-        </div>
-
-        <div id="productsLoadMoreWrap" class="hidden pt-4 text-center">
-          <button id="loadMoreProductsBtn" class="btn-soft px-5 py-2 rounded-xl font-bold">تحميل المزيد</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- INVOICES -->
-    <section id="tab-invoices" class="tab-content hidden space-y-6">
-      <div class="flex flex-wrap justify-between items-center gap-4">
-        <h2 class="text-2xl font-bold">الفواتير</h2>
-
-        <div class="flex gap-2 flex-wrap">
-          <input type="text" id="invSearchQuery" placeholder="بحث برقم الفاتورة أو الاسم أو الجوال..." class="p-3 bg-white border rounded-xl w-72">
-
-          <select id="invoiceStatusFilter" class="p-3 bg-white border rounded-xl">
-            <option value="all">كل الحالات</option>
-            <option value="paid">مكتمل</option>
-            <option value="unpaid">غير مكتمل</option>
-          </select>
-
-          <button onclick="openScanner('invoice')" class="p-3 bg-blue-50 text-blue-700 rounded-xl" title="مسح باركود الفاتورة">
-            <i data-lucide="scan-line"></i>
-          </button>
-
-          <label class="p-3 bg-purple-50 text-purple-600 rounded-xl cursor-pointer" title="اختيار صورة باركود فاتورة">
-            <i data-lucide="image-plus"></i>
-            <input type="file" id="barcodeImageInputInvoice" accept="image/*" class="hidden">
-          </label>
-
-          <button onclick="openManualInvoiceModal()" class="btn-primary px-4 py-3 rounded-xl">
-            <i data-lucide="plus"></i> فاتورة مباشرة
-          </button>
-        </div>
-      </div>
-
-      <div class="card p-4 mb-4">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-          <select id="bulkExportRange" class="input-bordered">
-            <option value="day">اليوم</option>
-            <option value="week">الأسبوع</option>
-            <option value="month">الشهر</option>
-            <option value="year">السنة</option>
-            <option value="all">كل السجل</option>
-            <option value="specific">تاريخ محدد</option>
-          </select>
-
-          <input type="date" id="bulkExportSpecificDate" class="input-bordered">
-
-          <button id="bulkPrintInvoicesBtn" class="btn-soft py-3">طباعة الفواتير</button>
-          <button id="bulkExportInvoicesPdfBtn" class="btn-danger py-3">PDF الفواتير</button>
-          <button id="bulkExportInvoicesImagesBtn" class="btn-success py-3">صور الفواتير</button>
-        </div>
-      </div>
-
-      <div class="card p-4 overflow-x-auto">
-        <div id="invoicesLoading" class="hidden py-10 flex flex-col items-center gap-3">
-          <div class="mini-loader"></div>
-          <p class="text-sm text-gray-500">جاري تحميل الفواتير...</p>
-        </div>
-
-        <table class="w-full text-right border-collapse">
-          <thead>
-            <tr class="bg-gray-50 text-gray-500">
-              <th class="p-4">رقم الفاتورة</th>
-              <th class="p-4">التاريخ</th>
-              <th class="p-4">العميل</th>
-              <th class="p-4">الحالة</th>
-              <th class="p-4">المبلغ</th>
-              <th class="p-4">الدفع</th>
-              <th class="p-4">حساب التحويل</th>
-              <th class="p-4">ملاحظات</th>
-              <th class="p-4">الإجراءات</th>
-            </tr>
-          </thead>
-          <tbody id="invoicesTable"></tbody>
-        </table>
-
-        <div id="invoicesLoadMoreWrap" class="hidden pt-4 text-center">
-          <button id="loadMoreInvoicesBtn" class="btn-soft px-5 py-2 rounded-xl font-bold">تحميل المزيد</button>
-        </div>
-      </div>
-
-      <div id="bulkInvoicesExportArea" class="hidden"></div>
-    </section>
-
-    <!-- PURCHASES -->
-    <section id="tab-purchases" class="tab-content hidden space-y-6">
-      <div class="flex flex-wrap justify-between items-center gap-4">
-        <h2 class="text-2xl font-bold">مشتريات الموردين</h2>
-        <button id="openPurchaseModalBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
-          <i data-lucide="plus"></i> إضافة فاتورة شراء
-        </button>
-      </div>
-
-      <div class="card p-4 mb-4">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-          <select id="bulkPurchasesRange" class="input-bordered">
-            <option value="day">اليوم</option>
-            <option value="week">الأسبوع</option>
-            <option value="month">الشهر</option>
-            <option value="year">السنة</option>
-            <option value="all">كل السجل</option>
-            <option value="specific">تاريخ محدد</option>
-          </select>
-
-          <input type="date" id="bulkPurchasesSpecificDate" class="input-bordered">
-
-          <button id="bulkPrintPurchasesBtn" class="btn-soft py-3">طباعة المشتريات</button>
-          <button id="bulkExportPurchasesPdfBtn" class="btn-danger py-3">PDF المشتريات</button>
-          <button id="bulkExportPurchasesImagesBtn" class="btn-success py-3">صور المشتريات</button>
-        </div>
-      </div>
-
-      <div class="card p-4 overflow-x-auto">
-        <div id="purchasesLoading" class="hidden py-10 flex flex-col items-center gap-3">
-          <div class="mini-loader"></div>
-          <p class="text-sm text-gray-500">جاري تحميل المشتريات...</p>
-        </div>
-
-        <table class="w-full text-right border-collapse">
-          <thead>
-            <tr class="bg-gray-50 text-gray-500">
-              <th class="p-4">المورد</th>
-              <th class="p-4">الصنف</th>
-              <th class="p-4">الكمية</th>
-              <th class="p-4">سعر الجملة</th>
-              <th class="p-4">الإجمالي</th>
-              <th class="p-4">أدخل للمخزون</th>
-              <th class="p-4">الملاحظات</th>
-              <th class="p-4">التاريخ</th>
-              <th class="p-4">الإجراءات</th>
-            </tr>
-          </thead>
-          <tbody id="purchasesTable"></tbody>
-        </table>
-      </div>
-
-      <div id="bulkPurchasesExportArea" class="hidden"></div>
-    </section>
-
-    <!-- MERCHANT PAYMENTS -->
-    <section id="tab-merchant-payments" class="tab-content hidden space-y-6">
-      <div class="flex flex-wrap justify-between items-center gap-4">
-        <h2 class="text-2xl font-bold">دفعات التجار والموردين</h2>
-        <button id="openMerchantPaymentModalBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
-          <i data-lucide="plus"></i> إضافة دفعة لتاجر
-        </button>
-      </div>
-
-      <div class="card p-4 mb-4">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-          <select id="merchantPaymentsReportRange" class="input-bordered">
-            <option value="day">اليوم</option>
-            <option value="week">الأسبوع</option>
-            <option value="month">الشهر</option>
-            <option value="year">السنة</option>
-            <option value="all">كل السجل</option>
-            <option value="specific">تاريخ محدد</option>
-          </select>
-
-          <input type="date" id="merchantPaymentsSpecificDate" class="input-bordered">
-
-          <button id="printMerchantPaymentsBtn" class="btn-soft py-3">طباعة</button>
-          <button id="exportMerchantPaymentsPdfBtn" class="btn-danger py-3">PDF</button>
-          <button id="exportMerchantPaymentsImageBtn" class="btn-success py-3">صورة</button>
-        </div>
-      </div>
-
-      <div class="card p-4 overflow-x-auto">
-        <div id="merchantPaymentsPrintableArea">
-          <table class="w-full text-right">
-            <thead class="bg-gray-50 text-gray-500">
-              <tr>
-                <th class="p-4">التاجر / المورد</th>
-                <th class="p-4">المبلغ</th>
-                <th class="p-4">طريقة الدفع</th>
-                <th class="p-4">الحساب</th>
-                <th class="p-4">ملاحظات</th>
-                <th class="p-4">التاريخ</th>
-                <th class="p-4">الإجراءات</th>
-              </tr>
-            </thead>
-            <tbody id="merchantPaymentsTable"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-<!-- CUSTOMERS -->
-    <section id="tab-customers" class="tab-content hidden space-y-6">
-      <div class="flex flex-wrap justify-between items-center gap-4">
-        <h2 class="text-2xl font-bold">صفحة العملاء</h2>
-        <input type="text" id="customersSearch" class="input-bordered max-w-md" placeholder="بحث باسم العميل أو رقم الزبون">
-      </div>
-
-      <div class="card p-4">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-          <select id="customersReportRange" class="input-bordered">
-            <option value="day">اليوم</option>
-            <option value="week">الأسبوع</option>
-            <option value="month">الشهر</option>
-            <option value="year">السنة</option>
-            <option value="all">كل السجل</option>
-            <option value="specific">تاريخ محدد</option>
-          </select>
-
-          <input type="date" id="customersSpecificDate" class="input-bordered">
-
-          <button id="printCustomersBtn" class="btn-soft py-3">طباعة</button>
-          <button id="exportCustomersPdfBtn" class="btn-danger py-3">PDF</button>
-          <button id="exportCustomersImageBtn" class="btn-success py-3">صورة</button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="card p-5 bg-blue-700 text-white">
-          <div class="text-sm opacity-80">عدد العملاء</div>
-          <div id="customersCount" class="text-3xl font-bold mt-2">0</div>
-        </div>
-
-        <div class="card p-5 bg-green-600 text-white">
-          <div class="text-sm opacity-80">إجمالي المدفوع</div>
-          <div id="customersPaidTotal" class="text-3xl font-bold mt-2">0.00 ₪</div>
-        </div>
-
-        <div class="card p-5 bg-red-600 text-white">
-          <div class="text-sm opacity-80">إجمالي غير المكتمل</div>
-          <div id="customersUnpaidTotal" class="text-3xl font-bold mt-2">0.00 ₪</div>
-        </div>
-
-        <div class="card p-5 bg-slate-700 text-white">
-          <div class="text-sm opacity-80">إجمالي المبيعات للعملاء</div>
-          <div id="customersGrandTotal" class="text-3xl font-bold mt-2">0.00 ₪</div>
-        </div>
-      </div>
-
-      <div class="card p-4 overflow-x-auto">
-        <div id="customersPrintableArea">
-          <table class="w-full text-right">
-            <thead class="bg-gray-50 text-gray-500">
-              <tr>
-                <th class="p-4">اسم العميل</th>
-                <th class="p-4">رقم الزبون</th>
-                <th class="p-4">عدد الفواتير</th>
-                <th class="p-4">المدفوع</th>
-                <th class="p-4">غير المكتمل</th>
-                <th class="p-4">الإجمالي</th>
-                <th class="p-4">آخر عملية</th>
-                <th class="p-4">الإجراءات</th>
-              </tr>
-            </thead>
-            <tbody id="customersTable"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- EXPENSES -->
-    <section id="tab-expenses" class="tab-content hidden space-y-6">
-      <div class="flex flex-wrap justify-between items-center gap-4">
-        <h2 class="text-2xl font-bold">المصروفات</h2>
-
-        <button id="openExpenseModalBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
-          <i data-lucide="plus"></i> إضافة مصروف
-        </button>
-      </div>
-
-      <div class="card p-4">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-          <select id="expensesReportRange" class="input-bordered">
-            <option value="day">اليوم</option>
-            <option value="week">الأسبوع</option>
-            <option value="month">الشهر</option>
-            <option value="year">السنة</option>
-            <option value="all">كل السجل</option>
-            <option value="specific">تاريخ محدد</option>
-          </select>
-
-          <input type="date" id="expensesSpecificDate" class="input-bordered">
-
-          <button id="printExpensesBtn" class="btn-soft py-3">طباعة</button>
-          <button id="exportExpensesPdfBtn" class="btn-danger py-3">PDF</button>
-          <button id="exportExpensesImageBtn" class="btn-success py-3">صورة</button>
-        </div>
-      </div>
-
-      <div class="card p-4 overflow-x-auto">
-        <div id="expensesPrintableArea">
-          <table class="w-full text-right">
-            <thead class="bg-gray-50 text-gray-500">
-              <tr>
-                <th class="p-4">اسم المصروف</th>
-                <th class="p-4">المبلغ</th>
-                <th class="p-4">طريقة الدفع</th>
-                <th class="p-4">الحساب</th>
-                <th class="p-4">ملاحظات</th>
-                <th class="p-4">التاريخ</th>
-                <th class="p-4">الإجراءات</th>
-              </tr>
-            </thead>
-            <tbody id="expensesTable"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- SALES REPORT -->
-    <section id="tab-sales-report" class="tab-content hidden space-y-6">
-      <div class="flex flex-wrap justify-between items-center gap-4">
-        <h2 class="text-2xl font-bold">تقرير المبيعات</h2>
-      </div>
-
-      <div class="card p-4">
-        <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
-          <select id="salesReportRange" class="input-bordered">
-            <option value="day">اليوم</option>
-            <option value="week">الأسبوع</option>
-            <option value="month">الشهر</option>
-            <option value="year">السنة</option>
-            <option value="all">كل السجل</option>
-            <option value="specific">يوم محدد</option>
-          </select>
-
-          <input type="date" id="salesReportSpecificDate" class="input-bordered">
-
-          <select id="salesReportPaymentFilter" class="input-bordered">
-            <option value="all">كل طرق الدفع</option>
-            <option value="cash">كاش</option>
-            <option value="bank">بنك</option>
-            <option value="wallet">محفظة</option>
-            <option value="jawwalpay">جوال باي</option>
-            <option value="app">تطبيق</option>
-          </select>
-
-          <button id="renderSalesReportBtn" class="btn-primary py-3">عرض التقرير</button>
-          <button id="printSalesReportBtn" class="btn-soft py-3">طباعة</button>
-          <button id="exportSalesReportPdfBtn" class="btn-danger py-3">PDF</button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-          <button id="exportSalesReportImageBtn" class="btn-success py-3">صورة</button>
-          <button id="downloadSalesReportBackupBtn" class="btn-warning py-3">حفظ التقرير كملف</button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="kpi-card bg-blue-700">
-          <div class="kpi-title">إجمالي المبيعات</div>
-          <div id="salesReportTotal" class="kpi-value">0.00 ₪</div>
-        </div>
-
-        <div class="kpi-card bg-green-600">
-          <div class="kpi-title">عدد الأصناف المباعة</div>
-          <div id="salesReportQty" class="kpi-value">0</div>
-        </div>
-
-        <div class="kpi-card bg-slate-700">
-          <div class="kpi-title">عدد الفواتير</div>
-          <div id="salesReportInvoicesCount" class="kpi-value">0</div>
-        </div>
-
-        <div class="kpi-card bg-purple-700">
-          <div class="kpi-title">أعلى طريقة دفع</div>
-          <div id="salesReportTopPayment" class="kpi-value">-</div>
-        </div>
-      </div>
-
-      <div class="card p-4 overflow-x-auto">
-        <div id="salesReportPrintableArea">
-          <div class="text-center mb-5">
-            <h3 class="text-2xl font-bold text-blue-700">تقرير المبيعات</h3>
-            <p id="salesReportPeriodText" class="text-gray-500 mt-1">-</p>
+        <div class="card p-4 overflow-x-auto">
+          <div id="invoicesLoading" class="hidden py-10 flex flex-col items-center gap-3">
+            <div class="mini-loader"></div>
+            <p class="text-sm text-gray-500">جاري تحميل الفواتير...</p>
           </div>
 
           <table class="w-full text-right border-collapse">
             <thead>
               <tr class="bg-gray-50 text-gray-500">
-                <th class="p-3 border">التاريخ</th>
-                <th class="p-3 border">اسم الزبون</th>
-                <th class="p-3 border">رقم الزبون</th>
-                <th class="p-3 border">الصنف</th>
-                <th class="p-3 border">الكمية</th>
-                <th class="p-3 border">السعر</th>
-                <th class="p-3 border">طريقة الدفع</th>
-                <th class="p-3 border">حساب التحويل</th>
-                <th class="p-3 border">الإجمالي</th>
+                <th class="p-4">رقم الفاتورة</th>
+                <th class="p-4">التاريخ</th>
+                <th class="p-4">العميل</th>
+                <th class="p-4">الحالة</th>
+                <th class="p-4">المبلغ</th>
+                <th class="p-4">الدفع</th>
+                <th class="p-4">الجهة</th>
+                <th class="p-4">ملاحظات</th>
+                <th class="p-4">الإجراءات</th>
               </tr>
             </thead>
-            <tbody id="salesReportTable"></tbody>
+            <tbody id="invoicesTable"></tbody>
           </table>
-        </div>
-      </div>
-    </section>
 
-    <!-- STOCK REPORT -->
-    <section id="tab-stock-report" class="tab-content hidden space-y-6">
-      <div class="flex flex-wrap justify-between items-center gap-4">
-        <h2 class="text-2xl font-bold">تقرير البضاعة الناقصة</h2>
-      </div>
-
-      <div class="card p-4">
-        <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
-          <select id="stockReportRange" class="input-bordered">
-            <option value="day">اليوم</option>
-            <option value="week">الأسبوع</option>
-            <option value="month">الشهر</option>
-            <option value="year">السنة</option>
-            <option value="all">كل السجل</option>
-            <option value="specific">تاريخ محدد</option>
-          </select>
-
-          <input type="date" id="stockReportSpecificDate" class="input-bordered">
-
-          <input type="number" id="lowStockLimit" class="input-bordered" value="5" placeholder="حد النقص">
-
-          <button id="renderStockReportBtn" class="btn-primary py-3">عرض</button>
-          <button id="printStockReportBtn" class="btn-soft py-3">طباعة</button>
-          <button id="exportStockReportPdfBtn" class="btn-danger py-3">PDF</button>
+          <div id="invoicesLoadMoreWrap" class="hidden pt-4 text-center">
+            <button id="loadMoreInvoicesBtn" class="btn-soft px-5 py-2 rounded-xl font-black">تحميل المزيد</button>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-1 gap-3 mt-3">
-          <button id="exportStockReportImageBtn" class="btn-success py-3">صورة</button>
-        </div>
-      </div>
+        <div id="bulkInvoicesExportArea" class="hidden"></div>
+      </section>
 
-      <div class="card p-4 overflow-x-auto">
-        <div id="stockReportPrintableArea">
-          <table class="w-full text-right">
-            <thead class="bg-gray-50 text-gray-500">
-              <tr>
-                <th class="p-4">الكود</th>
+      <!-- PURCHASES -->
+      <section id="tab-purchases" class="tab-content hidden space-y-6">
+        <div class="flex flex-wrap justify-between items-center gap-4">
+          <h2 class="text-2xl font-black">مشتريات الموردين</h2>
+          <button id="openPurchaseModalBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
+            <i data-lucide="plus"></i> إضافة فاتورة شراء
+          </button>
+        </div>
+
+        <div class="card p-4">
+          <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
+            <select id="bulkPurchasesRange" class="input-bordered">
+              <option value="day">اليوم</option>
+              <option value="week">الأسبوع</option>
+              <option value="month">الشهر</option>
+              <option value="year">السنة</option>
+              <option value="all">كل السجل</option>
+              <option value="specific">يوم محدد</option>
+            </select>
+
+            <input type="date" id="bulkPurchasesSpecificDate" class="input-bordered">
+
+            <button id="bulkPrintPurchasesBtn" class="btn-soft py-3">طباعة جدول</button>
+            <button id="bulkExportPurchasesPdfBtn" class="btn-danger py-3">PDF جدول</button>
+            <button id="bulkExportPurchasesImagesBtn" class="btn-success py-3">صورة جدول</button>
+            <button id="bulkExportPurchasesExcelBtn" class="btn-warning py-3">Excel</button>
+          </div>
+        </div>
+
+        <div class="card p-4 overflow-x-auto">
+          <div id="purchasesLoading" class="hidden py-10 flex flex-col items-center gap-3">
+            <div class="mini-loader"></div>
+            <p class="text-sm text-gray-500">جاري تحميل المشتريات...</p>
+          </div>
+
+          <table class="w-full text-right border-collapse">
+            <thead>
+              <tr class="bg-gray-50 text-gray-500">
                 <th class="p-4">المورد</th>
                 <th class="p-4">الصنف</th>
-                <th class="p-4">الكمية الحالية</th>
+                <th class="p-4">الكمية</th>
                 <th class="p-4">سعر الجملة</th>
                 <th class="p-4">سعر البيع</th>
-                <th class="p-4">الحالة</th>
+                <th class="p-4">الإجمالي</th>
+                <th class="p-4">دخل المخزون</th>
+                <th class="p-4">ملاحظات</th>
+                <th class="p-4">التاريخ</th>
+                <th class="p-4">الإجراءات</th>
               </tr>
             </thead>
-            <tbody id="stockReportTable"></tbody>
+            <tbody id="purchasesTable"></tbody>
           </table>
         </div>
-      </div>
-    </section>
 
-    <!-- PROFIT REPORT -->
-    <section id="tab-profit-report" class="tab-content hidden space-y-6">
-      <div class="flex flex-wrap justify-between items-center gap-4">
-        <h2 class="text-2xl font-bold">تقرير المرابح والأرصدة</h2>
-      </div>
+        <div id="bulkPurchasesExportArea" class="hidden"></div>
+      </section>
 
-      <div class="card p-4">
-        <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
-          <select id="profitReportRange" class="input-bordered">
-            <option value="week">الأسبوع</option>
-            <option value="month">الشهر</option>
-            <option value="year">السنة</option>
-            <option value="all">كل السجل</option>
-            <option value="specific">تاريخ محدد</option>
-          </select>
-
-          <input type="date" id="profitReportSpecificDate" class="input-bordered">
-
-          <button id="renderProfitReportBtn" class="btn-primary py-3">عرض</button>
-          <button id="printProfitReportBtn" class="btn-soft py-3">طباعة</button>
-          <button id="exportProfitReportPdfBtn" class="btn-danger py-3">PDF</button>
-          <button id="exportProfitReportImageBtn" class="btn-success py-3">صورة</button>
+      <!-- MERCHANT PAYMENTS -->
+      <section id="tab-merchant-payments" class="tab-content hidden space-y-6">
+        <div class="flex flex-wrap justify-between items-center gap-4">
+          <h2 class="text-2xl font-black">دفعات التجار</h2>
+          <button id="openMerchantPaymentModalBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
+            <i data-lucide="plus"></i> إضافة دفعة
+          </button>
         </div>
-      </div>
 
-      <div id="profitReportPrintableArea">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <div class="kpi-card bg-blue-700">
-            <div class="kpi-title">إجمالي المبيعات</div>
-            <div id="profitTotalSales" class="kpi-value">0.00 ₪</div>
+        <div class="card p-4">
+          <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
+            <select id="merchantPaymentsReportRange" class="input-bordered">
+              <option value="day">اليوم</option>
+              <option value="week">الأسبوع</option>
+              <option value="month">الشهر</option>
+              <option value="year">السنة</option>
+              <option value="all">كل السجل</option>
+              <option value="specific">يوم محدد</option>
+            </select>
+
+            <input type="date" id="merchantPaymentsSpecificDate" class="input-bordered">
+
+            <button id="printMerchantPaymentsBtn" class="btn-soft py-3">طباعة جدول</button>
+            <button id="exportMerchantPaymentsPdfBtn" class="btn-danger py-3">PDF جدول</button>
+            <button id="exportMerchantPaymentsImageBtn" class="btn-success py-3">صورة جدول</button>
+            <button id="exportMerchantPaymentsExcelBtn" class="btn-warning py-3">Excel</button>
           </div>
+        </div>
 
-          <div class="kpi-card bg-slate-700">
-            <div class="kpi-title">تكلفة البضاعة</div>
-            <div id="profitTotalCost" class="kpi-value">0.00 ₪</div>
+        <div class="card p-4 overflow-x-auto">
+          <div id="merchantPaymentsPrintableArea">
+            <table class="w-full text-right">
+              <thead class="bg-gray-50 text-gray-500">
+                <tr>
+                  <th class="p-4">اسم التاجر</th>
+                  <th class="p-4">المبلغ</th>
+                  <th class="p-4">الدفع</th>
+                  <th class="p-4">الجهة</th>
+                  <th class="p-4">ملاحظات</th>
+                  <th class="p-4">التاريخ</th>
+                  <th class="p-4">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="merchantPaymentsTable"></tbody>
+            </table>
           </div>
+        </div>
+      </section>
 
-          <div class="kpi-card bg-red-600">
-            <div class="kpi-title">المصروفات</div>
-            <div id="profitExpenses" class="kpi-value">0.00 ₪</div>
+      <!-- CUSTOMERS -->
+      <section id="tab-customers" class="tab-content hidden space-y-6">
+        <div class="flex flex-wrap justify-between items-center gap-4">
+          <h2 class="text-2xl font-black">العملاء</h2>
+          <input type="text" id="customersSearch" class="input-bordered max-w-md" placeholder="بحث باسم العميل أو رقم الزبون">
+        </div>
+
+        <div class="card p-4">
+          <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
+            <select id="customersReportRange" class="input-bordered">
+              <option value="all">كل السجل</option>
+              <option value="day">اليوم</option>
+              <option value="week">الأسبوع</option>
+              <option value="month">الشهر</option>
+              <option value="year">السنة</option>
+              <option value="specific">تاريخ محدد</option>
+            </select>
+
+            <input type="date" id="customersSpecificDate" class="input-bordered">
+
+            <button id="printCustomersBtn" class="btn-soft py-3">طباعة جدول</button>
+            <button id="exportCustomersPdfBtn" class="btn-danger py-3">PDF جدول</button>
+            <button id="exportCustomersImageBtn" class="btn-success py-3">صورة جدول</button>
+            <button id="exportCustomersExcelBtn" class="btn-warning py-3">Excel</button>
           </div>
+        </div>
 
-          <div class="kpi-card bg-orange-600">
-            <div class="kpi-title">دفعات التجار</div>
-            <div id="profitMerchantPayments" class="kpi-value">0.00 ₪</div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="kpi-card bg-emerald-700">
+            <div class="kpi-title">عدد العملاء</div>
+            <div id="customersCount" class="kpi-value">0</div>
           </div>
 
           <div class="kpi-card bg-green-600">
-            <div class="kpi-title">صافي الربح</div>
-            <div id="profitNet" class="kpi-value">0.00 ₪</div>
+            <div class="kpi-title">إجمالي المدفوع</div>
+            <div id="customersPaidTotal" class="kpi-value">0.00 ₪</div>
+          </div>
+
+          <div class="kpi-card bg-red-600">
+            <div class="kpi-title">إجمالي غير المكتمل</div>
+            <div id="customersUnpaidTotal" class="kpi-value">0.00 ₪</div>
+          </div>
+
+          <div class="kpi-card bg-slate-700">
+            <div class="kpi-title">إجمالي المبيعات للعملاء</div>
+            <div id="customersGrandTotal" class="kpi-value">0.00 ₪</div>
           </div>
         </div>
 
-        <div class="card p-4 overflow-x-auto mt-6">
-          <h3 class="font-bold text-xl mb-4">الأرصدة حسب الحساب</h3>
-
-          <table class="w-full text-right">
-            <thead class="bg-gray-50 text-gray-500">
-              <tr>
-                <th class="p-4">نوع الحساب</th>
-                <th class="p-4">اسم الحساب</th>
-                <th class="p-4">رقم الحساب / رقم الجوال</th>
-                <th class="p-4">الرصيد المتوفر</th>
-              </tr>
-            </thead>
-            <tbody id="balancesReportTable"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- REPORTS OLD SUMMARY -->
-    <section id="tab-reports" class="tab-content hidden space-y-6">
-      <div class="flex justify-between items-center gap-3 flex-wrap">
-        <h2 class="text-2xl font-bold">التقارير المالية المختصرة</h2>
-
-        <select id="reportFilter" class="p-3 border rounded-xl">
-          <option value="today">اليوم</option>
-          <option value="week">آخر 7 أيام</option>
-          <option value="month">هذا الشهر</option>
-          <option value="year">السنة</option>
-          <option value="all">كل السجل</option>
-        </select>
-      </div>
-
-      <div class="card p-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <button id="printSummaryReportBtn" class="btn-soft py-3">طباعة</button>
-          <button id="exportSummaryReportPdfBtn" class="btn-danger py-3">PDF</button>
-          <button id="exportSummaryReportImageBtn" class="btn-success py-3">صورة</button>
-        </div>
-      </div>
-
-      <div id="summaryReportPrintableArea">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
-          <div class="card p-8 bg-slate-700 text-white shadow-xl">
-            <p class="opacity-80">إجمالي البيع بسعر الجملة</p>
-            <h4 id="repWholesaleSales" class="text-4xl font-bold mt-2">0.00 ₪</h4>
-          </div>
-
-          <div class="card p-8 bg-blue-700 text-white shadow-xl">
-            <p class="opacity-80">إجمالي المبيعات</p>
-            <h4 id="repTotalSales" class="text-4xl font-bold mt-2">0.00 ₪</h4>
-          </div>
-
-          <div class="card p-8 bg-green-600 text-white shadow-xl">
-            <p class="opacity-80">صافي الربح</p>
-            <h4 id="repTotalProfit" class="text-4xl font-bold mt-2">0.00 ₪</h4>
-          </div>
-
-          <div class="card p-8 bg-red-600 text-white shadow-xl">
-            <p class="opacity-80">المشتريات</p>
-            <h4 id="repPurchases" class="text-4xl font-bold mt-2">0.00 ₪</h4>
-          </div>
-
-          <div class="card p-8 bg-orange-500 text-white shadow-xl">
-            <p class="opacity-80">عدد العمليات</p>
-            <h4 id="repCount" class="text-4xl font-bold mt-2">0</h4>
+        <div class="card p-4 overflow-x-auto">
+          <div id="customersPrintableArea">
+            <table class="w-full text-right">
+              <thead class="bg-gray-50 text-gray-500">
+                <tr>
+                  <th class="p-4">اسم العميل</th>
+                  <th class="p-4">رقم الزبون</th>
+                  <th class="p-4">عدد الفواتير</th>
+                  <th class="p-4">المدفوع</th>
+                  <th class="p-4">غير المكتمل</th>
+                  <th class="p-4">الإجمالي</th>
+                  <th class="p-4">آخر عملية</th>
+                  <th class="p-4">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="customersTable"></tbody>
+            </table>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- STORES -->
-    <section id="tab-stores" class="tab-content hidden space-y-6">
-      <div class="flex justify-between items-center">
-        <h2 class="text-2xl font-bold">إدارة الفروع والمحلات</h2>
-        <button onclick="toggleModal('storeModal', true)" class="btn-primary px-4 py-2 rounded-xl">
-          <i data-lucide="plus"></i> إضافة محل
-        </button>
-      </div>
-
-      <div id="storesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </section>
-
-    <!-- SETTINGS -->
-    <section id="tab-settings" class="tab-content hidden">
-      <div class="card p-8 max-w-5xl mx-auto space-y-8">
-        <div class="flex items-center justify-between gap-3 flex-wrap border-b pb-4">
-          <h2 class="text-2xl font-bold">الإعدادات</h2>
-          <span id="settingsPlanBadge" class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-bold">
-            نسختك —
-          </span>
+      <!-- EXPENSES -->
+      <section id="tab-expenses" class="tab-content hidden space-y-6">
+        <div class="flex flex-wrap justify-between items-center gap-4">
+          <h2 class="text-2xl font-black">المصروفات</h2>
+          <button id="openExpenseModalBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
+            <i data-lucide="plus"></i> إضافة مصروف
+          </button>
         </div>
 
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          <div class="soft-card p-5 space-y-4">
-            <h3 class="font-bold text-lg">بيانات المحل</h3>
-
-            <div class="flex justify-center mb-4">
-              <img id="settingsLogoPreview" src="" class="w-24 h-24 rounded-2xl shadow-md object-cover border-4 border-white hidden">
-            </div>
-
-            <div>
-              <label class="block text-sm font-semibold mb-2">اسم المحل</label>
-              <input type="text" id="setStoreName" class="input-bordered">
-            </div>
-
-            <div>
-              <label class="block text-sm font-semibold mb-2">رابط صورة الشعار</label>
-              <input type="text" id="setStoreLogo" class="input-bordered">
-            </div>
-
-            <div>
-              <label class="block text-sm font-semibold mb-2">اسم العملة</label>
-              <input type="text" id="currencyNameInput" class="input-bordered" placeholder="شيكل">
-            </div>
-
-            <div>
-              <label class="block text-sm font-semibold mb-2">رمز العملة</label>
-              <input type="text" id="currencySymbolInput" class="input-bordered" placeholder="₪">
-            </div>
-          </div>
-
-          <div class="soft-card p-5 space-y-4">
-            <h3 class="font-bold text-lg">بيانات المفتاح الحالي</h3>
-
-            <div class="bg-gray-50 p-4 rounded-2xl text-sm space-y-2">
-              <div class="flex justify-between gap-4">
-                <span class="text-gray-500">المفتاح:</span>
-                <span id="setCurrentKey" class="font-bold text-left break-all">-</span>
-              </div>
-
-              <div class="flex justify-between gap-4">
-                <span class="text-gray-500">نوع المدة:</span>
-                <span id="setCurrentLicenseType" class="font-bold text-left">-</span>
-              </div>
-
-              <div class="flex justify-between gap-4">
-                <span class="text-gray-500">تاريخ البدء:</span>
-                <span id="setCurrentLicenseStart" class="font-bold text-left">-</span>
-              </div>
-
-              <div class="flex justify-between gap-4">
-                <span class="text-gray-500">تاريخ الانتهاء:</span>
-                <span id="setCurrentLicenseEnd" class="font-bold text-left">-</span>
-              </div>
-
-              <div class="flex justify-between gap-4">
-                <span class="text-gray-500">الوقت المتبقي:</span>
-                <span id="setCurrentLicenseRemaining" class="font-bold text-left text-green-700">-</span>
-              </div>
-
-              <div class="flex justify-between gap-4">
-                <span class="text-gray-500">نوع النظام:</span>
-                <span id="setCurrentSystemMode" class="font-bold text-left">-</span>
-              </div>
-            </div>
-
-            <div id="offlineSyncWrap" class="hidden space-y-3 pt-2">
-              <div class="text-sm font-bold text-slate-700">مزامنة الأوفلاين مع السحابة</div>
-
-              <div class="grid grid-cols-1 gap-3">
-                <button id="downloadOfflinePackageBtn" class="btn-soft py-3">تنزيل حزمة أوفلاين</button>
-
-                <label class="btn-soft py-3 text-center cursor-pointer">
-                  استيراد حزمة أوفلاين
-                  <input type="file" id="importOfflinePackageInput" accept=".json,application/json" class="hidden">
-                </label>
-
-                <button id="uploadOfflineDataBtn" class="btn-success py-3">رفع بيانات الأوفلاين إلى السحابة</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="soft-card p-5 space-y-4">
-          <h3 class="font-bold text-lg">حسابات الدفع والتحويل</h3>
-          <p class="text-sm text-gray-500">
-            أضف بنك، محفظة، جوال باي، تطبيق، أو كاش. هذه الحسابات تظهر اختيارياً عند إنشاء الفاتورة والمصروفات ودفعات التجار.
-          </p>
-
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <select id="accountKindInput" class="input-bordered">
-              <option value="bank">بنك</option>
-              <option value="wallet">محفظة</option>
-              <option value="jawwalpay">جوال باي</option>
-              <option value="app">تطبيق</option>
-              <option value="cash">كاش</option>
+        <div class="card p-4">
+          <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
+            <select id="expensesReportRange" class="input-bordered">
+              <option value="day">اليوم</option>
+              <option value="week">الأسبوع</option>
+              <option value="month">الشهر</option>
+              <option value="year">السنة</option>
+              <option value="all">كل السجل</option>
+              <option value="specific">تاريخ محدد</option>
             </select>
 
-            <input type="text" id="accountTypeInput" class="input-bordered" placeholder="اسم البنك أو الجهة">
+            <input type="date" id="expensesSpecificDate" class="input-bordered">
 
-            <input type="text" id="accountOwnerInput" class="input-bordered" placeholder="اسم صاحب الحساب">
-
-            <input type="text" id="accountNumberInput" class="input-bordered" placeholder="رقم الحساب / رقم الجوال">
-          </div>
-
-          <button id="addAccountBtn" type="button" class="btn-primary px-5 py-3">إضافة حساب</button>
-
-          <div>
-            <div class="text-sm font-bold mb-2">الحسابات المتاحة</div>
-            <div id="accountsList" class="space-y-3"></div>
+            <button id="printExpensesBtn" class="btn-soft py-3">طباعة جدول</button>
+            <button id="exportExpensesPdfBtn" class="btn-danger py-3">PDF جدول</button>
+            <button id="exportExpensesImageBtn" class="btn-success py-3">صورة جدول</button>
+            <button id="exportExpensesExcelBtn" class="btn-warning py-3">Excel</button>
           </div>
         </div>
 
-        <div class="soft-card p-5 space-y-4">
-          <h3 class="font-bold text-lg">تفاصيل الدفع النصية</h3>
-
-          <textarea id="paymentInfoInput" rows="5" class="input-bordered" placeholder="مثلاً:
-بنك فلسطين - أحمد
-رقم حساب: xxxx
-محفظة جوال باي - محمد
-رقم: xxxx"></textarea>
-        </div>
-
-        <div class="soft-card p-5 space-y-4">
-          <div class="flex items-center justify-between gap-3 flex-wrap">
-            <h3 class="font-bold text-lg">النسخ الاحتياطي والاستعادة</h3>
-            <span class="text-xs text-gray-500">خاص بالمفتاح الحالي فقط</span>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <button id="downloadBackupBtn" class="btn-soft py-3">تنزيل نسخة احتياطية</button>
-            <button id="saveCloudBackupBtn" class="btn-success py-3">حفظ نسخة احتياطية</button>
-
-            <label class="btn-primary py-3 text-center cursor-pointer">
-              استعادة نسخة
-              <input type="file" id="restoreBackupInput" accept=".json,application/json" class="hidden">
-            </label>
-          </div>
-
-          <div class="backup-drop">
-            يمكنك حفظ نسخة احتياطية لمنتجاتك وفواتيرك ومشترياتك ومصروفاتك وإعداداتك ثم استعادتها لاحقًا.
+        <div class="card p-4 overflow-x-auto">
+          <div id="expensesPrintableArea">
+            <table class="w-full text-right">
+              <thead class="bg-gray-50 text-gray-500">
+                <tr>
+                  <th class="p-4">اسم المصروف</th>
+                  <th class="p-4">المبلغ</th>
+                  <th class="p-4">طريقة الدفع</th>
+                  <th class="p-4">الجهة</th>
+                  <th class="p-4">ملاحظات</th>
+                  <th class="p-4">التاريخ</th>
+                  <th class="p-4">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="expensesTable"></tbody>
+            </table>
           </div>
         </div>
+      </section>
+<!-- SALES REPORT -->
+      <section id="tab-sales-report" class="tab-content hidden space-y-6">
+        <div class="flex flex-wrap justify-between items-center gap-4">
+          <h2 class="text-2xl font-black">تقرير المبيعات التفصيلي</h2>
+        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <button id="saveSettingsBtn" class="w-full btn-primary py-3 rounded-xl font-bold">
-            حفظ الإعدادات
+        <div class="card p-4">
+          <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
+            <select id="salesReportRange" class="input-bordered">
+              <option value="day">اليوم</option>
+              <option value="week">الأسبوع</option>
+              <option value="month">الشهر</option>
+              <option value="year">السنة</option>
+              <option value="all">كل السجل</option>
+              <option value="specific">تاريخ محدد</option>
+            </select>
+
+            <input type="date" id="salesReportSpecificDate" class="input-bordered">
+
+            <select id="salesReportPaymentFilter" class="input-bordered">
+              <option value="all">كل طرق الدفع</option>
+              <option value="cash">كاش</option>
+              <option value="direct">بنكي مباشر</option>
+            </select>
+
+            <button id="renderSalesReportBtn" class="btn-primary py-3">عرض التقرير</button>
+            <button id="printSalesReportBtn" class="btn-soft py-3">طباعة جدول</button>
+            <button id="exportSalesReportPdfBtn" class="btn-danger py-3">PDF جدول</button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+            <button id="exportSalesReportImageBtn" class="btn-success py-3">صورة جدول</button>
+            <button id="exportSalesReportExcelBtn" class="btn-warning py-3">Excel</button>
+            <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-3 text-sm text-emerald-800 font-bold">
+              الفترة: <span id="salesReportPeriodText">-</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="kpi-card bg-emerald-700">
+            <div class="kpi-title">إجمالي المبيعات</div>
+            <div id="salesReportTotal" class="kpi-value">0.00 ₪</div>
+          </div>
+
+          <div class="kpi-card bg-green-600">
+            <div class="kpi-title">عدد القطع</div>
+            <div id="salesReportQty" class="kpi-value">0</div>
+          </div>
+
+          <div class="kpi-card bg-slate-700">
+            <div class="kpi-title">عدد الفواتير</div>
+            <div id="salesReportInvoicesCount" class="kpi-value">0</div>
+          </div>
+
+          <div class="kpi-card bg-teal-600">
+            <div class="kpi-title">أكثر طريقة دفع</div>
+            <div id="salesReportTopPayment" class="kpi-value">-</div>
+          </div>
+        </div>
+
+        <div class="card p-4 overflow-x-auto">
+          <div id="salesReportPrintableArea">
+            <table class="w-full text-right border-collapse">
+              <thead class="bg-gray-50 text-gray-500">
+                <tr>
+                  <th class="p-4 border">التاريخ</th>
+                  <th class="p-4 border">اسم الزبون</th>
+                  <th class="p-4 border">رقم الزبون</th>
+                  <th class="p-4 border">الصنف</th>
+                  <th class="p-4 border">الكمية</th>
+                  <th class="p-4 border">السعر</th>
+                  <th class="p-4 border">الدفع</th>
+                  <th class="p-4 border">الجهة</th>
+                  <th class="p-4 border">الإجمالي</th>
+                </tr>
+              </thead>
+              <tbody id="salesReportTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- STOCK REPORT -->
+      <section id="tab-stock-report" class="tab-content hidden space-y-6">
+        <div class="flex flex-wrap justify-between items-center gap-4">
+          <h2 class="text-2xl font-black">تقرير البضاعة الناقصة</h2>
+        </div>
+
+        <div class="card p-4">
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+            <input type="number" id="lowStockLimit" class="input-bordered" value="5" placeholder="حد النقص">
+
+            <button id="renderStockReportBtn" class="btn-primary py-3">عرض التقرير</button>
+            <button id="printStockReportBtn" class="btn-soft py-3">طباعة جدول</button>
+            <button id="exportStockReportPdfBtn" class="btn-danger py-3">PDF جدول</button>
+            <button id="exportStockReportImageBtn" class="btn-success py-3">صورة جدول</button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-1 gap-3 mt-3">
+            <button id="exportStockReportExcelBtn" class="btn-warning py-3">Excel</button>
+          </div>
+        </div>
+
+        <div class="card p-4 overflow-x-auto">
+          <div id="stockReportPrintableArea">
+            <table class="w-full text-right">
+              <thead class="bg-gray-50 text-gray-500">
+                <tr>
+                  <th class="p-4">الكود</th>
+                  <th class="p-4">المورد</th>
+                  <th class="p-4">المنتج</th>
+                  <th class="p-4">الكمية الحالية</th>
+                  <th class="p-4">سعر الجملة</th>
+                  <th class="p-4">سعر البيع</th>
+                  <th class="p-4">الحالة</th>
+                </tr>
+              </thead>
+              <tbody id="stockReportTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFIT REPORT -->
+      <section id="tab-profit-report" class="tab-content hidden space-y-6">
+        <div class="flex flex-wrap justify-between items-center gap-4">
+          <h2 class="text-2xl font-black">تقرير المرابح والأرصدة</h2>
+        </div>
+
+        <div class="card p-4">
+          <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
+            <select id="profitReportRange" class="input-bordered">
+              <option value="week">الأسبوع</option>
+              <option value="month">الشهر</option>
+              <option value="year">السنة</option>
+              <option value="all">كل السجل</option>
+              <option value="specific">تاريخ محدد</option>
+            </select>
+
+            <input type="date" id="profitReportSpecificDate" class="input-bordered">
+
+            <button id="renderProfitReportBtn" class="btn-primary py-3">عرض التقرير</button>
+            <button id="printProfitReportBtn" class="btn-soft py-3">طباعة جدول</button>
+            <button id="exportProfitReportPdfBtn" class="btn-danger py-3">PDF جدول</button>
+            <button id="exportProfitReportImageBtn" class="btn-success py-3">صورة جدول</button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-1 gap-3 mt-3">
+            <button id="exportProfitReportExcelBtn" class="btn-warning py-3">Excel</button>
+          </div>
+        </div>
+
+        <div id="profitReportPrintableArea" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div class="kpi-card bg-emerald-700">
+              <div class="kpi-title">إجمالي المبيعات</div>
+              <div id="profitTotalSales" class="kpi-value">0.00 ₪</div>
+            </div>
+
+            <div class="kpi-card bg-slate-700">
+              <div class="kpi-title">تكلفة البضاعة</div>
+              <div id="profitTotalCost" class="kpi-value">0.00 ₪</div>
+            </div>
+
+            <div class="kpi-card bg-orange-600">
+              <div class="kpi-title">المصروفات</div>
+              <div id="profitExpenses" class="kpi-value">0.00 ₪</div>
+            </div>
+
+            <div class="kpi-card bg-red-600">
+              <div class="kpi-title">دفعات التجار</div>
+              <div id="profitMerchantPayments" class="kpi-value">0.00 ₪</div>
+            </div>
+
+            <div class="kpi-card bg-green-600">
+              <div class="kpi-title">صافي الربح</div>
+              <div id="profitNet" class="kpi-value">0.00 ₪</div>
+            </div>
+          </div>
+
+          <div class="card p-4 overflow-x-auto">
+            <h3 class="font-black mb-4">الأرصدة حسب الجهة</h3>
+            <table class="w-full text-right">
+              <thead class="bg-gray-50 text-gray-500">
+                <tr>
+                  <th class="p-4">طريقة الدفع</th>
+                  <th class="p-4">اسم الجهة</th>
+                  <th class="p-4">الرقم / الحساب</th>
+                  <th class="p-4">الرصيد</th>
+                </tr>
+              </thead>
+              <tbody id="balancesReportTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ALL REPORTS -->
+      <section id="tab-reports" class="tab-content hidden space-y-6">
+        <div class="flex justify-between items-center gap-3 flex-wrap">
+          <h2 class="text-2xl font-black">كل التقارير المختصرة</h2>
+
+          <select id="reportFilter" class="p-3 border rounded-xl">
+            <option value="today">اليوم</option>
+            <option value="week">آخر 7 أيام</option>
+            <option value="month">هذا الشهر</option>
+            <option value="year">هذه السنة</option>
+            <option value="all">كل السجل</option>
+          </select>
+        </div>
+
+        <div class="card p-4">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <button id="printSummaryReportBtn" class="btn-soft py-3">طباعة التقرير</button>
+            <button id="exportSummaryReportPdfBtn" class="btn-danger py-3">PDF التقرير</button>
+            <button id="exportSummaryReportImageBtn" class="btn-success py-3">صورة التقرير</button>
+            <button id="exportSummaryReportExcelBtn" class="btn-warning py-3">Excel</button>
+          </div>
+        </div>
+
+        <div id="summaryReportPrintableArea">
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+            <div class="kpi-card bg-slate-700">
+              <div class="kpi-title">إجمالي البيع بسعر الجملة</div>
+              <div id="repWholesaleSales" class="kpi-value">0.00 ₪</div>
+            </div>
+
+            <div class="kpi-card bg-emerald-700">
+              <div class="kpi-title">إجمالي المبيعات</div>
+              <div id="repTotalSales" class="kpi-value">0.00 ₪</div>
+            </div>
+
+            <div class="kpi-card bg-green-600">
+              <div class="kpi-title">صافي الربح</div>
+              <div id="repTotalProfit" class="kpi-value">0.00 ₪</div>
+            </div>
+
+            <div class="kpi-card bg-red-600">
+              <div class="kpi-title">المشتريات</div>
+              <div id="repPurchases" class="kpi-value">0.00 ₪</div>
+            </div>
+
+            <div class="kpi-card bg-orange-500">
+              <div class="kpi-title">عدد العمليات</div>
+              <div id="repCount" class="kpi-value">0</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STORES -->
+      <section id="tab-stores" class="tab-content hidden space-y-6">
+        <div class="flex justify-between items-center gap-3 flex-wrap">
+          <h2 class="text-2xl font-black">إدارة الفروع والمحلات</h2>
+          <button onclick="toggleModal('storeModal', true)" class="btn-primary px-4 py-3 rounded-xl">
+            <i data-lucide="plus"></i> إضافة محل
           </button>
-
-          <button id="logoutBtn" class="w-full bg-red-600 text-white py-3 rounded-xl font-bold">
-            تسجيل الخروج
-          </button>
         </div>
-      </div>
-    </section>
 
+        <div id="storesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+<!-- SETTINGS -->
+      <section id="tab-settings" class="tab-content hidden">
+        <div class="card p-5 md:p-8 max-w-6xl mx-auto space-y-8">
+          <div class="flex items-center justify-between gap-3 flex-wrap border-b pb-4">
+            <div>
+              <h2 class="text-2xl font-black">الإعدادات</h2>
+              <p class="text-sm text-gray-500 mt-1">إدارة بيانات المحل، العملة، الحسابات، النسخ الاحتياطي، والمزامنة.</p>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap">
+              <span id="settingsPlanBadge" class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-black text-xs">
+                نسختك —
+              </span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div class="soft-card p-5 space-y-4">
+              <h3 class="font-black text-lg">بيانات المحل</h3>
+
+              <div class="flex justify-center mb-4">
+                <img id="settingsLogoPreview" src="" class="w-24 h-24 rounded-3xl shadow-md object-cover border-4 border-white hidden">
+              </div>
+
+              <div>
+                <label class="block text-sm font-bold mb-2">اسم المحل</label>
+                <input type="text" id="setStoreName" class="input-bordered">
+              </div>
+
+              <div>
+                <label class="block text-sm font-bold mb-2">رابط صورة الشعار</label>
+                <input type="text" id="setStoreLogo" class="input-bordered">
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-sm font-bold mb-2">اسم العملة</label>
+                  <input type="text" id="currencyNameInput" class="input-bordered" placeholder="شيكل">
+                </div>
+
+                <div>
+                  <label class="block text-sm font-bold mb-2">رمز العملة</label>
+                  <input type="text" id="currencySymbolInput" class="input-bordered" placeholder="₪">
+                </div>
+              </div>
+            </div>
+
+            <div class="soft-card p-5 space-y-4">
+              <h3 class="font-black text-lg">بيانات المفتاح الحالي</h3>
+
+              <div class="bg-gray-50 p-4 rounded-2xl text-sm space-y-2">
+                <div class="flex justify-between gap-4"><span class="text-gray-500">المفتاح:</span><span id="setCurrentKey" class="font-black text-left break-all">-</span></div>
+                <div class="flex justify-between gap-4"><span class="text-gray-500">نوع المدة:</span><span id="setCurrentLicenseType" class="font-black text-left">-</span></div>
+                <div class="flex justify-between gap-4"><span class="text-gray-500">تاريخ البدء:</span><span id="setCurrentLicenseStart" class="font-black text-left">-</span></div>
+                <div class="flex justify-between gap-4"><span class="text-gray-500">تاريخ الانتهاء:</span><span id="setCurrentLicenseEnd" class="font-black text-left">-</span></div>
+                <div class="flex justify-between gap-4"><span class="text-gray-500">الوقت المتبقي:</span><span id="setCurrentLicenseRemaining" class="font-black text-left text-green-700">-</span></div>
+                <div class="flex justify-between gap-4"><span class="text-gray-500">نوع النظام:</span><span id="setCurrentSystemMode" class="font-black text-left">-</span></div>
+              </div>
+
+              <div id="offlineSyncWrap" class="hidden space-y-3 pt-2">
+                <div class="text-sm font-black text-slate-700">مزامنة الأوفلاين مع السحابة</div>
+
+                <div class="grid grid-cols-1 gap-3">
+                  <button id="downloadOfflinePackageBtn" class="btn-soft py-3">تنزيل حزمة أوفلاين</button>
+
+                  <label class="btn-soft py-3 text-center cursor-pointer">
+                    استيراد حزمة أوفلاين
+                    <input type="file" id="importOfflinePackageInput" accept=".json,application/json" class="hidden">
+                  </label>
+
+                  <button id="uploadOfflineDataBtn" class="btn-success py-3">رفع بيانات الأوفلاين إلى السحابة</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="soft-card p-5 space-y-4">
+            <div>
+              <h3 class="font-black text-lg">جهات الدفع والتحويل</h3>
+              <p class="text-sm text-gray-500 mt-1">
+                أضف أي جهة مثل بنك، محفظة، بال باي، جوال باي أو غيرها. عند إنشاء الفاتورة تختار فقط كاش أو بنكي مباشر، والجهة اختيارية.
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <input type="text" id="accountTypeInput" class="input-bordered" placeholder="اسم الجهة، مثال: بنك فلسطين">
+              <input type="text" id="accountOwnerInput" class="input-bordered" placeholder="اسم صاحب الحساب">
+              <input type="text" id="accountNumberInput" class="input-bordered" placeholder="رقم الحساب / المحفظة اختياري">
+              <button id="addAccountBtn" type="button" class="btn-primary px-5 py-3">إضافة جهة</button>
+            </div>
+
+            <div>
+              <div class="text-sm font-black mb-2">الجهات المتاحة</div>
+              <div id="accountsList" class="space-y-3"></div>
+            </div>
+          </div>
+
+          <div class="soft-card p-5 space-y-4">
+            <h3 class="font-black text-lg">معلومات الدفع النصية</h3>
+
+            <textarea id="paymentInfoInput" rows="5" class="input-bordered" placeholder="ملاحظات أو تعليمات دفع تظهر في الرسائل عند الحاجة"></textarea>
+          </div>
+
+          <div class="soft-card p-5 space-y-4">
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+              <div>
+                <h3 class="font-black text-lg">النسخ الاحتياطي والاستعادة</h3>
+                <p class="text-sm text-gray-500 mt-1">خاص بالمفتاح الحالي فقط.</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <button id="downloadBackupBtn" class="btn-soft py-3">تنزيل نسخة احتياطية</button>
+              <button id="saveCloudBackupBtn" class="btn-success py-3">حفظ نسخة احتياطية سحابية</button>
+
+              <label class="btn-primary py-3 text-center cursor-pointer">
+                استعادة نسخة
+                <input type="file" id="restoreBackupInput" accept=".json,application/json" class="hidden">
+              </label>
+            </div>
+
+            <div class="backup-drop">
+              يمكنك حفظ نسخة احتياطية لمنتجاتك وفواتيرك ومشترياتك ومصروفاتك وإعداداتك ثم استعادتها لاحقًا.
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <button id="saveSettingsBtn" class="w-full btn-primary py-3 rounded-xl font-black">
+              حفظ الإعدادات
+            </button>
+
+            <button id="logoutBtn" class="w-full bg-red-600 text-white py-3 rounded-xl font-black">
+              تسجيل الخروج
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
   </main>
 </div>
 
@@ -1624,7 +1936,7 @@
         <i data-lucide="printer"></i> طباعة
       </button>
 
-      <button id="exportInvoiceImageBtn" class="bg-blue-700 text-white px-4 py-3 rounded-xl shadow flex items-center gap-2">
+      <button id="exportInvoiceImageBtn" class="bg-emerald-700 text-white px-4 py-3 rounded-xl shadow flex items-center gap-2">
         <i data-lucide="image"></i> صورة
       </button>
 
@@ -1644,7 +1956,6 @@
         <div class="invoice-brand">
           <div class="invoice-brand-right">
             <img id="invPageLogo" src="" alt="logo" class="hidden">
-
             <div class="text-right">
               <div id="invPageStoreName" class="invoice-brand-name">اسم المحل</div>
             </div>
@@ -1678,7 +1989,7 @@
             </div>
 
             <div class="invoice-customer-row">
-              <div class="invoice-customer-label">حساب التحويل</div>
+              <div class="invoice-customer-label">الجهة</div>
               <div id="invPageTransferAccount" class="invoice-customer-value">اختياري</div>
             </div>
 
@@ -1713,7 +2024,6 @@
                 <th style="width:110px">الإجمالي</th>
               </tr>
             </thead>
-
             <tbody id="invPageItems"></tbody>
           </table>
         </div>
@@ -1746,50 +2056,53 @@
     </div>
   </div>
 </div>
-
 <!-- BARCODE MODAL -->
 <div id="barcodeModal" class="modal-wrap hidden">
-  <div class="modal-card max-w-md p-8 text-center">
-    <h3 id="barcodeTitle" class="text-xl font-bold mb-6">باركود المنتج</h3>
+  <div class="modal-card max-w-md p-6 md:p-8">
+    <div class="flex items-center justify-between gap-3 mb-6">
+      <h3 id="barcodeTitle" class="text-xl font-black">باركود المنتج</h3>
+      <button onclick="toggleModal('barcodeModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
 
-    <div class="bg-white rounded-2xl p-4 border">
+    <div class="bg-white rounded-2xl p-4 border text-center">
       <svg id="productBarcodeSvg"></svg>
     </div>
 
-    <div id="barcodeText" class="mt-4 font-mono text-sm text-blue-700 break-all"></div>
-
-    <div class="mt-6">
-      <button onclick="toggleModal('barcodeModal', false)" class="w-full bg-gray-100 p-3 rounded-xl font-bold text-gray-700">
-        إغلاق
-      </button>
-    </div>
+    <div id="barcodeText" class="mt-4 font-mono text-sm text-emerald-700 break-all text-center"></div>
   </div>
 </div>
 
 <!-- PRODUCT MODAL -->
-<div id="productModal" class="modal-wrap hidden overflow-y-auto">
-  <div class="modal-card max-w-2xl p-8 my-6">
-    <h3 id="modalTitle" class="text-xl font-bold mb-6">إضافة منتج جديد</h3>
+<div id="productModal" class="modal-wrap hidden">
+  <div class="modal-card max-w-2xl p-5 md:p-8">
+    <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
+      <h3 id="modalTitle" class="text-xl font-black">إضافة منتج جديد</h3>
+      <button onclick="toggleModal('productModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
 
     <div class="space-y-4">
       <input type="hidden" id="editProductId">
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="md:col-span-2">
-          <label class="block text-sm mb-1">اسم المورد أو التاجر</label>
-          <input type="text" id="prodSupplier" class="input-bordered" placeholder="مثلاً: شركة الهدى">
+          <label class="block text-sm mb-1 font-bold">اسم المورد / التاجر</label>
+          <input type="text" id="prodSupplier" class="input-bordered" placeholder="اختياري">
         </div>
 
         <div class="md:col-span-2">
-          <label class="block text-sm mb-1">اسم المنتج / الصنف</label>
-          <input type="text" id="prodName" class="input-bordered" placeholder="اسم المنتج">
+          <label class="block text-sm mb-1 font-bold">اسم المنتج</label>
+          <input type="text" id="prodName" class="input-bordered">
         </div>
 
         <div>
-          <label class="block text-sm mb-1">كود المنتج</label>
+          <label class="block text-sm mb-1 font-bold">كود المنتج</label>
           <div class="flex gap-2">
-            <input type="text" id="prodCode" class="input-bordered" placeholder="كود أو باركود المنتج">
-            <button type="button" onclick="openScanner('product-code')" class="px-4 rounded-xl bg-blue-50 text-blue-700 border border-blue-100" title="مسح كود المنتج">
+            <input type="text" id="prodCode" class="input-bordered">
+            <button type="button" onclick="openScanner('product-code')" class="px-4 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100" title="مسح كود المنتج">
               <i data-lucide="scan-line"></i>
             </button>
           </div>
@@ -1797,99 +2110,95 @@
         </div>
 
         <div>
-          <label class="block text-sm mb-1">الكمية</label>
-          <input type="number" id="prodStock" class="input-bordered" placeholder="0">
+          <label class="block text-sm mb-1 font-bold">المخزون الكلي</label>
+          <input type="number" id="prodStock" class="input-bordered">
         </div>
 
         <div>
-          <label class="block text-sm mb-1">سعر الجملة</label>
-          <input type="number" step="0.01" id="prodCost" class="input-bordered" placeholder="0.00">
+          <label class="block text-sm mb-1 font-bold">سعر الجملة</label>
+          <input type="number" step="0.01" id="prodCost" class="input-bordered">
         </div>
 
         <div>
-          <label class="block text-sm mb-1">سعر البيع</label>
-          <input type="number" step="0.01" id="prodPrice" class="input-bordered" placeholder="0.00">
+          <label class="block text-sm mb-1 font-bold">سعر البيع</label>
+          <input type="number" step="0.01" id="prodPrice" class="input-bordered">
         </div>
       </div>
 
       <div class="border-t pt-4">
         <div class="flex items-center justify-between mb-3">
-          <h4 class="font-bold">الأصناف / المقاسات</h4>
-          <button onclick="addVariantRow()" type="button" class="bg-blue-50 text-blue-700 px-4 py-2 rounded-xl font-bold">
-            أضف صنف
-          </button>
+          <h4 class="font-black">الأصناف / المقاسات</h4>
+          <button onclick="addVariantRow()" type="button" class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl font-black">أضف صنف</button>
         </div>
 
         <div id="variantsBox" class="space-y-3"></div>
 
         <p class="text-xs text-gray-500 mt-2">
-          إذا كان المنتج بدون أصناف، اترك هذا القسم فارغًا.
+          إذا كان مجموع كميات الأصناف أكبر من المخزون الكلي، سيتم تعديل المخزون تلقائيًا ليطابق مجموع الأصناف.
         </p>
       </div>
 
-      <div class="flex gap-3 pt-4">
-        <button id="saveProductBtn" class="flex-grow btn-primary p-4 rounded-xl font-bold shadow-lg">
-          حفظ المنتج
-        </button>
-        <button onclick="toggleModal('productModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-500">
-          إلغاء
-        </button>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4">
+        <button id="saveProductBtn" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ المنتج</button>
+        <button onclick="toggleModal('productModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- PURCHASE MODAL -->
-<div id="purchaseModal" class="modal-wrap hidden overflow-y-auto">
-  <div class="modal-card max-w-2xl p-8 my-6">
-    <h3 id="purchaseModalTitle" class="text-xl font-bold mb-6">إضافة فاتورة شراء</h3>
+<div id="purchaseModal" class="modal-wrap hidden">
+  <div class="modal-card max-w-2xl p-5 md:p-8">
+    <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
+      <h3 id="purchaseModalTitle" class="text-xl font-black">إضافة فاتورة شراء</h3>
+      <button onclick="toggleModal('purchaseModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
     <input type="hidden" id="editPurchaseId">
 
     <div class="space-y-4">
       <div>
-        <label class="block text-sm mb-1">اسم التاجر / المورد</label>
-        <input type="text" id="purchaseSupplier" class="input-bordered" placeholder="اسم المورد">
+        <label class="block text-sm mb-1 font-bold">اسم المورد / التاجر</label>
+        <input type="text" id="purchaseSupplier" class="input-bordered">
       </div>
 
       <div>
-        <label class="block text-sm mb-1">الصنف</label>
-        <input type="text" id="purchaseItemName" class="input-bordered" placeholder="اسم الصنف">
+        <label class="block text-sm mb-1 font-bold">الصنف</label>
+        <input type="text" id="purchaseItemName" class="input-bordered">
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label class="block text-sm mb-1">الكمية</label>
-          <input type="number" step="1" id="purchaseQty" class="input-bordered" placeholder="0">
+          <label class="block text-sm mb-1 font-bold">الكمية</label>
+          <input type="number" id="purchaseQty" class="input-bordered">
         </div>
 
         <div>
-          <label class="block text-sm mb-1">سعر الجملة</label>
-          <input type="number" step="0.01" id="purchaseWholesalePrice" class="input-bordered" placeholder="0.00">
+          <label class="block text-sm mb-1 font-bold">السعر بالجملة</label>
+          <input type="number" step="0.01" id="purchaseWholesalePrice" class="input-bordered">
         </div>
 
         <div>
-          <label class="block text-sm mb-1">سعر البيع</label>
-          <input type="number" step="0.01" id="purchaseSalePrice" class="input-bordered" placeholder="0.00">
+          <label class="block text-sm mb-1 font-bold">سعر البيع</label>
+          <input type="number" step="0.01" id="purchaseSalePrice" class="input-bordered">
         </div>
       </div>
 
-      <label class="flex items-center gap-2 font-bold">
-        <input type="checkbox" id="purchaseAddToStock" checked>
-        إدخال هذه الفاتورة إلى المخزون
+      <label class="flex items-center gap-3 bg-emerald-50 border border-emerald-100 p-4 rounded-2xl cursor-pointer">
+        <input type="checkbox" id="purchaseAddToStock" checked class="w-5 h-5">
+        <span class="font-black text-emerald-800">إضافة هذه الفاتورة إلى صفحة المخزون</span>
       </label>
 
       <div>
-        <label class="block text-sm mb-1">ملاحظات</label>
-        <textarea id="purchaseNotes" rows="4" class="input-bordered" placeholder="ملاحظات اختيارية"></textarea>
+        <label class="block text-sm mb-1 font-bold">ملاحظات</label>
+        <textarea id="purchaseNotes" rows="4" class="input-bordered"></textarea>
       </div>
 
-      <div class="flex gap-3 pt-2">
-        <button id="savePurchaseBtn" class="flex-grow btn-primary p-4 rounded-xl font-bold shadow-lg">
-          حفظ
-        </button>
-        <button onclick="toggleModal('purchaseModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-500">
-          إلغاء
-        </button>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+        <button id="savePurchaseBtn" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ</button>
+        <button onclick="toggleModal('purchaseModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
       </div>
     </div>
   </div>
@@ -1897,35 +2206,50 @@
 
 <!-- MERCHANT PAYMENT MODAL -->
 <div id="merchantPaymentModal" class="modal-wrap hidden">
-  <div class="modal-card max-w-lg p-8">
-    <h3 id="merchantPaymentModalTitle" class="text-xl font-bold mb-6">إضافة دفعة لتاجر</h3>
+  <div class="modal-card max-w-xl p-5 md:p-8">
+    <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
+      <h3 id="merchantPaymentModalTitle" class="text-xl font-black">إضافة دفعة لتاجر</h3>
+      <button onclick="toggleModal('merchantPaymentModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
     <input type="hidden" id="editMerchantPaymentId">
 
     <div class="space-y-4">
-      <input type="text" id="merchantPaymentName" class="input-bordered" placeholder="اسم التاجر / المورد">
-      <input type="number" step="0.01" id="merchantPaymentAmount" class="input-bordered" placeholder="المبلغ">
+      <div>
+        <label class="block text-sm mb-1 font-bold">اسم التاجر</label>
+        <input type="text" id="merchantPaymentName" class="input-bordered">
+      </div>
 
-      <select id="merchantPaymentMethod" class="input-bordered">
-        <option value="cash">كاش</option>
-        <option value="bank">بنك</option>
-        <option value="wallet">محفظة</option>
-        <option value="jawwalpay">جوال باي</option>
-        <option value="app">تطبيق</option>
-      </select>
+      <div>
+        <label class="block text-sm mb-1 font-bold">المبلغ</label>
+        <input type="number" step="0.01" id="merchantPaymentAmount" class="input-bordered">
+      </div>
 
-      <select id="merchantPaymentAccount" class="input-bordered">
-        <option value="">حساب التحويل اختياري</option>
-      </select>
+      <div>
+        <label class="block text-sm mb-1 font-bold">طريقة الدفع</label>
+        <select id="merchantPaymentMethod" class="input-bordered">
+          <option value="cash">كاش</option>
+          <option value="direct">بنكي مباشر</option>
+        </select>
+      </div>
 
-      <textarea id="merchantPaymentNotes" rows="4" class="input-bordered" placeholder="ملاحظات"></textarea>
+      <div>
+        <label class="block text-sm mb-1 font-bold">الجهة اختيارية</label>
+        <select id="merchantPaymentAccount" class="input-bordered">
+          <option value="">اختياري</option>
+        </select>
+      </div>
 
-      <div class="flex gap-3">
-        <button id="saveMerchantPaymentBtn" class="flex-grow btn-primary p-4">
-          حفظ
-        </button>
-        <button onclick="toggleModal('merchantPaymentModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-500">
-          إلغاء
-        </button>
+      <div>
+        <label class="block text-sm mb-1 font-bold">ملاحظات</label>
+        <textarea id="merchantPaymentNotes" rows="4" class="input-bordered"></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+        <button id="saveMerchantPaymentBtn" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ</button>
+        <button onclick="toggleModal('merchantPaymentModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
       </div>
     </div>
   </div>
@@ -1933,61 +2257,82 @@
 
 <!-- EXPENSE MODAL -->
 <div id="expenseModal" class="modal-wrap hidden">
-  <div class="modal-card max-w-lg p-8">
-    <h3 id="expenseModalTitle" class="text-xl font-bold mb-6">إضافة مصروف</h3>
+  <div class="modal-card max-w-xl p-5 md:p-8">
+    <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
+      <h3 id="expenseModalTitle" class="text-xl font-black">إضافة مصروف</h3>
+      <button onclick="toggleModal('expenseModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
     <input type="hidden" id="editExpenseId">
 
     <div class="space-y-4">
-      <input type="text" id="expenseName" class="input-bordered" placeholder="اسم المصروف">
-      <input type="number" step="0.01" id="expenseAmount" class="input-bordered" placeholder="المبلغ">
+      <div>
+        <label class="block text-sm mb-1 font-bold">اسم المصروف</label>
+        <input type="text" id="expenseName" class="input-bordered">
+      </div>
 
-      <select id="expensePaymentMethod" class="input-bordered">
-        <option value="cash">كاش</option>
-        <option value="bank">بنك</option>
-        <option value="wallet">محفظة</option>
-        <option value="jawwalpay">جوال باي</option>
-        <option value="app">تطبيق</option>
-      </select>
+      <div>
+        <label class="block text-sm mb-1 font-bold">المبلغ</label>
+        <input type="number" step="0.01" id="expenseAmount" class="input-bordered">
+      </div>
 
-      <select id="expenseAccount" class="input-bordered">
-        <option value="">حساب التحويل اختياري</option>
-      </select>
+      <div>
+        <label class="block text-sm mb-1 font-bold">طريقة الدفع</label>
+        <select id="expensePaymentMethod" class="input-bordered">
+          <option value="cash">كاش</option>
+          <option value="direct">بنكي مباشر</option>
+        </select>
+      </div>
 
-      <textarea id="expenseNotes" rows="4" class="input-bordered" placeholder="ملاحظات"></textarea>
+      <div>
+        <label class="block text-sm mb-1 font-bold">الجهة اختيارية</label>
+        <select id="expenseAccount" class="input-bordered">
+          <option value="">اختياري</option>
+        </select>
+      </div>
 
-      <div class="flex gap-3">
-        <button id="saveExpenseBtn" class="flex-grow btn-primary p-4">
-          حفظ
-        </button>
-        <button onclick="toggleModal('expenseModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-500">
-          إلغاء
-        </button>
+      <div>
+        <label class="block text-sm mb-1 font-bold">ملاحظات</label>
+        <textarea id="expenseNotes" rows="4" class="input-bordered"></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+        <button id="saveExpenseBtn" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ</button>
+        <button onclick="toggleModal('expenseModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- MANUAL INVOICE MODAL -->
-<div id="manualInvoiceModal" class="modal-wrap hidden overflow-y-auto">
-  <div class="modal-card max-w-2xl p-8 my-6">
-    <h3 class="text-xl font-bold mb-6">إضافة فاتورة مباشرة</h3>
+<div id="manualInvoiceModal" class="modal-wrap hidden">
+  <div class="modal-card max-w-2xl p-5 md:p-8">
+    <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
+      <h3 class="text-xl font-black">إضافة فاتورة مباشرة</h3>
+      <button onclick="toggleModal('manualInvoiceModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
     <input type="hidden" id="editManualInvoiceId">
 
     <div class="space-y-4">
       <div class="relative">
-        <label class="block text-sm mb-1">الاسم</label>
+        <label class="block text-sm mb-1 font-bold">الاسم</label>
         <input type="text" id="manualCustomerName" class="input-bordered">
         <div id="manualCustomerSuggestions" class="simple-suggestions hidden"></div>
       </div>
 
       <div>
-        <label class="block text-sm mb-1">رقم الزبون</label>
+        <label class="block text-sm mb-1 font-bold">رقم الزبون</label>
         <input type="tel" id="manualCustomerPhone" class="input-bordered">
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm mb-1">الحالة</label>
+          <label class="block text-sm mb-1 font-bold">الحالة</label>
           <select id="manualInvoiceStatus" class="input-bordered">
             <option value="paid">مكتمل</option>
             <option value="unpaid">غير مكتمل</option>
@@ -1995,35 +2340,34 @@
         </div>
 
         <div>
-          <label class="block text-sm mb-1">المبلغ</label>
+          <label class="block text-sm mb-1 font-bold">المبلغ</label>
           <input type="number" id="manualInvoiceAmount" step="0.01" class="input-bordered">
         </div>
       </div>
 
-      <select id="manualPaymentMethod" class="input-bordered">
-        <option value="cash">كاش</option>
-        <option value="bank">بنك</option>
-        <option value="wallet">محفظة</option>
-        <option value="jawwalpay">جوال باي</option>
-        <option value="app">تطبيق</option>
-      </select>
-
-      <select id="transferAccountSelectManual" class="input-bordered">
-        <option value="">حساب التحويل اختياري</option>
-      </select>
+      <div>
+        <label class="block text-sm mb-1 font-bold">طريقة الدفع</label>
+        <select id="manualPaymentMethod" class="input-bordered">
+          <option value="cash">كاش</option>
+          <option value="direct">بنكي مباشر</option>
+        </select>
+      </div>
 
       <div>
-        <label class="block text-sm mb-1">ملاحظات</label>
+        <label class="block text-sm mb-1 font-bold">الجهة اختيارية</label>
+        <select id="transferAccountSelectManual" class="input-bordered">
+          <option value="">اختياري</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm mb-1 font-bold">ملاحظات</label>
         <textarea id="manualInvoiceNotes" rows="4" class="input-bordered"></textarea>
       </div>
 
-      <div class="flex gap-3 pt-2">
-        <button onclick="saveManualInvoice()" class="flex-grow btn-primary p-4 rounded-xl font-bold shadow-lg">
-          حفظ الفاتورة
-        </button>
-        <button onclick="toggleModal('manualInvoiceModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-500">
-          إلغاء
-        </button>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+        <button onclick="saveManualInvoice()" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ الفاتورة</button>
+        <button onclick="toggleModal('manualInvoiceModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
       </div>
     </div>
   </div>
@@ -2031,17 +2375,29 @@
 
 <!-- STORE MODAL -->
 <div id="storeModal" class="modal-wrap hidden">
-  <div class="modal-card max-w-md p-8">
-    <h3 class="text-xl font-bold mb-6">إنشاء فرع جديد</h3>
+  <div class="modal-card max-w-md p-5 md:p-8">
+    <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
+      <h3 class="text-xl font-black">إنشاء فرع جديد</h3>
+      <button onclick="toggleModal('storeModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
     <input type="text" id="newStoreName" class="input-bordered mb-4" placeholder="اسم المحل أو الفرع">
-    <button id="createStoreBtn" class="w-full btn-primary p-3 rounded-xl font-bold">إنشاء</button>
+    <button id="createStoreBtn" class="w-full btn-primary p-3 rounded-xl font-black">إنشاء</button>
   </div>
 </div>
 
 <!-- STATUS MODAL -->
 <div id="statusModal" class="modal-wrap hidden">
-  <div class="modal-card max-w-md p-8">
-    <h3 class="text-xl font-bold mb-6">تعديل حالة الفاتورة</h3>
+  <div class="modal-card max-w-md p-5 md:p-8">
+    <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
+      <h3 class="text-xl font-black">تعديل حالة الفاتورة</h3>
+      <button onclick="toggleModal('statusModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
     <input type="hidden" id="statusInvoiceId">
 
     <select id="statusSelect" class="input-bordered mb-4">
@@ -2051,35 +2407,35 @@
 
     <div class="grid grid-cols-2 gap-3">
       <button id="saveStatusBtn" class="btn-primary py-3">حفظ</button>
-      <button onclick="toggleModal('statusModal', false)" class="bg-gray-100 py-3 rounded-xl font-bold text-gray-700">إلغاء</button>
+      <button onclick="toggleModal('statusModal', false)" class="bg-gray-100 py-3 rounded-xl font-black text-gray-700">إلغاء</button>
     </div>
   </div>
 </div>
 
 <!-- NOTE MODAL -->
 <div id="noteModal" class="modal-wrap hidden">
-  <div class="modal-card max-w-lg p-8">
-    <h3 class="text-xl font-bold mb-4">ملاحظات الفاتورة</h3>
-    <div id="noteModalContent" class="bg-gray-50 border rounded-2xl p-4 text-sm leading-8 text-slate-700 min-h-[120px]"></div>
-
-    <div class="mt-5">
-      <button onclick="toggleModal('noteModal', false)" class="w-full bg-gray-100 py-3 rounded-xl font-bold text-gray-700">
-        إغلاق
+  <div class="modal-card max-w-lg p-5 md:p-8">
+    <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
+      <h3 class="text-xl font-black">ملاحظات الفاتورة</h3>
+      <button onclick="toggleModal('noteModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+        <i data-lucide="x"></i>
       </button>
     </div>
+
+    <div id="noteModalContent" class="bg-gray-50 border rounded-2xl p-4 text-sm leading-8 text-slate-700 min-h-[120px]"></div>
   </div>
 </div>
 
 <!-- CUSTOMER HISTORY MODAL -->
-<div id="customerHistoryModal" class="modal-wrap hidden overflow-y-auto">
-  <div class="modal-card max-w-5xl p-8 my-6">
-    <div class="flex items-start justify-between gap-3 mb-6">
+<div id="customerHistoryModal" class="modal-wrap hidden">
+  <div class="modal-card max-w-5xl p-5 md:p-8">
+    <div class="flex items-start justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
       <div>
-        <h3 id="customerHistoryTitle" class="text-2xl font-bold">سجل العميل</h3>
+        <h3 id="customerHistoryTitle" class="text-2xl font-black">سجل العميل</h3>
         <p class="text-sm text-gray-500 mt-1">يمكنك إرسال رسالة أو إنشاء فاتورة مجمعة لهذا العميل</p>
       </div>
 
-      <button onclick="toggleModal('customerHistoryModal', false)" class="text-gray-400 hover:text-gray-700">
+      <button onclick="toggleModal('customerHistoryModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
         <i data-lucide="x"></i>
       </button>
     </div>
@@ -2087,21 +2443,21 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
       <div class="card p-4 bg-green-50">
         <div class="text-sm text-gray-500">المدفوع</div>
-        <div id="custPaidTotal" class="font-bold text-2xl text-green-700 mt-2">0.00 ₪</div>
+        <div id="custPaidTotal" class="font-black text-2xl text-green-700 mt-2">0.00 ₪</div>
       </div>
 
       <div class="card p-4 bg-red-50">
         <div class="text-sm text-gray-500">غير المدفوع</div>
-        <div id="custUnpaidTotal" class="font-bold text-2xl text-red-700 mt-2">0.00 ₪</div>
+        <div id="custUnpaidTotal" class="font-black text-2xl text-red-700 mt-2">0.00 ₪</div>
       </div>
 
-      <div class="card p-4 bg-blue-50">
+      <div class="card p-4 bg-emerald-50">
         <div class="text-sm text-gray-500">الإجمالي</div>
-        <div id="custGrandTotal" class="font-bold text-2xl text-blue-700 mt-2">0.00 ₪</div>
+        <div id="custGrandTotal" class="font-black text-2xl text-emerald-700 mt-2">0.00 ₪</div>
       </div>
 
       <div class="card p-4">
-        <label class="block text-sm font-bold mb-2">الفترة</label>
+        <label class="block text-sm font-black mb-2">الفترة</label>
         <select id="customerHistoryRange" class="input-bordered">
           <option value="all">كل السجل</option>
           <option value="day">اليوم</option>
@@ -2114,7 +2470,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
       <div class="soft-card p-4 space-y-3">
-        <div class="font-bold">إرسال رسالة للعميل</div>
+        <div class="font-black">إرسال رسالة للعميل</div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <select id="messageTargetApp" class="input-bordered">
@@ -2131,13 +2487,11 @@
           <input type="text" id="messageCustomPrefix" class="input-bordered" placeholder="مقدمة مخصصة">
         </div>
 
-        <button id="customerSendDebtMsgBtn" class="btn-success py-3 w-full">
-          إرسال رسالة بالدفعات غير المكتملة
-        </button>
+        <button id="customerSendDebtMsgBtn" class="btn-success py-3 w-full">إرسال رسالة بالدفعات غير المكتملة</button>
       </div>
 
       <div class="soft-card p-4 space-y-3">
-        <div class="font-bold">إنشاء فاتورة مجمعة</div>
+        <div class="font-black">إنشاء فاتورة مجمعة</div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <select id="customerInvoiceAggregateStatus" class="input-bordered">
@@ -2155,9 +2509,7 @@
           </select>
         </div>
 
-        <button id="customerCreateDebtInvoiceBtn" class="btn-primary py-3 w-full">
-          إنشاء فاتورة مجمعة
-        </button>
+        <button id="customerCreateDebtInvoiceBtn" class="btn-primary py-3 w-full">إنشاء فاتورة مجمعة</button>
       </div>
     </div>
 
@@ -2169,11 +2521,10 @@
             <th class="p-4">التاريخ</th>
             <th class="p-4">الحالة</th>
             <th class="p-4">المبلغ</th>
-            <th class="p-4">حساب التحويل</th>
+            <th class="p-4">الجهة</th>
             <th class="p-4">ملاحظات</th>
           </tr>
         </thead>
-
         <tbody id="customerHistoryTable"></tbody>
       </table>
     </div>
@@ -2181,13 +2532,13 @@
 </div>
 
 <!-- SCANNER -->
-<div id="scannerModal" class="fixed inset-0 scanner-overlay z-[500] flex flex-col items-center justify-center p-4 hidden">
-  <div class="w-full max-w-md bg-white scanner-frame" id="scannerFrameWrap">
+<div id="scannerModal" class="fixed inset-0 scanner-overlay z-[500] flex flex-col items-center justify-start md:justify-center p-3 md:p-4 hidden overflow-y-auto">
+  <div class="w-full max-w-md bg-white scanner-frame mt-3 md:mt-0" id="scannerFrameWrap">
     <div class="scanner-success-frame hidden" id="scannerFrameBox"></div>
 
     <div class="p-4 border-b flex items-center justify-between">
-      <h3 class="font-bold" id="scannerTitle">مسح الباركود</h3>
-      <button onclick="closeScanner()" class="text-blue-700">
+      <h3 class="font-black" id="scannerTitle">مسح الباركود</h3>
+      <button onclick="closeScanner()" class="text-emerald-700">
         <i data-lucide="x-circle"></i>
       </button>
     </div>
@@ -2200,31 +2551,40 @@
 
     <div class="p-6 bg-white text-center space-y-3">
       <p class="text-gray-500">ضع الباركود داخل الإطار</p>
-      <button onclick="toggleScannerTorch()" id="scannerTorchBtn" class="w-full bg-amber-50 text-amber-700 p-3 rounded-2xl font-bold hidden">
-        تشغيل / إيقاف الفلاش
-      </button>
-
-      <button onclick="closeScanner()" class="w-full bg-blue-700 text-white p-3 rounded-2xl font-bold">
-        إغلاق الكاميرا
-      </button>
+      <button onclick="toggleScannerTorch()" id="scannerTorchBtn" class="w-full bg-amber-50 text-amber-700 p-3 rounded-2xl font-black hidden">تشغيل / إيقاف الفلاش</button>
+      <button onclick="closeScanner()" class="w-full bg-emerald-700 text-white p-3 rounded-2xl font-black">إغلاق الكاميرا</button>
     </div>
   </div>
 </div>
 
-<script src="./app.js" type="module"></script>
-
 <script>
+  function openSidebar(){
+    document.getElementById("sideNav")?.classList.add("open");
+    document.getElementById("sidebarBackdrop")?.classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeSidebar(){
+    document.getElementById("sideNav")?.classList.remove("open");
+    document.getElementById("sidebarBackdrop")?.classList.remove("show");
+    document.body.style.overflow = "";
+  }
+
+  window.openSidebar = openSidebar;
+  window.closeSidebar = closeSidebar;
+
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", async () => {
       try {
         await navigator.serviceWorker.register("./sw.js");
-        console.log("Service Worker registered");
       } catch (err) {
         console.error("Service Worker error:", err);
       }
     });
   }
 </script>
+
+<script src="./app.js" type="module"></script>
 
 </body>
 </html>
