@@ -3,18 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>نظام كاشير البقالة</title>
 
-  <title>نظام إدارة البقالة والكاشير</title>
-
-  <meta name="theme-color" content="#1d4ed8" />
+  <meta name="theme-color" content="#2563eb" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="نظام الكاشير" />
+  <meta name="apple-mobile-web-app-title" content="كاشير البقالة" />
 
   <link rel="manifest" href="./manifest.webmanifest" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -26,29 +21,23 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap');
 
-    :root {
-      --primary:#1d4ed8;
-      --primary-dark:#1e40af;
-      --bg:#f3f4f8;
+    :root{
+      --primary:#2563eb;
+      --primary-dark:#1d4ed8;
+      --bg:#f4f7fb;
       --card:#ffffff;
-      --text:#111827;
-      --muted:#6b7280;
-      --danger:#dc2626;
+      --text:#0f172a;
+      --muted:#64748b;
       --success:#16a34a;
-      --warning:#d97706;
-      --shadow:0 8px 28px rgba(0,0,0,.06);
-      --radius:20px;
+      --danger:#dc2626;
+      --warning:#f97316;
+      --shadow:0 12px 35px rgba(15,23,42,.08);
+      --radius:22px;
     }
 
-    * {
-      box-sizing:border-box;
-    }
+    *{box-sizing:border-box}
 
-    html {
-      scroll-behavior:smooth;
-    }
-
-    body {
+    body{
       margin:0;
       font-family:'Cairo',sans-serif;
       background:var(--bg);
@@ -56,45 +45,41 @@
       -webkit-tap-highlight-color:transparent;
     }
 
-    .hidden {
-      display:none !important;
-    }
+    .hidden{display:none!important}
 
-    .card {
+    .card{
       background:#fff;
-      border-radius:20px;
+      border-radius:var(--radius);
       box-shadow:var(--shadow);
     }
 
-    .soft-card {
-      background:linear-gradient(180deg,#ffffff 0%,#fbfcff 100%);
-      border:1px solid #eef2ff;
-      border-radius:18px;
-      box-shadow:0 10px 26px rgba(30,64,175,.05);
+    .soft-card{
+      background:linear-gradient(180deg,#fff,#f8fbff);
+      border:1px solid #e8eefc;
+      border-radius:20px;
+      box-shadow:0 10px 28px rgba(37,99,235,.06);
     }
 
-    .btn-primary {
+    .btn-primary{
       background:var(--primary);
       color:#fff;
       border:none;
       border-radius:16px;
-      font-weight:800;
+      font-weight:900;
       transition:.2s;
     }
 
-    .btn-primary:hover {
-      background:var(--primary-dark);
-    }
+    .btn-primary:hover{background:var(--primary-dark)}
 
-    .btn-soft {
+    .btn-soft{
       background:#eff6ff;
-      color:var(--primary);
+      color:#1d4ed8;
       border:1px solid #dbeafe;
       border-radius:16px;
       font-weight:800;
     }
 
-    .btn-danger {
+    .btn-danger{
       background:#fee2e2;
       color:#b91c1c;
       border:1px solid #fecaca;
@@ -102,7 +87,7 @@
       font-weight:800;
     }
 
-    .btn-success {
+    .btn-success{
       background:#ecfdf5;
       color:#166534;
       border:1px solid #bbf7d0;
@@ -110,7 +95,7 @@
       font-weight:800;
     }
 
-    .btn-warning {
+    .btn-warning{
       background:#fff7ed;
       color:#c2410c;
       border:1px solid #fed7aa;
@@ -119,83 +104,59 @@
     }
 
     .input,
-    .input-bordered {
+    .input-bordered{
       width:100%;
       padding:13px 15px;
-      border-radius:14px;
+      border-radius:15px;
       outline:none;
       font-size:14px;
       background:#fff;
     }
 
-    .input {
+    .input{
       border:none;
-      background:#f9fafb;
+      background:#f8fafc;
     }
 
-    .input-bordered {
-      border:1px solid #e5e7eb;
+    .input-bordered{
+      border:1px solid #e2e8f0;
     }
 
     .input:focus,
-    .input-bordered:focus {
-      box-shadow:0 0 0 3px rgba(29,78,216,.12);
+    .input-bordered:focus{
       border-color:#bfdbfe;
+      box-shadow:0 0 0 3px rgba(37,99,235,.13);
     }
 
-    textarea.input,
-    textarea.input-bordered {
-      resize:vertical;
-    }
+    textarea.input-bordered{resize:vertical}
 
-    .loading-overlay {
+    .loading-overlay{
       position:fixed;
       inset:0;
+      z-index:9999;
       background:rgba(255,255,255,.96);
       display:flex;
+      align-items:center;
+      justify-content:center;
       flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      z-index:9999;
+      gap:16px;
     }
 
-    .progress-circle {
-      width:96px;
-      height:96px;
+    .spinner{
+      width:72px;
+      height:72px;
       border-radius:50%;
-      background:
-        radial-gradient(closest-side, white 79%, transparent 80% 100%),
-        conic-gradient(var(--primary) calc(var(--progress) * 1%), #e5e7eb 0);
-      display:flex;
-      justify-content:center;
-      align-items:center;
-    }
-
-    .progress-circle::before {
-      content:attr(data-progress) '%';
-      font-weight:900;
-      color:var(--primary);
-    }
-
-    .mini-loader {
-      width:30px;
-      height:30px;
-      border:3px solid #dbeafe;
+      border:7px solid #dbeafe;
       border-top-color:var(--primary);
-      border-radius:50%;
       animation:spin .8s linear infinite;
     }
 
-    @keyframes spin {
-      to {
-        transform:rotate(360deg);
-      }
-    }
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-    .toast-wrap {
+    .toast-wrap{
       position:fixed;
-      left:16px;
       right:16px;
+      left:16px;
       bottom:18px;
       z-index:99999;
       display:flex;
@@ -203,132 +164,122 @@
       pointer-events:none;
     }
 
-    .toast {
-      min-width:220px;
-      max-width:90vw;
-      background:rgba(15,23,42,.96);
+    .toast{
+      max-width:92vw;
+      min-width:230px;
+      background:#0f172a;
       color:#fff;
-      border-radius:16px;
-      padding:14px 16px;
-      box-shadow:0 12px 30px rgba(0,0,0,.24);
-      transform:translateY(20px);
-      opacity:0;
-      transition:.25s ease;
-      text-align:center;
-      font-weight:800;
+      border-radius:18px;
+      padding:14px 18px;
       font-size:14px;
+      font-weight:800;
+      text-align:center;
+      opacity:0;
+      transform:translateY(18px);
+      transition:.25s;
+      box-shadow:0 16px 40px rgba(15,23,42,.28);
     }
 
-    .toast.show {
-      transform:translateY(0);
+    .toast.show{
       opacity:1;
+      transform:translateY(0);
     }
 
-    .modal-wrap {
+    .modal-wrap{
       position:fixed;
       inset:0;
+      z-index:200;
       background:rgba(15,23,42,.58);
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:16px;
-      z-index:150;
+      padding:14px;
     }
 
-    .modal-card {
-      background:#fff;
-      border-radius:24px;
+    .modal-card{
       width:100%;
-      box-shadow:0 20px 50px rgba(0,0,0,.18);
+      background:#fff;
+      border-radius:26px;
+      box-shadow:0 24px 70px rgba(15,23,42,.25);
       max-height:92vh;
       overflow-y:auto;
     }
 
-    .modal-card::-webkit-scrollbar {
-      width:6px;
-    }
+    .modal-card::-webkit-scrollbar{width:7px}
+    .modal-card::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:99px}
 
-    .modal-card::-webkit-scrollbar-thumb {
-      background:#cbd5e1;
-      border-radius:99px;
-    }
-
-    .nav-btn {
-      border-radius:16px;
-      transition:.2s;
-      color:#334155;
-      font-weight:800;
-    }
-
-    .nav-btn.active {
-      background:var(--primary);
-      color:#fff;
-      box-shadow:0 8px 20px rgba(29,78,216,.18);
-    }
-
-    .side-backdrop {
+    .side-backdrop{
       position:fixed;
       inset:0;
-      background:rgba(15,23,42,.48);
+      background:rgba(15,23,42,.5);
       z-index:80;
     }
 
-    .status-pill {
-      display:inline-flex;
+    .nav-btn{
+      display:flex;
       align-items:center;
-      gap:6px;
-      padding:6px 12px;
-      border-radius:999px;
-      font-size:12px;
+      gap:12px;
+      padding:12px 14px;
+      border-radius:16px;
       font-weight:900;
-      border:none;
-      cursor:pointer;
+      color:#334155;
+      transition:.2s;
+      width:100%;
+      text-align:right;
     }
 
-    .status-paid {
-      background:#ecfdf5;
-      color:#166534;
+    .nav-btn.active{
+      background:var(--primary);
+      color:#fff;
+      box-shadow:0 10px 24px rgba(37,99,235,.25);
     }
 
-    .status-unpaid {
-      background:#fef2f2;
-      color:#b91c1c;
+    .mobile-header{
+      display:none;
     }
 
-    .status-pending {
-      background:#fff7ed;
-      color:#c2410c;
-    }
-
-    .status-late {
-      background:#fef2f2;
-      color:#991b1b;
-    }
-
-    .mobile-table-scroll {
+    .table-scroll{
       overflow-x:auto;
       -webkit-overflow-scrolling:touch;
     }
 
-    .mobile-table-scroll table {
-      min-width:900px;
+    .table-scroll table{
+      min-width:950px;
     }
 
-    .product-grid-card {
-      border:1px solid #e5e7eb;
-      border-radius:20px;
+    .status-pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      border-radius:999px;
+      padding:6px 12px;
+      font-size:12px;
+      font-weight:900;
+      border:none;
+    }
+
+    .status-paid{background:#dcfce7;color:#166534}
+    .status-unpaid{background:#fee2e2;color:#991b1b}
+    .status-pending{background:#ffedd5;color:#9a3412}
+    .status-low{background:#ffedd5;color:#c2410c}
+    .status-empty{background:#fee2e2;color:#b91c1c}
+
+    .product-card{
       background:#fff;
+      border:1px solid #e2e8f0;
+      border-radius:20px;
       overflow:hidden;
       transition:.2s;
       cursor:pointer;
     }
 
-    .product-grid-card:hover {
+    .product-card:hover{
       transform:translateY(-2px);
-      box-shadow:0 12px 30px rgba(0,0,0,.08);
+      box-shadow:0 14px 36px rgba(15,23,42,.1);
     }
 
-    .product-img {
+    .product-img{
       height:120px;
       background:#f8fafc;
       display:flex;
@@ -337,303 +288,197 @@
       overflow:hidden;
     }
 
-    .product-img img {
+    .product-img img{
       width:100%;
       height:100%;
       object-fit:cover;
     }
 
-    .scanner-overlay {
-      background:rgba(0,0,0,.9);
+    .scanner-overlay{
+      background:rgba(0,0,0,.92);
     }
 
-    .scanner-frame {
+    .scanner-frame{
       border-radius:28px;
       overflow:hidden;
-      box-shadow:0 20px 44px rgba(0,0,0,.35);
-      position:relative;
+      box-shadow:0 24px 60px rgba(0,0,0,.45);
     }
 
-    .scanner-success-frame {
-      position:absolute;
-      inset:18px;
-      border:4px solid #22c55e;
-      border-radius:20px;
-      box-shadow:0 0 0 9999px rgba(34,197,94,.06) inset;
-      opacity:0;
-      pointer-events:none;
-      transition:.18s;
-    }
-
-    .scanner-success-frame.show {
-      opacity:1;
-    }
-
-    .customer-suggestions,
-    .simple-suggestions {
+    .suggest-box{
       position:absolute;
       top:100%;
-      left:0;
       right:0;
+      left:0;
       margin-top:8px;
       background:#fff;
-      border:1px solid #e5e7eb;
-      border-radius:16px;
-      box-shadow:0 14px 34px rgba(0,0,0,.10);
-      z-index:120;
-      max-height:260px;
-      overflow-y:auto;
-      padding:8px;
-    }
-
-    .suggest-item {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      padding:12px;
-      border-radius:12px;
-      cursor:pointer;
-    }
-
-    .suggest-item:hover {
-      background:#eff6ff;
-    }
-
-    .invoice-page {
-      background:#f5f6fa;
-      min-height:100vh;
-      padding:10px;
-    }
-
-    .invoice-shell {
-      width:100%;
-      max-width:1120px;
-      margin:0 auto;
-      background:#fff;
-      border:1px solid #e5e7eb;
+      border:1px solid #e2e8f0;
       border-radius:18px;
-      box-shadow:0 8px 28px rgba(0,0,0,.06);
-      overflow:hidden;
+      box-shadow:0 18px 42px rgba(15,23,42,.14);
+      z-index:130;
+      padding:8px;
+      max-height:250px;
+      overflow:auto;
     }
 
-    .invoice-topbar {
-      background:linear-gradient(135deg,#eff6ff 0%,#ffffff 100%);
-      border-bottom:1px solid #e5e7eb;
-      padding:18px;
-    }
-
-    .invoice-title {
-      text-align:center;
-      font-size:28px;
-      font-weight:900;
-      margin:10px 0 0;
-      color:#0f172a;
-    }
-
-    .invoice-inner {
-      padding:18px;
-    }
-
-    .invoice-brand {
+    .suggest-item{
+      padding:12px;
+      border-radius:14px;
+      cursor:pointer;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
+      gap:10px;
     }
 
-    .invoice-brand-right {
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
+    .suggest-item:hover{background:#eff6ff}
 
-    .invoice-brand img {
-      width:58px;
-      height:58px;
-      border-radius:16px;
-      object-fit:cover;
-      border:1px solid #e5e7eb;
-      background:#fff;
-    }
-
-    .invoice-brand-name {
-      font-size:21px;
-      font-weight:900;
-      color:#0f172a;
-    }
-
-    .invoice-table {
-      width:100%;
-      border-collapse:collapse;
-      font-size:12px;
-    }
-
-    .invoice-table th {
-      background:#f8fafc;
-      color:var(--primary);
-      border:1px solid #e5e7eb;
-      padding:10px 8px;
-      font-weight:900;
-    }
-
-    .invoice-table td {
-      padding:10px 8px;
-      border:1px solid #eef2f7;
-      word-break:break-word;
-      text-align:center;
-    }
-
-    .invoice-table td:nth-child(2),
-    .invoice-table td:nth-child(3) {
-      text-align:right;
-    }
-
-    .report-print-page {
+    .report-page{
       width:1120px;
       background:#fff;
       padding:24px;
       font-family:'Cairo',sans-serif;
-    }
-
-    .report-title {
-      font-size:26px;
-      font-weight:900;
-      color:#1d4ed8;
-      margin-bottom:14px;
-    }
-
-    .report-date-title {
-      font-size:18px;
-      font-weight:900;
-      background:#eff6ff;
-      color:#1e40af;
-      padding:10px 14px;
-      border-radius:14px;
-      margin:18px 0 10px;
-    }
-
-    .report-table {
-      width:100%;
-      border-collapse:collapse;
-      font-size:12px;
       direction:rtl;
     }
 
+    .report-title{
+      font-size:26px;
+      font-weight:900;
+      color:#1d4ed8;
+      margin-bottom:16px;
+    }
+
+    .report-date-title{
+      font-size:18px;
+      font-weight:900;
+      background:#eff6ff;
+      color:#1d4ed8;
+      border-radius:14px;
+      padding:10px 14px;
+      margin:18px 0 10px;
+    }
+
+    .report-table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:12px;
+    }
+
     .report-table th,
-    .report-table td {
-      border:1px solid #e5e7eb;
+    .report-table td{
+      border:1px solid #e2e8f0;
       padding:9px;
       text-align:center;
     }
 
-    .report-table th {
+    .report-table th{
       background:#f8fafc;
+      font-weight:900;
       color:#0f172a;
+    }
+
+    .invoice-page{
+      background:#f5f7fb;
+      min-height:100vh;
+      padding:10px;
+    }
+
+    .invoice-shell{
+      width:100%;
+      max-width:1120px;
+      margin:0 auto;
+      background:#fff;
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      border:1px solid #e2e8f0;
+    }
+
+    .invoice-head{
+      background:linear-gradient(135deg,#eff6ff,#fff);
+      border-bottom:1px solid #e2e8f0;
+      padding:18px;
+    }
+
+    .invoice-table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:12px;
+    }
+
+    .invoice-table th,
+    .invoice-table td{
+      border:1px solid #e2e8f0;
+      padding:9px;
+      text-align:center;
+    }
+
+    .invoice-table th{
+      background:#f8fafc;
+      color:#1d4ed8;
       font-weight:900;
     }
 
-    .backup-drop {
-      border:2px dashed #bfdbfe;
-      background:#f8fbff;
-      border-radius:18px;
-      padding:18px;
-      text-align:center;
-      color:#475569;
-    }
-
-    @media (max-width: 900px) {
-      .mobile-header {
-        display:flex !important;
+    @media(max-width:900px){
+      .mobile-header{
+        display:flex;
       }
 
-      #sideNav {
+      #sideNav{
         position:fixed;
         top:0;
         bottom:0;
         right:0;
         width:84vw;
-        max-width:340px;
+        max-width:350px;
         z-index:90;
-        transform:translateX(105%);
-        transition:.25s ease;
-        border-left:1px solid #e5e7eb;
+        transform:translateX(110%);
+        transition:.25s;
       }
 
-      #sideNav.open {
+      #sideNav.open{
         transform:translateX(0);
       }
 
-      main {
-        padding-top:76px !important;
+      main{
+        padding-top:78px!important;
       }
 
-      .modal-wrap {
+      .modal-wrap{
         align-items:flex-end;
         padding:10px;
       }
 
-      .modal-card {
+      .modal-card{
+        border-radius:24px 24px 16px 16px;
         max-height:88vh;
-        border-radius:22px 22px 16px 16px;
       }
 
-      .invoice-title {
-        font-size:22px;
-      }
-
-      .invoice-brand {
-        flex-direction:column;
-        align-items:flex-start;
+      .product-img{
+        height:95px;
       }
     }
 
-    @media (min-width: 901px) {
-      .mobile-header {
-        display:none !important;
+    @media(min-width:901px){
+      #sideNav{
+        transform:none!important;
       }
 
-      #sideNav {
-        transform:none !important;
-      }
-
-      .side-backdrop {
-        display:none !important;
+      .side-backdrop{
+        display:none!important;
       }
     }
 
-    @media print {
-      .no-print {
-        display:none !important;
-      }
-
-      body {
-        background:#fff !important;
-      }
-
-      #mainApp,
-      #loginPage,
-      #licenseExpiredPage,
-      #invoicePage > .top-actions {
-        display:none !important;
-      }
-
-      #invoicePage {
-        display:block !important;
-        padding:0 !important;
-        background:#fff !important;
-      }
-
-      #printInvoiceOnly {
-        display:block !important;
-      }
-
-      .invoice-shell {
-        width:11in !important;
-        max-width:11in !important;
-        border:none !important;
-        border-radius:0 !important;
-        box-shadow:none !important;
+    @media print{
+      .no-print{display:none!important}
+      body{background:#fff!important}
+      #mainApp,#loginPage,#invoicePage>.top-actions{display:none!important}
+      #invoicePage{display:block!important;background:#fff!important;padding:0!important}
+      .invoice-shell{
+        width:11in!important;
+        max-width:11in!important;
+        border:none!important;
+        border-radius:0!important;
+        box-shadow:none!important;
       }
     }
   </style>
@@ -641,85 +486,71 @@
 
 <body>
 
-  <audio id="scanBeep" preload="auto">
-    <source src="data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTAAAAAAgICAf39/fwAAAP///wAAf39/gICAf39/fwAAAP///wAAf39/gICAf39/fwAAAP///wAA" type="audio/wav">
-  </audio>
-
   <div id="loader" class="loading-overlay hidden">
-    <div class="progress-circle" id="progressCircle" data-progress="0" style="--progress:0"></div>
-    <p class="mt-4 font-bold text-blue-700" id="loaderText">جاري المعالجة...</p>
+    <div class="spinner"></div>
+    <div id="loaderText" class="font-black text-blue-700">جاري المعالجة...</div>
   </div>
 
   <div class="toast-wrap">
     <div id="toast" class="toast">تم</div>
   </div>
 
+  <audio id="scanBeep" preload="auto">
+    <source src="data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTAAAAAAgICAf39/fwAAAP///wAAf39/gICAf39/fwAAAP///wAAf39/gICAf39/fwAAAP///wAA" type="audio/wav">
+  </audio>
+
   <!-- LOGIN -->
-  <div id="loginPage" class="min-h-screen flex items-center justify-center p-4">
-    <div class="card w-full max-w-md p-8">
+  <section id="loginPage" class="min-h-screen flex items-center justify-center p-4">
+    <div class="card w-full max-w-md p-7 md:p-8">
       <div class="text-center mb-6">
-        <div class="bg-blue-700 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white shadow-lg">
-          <i data-lucide="key-round" size="32"></i>
+        <div class="w-20 h-20 rounded-3xl bg-blue-700 text-white mx-auto flex items-center justify-center shadow-xl mb-4">
+          <i data-lucide="store" size="38"></i>
         </div>
-        <h1 class="text-2xl font-bold text-gray-800">دخول بالمفتاح</h1>
-        <p class="text-gray-500 text-sm mt-2">
-          أول دخول يحتاج إنترنت، وبعدها يعمل النظام أوفلاين مع مزامنة عند رجوع الإنترنت
+
+        <h1 class="text-3xl font-black text-slate-800">نظام كاشير البقالة</h1>
+        <p class="text-sm text-slate-500 mt-2 leading-7">
+          نظام كاشير ومخزون وديون ومصاريف يعمل على الهاتف والآيباد والكمبيوتر
         </p>
       </div>
 
       <div class="space-y-4">
-        <input type="text" id="licenseKeyInput" class="input-bordered" placeholder="أدخل مفتاح الاشتراك">
-        <button id="loginBtn" class="w-full btn-primary p-3 shadow-md">دخول</button>
-        <p id="loginError" class="text-red-500 text-center text-sm hidden"></p>
+        <input id="loginKeyInput" type="text" class="input-bordered text-center font-bold" placeholder="أدخل مفتاح الاشتراك">
 
-        <div class="bg-green-50 border border-green-100 rounded-2xl p-4 text-center">
-          <p class="text-sm text-gray-600 mb-2">لشراء مفتاح جديد أو تجديد المفتاح</p>
-          <a href="https://wa.me/972597603119" target="_blank" class="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl font-bold">
+        <button id="loginBtn" class="w-full btn-primary py-4 text-lg shadow-lg flex items-center justify-center gap-2">
+          <i data-lucide="log-in"></i>
+          دخول
+        </button>
+
+        <p id="loginError" class="hidden text-center text-red-600 font-bold text-sm"></p>
+
+        <div class="bg-green-50 border border-green-100 rounded-3xl p-4 text-center">
+          <div class="text-sm text-gray-600 mb-3">لشراء مفتاح جديد أو تجديد الاشتراك</div>
+
+          <a href="https://wa.me/972597603119" target="_blank" class="inline-flex items-center justify-center gap-2 bg-green-600 text-white px-5 py-3 rounded-2xl font-black w-full">
             <i data-lucide="message-circle"></i>
             راسلنا واتساب 972597603119
           </a>
         </div>
+
+        <div class="text-xs text-center text-slate-400 leading-6">
+          أول دخول يحتاج إنترنت، وبعدها يعمل أوفلاين مع مزامنة تلقائية عند رجوع الإنترنت.
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- EXPIRED -->
-  <div id="licenseExpiredPage" class="hidden min-h-screen flex items-center justify-center p-4">
-    <div class="card w-full max-w-lg p-8 text-center">
-      <div class="bg-red-100 text-red-600 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-        <i data-lucide="shield-x" size="38"></i>
-      </div>
-
-      <h2 class="text-2xl font-bold mb-3">انتهى وقت المفتاح أو أصبح غير صالح</h2>
-      <p id="expiredMessage" class="text-gray-600 mb-6">
-        تم انتهاء الوقت أو عدد الأجهزة المتاحة لهذا المفتاح.
-      </p>
-
-      <div class="flex flex-col md:flex-row gap-3 justify-center">
-        <button id="goToLoginBtn" class="btn-primary px-5 py-3">
-          الذهاب إلى تسجيل الدخول
-        </button>
-
-        <a href="https://wa.me/972597603119" target="_blank" class="inline-flex items-center justify-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl font-bold">
-          <i data-lucide="message-circle"></i>
-          شراء مفتاح
-        </a>
-      </div>
-    </div>
-  </div>
+  </section>
 
   <!-- MOBILE HEADER -->
-  <header class="mobile-header fixed top-0 right-0 left-0 h-16 bg-white shadow z-[70] items-center justify-between px-4 no-print hidden">
-    <button id="openMobileMenuBtn" class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-700 flex items-center justify-center">
+  <header class="mobile-header fixed top-0 right-0 left-0 h-16 bg-white shadow z-[70] items-center justify-between px-4 no-print">
+    <button id="openMenuBtn" class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-700 flex items-center justify-center">
       <i data-lucide="menu"></i>
     </button>
 
     <div class="text-center">
-      <div id="mobileStoreName" class="font-black text-slate-800">نظام الكاشير</div>
-      <div id="mobileSyncState" class="text-[11px] text-gray-500">جاهز للعمل</div>
+      <div id="mobileStoreName" class="font-black text-slate-800">كاشير البقالة</div>
+      <div id="syncStateText" class="text-[11px] text-gray-500">جاهز للعمل</div>
     </div>
 
-    <button onclick="openScanner('pos')" class="w-11 h-11 rounded-2xl bg-green-50 text-green-700 flex items-center justify-center">
+    <button id="quickScanBtn" class="w-11 h-11 rounded-2xl bg-green-50 text-green-700 flex items-center justify-center">
       <i data-lucide="scan-barcode"></i>
     </button>
   </header>
@@ -728,119 +559,120 @@
 
   <!-- MAIN APP -->
   <div id="mainApp" class="hidden min-h-screen flex">
-
-    <!-- SIDE NAV -->
-    <nav id="sideNav" class="bg-white w-72 flex-shrink-0 flex flex-col border-l no-print overflow-y-auto">
+    <aside id="sideNav" class="bg-white w-72 flex-shrink-0 flex flex-col border-l no-print overflow-y-auto">
       <div class="p-5 border-b">
-        <div class="flex items-center justify-between mb-4 md:hidden">
+        <div class="flex items-center justify-between md:hidden mb-4">
           <div class="font-black">القائمة</div>
-          <button id="closeMobileMenuBtn" class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+          <button id="closeMenuBtn" class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
             <i data-lucide="x"></i>
           </button>
         </div>
 
         <div class="flex flex-col items-center text-center gap-3">
-          <img id="sideLogo" src="" class="w-16 h-16 rounded-2xl object-cover shadow-sm hidden">
+          <img id="sideLogo" class="hidden w-16 h-16 rounded-2xl object-cover shadow" alt="logo">
+
+          <div class="w-16 h-16 rounded-2xl bg-blue-700 text-white flex items-center justify-center shadow-lg" id="sideDefaultLogo">
+            <i data-lucide="shopping-basket" size="32"></i>
+          </div>
 
           <div>
-            <h2 id="sideStoreName" class="font-black text-gray-800">اسم المحل</h2>
-
+            <h2 id="sideStoreName" class="font-black text-lg text-slate-800">اسم المحل</h2>
             <div class="mt-2 flex items-center justify-center gap-2 flex-wrap">
-              <span class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">نشط الآن</span>
-              <span id="licensePlanBadge" class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">نسختك —</span>
+              <span id="onlineBadge" class="text-[11px] bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">متصل</span>
+              <span id="licenseBadge" class="text-[11px] bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-bold">نسخة عادية</span>
             </div>
           </div>
         </div>
 
-        <div class="mt-4 bg-blue-50 rounded-2xl p-3 text-right space-y-2">
+        <div class="mt-4 bg-blue-50 rounded-2xl p-3 text-sm space-y-2">
           <div>
             <div class="text-xs text-gray-500">المفتاح الحالي</div>
-            <div id="sideLicenseKey" class="font-bold text-blue-700 text-sm break-all">-</div>
+            <div id="sideLicenseKey" class="font-bold text-blue-700 break-all">-</div>
           </div>
 
           <div>
             <div class="text-xs text-gray-500">الوقت المتبقي</div>
-            <div id="sideLicenseRemaining" class="font-bold text-green-700 text-sm">-</div>
-          </div>
-
-          <div>
-            <div class="text-xs text-gray-500">نوع النسخة</div>
-            <div id="sideModeText" class="font-bold text-sm text-slate-700">-</div>
+            <div id="sideLicenseRemaining" class="font-bold text-green-700">-</div>
           </div>
 
           <div>
             <div class="text-xs text-gray-500">العملة</div>
-            <div id="sideCurrencyText" class="font-bold text-sm text-slate-700">₪ شيكل</div>
+            <div id="sideCurrencyText" class="font-bold">₪ شيكل</div>
           </div>
         </div>
       </div>
 
-      <div class="flex flex-col p-3 gap-1" id="navButtonsWrap">
-        <button onclick="switchTab('dashboard')" class="nav-btn flex items-center gap-3 p-3 w-full" data-tab="dashboard">
-          <i data-lucide="layout-dashboard"></i> <span>الرئيسية</span>
+      <nav class="p-3 flex flex-col gap-1">
+        <button class="nav-btn" data-tab="dashboard" onclick="switchTab('dashboard')">
+          <i data-lucide="layout-dashboard"></i>
+          الرئيسية
         </button>
 
-        <button onclick="switchTab('pos')" class="nav-btn flex items-center gap-3 p-3 w-full" data-tab="pos">
-          <i data-lucide="shopping-cart"></i> <span>الكاشير</span>
+        <button class="nav-btn" data-tab="pos" onclick="switchTab('pos')">
+          <i data-lucide="shopping-cart"></i>
+          الكاشير
         </button>
 
-        <button onclick="switchTab('inventory')" class="nav-btn flex items-center gap-3 p-3 w-full" data-tab="inventory">
-          <i data-lucide="package"></i> <span>المخزون</span>
+        <button class="nav-btn" data-tab="inventory" onclick="switchTab('inventory')">
+          <i data-lucide="package"></i>
+          المخزون
         </button>
 
-        <button onclick="switchTab('sales')" class="nav-btn flex items-center gap-3 p-3 w-full" data-tab="sales">
-          <i data-lucide="receipt-text"></i> <span>فواتير المبيعات</span>
+        <button class="nav-btn" data-tab="sales" onclick="switchTab('sales')">
+          <i data-lucide="receipt-text"></i>
+          فواتير المبيعات
         </button>
 
-        <button onclick="switchTab('purchases')" class="nav-btn flex items-center gap-3 p-3 w-full" data-tab="purchases">
-          <i data-lucide="shopping-bag"></i> <span>فواتير الموردين</span>
+        <button class="nav-btn" data-tab="purchases" onclick="switchTab('purchases')">
+          <i data-lucide="shopping-bag"></i>
+          مشتريات الموردين
         </button>
 
-        <button onclick="switchTab('supplierPayments')" class="nav-btn flex items-center gap-3 p-3 w-full" data-tab="supplierPayments">
-          <i data-lucide="hand-coins"></i> <span>دفعات التجار</span>
+        <button class="nav-btn" data-tab="supplierPayments" onclick="switchTab('supplierPayments')">
+          <i data-lucide="hand-coins"></i>
+          دفعات التجار
         </button>
 
-        <button onclick="switchTab('customers')" class="nav-btn flex items-center gap-3 p-3 w-full" data-tab="customers">
-          <i data-lucide="users"></i> <span>العملاء والديون</span>
+        <button class="nav-btn" data-tab="customers" onclick="switchTab('customers')">
+          <i data-lucide="users"></i>
+          العملاء والديون
         </button>
 
-        <button onclick="switchTab('expenses')" class="nav-btn flex items-center gap-3 p-3 w-full" data-tab="expenses">
-          <i data-lucide="wallet-cards"></i> <span>المصروفات</span>
+        <button class="nav-btn" data-tab="expenses" onclick="switchTab('expenses')">
+          <i data-lucide="wallet-cards"></i>
+          المصروفات
         </button>
 
-        <button onclick="switchTab('reports')" class="nav-btn flex items-center gap-3 p-3 w-full" data-tab="reports">
-          <i data-lucide="bar-chart-3"></i> <span>التقارير</span>
+        <button class="nav-btn" data-tab="reports" onclick="switchTab('reports')">
+          <i data-lucide="bar-chart-3"></i>
+          التقارير المالية
         </button>
 
-        <button onclick="switchTab('shortages')" class="nav-btn flex items-center gap-3 p-3 w-full" data-tab="shortages">
-          <i data-lucide="triangle-alert"></i> <span>البضاعة الناقصة</span>
+        <button class="nav-btn" data-tab="shortages" onclick="switchTab('shortages')">
+          <i data-lucide="triangle-alert"></i>
+          البضاعة الناقصة
         </button>
 
-        <button onclick="switchTab('stores')" class="nav-btn flex items-center gap-3 p-3 w-full" data-tab="stores">
-          <i data-lucide="store"></i> <span>الفروع</span>
+        <button class="nav-btn" data-tab="settings" onclick="switchTab('settings')">
+          <i data-lucide="settings"></i>
+          الإعدادات
         </button>
+      </nav>
+    </aside>
 
-        <button onclick="switchTab('settings')" class="nav-btn flex items-center gap-3 p-3 w-full" data-tab="settings">
-          <i data-lucide="settings"></i> <span>الإعدادات</span>
-        </button>
-      </div>
-    </nav>
-
-    <!-- CONTENT -->
     <main class="flex-grow p-4 md:p-8 overflow-y-auto">
-
-      <!-- DASHBOARD -->
+<!-- DASHBOARD -->
       <section id="tab-dashboard" class="tab-content space-y-6">
         <div class="flex justify-between items-center gap-4 flex-wrap">
           <div>
-            <h1 class="text-2xl md:text-3xl font-black text-slate-800">لوحة التحكم</h1>
-            <p class="text-sm text-gray-500 mt-1">ملخص سريع للمبيعات والمخزون والديون والمصاريف</p>
+            <h1 class="text-2xl md:text-3xl font-black text-slate-800">الواجهة الرئيسية</h1>
+            <p class="text-sm text-gray-500 mt-1">عرض سريع للأصناف والمبيعات والديون والتنبيهات</p>
           </div>
 
           <div class="flex gap-2 flex-wrap">
             <button onclick="openScanner('pos')" class="btn-soft px-4 py-3 flex items-center gap-2">
               <i data-lucide="scan-barcode"></i>
-              باركود
+              مسح باركود
             </button>
 
             <button onclick="switchTab('pos')" class="btn-primary px-4 py-3 flex items-center gap-2">
@@ -879,9 +711,15 @@
 
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
           <div class="card p-5 xl:col-span-2">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="font-black text-lg">الأصناف السريعة</h3>
-              <button onclick="switchTab('inventory')" class="text-blue-700 font-bold text-sm">عرض المخزون</button>
+            <div class="flex justify-between items-center gap-3 flex-wrap mb-4">
+              <h3 class="font-black text-lg">الأصناف على شكل شبكة</h3>
+
+              <div class="flex gap-2 flex-wrap">
+                <input id="dashProductSearch" type="text" class="input-bordered w-full md:w-56" placeholder="بحث سريع عن صنف">
+                <select id="dashCategoryFilter" class="input-bordered w-full md:w-48">
+                  <option value="all">كل التصنيفات</option>
+                </select>
+              </div>
             </div>
 
             <div id="dashboardProductsGrid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3"></div>
@@ -889,7 +727,7 @@
 
           <div class="card p-5">
             <div class="flex justify-between items-center mb-4">
-              <h3 class="font-black text-lg">تنبيهات</h3>
+              <h3 class="font-black text-lg">التنبيهات</h3>
               <i data-lucide="bell" class="text-blue-700"></i>
             </div>
 
@@ -906,33 +744,33 @@
       <section id="tab-pos" class="tab-content hidden grid grid-cols-1 xl:grid-cols-4 gap-6">
         <div class="xl:col-span-3 space-y-4">
           <div class="card p-4 flex flex-wrap gap-3 items-center">
-            <div class="relative flex-grow min-w-[240px]">
+            <div class="relative flex-grow min-w-[230px]">
               <i data-lucide="search" class="absolute right-4 top-3.5 text-gray-400" size="20"></i>
-              <input type="text" id="posSearch" placeholder="ابحث بالاسم أو الباركود أو التصنيف..." class="w-full pr-12 p-3.5 bg-gray-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500">
-              <div id="posSearchResults" class="absolute top-full mt-2 left-0 right-0 bg-white border rounded-2xl shadow-2xl z-[100] hidden max-h-80 overflow-y-auto p-2"></div>
+              <input id="posSearch" type="text" class="w-full pr-12 p-3.5 bg-gray-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500" placeholder="ابحث بالاسم أو الكود أو التصنيف">
+              <div id="posSearchResults" class="suggest-box hidden"></div>
             </div>
 
             <select id="posCategoryFilter" class="input-bordered w-full md:w-48">
               <option value="all">كل التصنيفات</option>
             </select>
 
-            <button onclick="openScanner('pos')" class="p-3.5 bg-blue-50 text-blue-700 rounded-2xl hover:bg-blue-100" title="فتح كاميرا مسح الباركود">
+            <button onclick="openScanner('pos')" class="p-3.5 bg-blue-50 text-blue-700 rounded-2xl hover:bg-blue-100" title="فتح الكاميرا">
               <i data-lucide="scan-barcode"></i>
             </button>
 
-            <button onclick="toggleScannerTorch()" id="scannerTorchQuickBtn" class="p-3.5 bg-amber-50 text-amber-700 rounded-2xl hover:bg-amber-100 hidden" title="تشغيل / إيقاف الفلاش">
+            <button id="scannerTorchQuickBtn" onclick="toggleScannerTorch()" class="p-3.5 bg-amber-50 text-amber-700 rounded-2xl hover:bg-amber-100 hidden" title="تشغيل الفلاش">
               <i data-lucide="flashlight"></i>
             </button>
 
-            <label class="p-3.5 bg-purple-50 text-purple-600 rounded-2xl hover:bg-purple-100 cursor-pointer" title="اختيار صورة باركود من الجهاز">
+            <label class="p-3.5 bg-purple-50 text-purple-700 rounded-2xl hover:bg-purple-100 cursor-pointer" title="قراءة باركود من صورة">
               <i data-lucide="image-plus"></i>
-              <input type="file" id="barcodeImageInputPos" accept="image/*" class="hidden">
+              <input id="barcodeImageInputPos" type="file" accept="image/*" class="hidden">
             </label>
           </div>
 
           <div class="card p-4">
-            <div class="flex justify-between items-center mb-4 gap-3 flex-wrap">
-              <h2 class="font-black text-lg">شبكة الأصناف</h2>
+            <div class="flex justify-between items-center gap-3 flex-wrap mb-4">
+              <h2 class="font-black text-lg">الأصناف</h2>
               <span class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-bold">
                 اضغط على الصنف لإضافته للسلة
               </span>
@@ -947,7 +785,7 @@
               <button onclick="clearCart()" class="btn-danger px-4 py-2 text-sm">تفريغ السلة</button>
             </div>
 
-            <div class="mobile-table-scroll">
+            <div class="table-scroll">
               <table class="w-full text-right">
                 <thead class="bg-gray-50 text-gray-500 text-sm">
                   <tr>
@@ -971,7 +809,7 @@
           </div>
         </div>
 
-        <div class="space-y-4">
+        <aside class="space-y-4">
           <div class="card p-6 space-y-5">
             <div class="flex items-center justify-between gap-2">
               <h3 class="font-black text-lg text-gray-700">إجمالي الطلب</h3>
@@ -1004,11 +842,11 @@
                   <option value="percent">نسبة مئوية %</option>
                 </select>
 
-                <input type="number" id="posDiscount" class="input-bordered" value="0" placeholder="الخصم">
+                <input id="posDiscount" type="number" class="input-bordered" value="0" placeholder="الخصم">
               </div>
             </div>
 
-            <button id="openPaymentModalBtn" class="w-full btn-primary py-4 rounded-2xl font-black shadow-lg transition-all">
+            <button id="openPaymentModalBtn" class="w-full btn-primary py-4 rounded-2xl font-black shadow-lg">
               حفظ البيع واختيار الدفع
             </button>
           </div>
@@ -1020,10 +858,10 @@
             </div>
 
             <p class="text-sm text-gray-500 leading-7">
-              عند حفظ البيع سيتم خصم الكميات من المخزون تلقائيًا، وإذا اخترت دين أو تطبيق لاحق سيتم إضافتها على حساب العميل.
+              عند حفظ البيع سيتم خصم الكمية من المخزون تلقائيًا. وإذا اخترت دين أو تطبيق لاحق سيتم ربط الفاتورة بالعميل.
             </p>
           </div>
-        </div>
+        </aside>
       </section>
 
       <!-- INVENTORY -->
@@ -1032,7 +870,7 @@
           <div>
             <h2 class="text-2xl font-black">المخزون والأصناف</h2>
             <p class="text-sm text-gray-500 mt-1">
-              إدارة المنتجات بنظام وحدات: قطعة، كرتونة، كيلو، جرام، لتر، مل، رصيد، أو وحدة مخصصة
+              إضافة الأصناف وربطها بالمورد وسعر الجملة وسعر البيع ونظام الوحدات
             </p>
           </div>
 
@@ -1051,7 +889,7 @@
 
         <div class="card p-4">
           <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <input type="text" id="inventorySearch" placeholder="بحث في المخزون..." class="input-bordered">
+            <input id="inventorySearch" type="text" class="input-bordered" placeholder="بحث في المخزون">
 
             <select id="inventoryCategoryFilter" class="input-bordered">
               <option value="all">كل التصنيفات</option>
@@ -1072,11 +910,11 @@
 
         <div class="card p-4">
           <div id="productsLoading" class="hidden py-10 flex flex-col items-center gap-3">
-            <div class="mini-loader"></div>
+            <div class="spinner !w-9 !h-9 !border-[4px]"></div>
             <p class="text-sm text-gray-500">جاري تحميل المنتجات...</p>
           </div>
 
-          <div class="mobile-table-scroll">
+          <div class="table-scroll">
             <table class="w-full text-right">
               <thead class="bg-gray-50 border-b">
                 <tr>
@@ -1089,6 +927,7 @@
                   <th class="p-4">المتوفر</th>
                   <th class="p-4">سعر الجملة</th>
                   <th class="p-4">سعر البيع</th>
+                  <th class="p-4">الحالة</th>
                   <th class="p-4">الإجراءات</th>
                 </tr>
               </thead>
@@ -1098,39 +937,38 @@
           </div>
 
           <div id="productsLoadMoreWrap" class="hidden pt-4 text-center">
-            <button id="loadMoreProductsBtn" class="btn-soft px-5 py-2 rounded-xl font-bold">
-              تحميل المزيد
-            </button>
+            <button id="loadMoreProductsBtn" class="btn-soft px-5 py-2 rounded-xl font-bold">تحميل المزيد</button>
           </div>
         </div>
       </section>
-<!-- SALES INVOICES -->
+
+      <!-- SALES -->
       <section id="tab-sales" class="tab-content hidden space-y-6">
         <div class="flex flex-wrap justify-between items-center gap-4">
           <div>
             <h2 class="text-2xl font-black">فواتير المبيعات</h2>
             <p class="text-sm text-gray-500 mt-1">
-              تقارير مبيعات يومية، أسبوعية، شهرية، سنوية، كل السجل، أو يوم محدد بالتاريخ
+              تقرير يومي، أسبوعي، شهري، سنوي، كل السجل، أو يوم محدد بالتاريخ
             </p>
           </div>
 
           <div class="flex gap-2 flex-wrap">
-            <input type="text" id="invSearchQuery" placeholder="بحث برقم الفاتورة أو الاسم أو الجوال..." class="input-bordered w-full md:w-72">
+            <input id="invSearchQuery" type="text" class="input-bordered w-full md:w-72" placeholder="بحث برقم الفاتورة أو الاسم أو الهاتف">
 
             <select id="invoiceStatusFilter" class="input-bordered w-full md:w-44">
               <option value="all">كل الحالات</option>
               <option value="paid">مدفوع</option>
-              <option value="unpaid">دين</option>
               <option value="pending">تطبيق لاحق</option>
+              <option value="unpaid">دين</option>
             </select>
 
-            <button onclick="openScanner('invoice')" class="btn-soft px-4 py-3" title="مسح باركود الفاتورة">
+            <button onclick="openScanner('invoice')" class="btn-soft px-4 py-3" title="مسح فاتورة">
               <i data-lucide="scan-line"></i>
             </button>
 
-            <label class="btn-soft px-4 py-3 cursor-pointer" title="اختيار صورة باركود فاتورة">
+            <label class="btn-soft px-4 py-3 cursor-pointer" title="قراءة باركود فاتورة من صورة">
               <i data-lucide="image-plus"></i>
-              <input type="file" id="barcodeImageInputInvoice" accept="image/*" class="hidden">
+              <input id="barcodeImageInputInvoice" type="file" accept="image/*" class="hidden">
             </label>
           </div>
         </div>
@@ -1146,11 +984,11 @@
               <option value="customDay">يوم محدد</option>
             </select>
 
-            <input type="date" id="salesReportDate" class="input-bordered hidden">
+            <input id="salesReportDate" type="date" class="input-bordered hidden">
 
-            <button id="printSalesReportBtn" class="btn-soft py-3">طباعة جدول المبيعات</button>
-            <button id="exportSalesReportPdfBtn" class="btn-danger py-3">PDF جدول المبيعات</button>
-            <button id="exportSalesReportImageBtn" class="btn-success py-3">صورة جدول المبيعات</button>
+            <button id="printSalesReportBtn" class="btn-soft py-3">طباعة</button>
+            <button id="exportSalesReportPdfBtn" class="btn-danger py-3">PDF</button>
+            <button id="exportSalesReportImageBtn" class="btn-success py-3">صورة</button>
             <button onclick="openManualInvoiceModal()" class="btn-primary py-3">فاتورة مباشرة</button>
           </div>
         </div>
@@ -1179,11 +1017,11 @@
 
         <div class="card p-4 overflow-x-auto">
           <div id="invoicesLoading" class="hidden py-10 flex flex-col items-center gap-3">
-            <div class="mini-loader"></div>
+            <div class="spinner !w-9 !h-9 !border-[4px]"></div>
             <p class="text-sm text-gray-500">جاري تحميل الفواتير...</p>
           </div>
 
-          <div class="mobile-table-scroll">
+          <div class="table-scroll">
             <table class="w-full text-right border-collapse">
               <thead>
                 <tr class="bg-gray-50 text-gray-500">
@@ -1195,7 +1033,6 @@
                   <th class="p-4">رقم التحويل</th>
                   <th class="p-4">الحالة</th>
                   <th class="p-4">المبلغ</th>
-                  <th class="p-4">ملاحظات</th>
                   <th class="p-4">الإجراءات</th>
                 </tr>
               </thead>
@@ -1216,9 +1053,9 @@
       <section id="tab-purchases" class="tab-content hidden space-y-6">
         <div class="flex flex-wrap justify-between items-center gap-4">
           <div>
-            <h2 class="text-2xl font-black">فواتير الموردين</h2>
+            <h2 class="text-2xl font-black">مشتريات الموردين</h2>
             <p class="text-sm text-gray-500 mt-1">
-              فاتورة مشتريات تدخل على المخزون مباشرة وتربط سعر الجملة وسعر البيع
+              فاتورة الشراء تُدخل البضاعة إلى المخزون مباشرة
             </p>
           </div>
 
@@ -1239,9 +1076,9 @@
               <option value="customDay">يوم محدد</option>
             </select>
 
-            <input type="date" id="purchasesReportDate" class="input-bordered hidden">
+            <input id="purchasesReportDate" type="date" class="input-bordered hidden">
 
-            <input type="text" id="purchasesSearch" class="input-bordered" placeholder="بحث بالمورد أو الصنف">
+            <input id="purchasesSearch" type="text" class="input-bordered" placeholder="بحث بالمورد أو الصنف">
 
             <button id="printPurchasesReportBtn" class="btn-soft py-3">طباعة</button>
             <button id="exportPurchasesReportPdfBtn" class="btn-danger py-3">PDF</button>
@@ -1266,18 +1103,18 @@
           </div>
 
           <div class="card p-5 bg-slate-700 text-white">
-            <p class="opacity-80 text-sm">موردين</p>
+            <p class="opacity-80 text-sm">عدد الموردين</p>
             <h3 id="purchasesSuppliersCount" class="text-3xl font-black mt-2">0</h3>
           </div>
         </div>
 
         <div class="card p-4 overflow-x-auto">
           <div id="purchasesLoading" class="hidden py-10 flex flex-col items-center gap-3">
-            <div class="mini-loader"></div>
+            <div class="spinner !w-9 !h-9 !border-[4px]"></div>
             <p class="text-sm text-gray-500">جاري تحميل المشتريات...</p>
           </div>
 
-          <div class="mobile-table-scroll">
+          <div class="table-scroll">
             <table class="w-full text-right border-collapse">
               <thead>
                 <tr class="bg-gray-50 text-gray-500">
@@ -1290,7 +1127,6 @@
                   <th class="p-4">سعر الجملة</th>
                   <th class="p-4">سعر البيع</th>
                   <th class="p-4">الإجمالي</th>
-                  <th class="p-4">ملاحظات</th>
                   <th class="p-4">الإجراءات</th>
                 </tr>
               </thead>
@@ -1302,15 +1138,12 @@
 
         <div id="purchasesReportExportArea" class="hidden"></div>
       </section>
-
-      <!-- SUPPLIER PAYMENTS -->
+<!-- SUPPLIER PAYMENTS -->
       <section id="tab-supplierPayments" class="tab-content hidden space-y-6">
         <div class="flex flex-wrap justify-between items-center gap-4">
           <div>
             <h2 class="text-2xl font-black">دفعات التجار والموردين</h2>
-            <p class="text-sm text-gray-500 mt-1">
-              تسجيل أي دفعة يتم دفعها لتاجر أو مورد مع طريقة الدفع والحساب
-            </p>
+            <p class="text-sm text-gray-500 mt-1">تسجيل الدفعات التي يتم دفعها للموردين والتجار</p>
           </div>
 
           <button id="openSupplierPaymentModalBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
@@ -1329,7 +1162,7 @@
               <option value="all">كل السجل</option>
             </select>
 
-            <input type="text" id="supplierPaymentsSearch" class="input-bordered" placeholder="بحث باسم التاجر">
+            <input id="supplierPaymentsSearch" type="text" class="input-bordered" placeholder="بحث باسم التاجر أو المورد">
 
             <button id="printSupplierPaymentsBtn" class="btn-soft py-3">طباعة</button>
             <button id="exportSupplierPaymentsPdfBtn" class="btn-danger py-3">PDF</button>
@@ -1338,7 +1171,7 @@
         </div>
 
         <div class="card p-4 overflow-x-auto">
-          <div class="mobile-table-scroll">
+          <div class="table-scroll">
             <table class="w-full text-right border-collapse">
               <thead>
                 <tr class="bg-gray-50 text-gray-500">
@@ -1346,6 +1179,7 @@
                   <th class="p-4">اسم التاجر / المورد</th>
                   <th class="p-4">المبلغ</th>
                   <th class="p-4">طريقة الدفع</th>
+                  <th class="p-4">الحساب</th>
                   <th class="p-4">رقم التحويل</th>
                   <th class="p-4">ملاحظات</th>
                   <th class="p-4">الإجراءات</th>
@@ -1365,9 +1199,7 @@
         <div class="flex flex-wrap justify-between items-center gap-4">
           <div>
             <h2 class="text-2xl font-black">العملاء والديون</h2>
-            <p class="text-sm text-gray-500 mt-1">
-              إدارة العملاء المدينين، سجل الدفعات، والمتبقي على كل عميل
-            </p>
+            <p class="text-sm text-gray-500 mt-1">إدارة العملاء المدينين والدفعات والمتبقي</p>
           </div>
 
           <button id="openCustomerModalBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
@@ -1378,7 +1210,7 @@
 
         <div class="card p-4">
           <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-            <input type="text" id="customersSearch" class="input-bordered md:col-span-2" placeholder="بحث باسم العميل أو رقم الهاتف">
+            <input id="customersSearch" type="text" class="input-bordered md:col-span-2" placeholder="بحث باسم العميل أو رقم الهاتف">
 
             <select id="customersDebtFilter" class="input-bordered">
               <option value="all">كل العملاء</option>
@@ -1415,7 +1247,7 @@
         </div>
 
         <div class="card p-4 overflow-x-auto">
-          <div class="mobile-table-scroll">
+          <div class="table-scroll">
             <table class="w-full text-right border-collapse">
               <thead>
                 <tr class="bg-gray-50 text-gray-500">
@@ -1443,9 +1275,7 @@
         <div class="flex flex-wrap justify-between items-center gap-4">
           <div>
             <h2 class="text-2xl font-black">المصروفات</h2>
-            <p class="text-sm text-gray-500 mt-1">
-              مصروفات مثل الأكياس، النقل، الكهرباء، الماء، وأي مصروفات أخرى
-            </p>
+            <p class="text-sm text-gray-500 mt-1">إضافة مصروفات مثل نيلون، أكياس، نقل، كهرباء، ماء، وغيرها</p>
           </div>
 
           <button id="openExpenseModalBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
@@ -1464,7 +1294,7 @@
               <option value="all">كل السجل</option>
             </select>
 
-            <input type="text" id="expensesSearch" class="input-bordered" placeholder="بحث بنوع المصروف">
+            <input id="expensesSearch" type="text" class="input-bordered" placeholder="بحث بنوع المصروف">
 
             <select id="expensesProfitFilter" class="input-bordered">
               <option value="all">كل المصروفات</option>
@@ -1496,7 +1326,7 @@
         </div>
 
         <div class="card p-4 overflow-x-auto">
-          <div class="mobile-table-scroll">
+          <div class="table-scroll">
             <table class="w-full text-right border-collapse">
               <thead>
                 <tr class="bg-gray-50 text-gray-500">
@@ -1516,14 +1346,13 @@
 
         <div id="expensesExportArea" class="hidden"></div>
       </section>
-<!-- REPORTS -->
+
+      <!-- REPORTS -->
       <section id="tab-reports" class="tab-content hidden space-y-6">
         <div class="flex flex-wrap justify-between items-center gap-4">
           <div>
             <h2 class="text-2xl font-black">التقارير المالية</h2>
-            <p class="text-sm text-gray-500 mt-1">
-              تقارير للمبيعات، المرابح، المصروفات، الرصيد المتوفر في البنوك والمحافظ، والربح الصافي
-            </p>
+            <p class="text-sm text-gray-500 mt-1">مبيعات، أرباح، مصروفات، رصيد البنوك والمحافظ، وصافي الربح</p>
           </div>
 
           <div class="flex gap-2 flex-wrap">
@@ -1536,7 +1365,7 @@
               <option value="customDay">يوم محدد</option>
             </select>
 
-            <input type="date" id="reportCustomDate" class="input-bordered hidden">
+            <input id="reportCustomDate" type="date" class="input-bordered hidden">
 
             <button id="printFinanceReportBtn" class="btn-soft px-5 py-3">طباعة</button>
             <button id="exportFinanceReportPdfBtn" class="btn-danger px-5 py-3">PDF</button>
@@ -1579,17 +1408,17 @@
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <div class="card p-5">
             <div class="flex justify-between items-center gap-3 flex-wrap mb-4">
-              <h3 class="font-black text-lg">الرصيد المتوفر حسب البنك / المحفظة</h3>
+              <h3 class="font-black text-lg">الرصيد حسب البنك / المحفظة</h3>
               <span class="text-xs text-gray-500">حسب المبيعات والتحويلات ودفعات الموردين</span>
             </div>
 
-            <div class="mobile-table-scroll">
+            <div class="table-scroll">
               <table class="w-full text-right">
                 <thead class="bg-gray-50 text-gray-500">
                   <tr>
                     <th class="p-4">الحساب</th>
-                    <th class="p-4">نوع الحساب</th>
-                    <th class="p-4">رقم التحويل</th>
+                    <th class="p-4">النوع</th>
+                    <th class="p-4">رقم الحساب / التحويل</th>
                     <th class="p-4">الرصيد</th>
                   </tr>
                 </thead>
@@ -1605,7 +1434,7 @@
               <span class="text-xs text-gray-500">كاش، بنك، جوال باي، تطبيق فوري، تطبيق لاحق، دين</span>
             </div>
 
-            <div class="mobile-table-scroll">
+            <div class="table-scroll">
               <table class="w-full text-right">
                 <thead class="bg-gray-50 text-gray-500">
                   <tr>
@@ -1624,7 +1453,7 @@
         <div class="card p-5">
           <h3 class="font-black text-lg mb-4">تقرير المرابح حسب الصنف</h3>
 
-          <div class="mobile-table-scroll">
+          <div class="table-scroll">
             <table class="w-full text-right">
               <thead class="bg-gray-50 text-gray-500">
                 <tr>
@@ -1649,9 +1478,7 @@
         <div class="flex flex-wrap justify-between items-center gap-4">
           <div>
             <h2 class="text-2xl font-black">تقرير البضاعة الناقصة</h2>
-            <p class="text-sm text-gray-500 mt-1">
-              تقرير يومي، أسبوعي، شهري، سنوي، وكل السجل للأصناف الناقصة أو التي قاربت على النفاد
-            </p>
+            <p class="text-sm text-gray-500 mt-1">تقرير للأصناف الناقصة أو التي نفدت</p>
           </div>
 
           <div class="flex gap-2 flex-wrap">
@@ -1671,9 +1498,9 @@
 
         <div class="card p-4">
           <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <input type="text" id="shortageSearch" class="input-bordered" placeholder="بحث باسم الصنف أو التصنيف">
+            <input id="shortageSearch" type="text" class="input-bordered" placeholder="بحث باسم الصنف أو التصنيف">
 
-            <input type="number" id="shortageLimitInput" class="input-bordered" placeholder="حد النقص الافتراضي" value="5">
+            <input id="shortageLimitInput" type="number" class="input-bordered" placeholder="حد النقص الافتراضي" value="5">
 
             <select id="shortageCategoryFilter" class="input-bordered">
               <option value="all">كل التصنيفات</option>
@@ -1701,7 +1528,7 @@
         </div>
 
         <div class="card p-4 overflow-x-auto">
-          <div class="mobile-table-scroll">
+          <div class="table-scroll">
             <table class="w-full text-right border-collapse">
               <thead>
                 <tr class="bg-gray-50 text-gray-500">
@@ -1723,8 +1550,7 @@
 
         <div id="shortageReportExportArea" class="hidden"></div>
       </section>
-
-      <!-- STORES -->
+<!-- STORES -->
       <section id="tab-stores" class="tab-content hidden space-y-6">
         <div class="flex justify-between items-center gap-3 flex-wrap">
           <div>
@@ -1878,7 +1704,7 @@
               <div>
                 <h3 class="font-black text-lg">البنوك والمحافظ ورصيد الحسابات</h3>
                 <p class="text-sm text-gray-500 mt-1">
-                  يمكنك إضافة أكثر من بنك أو محفظة، مع رقم التحويل، وسيظهر الرصيد حسب المبيعات اليومية والتحويلات
+                  يمكنك إضافة أكثر من بنك أو محفظة مع رقم التحويل وسيظهر الرصيد في التقارير
                 </p>
               </div>
 
@@ -1920,7 +1746,7 @@
           <div class="soft-card p-5 space-y-4">
             <div class="flex items-center justify-between gap-3 flex-wrap">
               <h3 class="font-black text-lg">النسخ الاحتياطي والاستعادة</h3>
-              <span class="text-xs text-gray-500">خاص بالمفتاح الحالي فقط، ويمكن حفظه على الهاتف</span>
+              <span class="text-xs text-gray-500">خاص بالمفتاح الحالي فقط ويمكن حفظه على الهاتف</span>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -2006,7 +1832,7 @@
 
         <div class="invoice-inner">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="invoice-box bg-slate-50 border border-slate-200 rounded-2xl p-4">
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
               <div class="grid grid-cols-[120px_1fr] gap-2 text-sm mb-2">
                 <div class="font-black">اسم الزبون</div>
                 <div id="invPageCustomer" class="text-slate-600">-</div>
@@ -2028,7 +1854,7 @@
               </div>
             </div>
 
-            <div class="invoice-box bg-blue-50 border border-blue-100 rounded-2xl p-4">
+            <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4">
               <div class="grid grid-cols-[120px_1fr] gap-2 text-sm mb-2">
                 <div class="font-black">رقم الفاتورة</div>
                 <div id="invPageId" class="text-blue-700 font-black">-</div>
@@ -2051,7 +1877,7 @@
             </div>
           </div>
 
-          <div class="mobile-table-scroll">
+          <div class="table-scroll">
             <table class="invoice-table">
               <thead>
                 <tr>
@@ -2092,7 +1918,7 @@
             </div>
           </div>
 
-          <div class="invoice-footer-note text-center text-xs text-gray-500 mt-6 leading-7">
+          <div class="text-center text-xs text-gray-500 mt-6 leading-7">
             شكرًا لتعاملكم معنا
           </div>
         </div>
@@ -2118,15 +1944,14 @@
       </div>
     </div>
   </div>
-<!-- PRODUCT MODAL -->
+
+  <!-- PRODUCT MODAL -->
   <div id="productModal" class="modal-wrap hidden overflow-y-auto">
     <div class="modal-card max-w-4xl p-5 md:p-8 my-6">
       <div class="flex justify-between items-start gap-3 mb-6">
         <div>
           <h3 id="modalTitle" class="text-xl font-black">إضافة صنف جديد</h3>
-          <p class="text-sm text-gray-500 mt-1">
-            نظام وحدات كامل: قطعة، كرتونة، كيلو، جرام، لتر، مل، دقائق رصيد، أو وحدة مخصصة
-          </p>
+          <p class="text-sm text-gray-500 mt-1">نظام وحدات: قطعة، كرتونة، كيلو، جرام، لتر، مل، دقائق رصيد، أو وحدة مخصصة</p>
         </div>
 
         <button onclick="toggleModal('productModal', false)" class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600">
@@ -2145,14 +1970,14 @@
 
           <div>
             <label class="block text-sm font-bold mb-2">التصنيف</label>
-            <input type="text" id="prodCategory" class="input-bordered" placeholder="مشروبات / منظفات / رصيد / مواد غذائية">
+            <input type="text" id="prodCategory" class="input-bordered" placeholder="مشروبات / منظفات / رصيد">
           </div>
 
           <div>
             <label class="block text-sm font-bold mb-2">الباركود</label>
             <div class="flex gap-2">
               <input type="text" id="prodCode" class="input-bordered" placeholder="اختياري">
-              <button type="button" onclick="openScanner('product-code')" class="px-4 rounded-xl bg-blue-50 text-blue-700 border border-blue-100" title="مسح كود المنتج">
+              <button type="button" onclick="openScanner('product-code')" class="px-4 rounded-xl bg-blue-50 text-blue-700 border border-blue-100">
                 <i data-lucide="scan-line"></i>
               </button>
             </div>
@@ -2175,14 +2000,7 @@
         </div>
 
         <div class="soft-card p-4 space-y-4">
-          <div class="flex items-center justify-between gap-3 flex-wrap">
-            <div>
-              <h4 class="font-black">نظام الوحدات</h4>
-              <p class="text-sm text-gray-500 mt-1">
-                إذا اخترت كرتونة اكتب كم قطعة داخل الكرتونة، وسيتم تحويل المخزون للوحدة الأساسية تلقائيًا.
-              </p>
-            </div>
-          </div>
+          <h4 class="font-black">نظام الوحدات</h4>
 
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
@@ -2201,12 +2019,12 @@
 
             <div>
               <label class="block text-sm font-bold mb-2">اسم الوحدة الأساسية</label>
-              <input type="text" id="prodBaseUnitName" class="input-bordered" placeholder="قطعة / جرام / مل / دقيقة">
+              <input type="text" id="prodBaseUnitName" class="input-bordered" placeholder="قطعة / جرام / مل">
             </div>
 
             <div>
               <label class="block text-sm font-bold mb-2">معامل التحويل</label>
-              <input type="number" id="prodUnitFactor" class="input-bordered" value="1" placeholder="مثلاً: 24">
+              <input type="number" id="prodUnitFactor" class="input-bordered" value="1" placeholder="مثلاً 24">
             </div>
 
             <div>
@@ -2216,9 +2034,7 @@
           </div>
 
           <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 text-sm text-blue-800 leading-7">
-            مثال: 10 كراتين × 24 قطعة = 240 قطعة داخل المخزون.  
-            مثال: 1 كيلو = 1000 جرام.  
-            مثال: 1 لتر = 1000 مل.
+            مثال: 10 كراتين × 24 قطعة = 240 قطعة داخل المخزون.
           </div>
         </div>
 
@@ -2246,12 +2062,12 @@
 
             <div>
               <label class="block text-sm font-bold mb-2">سعر الجملة للوحدة الأساسية</label>
-              <input type="number" step="0.01" id="prodCost" class="input-bordered" placeholder="تكلفة القطعة / الجرام">
+              <input type="number" step="0.01" id="prodCost" class="input-bordered">
             </div>
 
             <div>
               <label class="block text-sm font-bold mb-2">سعر البيع للوحدة الأساسية</label>
-              <input type="number" step="0.01" id="prodPrice" class="input-bordered" placeholder="سعر البيع">
+              <input type="number" step="0.01" id="prodPrice" class="input-bordered">
             </div>
           </div>
 
@@ -2289,16 +2105,13 @@
       </div>
     </div>
   </div>
-
-  <!-- PAYMENT MODAL -->
+<!-- PAYMENT MODAL -->
   <div id="paymentModal" class="modal-wrap hidden overflow-y-auto">
     <div class="modal-card max-w-3xl p-5 md:p-8 my-6">
       <div class="flex justify-between items-start gap-3 mb-6">
         <div>
           <h3 class="text-xl font-black">اختيار طريقة الدفع وحفظ البيع</h3>
-          <p class="text-sm text-gray-500 mt-1">
-            يمكنك اختيار كاش، بنك، جوال باي، تطبيق فوري، تطبيق لاحق، أو دين
-          </p>
+          <p class="text-sm text-gray-500 mt-1">كاش، بنك، جوال باي، تطبيق فوري، تطبيق لاحق، أو دين</p>
         </div>
 
         <button onclick="toggleModal('paymentModal', false)" class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600">
@@ -2401,15 +2214,14 @@
       </div>
     </div>
   </div>
-<!-- PURCHASE MODAL -->
+
+  <!-- PURCHASE MODAL -->
   <div id="purchaseModal" class="modal-wrap hidden overflow-y-auto">
     <div class="modal-card max-w-5xl p-5 md:p-8 my-6">
       <div class="flex justify-between items-start gap-3 mb-6">
         <div>
           <h3 id="purchaseModalTitle" class="text-xl font-black">إضافة فاتورة شراء من مورد</h3>
-          <p class="text-sm text-gray-500 mt-1">
-            عند حفظ فاتورة الشراء يتم إدخال الصنف للمخزون أو تحديثه تلقائيًا
-          </p>
+          <p class="text-sm text-gray-500 mt-1">عند الحفظ يتم إدخال الصنف للمخزون أو تحديثه تلقائيًا</p>
         </div>
 
         <button onclick="toggleModal('purchaseModal', false)" class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600">
@@ -2441,18 +2253,14 @@
           <div class="flex justify-between items-center gap-3 flex-wrap">
             <div>
               <h4 class="font-black">أصناف فاتورة الشراء</h4>
-              <p class="text-sm text-gray-500 mt-1">
-                يمكنك إضافة أكثر من صنف داخل نفس الفاتورة
-              </p>
+              <p class="text-sm text-gray-500 mt-1">يمكنك إضافة أكثر من صنف داخل نفس الفاتورة</p>
             </div>
 
-            <button id="addPurchaseItemRowBtn" type="button" class="btn-soft px-4 py-2">
-              إضافة صنف
-            </button>
+            <button id="addPurchaseItemRowBtn" type="button" class="btn-soft px-4 py-2">إضافة صنف</button>
           </div>
 
-          <div class="mobile-table-scroll">
-            <table class="w-full text-right">
+          <div class="table-scroll">
+            <table class="w-full text-right min-w-[980px]">
               <thead class="bg-gray-50 text-gray-500">
                 <tr>
                   <th class="p-3">الصنف</th>
@@ -2510,9 +2318,7 @@
       <div class="flex justify-between items-start gap-3 mb-6">
         <div>
           <h3 id="supplierPaymentModalTitle" class="text-xl font-black">إضافة دفعة لتاجر</h3>
-          <p class="text-sm text-gray-500 mt-1">
-            سجل الدفعات التي تدفعها للموردين والتجار
-          </p>
+          <p class="text-sm text-gray-500 mt-1">سجل الدفعات التي تدفعها للموردين والتجار</p>
         </div>
 
         <button onclick="toggleModal('supplierPaymentModal', false)" class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600">
@@ -2580,16 +2386,13 @@
       </div>
     </div>
   </div>
-
-  <!-- CUSTOMER MODAL -->
+<!-- CUSTOMER MODAL -->
   <div id="customerModal" class="modal-wrap hidden overflow-y-auto">
     <div class="modal-card max-w-2xl p-5 md:p-8 my-6">
       <div class="flex justify-between items-start gap-3 mb-6">
         <div>
           <h3 id="customerModalTitle" class="text-xl font-black">إضافة عميل</h3>
-          <p class="text-sm text-gray-500 mt-1">
-            بيانات العميل تستخدم في الديون والدفع اللاحق
-          </p>
+          <p class="text-sm text-gray-500 mt-1">بيانات العميل تستخدم في الديون والدفع اللاحق</p>
         </div>
 
         <button onclick="toggleModal('customerModal', false)" class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600">
@@ -2650,9 +2453,7 @@
       <div class="flex items-start justify-between gap-3 mb-6">
         <div>
           <h3 id="customerHistoryTitle" class="text-2xl font-black">سجل العميل</h3>
-          <p class="text-sm text-gray-500 mt-1">
-            عرض الديون والمدفوعات والمتبقي، مع إمكانية إرسال رسالة للعميل
-          </p>
+          <p class="text-sm text-gray-500 mt-1">عرض الديون والمدفوعات والمتبقي، مع إمكانية إرسال رسالة للعميل</p>
         </div>
 
         <button onclick="toggleModal('customerHistoryModal', false)" class="text-gray-400 hover:text-gray-700">
@@ -2738,8 +2539,8 @@
         </div>
       </div>
 
-      <div class="overflow-x-auto border rounded-2xl">
-        <table class="w-full text-right">
+      <div class="table-scroll border rounded-2xl">
+        <table class="w-full text-right min-w-[760px]">
           <thead class="bg-gray-50">
             <tr>
               <th class="p-4">رقم</th>
@@ -2763,9 +2564,7 @@
       <div class="flex justify-between items-start gap-3 mb-6">
         <div>
           <h3 id="expenseModalTitle" class="text-xl font-black">إضافة مصروف</h3>
-          <p class="text-sm text-gray-500 mt-1">
-            مثل نيلون، أكياس، أجرة نقل، كهرباء، ماء، أو مصاريف أخرى
-          </p>
+          <p class="text-sm text-gray-500 mt-1">مثل نيلون، أكياس، أجرة نقل، كهرباء، ماء، أو مصاريف أخرى</p>
         </div>
 
         <button onclick="toggleModal('expenseModal', false)" class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600">
@@ -2818,15 +2617,13 @@
       </div>
     </div>
   </div>
-<!-- MANUAL INVOICE MODAL -->
+  <!-- MANUAL INVOICE MODAL -->
   <div id="manualInvoiceModal" class="modal-wrap hidden overflow-y-auto">
     <div class="modal-card max-w-2xl p-5 md:p-8 my-6">
       <div class="flex justify-between items-start gap-3 mb-6">
         <div>
           <h3 class="text-xl font-black">إضافة فاتورة مباشرة</h3>
-          <p class="text-sm text-gray-500 mt-1">
-            تستخدم لإضافة مبلغ مباشر بدون اختيار صنف من المخزون
-          </p>
+          <p class="text-sm text-gray-500 mt-1">تستخدم لإضافة مبلغ مباشر بدون اختيار صنف من المخزون</p>
         </div>
 
         <button onclick="toggleModal('manualInvoiceModal', false)" class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600">
@@ -2930,9 +2727,7 @@
       <input type="text" id="newStoreName" class="input-bordered mb-4" placeholder="اسم المحل أو الفرع">
 
       <div class="grid grid-cols-1 gap-3">
-        <button id="createStoreBtn" class="w-full btn-primary p-3 rounded-xl font-black">
-          إنشاء
-        </button>
+        <button id="createStoreBtn" class="w-full btn-primary p-3 rounded-xl font-black">إنشاء</button>
 
         <button onclick="toggleModal('storeModal', false)" class="w-full bg-gray-100 p-3 rounded-xl font-black text-gray-700">
           إلغاء
