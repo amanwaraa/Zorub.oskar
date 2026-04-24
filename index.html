@@ -17,6 +17,7 @@
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap');
@@ -59,6 +60,10 @@
       overflow-x:hidden;
     }
 
+    button,input,select,textarea{
+      font-family:'Cairo',sans-serif;
+    }
+
     .hidden{display:none!important}
 
     .card{
@@ -83,6 +88,10 @@
       font-weight:900;
       transition:.2s;
       box-shadow:0 12px 26px rgba(4,120,87,.22);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
     }
 
     .btn-primary:hover{
@@ -96,6 +105,10 @@
       border:1px solid #a7f3d0;
       border-radius:16px;
       font-weight:800;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
     }
 
     .btn-danger{
@@ -104,6 +117,10 @@
       border:1px solid #fecaca;
       border-radius:16px;
       font-weight:800;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
     }
 
     .btn-success{
@@ -112,6 +129,10 @@
       border:1px solid #bbf7d0;
       border-radius:16px;
       font-weight:800;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
     }
 
     .btn-warning{
@@ -120,6 +141,10 @@
       border:1px solid #fed7aa;
       border-radius:16px;
       font-weight:800;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
     }
 
     .input{
@@ -867,7 +892,7 @@
 
     <div class="space-y-4">
       <input type="text" id="licenseKeyInput" class="input-bordered" placeholder="أدخل المفتاح">
-      <button id="loginBtn" class="w-full btn-primary p-3 shadow-md">دخول</button>
+      <button id="loginBtn" type="button" class="w-full btn-primary p-3 shadow-md">دخول</button>
       <p id="loginError" class="text-red-500 text-center text-sm hidden"></p>
 
       <div class="bg-green-50 border border-green-100 rounded-2xl p-4 text-center">
@@ -891,7 +916,7 @@
     <p id="expiredMessage" class="text-gray-600 mb-6">تم انتهاء الوقت أو عدد الاستخدامات المتاحة لهذا المفتاح.</p>
 
     <div class="flex flex-col md:flex-row gap-3 justify-center">
-      <button id="goToLoginBtn" class="btn-primary px-5 py-3">الذهاب إلى تسجيل الدخول</button>
+      <button id="goToLoginBtn" type="button" class="btn-primary px-5 py-3">الذهاب إلى تسجيل الدخول</button>
       <a href="https://wa.me/972597603119" target="_blank" class="inline-flex items-center justify-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl font-bold">
         <i data-lucide="message-circle"></i>
         شراء مفتاح
@@ -921,13 +946,13 @@
           </div>
         </div>
 
-        <button onclick="closeSidebar()" class="hamburger-btn mr-auto lg:hidden">
+        <button type="button" onclick="closeSidebar()" class="hamburger-btn mr-auto lg:hidden">
           <i data-lucide="x"></i>
         </button>
       </div>
 
       <div class="mt-4 flex justify-center">
-        <img id="sideLogo" src="" class="w-20 h-20 rounded-3xl object-cover shadow-sm hidden">
+        <img id="sideLogo" src="" class="w-20 h-20 rounded-3xl object-cover shadow-sm hidden" alt="logo">
       </div>
 
       <div class="mt-4 bg-emerald-50 rounded-3xl p-4 text-right space-y-2">
@@ -953,61 +978,61 @@
     <div class="nav-group" id="navButtonsWrap">
       <div class="nav-title">الرئيسية</div>
 
-      <button onclick="switchTab('pos'); closeSidebar()" class="nav-btn" data-tab="pos">
+      <button type="button" onclick="switchTab('pos'); closeSidebar()" class="nav-btn" data-tab="pos">
         <i data-lucide="shopping-cart"></i> <span>الكاشير</span>
       </button>
 
-      <button onclick="switchTab('products'); closeSidebar()" class="nav-btn" data-tab="products">
+      <button type="button" onclick="switchTab('products'); closeSidebar()" class="nav-btn" data-tab="products">
         <i data-lucide="package"></i> <span>المخزون</span>
       </button>
 
-      <button onclick="switchTab('invoices'); closeSidebar()" class="nav-btn" data-tab="invoices">
+      <button type="button" onclick="switchTab('invoices'); closeSidebar()" class="nav-btn" data-tab="invoices">
         <i data-lucide="receipt-text"></i> <span>الفواتير</span>
       </button>
 
       <div class="nav-title">الموردين والحسابات</div>
 
-      <button onclick="switchTab('purchases'); closeSidebar()" class="nav-btn" data-tab="purchases">
+      <button type="button" onclick="switchTab('purchases'); closeSidebar()" class="nav-btn" data-tab="purchases">
         <i data-lucide="shopping-bag"></i> <span>مشتريات الموردين</span>
       </button>
 
-      <button onclick="switchTab('merchant-payments'); closeSidebar()" class="nav-btn" data-tab="merchant-payments">
+      <button type="button" onclick="switchTab('merchant-payments'); closeSidebar()" class="nav-btn" data-tab="merchant-payments">
         <i data-lucide="hand-coins"></i> <span>دفعات التجار</span>
       </button>
 
-      <button onclick="switchTab('customers'); closeSidebar()" class="nav-btn" data-tab="customers">
+      <button type="button" onclick="switchTab('customers'); closeSidebar()" class="nav-btn" data-tab="customers">
         <i data-lucide="users"></i> <span>العملاء</span>
       </button>
 
-      <button onclick="switchTab('expenses'); closeSidebar()" class="nav-btn" data-tab="expenses">
+      <button type="button" onclick="switchTab('expenses'); closeSidebar()" class="nav-btn" data-tab="expenses">
         <i data-lucide="wallet-cards"></i> <span>المصروفات</span>
       </button>
 
       <div class="nav-title">التقارير</div>
 
-      <button onclick="switchTab('sales-report'); closeSidebar()" class="nav-btn" data-tab="sales-report">
+      <button type="button" onclick="switchTab('sales-report'); closeSidebar()" class="nav-btn" data-tab="sales-report">
         <i data-lucide="file-spreadsheet"></i> <span>تقرير المبيعات</span>
       </button>
 
-      <button onclick="switchTab('stock-report'); closeSidebar()" class="nav-btn" data-tab="stock-report">
+      <button type="button" onclick="switchTab('stock-report'); closeSidebar()" class="nav-btn" data-tab="stock-report">
         <i data-lucide="triangle-alert"></i> <span>البضاعة الناقصة</span>
       </button>
 
-      <button onclick="switchTab('profit-report'); closeSidebar()" class="nav-btn" data-tab="profit-report">
+      <button type="button" onclick="switchTab('profit-report'); closeSidebar()" class="nav-btn" data-tab="profit-report">
         <i data-lucide="trending-up"></i> <span>المرابح والأرصدة</span>
       </button>
 
-      <button onclick="switchTab('reports'); closeSidebar()" class="nav-btn" data-tab="reports">
+      <button type="button" onclick="switchTab('reports'); closeSidebar()" class="nav-btn" data-tab="reports">
         <i data-lucide="bar-chart-3"></i> <span>كل التقارير</span>
       </button>
 
       <div class="nav-title">النظام</div>
 
-      <button onclick="switchTab('stores'); closeSidebar()" class="nav-btn" data-tab="stores">
+      <button type="button" onclick="switchTab('stores'); closeSidebar()" class="nav-btn" data-tab="stores">
         <i data-lucide="store"></i> <span>المحلات</span>
       </button>
 
-      <button onclick="switchTab('settings'); closeSidebar()" class="nav-btn" data-tab="settings">
+      <button type="button" onclick="switchTab('settings'); closeSidebar()" class="nav-btn" data-tab="settings">
         <i data-lucide="settings"></i> <span>الإعدادات</span>
       </button>
     </div>
@@ -1020,7 +1045,7 @@
     <div class="top-status-bar px-4 md:px-8 py-3">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2 flex-wrap">
-          <button id="openSidebarBtn" onclick="openSidebar()" class="hamburger-btn">
+          <button id="openSidebarBtn" type="button" onclick="openSidebar()" class="hamburger-btn">
             <i data-lucide="menu"></i>
           </button>
 
@@ -1040,13 +1065,13 @@
             آخر مزامنة: -
           </span>
 
-          <button id="manualSyncBtn" class="btn-soft px-4 py-2 flex items-center gap-2">
+          <button id="manualSyncBtn" type="button" class="btn-soft px-4 py-2">
             <i data-lucide="refresh-cw" size="17"></i>
             مزامنة
             <span id="pendingSyncBadge" class="sync-badge hidden">0</span>
           </button>
 
-          <button id="downloadBackupTopBtn" class="btn-soft px-4 py-2 flex items-center gap-2">
+          <button id="downloadBackupTopBtn" type="button" class="btn-soft px-4 py-2">
             <i data-lucide="download" size="17"></i>
             نسخة احتياطية
           </button>
@@ -1064,10 +1089,10 @@
           </div>
 
           <div class="flex gap-2 flex-wrap">
-            <button onclick="switchTab('pos')" class="bg-white text-emerald-700 px-4 py-3 rounded-2xl font-black shadow">
+            <button type="button" onclick="switchTab('pos')" class="bg-white text-emerald-700 px-4 py-3 rounded-2xl font-black shadow">
               فاتورة جديدة
             </button>
-            <button onclick="switchTab('reports')" class="bg-emerald-950/30 text-white px-4 py-3 rounded-2xl font-black border border-white/20">
+            <button type="button" onclick="switchTab('reports')" class="bg-emerald-950/30 text-white px-4 py-3 rounded-2xl font-black border border-white/20">
               عرض التقارير
             </button>
           </div>
@@ -1084,11 +1109,11 @@
               <div id="posSearchResults" class="absolute top-full mt-2 left-0 right-0 bg-white border rounded-2xl shadow-2xl z-[100] hidden max-h-80 overflow-y-auto p-2"></div>
             </div>
 
-            <button onclick="openScanner('pos')" class="p-3.5 bg-emerald-50 text-emerald-700 rounded-2xl hover:bg-emerald-100" title="فتح كاميرا مسح الباركود">
+            <button type="button" onclick="openScanner('pos')" class="p-3.5 bg-emerald-50 text-emerald-700 rounded-2xl hover:bg-emerald-100" title="فتح كاميرا مسح الباركود">
               <i data-lucide="scan-barcode"></i>
             </button>
 
-            <button onclick="toggleScannerTorch()" id="scannerTorchQuickBtn" class="p-3.5 bg-amber-50 text-amber-700 rounded-2xl hover:bg-amber-100 hidden" title="تشغيل / إيقاف الفلاش">
+            <button type="button" onclick="toggleScannerTorch()" id="scannerTorchQuickBtn" class="p-3.5 bg-amber-50 text-amber-700 rounded-2xl hover:bg-amber-100 hidden" title="تشغيل / إيقاف الفلاش">
               <i data-lucide="flashlight"></i>
             </button>
 
@@ -1169,7 +1194,7 @@
               <div class="flex justify-between font-black text-2xl text-emerald-700 pt-2 border-t"><span>الإجمالي:</span> <span id="finalTotal">0.00 ₪</span></div>
             </div>
 
-            <button id="createInvoiceBtn" class="w-full btn-primary py-4 rounded-2xl font-black shadow-lg transition-all">
+            <button id="createInvoiceBtn" type="button" class="w-full btn-primary py-4 rounded-2xl font-black shadow-lg transition-all">
               إنشاء فاتورة
             </button>
           </div>
@@ -1180,7 +1205,7 @@
       <section id="tab-products" class="tab-content hidden space-y-6">
         <div class="flex flex-wrap justify-between items-center gap-4">
           <h2 class="text-2xl font-black">المخزون والمنتجات</h2>
-          <button id="openNewProductBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
+          <button id="openNewProductBtn" type="button" class="btn-primary px-6 py-3 rounded-2xl shadow-md">
             <i data-lucide="plus"></i> إضافة منتج
           </button>
         </div>
@@ -1212,11 +1237,12 @@
           </div>
 
           <div id="productsLoadMoreWrap" class="hidden pt-4 text-center">
-            <button id="loadMoreProductsBtn" class="btn-soft px-5 py-2 rounded-xl font-black">تحميل المزيد</button>
+            <button id="loadMoreProductsBtn" type="button" class="btn-soft px-5 py-2 rounded-xl font-black">تحميل المزيد</button>
           </div>
         </div>
       </section>
-<!-- INVOICES -->
+
+      <!-- INVOICES -->
       <section id="tab-invoices" class="tab-content hidden space-y-6">
         <div class="flex flex-wrap justify-between items-center gap-4">
           <h2 class="text-2xl font-black">الفواتير</h2>
@@ -1230,7 +1256,7 @@
               <option value="unpaid">غير مكتمل</option>
             </select>
 
-            <button onclick="openScanner('invoice')" class="p-3 bg-emerald-50 text-emerald-700 rounded-xl" title="مسح باركود الفاتورة">
+            <button type="button" onclick="openScanner('invoice')" class="p-3 bg-emerald-50 text-emerald-700 rounded-xl" title="مسح باركود الفاتورة">
               <i data-lucide="scan-line"></i>
             </button>
 
@@ -1239,7 +1265,7 @@
               <input type="file" id="barcodeImageInputInvoice" accept="image/*" class="hidden">
             </label>
 
-            <button onclick="openManualInvoiceModal()" class="btn-primary px-4 py-3 rounded-xl">
+            <button type="button" onclick="openManualInvoiceModal()" class="btn-primary px-4 py-3 rounded-xl">
               <i data-lucide="plus"></i> فاتورة مباشرة
             </button>
           </div>
@@ -1258,10 +1284,10 @@
 
             <input type="date" id="bulkExportSpecificDate" class="input-bordered">
 
-            <button id="bulkPrintInvoicesBtn" class="btn-soft py-3">طباعة جدول</button>
-            <button id="bulkExportInvoicesPdfBtn" class="btn-danger py-3">PDF جدول</button>
-            <button id="bulkExportInvoicesImagesBtn" class="btn-success py-3">صورة جدول</button>
-            <button id="bulkExportInvoicesExcelBtn" class="btn-warning py-3">Excel</button>
+            <button id="bulkPrintInvoicesBtn" type="button" class="btn-soft py-3">طباعة جدول</button>
+            <button id="bulkExportInvoicesPdfBtn" type="button" class="btn-danger py-3">PDF جدول</button>
+            <button id="bulkExportInvoicesImagesBtn" type="button" class="btn-success py-3">صورة جدول</button>
+            <button id="bulkExportInvoicesExcelBtn" type="button" class="btn-warning py-3">Excel</button>
           </div>
         </div>
 
@@ -1289,7 +1315,7 @@
           </table>
 
           <div id="invoicesLoadMoreWrap" class="hidden pt-4 text-center">
-            <button id="loadMoreInvoicesBtn" class="btn-soft px-5 py-2 rounded-xl font-black">تحميل المزيد</button>
+            <button id="loadMoreInvoicesBtn" type="button" class="btn-soft px-5 py-2 rounded-xl font-black">تحميل المزيد</button>
           </div>
         </div>
 
@@ -1300,7 +1326,7 @@
       <section id="tab-purchases" class="tab-content hidden space-y-6">
         <div class="flex flex-wrap justify-between items-center gap-4">
           <h2 class="text-2xl font-black">مشتريات الموردين</h2>
-          <button id="openPurchaseModalBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
+          <button id="openPurchaseModalBtn" type="button" class="btn-primary px-6 py-3 rounded-2xl shadow-md">
             <i data-lucide="plus"></i> إضافة فاتورة شراء
           </button>
         </div>
@@ -1318,10 +1344,10 @@
 
             <input type="date" id="bulkPurchasesSpecificDate" class="input-bordered">
 
-            <button id="bulkPrintPurchasesBtn" class="btn-soft py-3">طباعة جدول</button>
-            <button id="bulkExportPurchasesPdfBtn" class="btn-danger py-3">PDF جدول</button>
-            <button id="bulkExportPurchasesImagesBtn" class="btn-success py-3">صورة جدول</button>
-            <button id="bulkExportPurchasesExcelBtn" class="btn-warning py-3">Excel</button>
+            <button id="bulkPrintPurchasesBtn" type="button" class="btn-soft py-3">طباعة جدول</button>
+            <button id="bulkExportPurchasesPdfBtn" type="button" class="btn-danger py-3">PDF جدول</button>
+            <button id="bulkExportPurchasesImagesBtn" type="button" class="btn-success py-3">صورة جدول</button>
+            <button id="bulkExportPurchasesExcelBtn" type="button" class="btn-warning py-3">Excel</button>
           </div>
         </div>
 
@@ -1352,12 +1378,11 @@
 
         <div id="bulkPurchasesExportArea" class="hidden"></div>
       </section>
-
-      <!-- MERCHANT PAYMENTS -->
+<!-- MERCHANT PAYMENTS -->
       <section id="tab-merchant-payments" class="tab-content hidden space-y-6">
         <div class="flex flex-wrap justify-between items-center gap-4">
           <h2 class="text-2xl font-black">دفعات التجار</h2>
-          <button id="openMerchantPaymentModalBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
+          <button id="openMerchantPaymentModalBtn" type="button" class="btn-primary px-6 py-3 rounded-2xl shadow-md">
             <i data-lucide="plus"></i> إضافة دفعة
           </button>
         </div>
@@ -1375,10 +1400,10 @@
 
             <input type="date" id="merchantPaymentsSpecificDate" class="input-bordered">
 
-            <button id="printMerchantPaymentsBtn" class="btn-soft py-3">طباعة جدول</button>
-            <button id="exportMerchantPaymentsPdfBtn" class="btn-danger py-3">PDF جدول</button>
-            <button id="exportMerchantPaymentsImageBtn" class="btn-success py-3">صورة جدول</button>
-            <button id="exportMerchantPaymentsExcelBtn" class="btn-warning py-3">Excel</button>
+            <button id="printMerchantPaymentsBtn" type="button" class="btn-soft py-3">طباعة جدول</button>
+            <button id="exportMerchantPaymentsPdfBtn" type="button" class="btn-danger py-3">PDF جدول</button>
+            <button id="exportMerchantPaymentsImageBtn" type="button" class="btn-success py-3">صورة جدول</button>
+            <button id="exportMerchantPaymentsExcelBtn" type="button" class="btn-warning py-3">Excel</button>
           </div>
         </div>
 
@@ -1422,10 +1447,10 @@
 
             <input type="date" id="customersSpecificDate" class="input-bordered">
 
-            <button id="printCustomersBtn" class="btn-soft py-3">طباعة جدول</button>
-            <button id="exportCustomersPdfBtn" class="btn-danger py-3">PDF جدول</button>
-            <button id="exportCustomersImageBtn" class="btn-success py-3">صورة جدول</button>
-            <button id="exportCustomersExcelBtn" class="btn-warning py-3">Excel</button>
+            <button id="printCustomersBtn" type="button" class="btn-soft py-3">طباعة جدول</button>
+            <button id="exportCustomersPdfBtn" type="button" class="btn-danger py-3">PDF جدول</button>
+            <button id="exportCustomersImageBtn" type="button" class="btn-success py-3">صورة جدول</button>
+            <button id="exportCustomersExcelBtn" type="button" class="btn-warning py-3">Excel</button>
           </div>
         </div>
 
@@ -1476,7 +1501,7 @@
       <section id="tab-expenses" class="tab-content hidden space-y-6">
         <div class="flex flex-wrap justify-between items-center gap-4">
           <h2 class="text-2xl font-black">المصروفات</h2>
-          <button id="openExpenseModalBtn" class="btn-primary px-6 py-3 rounded-2xl flex items-center gap-2 shadow-md">
+          <button id="openExpenseModalBtn" type="button" class="btn-primary px-6 py-3 rounded-2xl shadow-md">
             <i data-lucide="plus"></i> إضافة مصروف
           </button>
         </div>
@@ -1494,10 +1519,10 @@
 
             <input type="date" id="expensesSpecificDate" class="input-bordered">
 
-            <button id="printExpensesBtn" class="btn-soft py-3">طباعة جدول</button>
-            <button id="exportExpensesPdfBtn" class="btn-danger py-3">PDF جدول</button>
-            <button id="exportExpensesImageBtn" class="btn-success py-3">صورة جدول</button>
-            <button id="exportExpensesExcelBtn" class="btn-warning py-3">Excel</button>
+            <button id="printExpensesBtn" type="button" class="btn-soft py-3">طباعة جدول</button>
+            <button id="exportExpensesPdfBtn" type="button" class="btn-danger py-3">PDF جدول</button>
+            <button id="exportExpensesImageBtn" type="button" class="btn-success py-3">صورة جدول</button>
+            <button id="exportExpensesExcelBtn" type="button" class="btn-warning py-3">Excel</button>
           </div>
         </div>
 
@@ -1520,7 +1545,8 @@
           </div>
         </div>
       </section>
-<!-- SALES REPORT -->
+
+      <!-- SALES REPORT -->
       <section id="tab-sales-report" class="tab-content hidden space-y-6">
         <div class="flex flex-wrap justify-between items-center gap-4">
           <h2 class="text-2xl font-black">تقرير المبيعات التفصيلي</h2>
@@ -1545,14 +1571,14 @@
               <option value="direct">بنكي مباشر</option>
             </select>
 
-            <button id="renderSalesReportBtn" class="btn-primary py-3">عرض التقرير</button>
-            <button id="printSalesReportBtn" class="btn-soft py-3">طباعة جدول</button>
-            <button id="exportSalesReportPdfBtn" class="btn-danger py-3">PDF جدول</button>
+            <button id="renderSalesReportBtn" type="button" class="btn-primary py-3">عرض التقرير</button>
+            <button id="printSalesReportBtn" type="button" class="btn-soft py-3">طباعة جدول</button>
+            <button id="exportSalesReportPdfBtn" type="button" class="btn-danger py-3">PDF جدول</button>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
-            <button id="exportSalesReportImageBtn" class="btn-success py-3">صورة جدول</button>
-            <button id="exportSalesReportExcelBtn" class="btn-warning py-3">Excel</button>
+            <button id="exportSalesReportImageBtn" type="button" class="btn-success py-3">صورة جدول</button>
+            <button id="exportSalesReportExcelBtn" type="button" class="btn-warning py-3">Excel</button>
             <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-3 text-sm text-emerald-800 font-bold">
               الفترة: <span id="salesReportPeriodText">-</span>
             </div>
@@ -1613,14 +1639,14 @@
           <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
             <input type="number" id="lowStockLimit" class="input-bordered" value="5" placeholder="حد النقص">
 
-            <button id="renderStockReportBtn" class="btn-primary py-3">عرض التقرير</button>
-            <button id="printStockReportBtn" class="btn-soft py-3">طباعة جدول</button>
-            <button id="exportStockReportPdfBtn" class="btn-danger py-3">PDF جدول</button>
-            <button id="exportStockReportImageBtn" class="btn-success py-3">صورة جدول</button>
+            <button id="renderStockReportBtn" type="button" class="btn-primary py-3">عرض التقرير</button>
+            <button id="printStockReportBtn" type="button" class="btn-soft py-3">طباعة جدول</button>
+            <button id="exportStockReportPdfBtn" type="button" class="btn-danger py-3">PDF جدول</button>
+            <button id="exportStockReportImageBtn" type="button" class="btn-success py-3">صورة جدول</button>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-1 gap-3 mt-3">
-            <button id="exportStockReportExcelBtn" class="btn-warning py-3">Excel</button>
+          <div class="grid grid-cols-1 gap-3 mt-3">
+            <button id="exportStockReportExcelBtn" type="button" class="btn-warning py-3">Excel</button>
           </div>
         </div>
 
@@ -1662,14 +1688,14 @@
 
             <input type="date" id="profitReportSpecificDate" class="input-bordered">
 
-            <button id="renderProfitReportBtn" class="btn-primary py-3">عرض التقرير</button>
-            <button id="printProfitReportBtn" class="btn-soft py-3">طباعة جدول</button>
-            <button id="exportProfitReportPdfBtn" class="btn-danger py-3">PDF جدول</button>
-            <button id="exportProfitReportImageBtn" class="btn-success py-3">صورة جدول</button>
+            <button id="renderProfitReportBtn" type="button" class="btn-primary py-3">عرض التقرير</button>
+            <button id="printProfitReportBtn" type="button" class="btn-soft py-3">طباعة جدول</button>
+            <button id="exportProfitReportPdfBtn" type="button" class="btn-danger py-3">PDF جدول</button>
+            <button id="exportProfitReportImageBtn" type="button" class="btn-success py-3">صورة جدول</button>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-1 gap-3 mt-3">
-            <button id="exportProfitReportExcelBtn" class="btn-warning py-3">Excel</button>
+          <div class="grid grid-cols-1 gap-3 mt-3">
+            <button id="exportProfitReportExcelBtn" type="button" class="btn-warning py-3">Excel</button>
           </div>
         </div>
 
@@ -1734,10 +1760,10 @@
 
         <div class="card p-4">
           <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <button id="printSummaryReportBtn" class="btn-soft py-3">طباعة التقرير</button>
-            <button id="exportSummaryReportPdfBtn" class="btn-danger py-3">PDF التقرير</button>
-            <button id="exportSummaryReportImageBtn" class="btn-success py-3">صورة التقرير</button>
-            <button id="exportSummaryReportExcelBtn" class="btn-warning py-3">Excel</button>
+            <button id="printSummaryReportBtn" type="button" class="btn-soft py-3">طباعة التقرير</button>
+            <button id="exportSummaryReportPdfBtn" type="button" class="btn-danger py-3">PDF التقرير</button>
+            <button id="exportSummaryReportImageBtn" type="button" class="btn-success py-3">صورة التقرير</button>
+            <button id="exportSummaryReportExcelBtn" type="button" class="btn-warning py-3">Excel</button>
           </div>
         </div>
 
@@ -1775,14 +1801,15 @@
       <section id="tab-stores" class="tab-content hidden space-y-6">
         <div class="flex justify-between items-center gap-3 flex-wrap">
           <h2 class="text-2xl font-black">إدارة الفروع والمحلات</h2>
-          <button onclick="toggleModal('storeModal', true)" class="btn-primary px-4 py-3 rounded-xl">
+          <button type="button" onclick="toggleModal('storeModal', true)" class="btn-primary px-4 py-3 rounded-xl">
             <i data-lucide="plus"></i> إضافة محل
           </button>
         </div>
 
         <div id="storesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
       </section>
-<!-- SETTINGS -->
+
+      <!-- SETTINGS -->
       <section id="tab-settings" class="tab-content hidden">
         <div class="card p-5 md:p-8 max-w-6xl mx-auto space-y-8">
           <div class="flex items-center justify-between gap-3 flex-wrap border-b pb-4">
@@ -1803,7 +1830,7 @@
               <h3 class="font-black text-lg">بيانات المحل</h3>
 
               <div class="flex justify-center mb-4">
-                <img id="settingsLogoPreview" src="" class="w-24 h-24 rounded-3xl shadow-md object-cover border-4 border-white hidden">
+                <img id="settingsLogoPreview" src="" class="w-24 h-24 rounded-3xl shadow-md object-cover border-4 border-white hidden" alt="logo">
               </div>
 
               <div>
@@ -1845,14 +1872,14 @@
                 <div class="text-sm font-black text-slate-700">مزامنة الأوفلاين مع السحابة</div>
 
                 <div class="grid grid-cols-1 gap-3">
-                  <button id="downloadOfflinePackageBtn" class="btn-soft py-3">تنزيل حزمة أوفلاين</button>
+                  <button id="downloadOfflinePackageBtn" type="button" class="btn-soft py-3">تنزيل حزمة أوفلاين</button>
 
                   <label class="btn-soft py-3 text-center cursor-pointer">
                     استيراد حزمة أوفلاين
                     <input type="file" id="importOfflinePackageInput" accept=".json,application/json" class="hidden">
                   </label>
 
-                  <button id="uploadOfflineDataBtn" class="btn-success py-3">رفع بيانات الأوفلاين إلى السحابة</button>
+                  <button id="uploadOfflineDataBtn" type="button" class="btn-success py-3">رفع بيانات الأوفلاين إلى السحابة</button>
                 </div>
               </div>
             </div>
@@ -1881,7 +1908,6 @@
 
           <div class="soft-card p-5 space-y-4">
             <h3 class="font-black text-lg">معلومات الدفع النصية</h3>
-
             <textarea id="paymentInfoInput" rows="5" class="input-bordered" placeholder="ملاحظات أو تعليمات دفع تظهر في الرسائل عند الحاجة"></textarea>
           </div>
 
@@ -1894,8 +1920,8 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <button id="downloadBackupBtn" class="btn-soft py-3">تنزيل نسخة احتياطية</button>
-              <button id="saveCloudBackupBtn" class="btn-success py-3">حفظ نسخة احتياطية سحابية</button>
+              <button id="downloadBackupBtn" type="button" class="btn-soft py-3">تنزيل نسخة احتياطية</button>
+              <button id="saveCloudBackupBtn" type="button" class="btn-success py-3">حفظ نسخة احتياطية سحابية</button>
 
               <label class="btn-primary py-3 text-center cursor-pointer">
                 استعادة نسخة
@@ -1909,11 +1935,11 @@
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <button id="saveSettingsBtn" class="w-full btn-primary py-3 rounded-xl font-black">
+            <button id="saveSettingsBtn" type="button" class="w-full btn-primary py-3 rounded-xl font-black">
               حفظ الإعدادات
             </button>
 
-            <button id="logoutBtn" class="w-full bg-red-600 text-white py-3 rounded-xl font-black">
+            <button id="logoutBtn" type="button" class="w-full bg-red-600 text-white py-3 rounded-xl font-black">
               تسجيل الخروج
             </button>
           </div>
@@ -1927,24 +1953,24 @@
 <!-- INVOICE PAGE -->
 <div id="invoicePage" class="hidden invoice-page">
   <div class="top-actions max-w-7xl mx-auto mb-3 flex justify-between items-center no-print">
-    <button id="backFromInvoiceBtn" class="bg-white px-4 py-3 rounded-xl shadow flex items-center gap-2">
+    <button id="backFromInvoiceBtn" type="button" class="bg-white px-4 py-3 rounded-xl shadow flex items-center gap-2">
       <i data-lucide="arrow-right"></i> رجوع
     </button>
 
     <div class="flex gap-3 flex-wrap">
-      <button id="printInvoiceBtn" class="bg-white px-4 py-3 rounded-xl shadow flex items-center gap-2">
+      <button id="printInvoiceBtn" type="button" class="bg-white px-4 py-3 rounded-xl shadow flex items-center gap-2">
         <i data-lucide="printer"></i> طباعة
       </button>
 
-      <button id="exportInvoiceImageBtn" class="bg-emerald-700 text-white px-4 py-3 rounded-xl shadow flex items-center gap-2">
+      <button id="exportInvoiceImageBtn" type="button" class="bg-emerald-700 text-white px-4 py-3 rounded-xl shadow flex items-center gap-2">
         <i data-lucide="image"></i> صورة
       </button>
 
-      <button id="exportInvoicePdfBtn" class="bg-red-600 text-white px-4 py-3 rounded-xl shadow flex items-center gap-2">
+      <button id="exportInvoicePdfBtn" type="button" class="bg-red-600 text-white px-4 py-3 rounded-xl shadow flex items-center gap-2">
         <i data-lucide="file-text"></i> PDF
       </button>
 
-      <button id="shareInvoiceBtn" class="bg-green-600 text-white px-4 py-3 rounded-xl shadow flex items-center gap-2">
+      <button id="shareInvoiceBtn" type="button" class="bg-green-600 text-white px-4 py-3 rounded-xl shadow flex items-center gap-2">
         <i data-lucide="share-2"></i> إرسال
       </button>
     </div>
@@ -2056,12 +2082,13 @@
     </div>
   </div>
 </div>
+
 <!-- BARCODE MODAL -->
 <div id="barcodeModal" class="modal-wrap hidden">
   <div class="modal-card max-w-md p-6 md:p-8">
     <div class="flex items-center justify-between gap-3 mb-6">
       <h3 id="barcodeTitle" class="text-xl font-black">باركود المنتج</h3>
-      <button onclick="toggleModal('barcodeModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+      <button type="button" onclick="toggleModal('barcodeModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
         <i data-lucide="x"></i>
       </button>
     </div>
@@ -2079,7 +2106,7 @@
   <div class="modal-card max-w-2xl p-5 md:p-8">
     <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
       <h3 id="modalTitle" class="text-xl font-black">إضافة منتج جديد</h3>
-      <button onclick="toggleModal('productModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+      <button type="button" onclick="toggleModal('productModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
         <i data-lucide="x"></i>
       </button>
     </div>
@@ -2128,7 +2155,7 @@
       <div class="border-t pt-4">
         <div class="flex items-center justify-between mb-3">
           <h4 class="font-black">الأصناف / المقاسات</h4>
-          <button onclick="addVariantRow()" type="button" class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl font-black">أضف صنف</button>
+          <button type="button" onclick="addVariantRow()" class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl font-black">أضف صنف</button>
         </div>
 
         <div id="variantsBox" class="space-y-3"></div>
@@ -2139,8 +2166,8 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4">
-        <button id="saveProductBtn" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ المنتج</button>
-        <button onclick="toggleModal('productModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
+        <button id="saveProductBtn" type="button" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ المنتج</button>
+        <button type="button" onclick="toggleModal('productModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
       </div>
     </div>
   </div>
@@ -2151,7 +2178,7 @@
   <div class="modal-card max-w-2xl p-5 md:p-8">
     <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
       <h3 id="purchaseModalTitle" class="text-xl font-black">إضافة فاتورة شراء</h3>
-      <button onclick="toggleModal('purchaseModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+      <button type="button" onclick="toggleModal('purchaseModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
         <i data-lucide="x"></i>
       </button>
     </div>
@@ -2197,8 +2224,8 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-        <button id="savePurchaseBtn" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ</button>
-        <button onclick="toggleModal('purchaseModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
+        <button id="savePurchaseBtn" type="button" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ</button>
+        <button type="button" onclick="toggleModal('purchaseModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
       </div>
     </div>
   </div>
@@ -2209,7 +2236,7 @@
   <div class="modal-card max-w-xl p-5 md:p-8">
     <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
       <h3 id="merchantPaymentModalTitle" class="text-xl font-black">إضافة دفعة لتاجر</h3>
-      <button onclick="toggleModal('merchantPaymentModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+      <button type="button" onclick="toggleModal('merchantPaymentModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
         <i data-lucide="x"></i>
       </button>
     </div>
@@ -2248,8 +2275,8 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-        <button id="saveMerchantPaymentBtn" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ</button>
-        <button onclick="toggleModal('merchantPaymentModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
+        <button id="saveMerchantPaymentBtn" type="button" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ</button>
+        <button type="button" onclick="toggleModal('merchantPaymentModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
       </div>
     </div>
   </div>
@@ -2260,7 +2287,7 @@
   <div class="modal-card max-w-xl p-5 md:p-8">
     <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
       <h3 id="expenseModalTitle" class="text-xl font-black">إضافة مصروف</h3>
-      <button onclick="toggleModal('expenseModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+      <button type="button" onclick="toggleModal('expenseModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
         <i data-lucide="x"></i>
       </button>
     </div>
@@ -2299,8 +2326,8 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-        <button id="saveExpenseBtn" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ</button>
-        <button onclick="toggleModal('expenseModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
+        <button id="saveExpenseBtn" type="button" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ</button>
+        <button type="button" onclick="toggleModal('expenseModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
       </div>
     </div>
   </div>
@@ -2311,7 +2338,7 @@
   <div class="modal-card max-w-2xl p-5 md:p-8">
     <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
       <h3 class="text-xl font-black">إضافة فاتورة مباشرة</h3>
-      <button onclick="toggleModal('manualInvoiceModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+      <button type="button" onclick="toggleModal('manualInvoiceModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
         <i data-lucide="x"></i>
       </button>
     </div>
@@ -2366,8 +2393,8 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-        <button onclick="saveManualInvoice()" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ الفاتورة</button>
-        <button onclick="toggleModal('manualInvoiceModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
+        <button type="button" onclick="saveManualInvoice()" class="btn-primary p-4 rounded-xl font-black shadow-lg">حفظ الفاتورة</button>
+        <button type="button" onclick="toggleModal('manualInvoiceModal', false)" class="bg-gray-100 p-4 rounded-xl text-gray-600 font-black">إلغاء</button>
       </div>
     </div>
   </div>
@@ -2378,13 +2405,13 @@
   <div class="modal-card max-w-md p-5 md:p-8">
     <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
       <h3 class="text-xl font-black">إنشاء فرع جديد</h3>
-      <button onclick="toggleModal('storeModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+      <button type="button" onclick="toggleModal('storeModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
         <i data-lucide="x"></i>
       </button>
     </div>
 
     <input type="text" id="newStoreName" class="input-bordered mb-4" placeholder="اسم المحل أو الفرع">
-    <button id="createStoreBtn" class="w-full btn-primary p-3 rounded-xl font-black">إنشاء</button>
+    <button id="createStoreBtn" type="button" class="w-full btn-primary p-3 rounded-xl font-black">إنشاء</button>
   </div>
 </div>
 
@@ -2393,7 +2420,7 @@
   <div class="modal-card max-w-md p-5 md:p-8">
     <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
       <h3 class="text-xl font-black">تعديل حالة الفاتورة</h3>
-      <button onclick="toggleModal('statusModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+      <button type="button" onclick="toggleModal('statusModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
         <i data-lucide="x"></i>
       </button>
     </div>
@@ -2406,8 +2433,8 @@
     </select>
 
     <div class="grid grid-cols-2 gap-3">
-      <button id="saveStatusBtn" class="btn-primary py-3">حفظ</button>
-      <button onclick="toggleModal('statusModal', false)" class="bg-gray-100 py-3 rounded-xl font-black text-gray-700">إلغاء</button>
+      <button id="saveStatusBtn" type="button" class="btn-primary py-3">حفظ</button>
+      <button type="button" onclick="toggleModal('statusModal', false)" class="bg-gray-100 py-3 rounded-xl font-black text-gray-700">إلغاء</button>
     </div>
   </div>
 </div>
@@ -2417,7 +2444,7 @@
   <div class="modal-card max-w-lg p-5 md:p-8">
     <div class="flex items-center justify-between gap-3 mb-6 sticky top-0 bg-white z-10 pb-3 border-b">
       <h3 class="text-xl font-black">ملاحظات الفاتورة</h3>
-      <button onclick="toggleModal('noteModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+      <button type="button" onclick="toggleModal('noteModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
         <i data-lucide="x"></i>
       </button>
     </div>
@@ -2435,7 +2462,7 @@
         <p class="text-sm text-gray-500 mt-1">يمكنك إرسال رسالة أو إنشاء فاتورة مجمعة لهذا العميل</p>
       </div>
 
-      <button onclick="toggleModal('customerHistoryModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
+      <button type="button" onclick="toggleModal('customerHistoryModal', false)" class="btn-soft w-11 h-11 flex items-center justify-center">
         <i data-lucide="x"></i>
       </button>
     </div>
@@ -2487,7 +2514,7 @@
           <input type="text" id="messageCustomPrefix" class="input-bordered" placeholder="مقدمة مخصصة">
         </div>
 
-        <button id="customerSendDebtMsgBtn" class="btn-success py-3 w-full">إرسال رسالة بالدفعات غير المكتملة</button>
+        <button id="customerSendDebtMsgBtn" type="button" class="btn-success py-3 w-full">إرسال رسالة بالدفعات غير المكتملة</button>
       </div>
 
       <div class="soft-card p-4 space-y-3">
@@ -2509,7 +2536,7 @@
           </select>
         </div>
 
-        <button id="customerCreateDebtInvoiceBtn" class="btn-primary py-3 w-full">إنشاء فاتورة مجمعة</button>
+        <button id="customerCreateDebtInvoiceBtn" type="button" class="btn-primary py-3 w-full">إنشاء فاتورة مجمعة</button>
       </div>
     </div>
 
@@ -2538,7 +2565,7 @@
 
     <div class="p-4 border-b flex items-center justify-between">
       <h3 class="font-black" id="scannerTitle">مسح الباركود</h3>
-      <button onclick="closeScanner()" class="text-emerald-700">
+      <button type="button" onclick="closeScanner()" class="text-emerald-700">
         <i data-lucide="x-circle"></i>
       </button>
     </div>
@@ -2551,8 +2578,8 @@
 
     <div class="p-6 bg-white text-center space-y-3">
       <p class="text-gray-500">ضع الباركود داخل الإطار</p>
-      <button onclick="toggleScannerTorch()" id="scannerTorchBtn" class="w-full bg-amber-50 text-amber-700 p-3 rounded-2xl font-black hidden">تشغيل / إيقاف الفلاش</button>
-      <button onclick="closeScanner()" class="w-full bg-emerald-700 text-white p-3 rounded-2xl font-black">إغلاق الكاميرا</button>
+      <button type="button" onclick="toggleScannerTorch()" id="scannerTorchBtn" class="w-full bg-amber-50 text-amber-700 p-3 rounded-2xl font-black hidden">تشغيل / إيقاف الفلاش</button>
+      <button type="button" onclick="closeScanner()" class="w-full bg-emerald-700 text-white p-3 rounded-2xl font-black">إغلاق الكاميرا</button>
     </div>
   </div>
 </div>
@@ -2572,6 +2599,10 @@
 
   window.openSidebar = openSidebar;
   window.closeSidebar = closeSidebar;
+
+  window.addEventListener("DOMContentLoaded", () => {
+    try { window.lucide?.createIcons?.(); } catch {}
+  });
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", async () => {
