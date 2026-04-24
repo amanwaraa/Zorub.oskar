@@ -1,3 +1,4 @@
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getDatabase,
@@ -9,6 +10,26 @@ import {
   onValue,
   off
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+window.__APP_JS_LOADED__ = true;
+
+window.addEventListener("error", function (e) {
+  console.error("JS ERROR:", e.message, e.filename, e.lineno, e.colno);
+  const err = document.getElementById("loginError");
+  if (err) {
+    err.innerText = "خطأ في ملف الجافا: " + e.message;
+    err.classList.remove("hidden");
+  }
+});
+
+window.addEventListener("unhandledrejection", function (e) {
+  console.error("PROMISE ERROR:", e.reason);
+  const err = document.getElementById("loginError");
+  if (err) {
+    err.innerText = "خطأ غير متوقع: " + (e.reason?.message || e.reason);
+    err.classList.remove("hidden");
+  }
+});
 
 const firebaseConfig = {
   apiKey: "AIzaSyCnLAY7zQyBy7gUuL9wszt9aEhiJgvRmxI",
@@ -64,12 +85,269 @@ let scannerLock = false;
 let currentCustomerHistoryName = "";
 let currentCustomerHistoryPhone = "";
 
+function qs(id) {
+  return document.getElementById(id);
+}
+
+function safeLucide() {
+  try {
+    if (window.lucide) lucide.createIcons();
+  } catch {}
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
-  lucide.createIcons();
+  safeLucide();
+
+  const loginButton = qs("loginBtn");
+  if (loginButton) {
+    loginButton.onclick = handleLicenseLogin;
+  }
+
   bindBaseEvents();
   bindOnlineOfflineEvents();
-  await initApp();
+
+  try {
+    await initApp();
+  } catch (err) {
+    console.error(err);
+    showLogin("خطأ أثناء تشغيل التطبيق: " + (err?.message || err));
+  }
 });
+function clone(obj) {
+  return JSON.parse(JSON.stringify(obj || {}));
+}
+
+function isOnline() {
+  return navigator.onLine;
+}
+
+function currentLicenseKey() {
+  const session = getLocalSession();
+  return session?.key || null;
+}
+
+function sanitizeKey(key) {
+  return String(key || "").replace(/[.#$/[\]]/g, "_");
+}
+
+function baseClientPath() {
+  const key = currentLicenseKey();
+  if (!key) return null;
+  return `${PREFIX}_clients/${sanitizeKey(key)}`;
+}
+
+function pathLicenses() { return `${PREFIX}_licenses`; }
+function pathClientStores() { return `${baseClientPath()}/stores`; }
+function pathClientProducts() { return `${baseClientPath()}/products`; }
+function pathClientInvoices() { return `${baseClientPath()}/invoices`; }
+function pathClientPurchases() { return `${baseClientPath()}/purchases`; }
+function pathClientExpenses() { return `${baseClientPath()}/expenses`; }
+function pathClientMerchantPayments() { return `${baseClientPath()}/merchantPayments`; }
+function pathClientCounters() { return `${baseClientPath()}/counters`; }
+function pathClientSettings() { return `${baseClientPath()}/settings`; }
+function pathClientBackups() { return `${baseClientPath()}/backups`; }
+
+function bindBaseEvents() {
+  qs("loginBtn")?.addEventListener("click", handleLicenseLogin);
+  qs("goToLoginBtn")?.addEventListener("click", goToLoginFromExpired);
+
+  qs("openNewProductBtn")?.addEventListener("click", openNewProduct);
+  qs("createInvoiceBtn")?.addEventListener("click", checkout);
+  qs("saveProductBtn")?.addEventListener("click", saveProduct);
+
+  qs("openPurchaseModalBtn")?.addEventListener("click", openPurchaseModal);
+  qs("savePurchaseBtn")?.addEventListener("click", savePurchase);
+
+  qs("openMerchantPaymentModalBtn")?.addEventListener("click", openMerchantPaymentModal);
+  qs("saveMerchantPaymentBtn")?.addEventListener("click", saveMerchantPayment);
+
+  qs("openExpenseModalBtn")?.addEventListener("click", openExpenseModal);
+  qs("saveExpenseBtn")?.addEventListener("click", saveExpense);
+
+  qs("createStoreBtn")?.addEventListener("click", createNewStore);
+  qs("saveSettingsBtn")?.addEventListener("click", saveSettings);
+  qs("logoutBtn")?.addEventListener("click", logoutUser);
+
+  qs("manualSyncBtn")?.addEventListener("click", () => syncPendingAndCloud(true));
+  qs("downloadBackupTopBtn")?.addEventListener("click", downloadBackupFile);
+
+  qs("backFromInvoiceBtn")?.addEventListener("click", backFromInvoicePage);
+  qs("printInvoiceBtn")?.addEventListener("click", printInvoicePage);
+  qs("exportInvoiceImageBtn")?.addEventListener("click", () => exportInvoicePage("image"));
+  qs("exportInvoicePdfBtn")?.addEventListener("click", () => exportInvoicePage("pdf"));
+  qs("shareInvoiceBtn")?.addEventListener("click", shareCurrentInvoice);
+
+  qs("downloadBackupBtn")?.addEventListener("click", downloadBackupFile);
+  qs("saveCloudBackupBtn")?.addEventListener("click", saveCloudBackup);
+  qs("restoreBackupInput")?.addEventListener("change", restoreBackupFromFile);
+
+  qs("downloadOfflinePackageBtn")?.addEventListener("click", downloadOfflinePackage);
+  qs("importOfflinePackageInput")?.addEventListener("change", importOfflinePackage);
+  qs("uploadOfflineDataBtn")?.addEventListener("click", () => syncPendingAndCloud(true));
+
+  qs("inventorySearch")?.addEventListener("input", resetProductsAndRender);
+  qs("invSearchQuery")?.addEventListener("input", resetInvoicesAndRender);
+  qs("invoiceStatusFilter")?.addEventListener("change", resetInvoicesAndRender);
+  qs("reportFilter")?.addEventListener("change", renderReports);
+  qs("posSearch")?.addEventListener("input", searchPosProducts);
+  qs("posDiscount")?.addEventListener("input", calculateTotal);
+  qs("discountType")?.addEventListener("change", calculateTotal);
+  qs("setStoreLogo")?.addEventListener("input", e => previewStoreLogo(e.target.value));
+
+  qs("paymentMethod")?.addEventListener("change", () => handlePaymentMethodUi("paymentMethod", "transferAccountSelect"));
+  qs("manualPaymentMethod")?.addEventListener("change", () => handlePaymentMethodUi("manualPaymentMethod", "transferAccountSelectManual"));
+  qs("merchantPaymentMethod")?.addEventListener("change", () => handlePaymentMethodUi("merchantPaymentMethod", "merchantPaymentAccount"));
+  qs("expensePaymentMethod")?.addEventListener("change", () => handlePaymentMethodUi("expensePaymentMethod", "expenseAccount"));
+
+  qs("barcodeImageInputPos")?.addEventListener("change", e => scanBarcodeFromImage(e, "pos"));
+  qs("barcodeImageInputInvoice")?.addEventListener("change", e => scanBarcodeFromImage(e, "invoice"));
+
+  qs("licenseKeyInput")?.addEventListener("keydown", e => {
+    if (e.key === "Enter") handleLicenseLogin();
+  });
+
+  qs("customerName")?.addEventListener("input", handleCustomerInput);
+  qs("customerPhone")?.addEventListener("input", handleCustomerInput);
+  qs("manualCustomerName")?.addEventListener("input", handleManualCustomerInput);
+  qs("manualCustomerPhone")?.addEventListener("input", handleManualCustomerInput);
+
+  qs("customersSearch")?.addEventListener("input", renderCustomersPage);
+  qs("customersReportRange")?.addEventListener("change", renderCustomersPage);
+  qs("customersSpecificDate")?.addEventListener("change", renderCustomersPage);
+
+  qs("customerHistoryRange")?.addEventListener("change", () => {
+    if (currentCustomerHistoryName) openCustomerHistory(currentCustomerHistoryName, currentCustomerHistoryPhone);
+  });
+
+  qs("saveStatusBtn")?.addEventListener("click", saveInvoiceStatus);
+  qs("customerCreateDebtInvoiceBtn")?.addEventListener("click", createAggregateInvoiceForCustomer);
+  qs("customerSendDebtMsgBtn")?.addEventListener("click", sendDebtMessageToCustomer);
+
+  qs("bulkPrintInvoicesBtn")?.addEventListener("click", () => exportBulkInvoices("print"));
+  qs("bulkExportInvoicesPdfBtn")?.addEventListener("click", () => exportBulkInvoices("pdf"));
+  qs("bulkExportInvoicesImagesBtn")?.addEventListener("click", () => exportBulkInvoices("image"));
+  qs("bulkExportInvoicesExcelBtn")?.addEventListener("click", exportInvoicesExcel);
+
+  qs("bulkPrintPurchasesBtn")?.addEventListener("click", () => exportBulkPurchases("print"));
+  qs("bulkExportPurchasesPdfBtn")?.addEventListener("click", () => exportBulkPurchases("pdf"));
+  qs("bulkExportPurchasesImagesBtn")?.addEventListener("click", () => exportBulkPurchases("image"));
+  qs("bulkExportPurchasesExcelBtn")?.addEventListener("click", exportPurchasesExcel);
+
+  qs("renderSalesReportBtn")?.addEventListener("click", renderSalesReport);
+  qs("renderStockReportBtn")?.addEventListener("click", renderStockReport);
+  qs("renderProfitReportBtn")?.addEventListener("click", renderProfitReport);
+
+  qs("addAccountBtn")?.addEventListener("click", addTransferAccount);
+
+  qs("loadMoreProductsBtn")?.addEventListener("click", loadMoreProducts);
+  qs("loadMoreInvoicesBtn")?.addEventListener("click", loadMoreInvoices);
+}
+
+function bindOnlineOfflineEvents() {
+  window.addEventListener("online", async () => {
+    updateConnectionUI();
+    await syncPendingAndCloud(true);
+  });
+
+  window.addEventListener("offline", updateConnectionUI);
+}
+
+async function initApp() {
+  updateConnectionUI();
+  updatePendingSyncBadge();
+  await bootSessionState();
+}
+
+function showToast(message, type = "info") {
+  const toast = qs("toast");
+  if (!toast) {
+    alert(message);
+    return;
+  }
+
+  toast.textContent = message;
+  toast.className = "toast show";
+
+  setTimeout(() => {
+    toast.className = "toast";
+  }, 2600);
+}
+
+function showLoader(text = "جاري المعالجة...", progress = 15) {
+  const loader = qs("loader");
+  const circle = qs("progressCircle");
+  const textEl = qs("loaderText");
+
+  if (!loader || !circle || !textEl) return;
+
+  loader.classList.remove("hidden");
+  textEl.innerText = text;
+  circle.style.setProperty("--progress", progress);
+  circle.setAttribute("data-progress", progress);
+}
+
+function updateLoader(text = "جاري المعالجة...", progress = 50) {
+  const circle = qs("progressCircle");
+  const textEl = qs("loaderText");
+
+  if (textEl) textEl.innerText = text;
+  if (circle) {
+    circle.style.setProperty("--progress", progress);
+    circle.setAttribute("data-progress", progress);
+  }
+}
+
+function hideLoader() {
+  const loader = qs("loader");
+  const circle = qs("progressCircle");
+
+  if (circle) {
+    circle.style.setProperty("--progress", 100);
+    circle.setAttribute("data-progress", 100);
+  }
+
+  setTimeout(() => {
+    loader?.classList.add("hidden");
+    if (circle) {
+      circle.style.setProperty("--progress", 0);
+      circle.setAttribute("data-progress", 0);
+    }
+  }, 160);
+}
+
+function showLogin(message = "") {
+  qs("mainApp")?.classList.add("hidden");
+  qs("invoicePage")?.classList.add("hidden");
+  qs("licenseExpiredPage")?.classList.add("hidden");
+  qs("loginPage")?.classList.remove("hidden");
+
+  const err = qs("loginError");
+  if (err) {
+    if (message) {
+      err.innerText = message;
+      err.classList.remove("hidden");
+    } else {
+      err.innerText = "";
+      err.classList.add("hidden");
+    }
+  }
+}
+
+function showExpired(message = "انتهى وقت المفتاح أو عدد الاستخدامات المتاحة.") {
+  qs("mainApp")?.classList.add("hidden");
+  qs("invoicePage")?.classList.add("hidden");
+  qs("loginPage")?.classList.add("hidden");
+  qs("licenseExpiredPage")?.classList.remove("hidden");
+  if (qs("expiredMessage")) qs("expiredMessage").innerText = message;
+  safeLucide();
+}
+
+function showApp() {
+  qs("loginPage")?.classList.add("hidden");
+  qs("licenseExpiredPage")?.classList.add("hidden");
+  qs("invoicePage")?.classList.add("hidden");
+  qs("mainApp")?.classList.remove("hidden");
+}
 
 function qs(id) {
   return document.getElementById(id);
