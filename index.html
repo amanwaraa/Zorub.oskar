@@ -984,6 +984,7 @@
       session: getDefaultAdminSession(),
       data: loadAppData()
     };
+    window.state = state;/
 
     function resetStateForCurrentKey() {
       state.data = loadAppData();
@@ -5587,6 +5588,25 @@
     restoreSavedEmployeeUsername();
     updateAlertsBadge();
   }
+
+window.render = render;
+window.navigate = navigate;
+window.saveAppState = saveAppState;
+window.enqueueSyncOperation = enqueueSyncOperation;
+window.syncQueueToCloud = syncQueueToCloud;
+window.isLocalOnlyMode = isLocalOnlyMode;
+window.showToast = showToast;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.formatCurrency = formatCurrency;
+window.formatDate = formatDate;
+window.calculateInvoiceTotals = calculateInvoiceTotals;
+window.getCustomerById = getCustomerById;
+window.getNextInvoiceNumber = getNextInvoiceNumber;
+window.rebuildCustomerBalances = rebuildCustomerBalances;
+window.applyTheme = applyTheme;
+window.updateHeader = updateHeader;
+window.uid = uid;
 
   init();
 </script>
