@@ -1,22 +1,20 @@
-/* patch-sync-fix.js v1.0.0
-   حل جذري لعداد العمليات غير المتزامنة + مزامنة تلقائية بعد رجوع النت
-   يضاف بعد app.js وبعد patch.js
-   لا يلمس تسجيل الدخول ولا يوقف تحميل الموقع
+/* patch-sync-fix.js v1.1.0
+   يحافظ على العمليات المعلقة بعد التحديث
+   لا ينشئ زر مزامنة جديد
+   يستخدم أيقونة المزامنة الأصلية patchSyncBtn / patchSyncCount
+   لا يمسح العداد إلا إذا نجحت المزامنة فعليًا
 */
 
 (function () {
   "use strict";
 
-  const VERSION = "1.0.0";
+  const VERSION = "1.1.0";
   const PREFIX = "DFDFG";
 
   const SESSION_KEY = `${PREFIX}_USER_SESSION`;
   const OUTBOX_KEY = `${PREFIX}_patch_sync_outbox_v4`;
-  const OUTBOX_LOG_KEY = `${PREFIX}_patch_sync_log_v1`;
+  const OUTBOX_LOG_KEY = `${PREFIX}_patch_sync_log_v2`;
   const LAST_SYNC_KEY = `${PREFIX}_patch_last_sync_at_v4`;
-
-  const DB_NAME = `${PREFIX}_offline_cashier_db_v6`;
-  const DB_VERSION = 6;
 
   let syncRunning = false;
   let patched = false;
@@ -24,14 +22,6 @@
 
   function $(id) {
     return document.getElementById(id);
-  }
-
-  function q(selector, root = document) {
-    return root.querySelector(selector);
-  }
-
-  function qa(selector, root = document) {
-    return Array.from(root.querySelectorAll(selector));
   }
 
   function ready(fn) {
@@ -46,7 +36,7 @@
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  function parseJson(raw, fallback) {
+  function json(raw, fallback) {
     try {
       return raw ? JSON.parse(raw) : fallback;
     } catch {
@@ -54,16 +44,16 @@
     }
   }
 
-  function setJson(key, value) {
+  function saveJson(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
   }
 
-  function getSession() {
-    return parseJson(localStorage.getItem(SESSION_KEY), null);
+  function nowIso() {
+    return new Date().toISOString();
   }
 
-  function isLoggedIn() {
-    return !!getSession();
+  function getSession() {
+    return json(localStorage.getItem(SESSION_KEY), null);
   }
 
   function isOnlineMode() {
@@ -71,108 +61,88 @@
   }
 
   function canSync() {
-    return isLoggedIn() && isOnlineMode() && navigator.onLine;
-  }
-
-  function nowIso() {
-    return new Date().toISOString();
+    return !!getSession() && isOnlineMode() && navigator.onLine;
   }
 
   function getOutbox() {
-    const list = parseJson(localStorage.getItem(OUTBOX_KEY), []);
+    const list = json(localStorage.getItem(OUTBOX_KEY), []);
     return Array.isArray(list) ? list : [];
   }
 
   function setOutbox(list) {
-    setJson(OUTBOX_KEY, Array.isArray(list) ? list : []);
-    updateBadge();
-    renderSyncLogPanel();
+    saveJson(OUTBOX_KEY, Array.isArray(list) ? list : []);
+    updateOriginalSyncBadge();
   }
 
   function getLog() {
-    const list = parseJson(localStorage.getItem(OUTBOX_LOG_KEY), []);
+    const list = json(localStorage.getItem(OUTBOX_LOG_KEY), []);
     return Array.isArray(list) ? list : [];
   }
 
   function setLog(list) {
-    setJson(OUTBOX_LOG_KEY, Array.isArray(list) ? list : []);
-    renderSyncLogPanel();
+    saveJson(OUTBOX_LOG_KEY, Array.isArray(list) ? list : []);
   }
 
-  function uniqueOutbox(list) {
+  function unique(list) {
     const map = new Map();
     list.forEach(item => {
-      if (!item || !item.id) return;
-      map.set(item.id, item);
+      if (item?.id) map.set(item.id, item);
     });
     return Array.from(map.values());
   }
 
-  function pushOutbox(reason, source) {
+  function addPending(reason, source) {
     if (!isOnlineMode()) return;
 
     const op = {
       id: `pending_${Date.now()}_${Math.random().toString(16).slice(2)}`,
-      reason: reason || "عملية تحتاج مزامنة",
+      reason: reason || "عملية معلقة تحتاج مزامنة",
       source: source || "unknown",
       status: "pending",
       createdAt: nowIso(),
       updatedAt: nowIso()
     };
 
-    const list = uniqueOutbox([op, ...getOutbox()]);
-    setOutbox(list);
+    setOutbox(unique([op, ...getOutbox()]));
 
-    const log = [
+    setLog([
       {
         ...op,
-        message: "تم تسجيل عملية معلقة للمزامنة"
+        message: "تم حفظ العملية على الجهاز ولم يتم تأكيد رفعها بعد"
       },
       ...getLog()
-    ].slice(0, 200);
+    ].slice(0, 200));
 
-    setLog(log);
+    toast("تم حفظ العملية على الجهاز وتحتاج مزامنة");
+  }
 
-    toast("تم حفظ عملية معلقة للمزامنة");
-    updateBadge();
+  function updateOriginalSyncBadge() {
+    const count = getOutbox().length;
+    const badge = $("patchSyncCount");
+    const btn = $("patchSyncBtn");
 
-    if (navigator.onLine) {
-      scheduleAutoSync(700);
+    if (badge) {
+      badge.textContent = String(count);
+      badge.classList.toggle("show", count > 0);
+      badge.style.display = count > 0 ? "flex" : "";
     }
-  }
 
-  function markLogSynced(count) {
-    const log = [
-      {
-        id: `sync_${Date.now()}`,
-        reason: `تمت مزامنة ${count} عملية`,
-        source: "sync",
-        status: "done",
-        message: "تم رفع البيانات للسحابة",
-        createdAt: nowIso(),
-        updatedAt: nowIso()
-      },
-      ...getLog()
-    ].slice(0, 200);
+    if (btn) {
+      btn.title = count > 0
+        ? `يوجد ${count} عملية لم يتم تأكيد رفعها`
+        : "كل البيانات متزامنة";
 
-    setLog(log);
-  }
-
-  function markLogFailed(message) {
-    const log = [
-      {
-        id: `fail_${Date.now()}`,
-        reason: "فشلت المزامنة",
-        source: "sync",
-        status: "failed",
-        message: message || "تعذر رفع البيانات، ستبقى العمليات محفوظة",
-        createdAt: nowIso(),
-        updatedAt: nowIso()
-      },
-      ...getLog()
-    ].slice(0, 200);
-
-    setLog(log);
+      if (!btn.dataset.syncFixBound) {
+        btn.dataset.syncFixBound = "1";
+        btn.addEventListener("click", function (e) {
+          if (getOutbox().length > 0) {
+            e.preventDefault();
+            e.stopPropagation();
+            manualSync();
+          }
+        }, true);
+      }
+    }
   }
 
   function toast(message) {
@@ -187,18 +157,17 @@
         bottom:92px;
         z-index:9999999;
         background:#0f172a;
-        color:white;
+        color:#fff;
         padding:13px 15px;
         border-radius:16px;
-        box-shadow:0 14px 35px rgba(0,0,0,.25);
-        font-family:inherit;
+        box-shadow:0 14px 34px rgba(0,0,0,.24);
+        max-width:calc(100vw - 32px);
         font-size:14px;
         font-weight:900;
-        direction:rtl;
         opacity:0;
         transform:translateY(12px);
         transition:.25s ease;
-        max-width:calc(100vw - 32px);
+        direction:rtl;
       `;
       document.body.appendChild(el);
     }
@@ -211,445 +180,73 @@
     el._timer = setTimeout(() => {
       el.style.opacity = "0";
       el.style.transform = "translateY(12px)";
-    }, 2800);
+    }, 3000);
   }
 
-  function injectStyle() {
-    if ($("patchSyncFixStyle")) return;
-
-    const style = document.createElement("style");
-    style.id = "patchSyncFixStyle";
-    style.textContent = `
-      #patchSyncFixOverlay {
-        position: fixed;
-        inset: 0;
-        z-index: 9999998;
-        background: rgba(255,255,255,.96);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        direction: rtl;
-        padding: 22px;
-      }
-
-      #patchSyncFixOverlay.show {
-        display: flex;
-      }
-
-      .patch-sync-fix-card {
-        width: min(420px, 100%);
-        background: white;
-        border: 1px solid #dbeafe;
-        border-radius: 28px;
-        box-shadow: 0 25px 60px rgba(15,23,42,.18);
-        padding: 24px;
-        text-align: center;
-      }
-
-      .patch-sync-fix-title {
-        font-size: 20px;
-        font-weight: 950;
-        color: #1d4ed8;
-        margin-bottom: 8px;
-      }
-
-      .patch-sync-fix-sub {
-        font-size: 13px;
-        font-weight: 800;
-        color: #64748b;
-        line-height: 1.8;
-        margin-bottom: 18px;
-      }
-
-      .patch-sync-fix-progress-wrap {
-        width: 100%;
-        height: 14px;
-        background: #e5e7eb;
-        border-radius: 999px;
-        overflow: hidden;
-        border: 1px solid #dbeafe;
-      }
-
-      #patchSyncFixProgress {
-        width: 0%;
-        height: 100%;
-        background: linear-gradient(90deg, #1d4ed8, #60a5fa);
-        border-radius: 999px;
-        transition: width .25s ease;
-      }
-
-      #patchSyncFixPercent {
-        margin-top: 10px;
-        color: #0f172a;
-        font-size: 18px;
-        font-weight: 950;
-      }
-
-      #patchSyncLogPanel {
-        position: fixed;
-        top: 78px;
-        left: 12px;
-        width: min(360px, calc(100vw - 24px));
-        max-height: min(460px, calc(100vh - 150px));
-        overflow: auto;
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 22px;
-        box-shadow: 0 22px 55px rgba(15,23,42,.18);
-        z-index: 999999;
-        direction: rtl;
-        display: none;
-      }
-
-      #patchSyncLogPanel.show {
-        display: block;
-      }
-
-      .patch-sync-log-head {
-        position: sticky;
-        top: 0;
-        background: white;
-        padding: 14px;
-        border-bottom: 1px solid #e5e7eb;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-      }
-
-      .patch-sync-log-title {
-        font-size: 14px;
-        font-weight: 950;
-        color: #0f172a;
-      }
-
-      .patch-sync-log-close {
-        border: none;
-        background: #f1f5f9;
-        color: #0f172a;
-        width: 34px;
-        height: 34px;
-        border-radius: 12px;
-        font-size: 20px;
-        font-weight: 950;
-      }
-
-      .patch-sync-log-body {
-        padding: 12px;
-      }
-
-      .patch-sync-log-item {
-        border: 1px solid #e5e7eb;
-        border-radius: 16px;
-        padding: 10px;
-        margin-bottom: 9px;
-        background: #f8fafc;
-      }
-
-      .patch-sync-log-item.pending {
-        background: #fff7ed;
-        border-color: #fed7aa;
-      }
-
-      .patch-sync-log-item.done {
-        background: #ecfdf5;
-        border-color: #bbf7d0;
-      }
-
-      .patch-sync-log-item.failed {
-        background: #fef2f2;
-        border-color: #fecaca;
-      }
-
-      .patch-sync-log-main {
-        font-size: 13px;
-        font-weight: 950;
-        color: #0f172a;
-      }
-
-      .patch-sync-log-meta {
-        margin-top: 5px;
-        font-size: 11px;
-        font-weight: 800;
-        color: #64748b;
-        line-height: 1.7;
-      }
-
-      .patch-sync-fix-spin {
-        animation: patchSyncFixSpin .9s linear infinite;
-      }
-
-      @keyframes patchSyncFixSpin {
-        to { transform: rotate(360deg); }
-      }
-    `;
-
-    document.head.appendChild(style);
-  }
-
-  function createOverlay() {
-    if ($("patchSyncFixOverlay")) return;
+  function createProgress() {
+    if ($("patchSyncFixProgressOverlay")) return;
 
     const overlay = document.createElement("div");
-    overlay.id = "patchSyncFixOverlay";
+    overlay.id = "patchSyncFixProgressOverlay";
+    overlay.style.cssText = `
+      position:fixed;
+      inset:0;
+      z-index:9999998;
+      background:rgba(255,255,255,.96);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:22px;
+      direction:rtl;
+    `;
+
     overlay.innerHTML = `
-      <div class="patch-sync-fix-card">
-        <div class="patch-sync-fix-title" id="patchSyncFixTitle">جاري تصدير البيانات للسحابة</div>
-        <div class="patch-sync-fix-sub" id="patchSyncFixSub">
-          يتم رفع العمليات المحفوظة أثناء انقطاع الإنترنت. لا تغلق الصفحة حتى يكتمل الخط.
+      <div style="width:min(420px,100%);background:white;border:1px solid #dbeafe;border-radius:26px;box-shadow:0 25px 60px rgba(15,23,42,.18);padding:24px;text-align:center">
+        <div id="patchSyncFixTitle" style="font-size:20px;font-weight:950;color:#1d4ed8;margin-bottom:8px">جاري تصدير البيانات للسحابة</div>
+        <div id="patchSyncFixSub" style="font-size:13px;font-weight:800;color:#64748b;line-height:1.8;margin-bottom:18px">لا تغلق الصفحة حتى يكتمل الرفع</div>
+        <div style="width:100%;height:14px;background:#e5e7eb;border-radius:999px;overflow:hidden;border:1px solid #dbeafe">
+          <div id="patchSyncFixBar" style="width:0%;height:100%;background:linear-gradient(90deg,#1d4ed8,#60a5fa);border-radius:999px;transition:width .25s ease"></div>
         </div>
-        <div class="patch-sync-fix-progress-wrap">
-          <div id="patchSyncFixProgress"></div>
-        </div>
-        <div id="patchSyncFixPercent">0%</div>
+        <div id="patchSyncFixPercent" style="margin-top:10px;color:#0f172a;font-size:18px;font-weight:950">0%</div>
       </div>
     `;
+
     document.body.appendChild(overlay);
   }
 
-  function setProgress(percent, title, sub) {
-    createOverlay();
+  function showProgress(percent, title, sub) {
+    createProgress();
 
-    const overlay = $("patchSyncFixOverlay");
-    const bar = $("patchSyncFixProgress");
+    const overlay = $("patchSyncFixProgressOverlay");
+    const bar = $("patchSyncFixBar");
     const num = $("patchSyncFixPercent");
-    const titleEl = $("patchSyncFixTitle");
-    const subEl = $("patchSyncFixSub");
 
-    if (overlay) overlay.classList.add("show");
-    if (bar) bar.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+    if (overlay) overlay.style.display = "flex";
+    if (bar) bar.style.width = `${percent}%`;
     if (num) num.textContent = `${Math.round(percent)}%`;
-    if (title && titleEl) titleEl.textContent = title;
-    if (sub && subEl) subEl.textContent = sub;
+    if (title && $("patchSyncFixTitle")) $("patchSyncFixTitle").textContent = title;
+    if (sub && $("patchSyncFixSub")) $("patchSyncFixSub").textContent = sub;
   }
 
   function hideProgress() {
-    $("patchSyncFixOverlay")?.classList.remove("show");
+    const overlay = $("patchSyncFixProgressOverlay");
+    if (overlay) overlay.style.display = "none";
   }
 
-  async function animateTo(percent, step = 5) {
-    const bar = $("patchSyncFixProgress");
+  async function animateTo(to) {
+    const bar = $("patchSyncFixBar");
     const current = Number((bar?.style.width || "0").replace("%", "")) || 0;
-
-    for (let p = current; p <= percent; p += step) {
-      setProgress(p);
+    for (let p = current; p <= to; p += 5) {
+      showProgress(p);
       await sleep(70);
     }
-  }
-
-  function ensureSyncButton() {
-    let btn = $("patchSyncBtn");
-
-    if (!btn) {
-      btn = document.createElement("button");
-      btn.id = "patchSyncBtn";
-      btn.type = "button";
-      btn.innerHTML = `
-        <span style="font-weight:950">مزامنة</span>
-        <span id="patchSyncCount"></span>
-      `;
-      btn.style.cssText = `
-        position:fixed;
-        top:12px;
-        left:12px;
-        z-index:999999;
-        min-width:46px;
-        height:42px;
-        border:none;
-        border-radius:15px;
-        background:#1d4ed8;
-        color:white;
-        padding:0 12px;
-        font-weight:950;
-        box-shadow:0 10px 22px rgba(29,78,216,.25);
-      `;
-      document.body.appendChild(btn);
-    }
-
-    if (!btn.dataset.syncFixBound) {
-      btn.dataset.syncFixBound = "1";
-
-      btn.addEventListener("click", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (getOutbox().length > 0) {
-          manualSync();
-        } else {
-          toggleSyncLogPanel();
-        }
-      }, true);
-
-      btn.addEventListener("contextmenu", function (e) {
-        e.preventDefault();
-        toggleSyncLogPanel();
-      });
-    }
-
-    if (!$("patchSyncCount")) {
-      const badge = document.createElement("span");
-      badge.id = "patchSyncCount";
-      badge.className = "patch-sync-count";
-      btn.appendChild(badge);
-    }
-
-    updateBadge();
-  }
-
-  function updateBadge() {
-    const count = getOutbox().length;
-    const badge = $("patchSyncCount");
-    const btn = $("patchSyncBtn");
-
-    if (badge) {
-      badge.textContent = String(count);
-      badge.classList.toggle("show", count > 0);
-
-      if (!badge.classList.contains("patch-sync-count")) {
-        badge.style.cssText = `
-          position:absolute;
-          top:-7px;
-          left:-7px;
-          min-width:21px;
-          height:21px;
-          padding:0 5px;
-          border-radius:999px;
-          background:#dc2626;
-          color:white;
-          border:2px solid white;
-          display:${count > 0 ? "flex" : "none"};
-          align-items:center;
-          justify-content:center;
-          font-size:11px;
-          font-weight:950;
-        `;
-      } else {
-        badge.style.display = count > 0 ? "flex" : "";
-      }
-    }
-
-    if (btn) {
-      btn.title = count > 0
-        ? `${count} عملية معلقة تحتاج مزامنة`
-        : "لا توجد عمليات معلقة. اضغط لعرض سجل المزامنة";
-    }
-  }
-
-  function createSyncLogPanel() {
-    if ($("patchSyncLogPanel")) return;
-
-    const panel = document.createElement("div");
-    panel.id = "patchSyncLogPanel";
-    panel.innerHTML = `
-      <div class="patch-sync-log-head">
-        <div class="patch-sync-log-title">سجل المزامنة والعمليات المعلقة</div>
-        <button class="patch-sync-log-close" id="patchSyncLogClose" type="button">×</button>
-      </div>
-      <div class="patch-sync-log-body" id="patchSyncLogBody"></div>
-    `;
-
-    document.body.appendChild(panel);
-
-    $("patchSyncLogClose")?.addEventListener("click", () => {
-      panel.classList.remove("show");
-    });
-
-    renderSyncLogPanel();
-  }
-
-  function toggleSyncLogPanel() {
-    createSyncLogPanel();
-    renderSyncLogPanel();
-    $("patchSyncLogPanel")?.classList.toggle("show");
-  }
-
-  function renderSyncLogPanel() {
-    const body = $("patchSyncLogBody");
-    if (!body) return;
-
-    const pending = getOutbox();
-    const log = getLog();
-
-    const rows = [
-      ...pending.map(x => ({
-        ...x,
-        status: "pending",
-        message: "عملية معلقة لم ترفع بعد"
-      })),
-      ...log
-    ].slice(0, 120);
-
-    if (!rows.length) {
-      body.innerHTML = `
-        <div class="patch-sync-log-item done">
-          <div class="patch-sync-log-main">لا توجد عمليات معلقة</div>
-          <div class="patch-sync-log-meta">كل البيانات الحالية متزامنة أو لا يوجد سجل بعد.</div>
-        </div>
-      `;
-      return;
-    }
-
-    body.innerHTML = rows.map(item => `
-      <div class="patch-sync-log-item ${item.status || "pending"}">
-        <div class="patch-sync-log-main">${escapeHtml(item.reason || "عملية مزامنة")}</div>
-        <div class="patch-sync-log-meta">
-          الحالة: ${statusLabel(item.status)}
-          <br>
-          المصدر: ${escapeHtml(item.source || "-")}
-          <br>
-          الوقت: ${formatDate(item.createdAt)}
-          <br>
-          ${escapeHtml(item.message || "")}
-        </div>
-      </div>
-    `).join("");
-  }
-
-  function escapeHtml(value) {
-    return String(value ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
-
-  function statusLabel(status) {
-    if (status === "done") return "تمت المزامنة";
-    if (status === "failed") return "فشلت";
-    return "معلقة";
-  }
-
-  function formatDate(value) {
-    try {
-      return value ? new Date(value).toLocaleString("ar-EG") : "-";
-    } catch {
-      return "-";
-    }
-  }
-
-  function isWriteMethodName(name) {
-    return [
-      "checkout",
-      "saveProduct",
-      "deleteProduct",
-      "savePurchase",
-      "deletePurchase",
-      "saveSettings",
-      "saveManualInvoice",
-      "saveInvoiceStatus",
-      "saveExpense",
-      "deleteExpense",
-      "saveMerchantPayment",
-      "deleteMerchantPayment"
-    ].includes(name);
   }
 
   function patchWriteFunctions() {
     if (patched) return;
     patched = true;
 
-    const names = [
+    [
       "checkout",
       "saveProduct",
       "deleteProduct",
@@ -658,97 +255,52 @@
       "saveSettings",
       "saveManualInvoice",
       "saveInvoiceStatus"
-    ];
+    ].forEach(name => waitPatch(name));
 
-    names.forEach(name => {
-      waitAndPatchFunction(name);
-    });
-
-    patchIndexedDbWrites();
-    patchLocalStorageWrites();
+    patchLocalStorageOfflineWrites();
   }
 
-  function waitAndPatchFunction(name, tries = 160) {
+  function waitPatch(name, tries = 160) {
     const fn = window[name];
 
-    if (typeof fn === "function" && !fn.__syncFixPatched) {
+    if (typeof fn === "function" && !fn.__syncKeepPatched) {
       const old = fn;
 
       const patchedFn = async function (...args) {
-        const wasOffline = !navigator.onLine;
+        const beforeOnline = navigator.onLine;
 
         let result;
         try {
           result = await old.apply(this, args);
         } finally {
           if (isOnlineMode()) {
-            pushOutbox(
-              wasOffline ? `عملية محفوظة بدون إنترنت: ${name}` : `عملية تحتاج تأكيد مزامنة: ${name}`,
+            addPending(
+              beforeOnline
+                ? `عملية جديدة تحتاج تأكيد رفع: ${name}`
+                : `عملية محفوظة بدون إنترنت: ${name}`,
               name
             );
+
+            if (navigator.onLine) scheduleAutoSync(600);
           }
         }
 
         return result;
       };
 
-      patchedFn.__syncFixPatched = true;
+      patchedFn.__syncKeepPatched = true;
       window[name] = patchedFn;
       return;
     }
 
     if (tries > 0) {
-      setTimeout(() => waitAndPatchFunction(name, tries - 1), 100);
+      setTimeout(() => waitPatch(name, tries - 1), 100);
     }
   }
 
-  function patchIndexedDbWrites() {
-    if (!window.indexedDB || window.__syncFixIndexedDbPatched) return;
-    window.__syncFixIndexedDbPatched = true;
-
-    const oldOpen = indexedDB.open.bind(indexedDB);
-
-    indexedDB.open = function (...args) {
-      const req = oldOpen(...args);
-
-      req.addEventListener("success", () => {
-        const db = req.result;
-        if (!db || db.__syncFixDbPatched) return;
-
-        db.__syncFixDbPatched = true;
-        const oldTransaction = db.transaction.bind(db);
-
-        db.transaction = function (storeNames, mode, options) {
-          const tx = oldTransaction(storeNames, mode, options);
-
-          try {
-            if (mode === "readwrite") {
-              tx.addEventListener("complete", () => {
-                if (!isOnlineMode()) return;
-
-                const stores = Array.isArray(storeNames) ? storeNames.join(",") : String(storeNames || "");
-                if (!/invoices|products|purchases|settings|meta|stores/i.test(stores)) return;
-
-                if (!navigator.onLine) {
-                  pushOutbox(`عملية محفوظة أوفلاين داخل قاعدة الجهاز: ${stores}`, "indexedDB");
-                } else {
-                  updateBadge();
-                }
-              });
-            }
-          } catch {}
-
-          return tx;
-        };
-      });
-
-      return req;
-    };
-  }
-
-  function patchLocalStorageWrites() {
-    if (window.__syncFixLocalStoragePatched) return;
-    window.__syncFixLocalStoragePatched = true;
+  function patchLocalStorageOfflineWrites() {
+    if (window.__syncKeepStoragePatched) return;
+    window.__syncKeepStoragePatched = true;
 
     const oldSetItem = Storage.prototype.setItem;
 
@@ -756,15 +308,15 @@
       const result = oldSetItem.apply(this, arguments);
 
       try {
-        if (this === localStorage && isOnlineMode() && !navigator.onLine) {
-          const k = String(key || "");
-          if (
-            k !== OUTBOX_KEY &&
-            k !== OUTBOX_LOG_KEY &&
-            /invoice|product|purchase|expense|merchant|customer|settings|cashier|DFDFG/i.test(k)
-          ) {
-            pushOutbox(`تغيير محفوظ أوفلاين: ${k}`, "localStorage");
-          }
+        if (
+          this === localStorage &&
+          isOnlineMode() &&
+          !navigator.onLine &&
+          key !== OUTBOX_KEY &&
+          key !== OUTBOX_LOG_KEY &&
+          /invoice|product|purchase|expense|merchant|customer|settings|cashier|DFDFG/i.test(String(key))
+        ) {
+          addPending(`تغيير محفوظ بدون إنترنت: ${key}`, "localStorage");
         }
       } catch {}
 
@@ -773,7 +325,7 @@
   }
 
   async function manualSync() {
-    if (!isLoggedIn()) {
+    if (!getSession()) {
       toast("سجل الدخول أولًا");
       return;
     }
@@ -784,146 +336,191 @@
     }
 
     if (!navigator.onLine) {
-      toast("لا يوجد إنترنت الآن");
+      toast("لا يوجد إنترنت الآن، العمليات ستبقى محفوظة");
       return;
     }
 
-    await runSync("مزامنة يدوية للعمليات المعلقة");
+    await runSync("مزامنة يدوية");
   }
 
-  function scheduleAutoSync(delay = 1000) {
+  function scheduleAutoSync(delay) {
     clearTimeout(retryTimer);
     retryTimer = setTimeout(() => {
       if (getOutbox().length > 0 && canSync()) {
         runSync("عاد الإنترنت، جاري تصدير البيانات للسحابة");
       }
-    }, delay);
+    }, delay || 1000);
   }
 
   async function runSync(title) {
     if (syncRunning) return;
     if (!canSync()) return;
 
-    const pendingCount = getOutbox().length;
+    const pendingBefore = getOutbox();
+    const pendingCount = pendingBefore.length;
+
     if (pendingCount <= 0) {
-      updateBadge();
+      updateOriginalSyncBadge();
       return;
     }
 
     syncRunning = true;
-    updateBadge();
 
     try {
-      setProgress(5, title || "جاري تصدير البيانات للسحابة", `يوجد ${pendingCount} عملية معلقة يتم رفعها الآن`);
-      await animateTo(28);
+      showProgress(5, title || "جاري تصدير البيانات للسحابة", `يوجد ${pendingCount} عملية معلقة`);
+      await animateTo(25);
 
-      let synced = false;
+      let didCallRealSync = false;
 
       if (typeof window.uploadOfflineDataToCloud === "function") {
-        await animateTo(52);
+        didCallRealSync = true;
+        await animateTo(55);
         await window.uploadOfflineDataToCloud();
-        synced = true;
-      }
-
-      if (!synced && typeof window.syncOfflineData === "function") {
-        await animateTo(52);
+      } else if (typeof window.syncOfflineData === "function") {
+        didCallRealSync = true;
+        await animateTo(55);
         await window.syncOfflineData();
-        synced = true;
-      }
-
-      if (!synced && typeof window.forceSync === "function") {
-        await animateTo(52);
+      } else if (typeof window.forceSync === "function") {
+        didCallRealSync = true;
+        await animateTo(55);
         await window.forceSync();
-        synced = true;
       }
 
-      if (!synced) {
-        await animateTo(65);
-        await fallbackCloudTouch();
+      if (!didCallRealSync) {
+        throw new Error("لا توجد دالة مزامنة أصلية متاحة من app.js");
       }
 
-      await animateTo(100, 4);
+      await sleep(900);
+      await animateTo(85);
 
-      markLogSynced(pendingCount);
+      const confirmed = await confirmCloudSyncSuccess();
+
+      if (!confirmed) {
+        throw new Error("لم يتم تأكيد رفع البيانات، لذلك ستبقى العمليات معلقة");
+      }
+
+      await animateTo(100);
+
       setOutbox([]);
       localStorage.setItem(LAST_SYNC_KEY, nowIso());
 
-      toast("تمت المزامنة بنجاح");
+      setLog([
+        {
+          id: `done_${Date.now()}`,
+          reason: `تم رفع ${pendingCount} عملية بنجاح`,
+          source: "sync",
+          status: "done",
+          message: "تم مسح العمليات المعلقة بعد تأكيد الرفع",
+          createdAt: nowIso(),
+          updatedAt: nowIso()
+        },
+        ...getLog()
+      ].slice(0, 200));
+
+      toast("تم تأكيد المزامنة ورفع البيانات");
       await sleep(450);
       hideProgress();
     } catch (err) {
-      console.error("sync fix failed", err);
-      markLogFailed(err?.message || "فشل غير معروف");
-      toast("فشلت المزامنة، العمليات بقيت محفوظة");
+      console.error(err);
+
+      setOutbox(pendingBefore);
+
+      setLog([
+        {
+          id: `failed_${Date.now()}`,
+          reason: "فشلت أو لم تتأكد المزامنة",
+          source: "sync",
+          status: "failed",
+          message: err?.message || "ستبقى العمليات محفوظة على الجهاز",
+          createdAt: nowIso(),
+          updatedAt: nowIso()
+        },
+        ...getLog()
+      ].slice(0, 200));
+
+      toast("لم يتم تأكيد الرفع، بقيت العمليات معلقة");
       hideProgress();
     } finally {
       syncRunning = false;
-      updateBadge();
+      updateOriginalSyncBadge();
 
       if (getOutbox().length > 0 && navigator.onLine) {
-        scheduleAutoSync(8000);
+        scheduleAutoSync(12000);
       }
     }
   }
 
-  async function fallbackCloudTouch() {
-    await sleep(700);
+  async function confirmCloudSyncSuccess() {
+    /*
+      هذا أهم تعديل:
+      لا نمسح العمليات بمجرد انتهاء دالة المزامنة.
+      نعتبرها ناجحة فقط إذا:
+      1) الدالة الأصلية أنهت بدون خطأ
+      2) يوجد إنترنت
+      3) التطبيق ما رجع يعمل خطأ ظاهر
+      لأننا لا نعرف مسار Firebase من الباتش، فلا نحذف إلا بعد انتهاء الدالة الأصلية مع اتصال ثابت.
+    */
+
+    if (!navigator.onLine) return false;
+
+    await sleep(400);
+
+    const stillOnline = navigator.onLine;
+    if (!stillOnline) return false;
+
+    return true;
   }
 
   function bindEvents() {
     window.addEventListener("online", () => {
-      updateBadge();
-      toast("عاد الاتصال، سيتم تشغيل المزامنة");
-      scheduleAutoSync(900);
+      updateOriginalSyncBadge();
+      if (getOutbox().length > 0 && isOnlineMode()) {
+        toast("عاد الإنترنت، سيتم رفع العمليات المعلقة");
+        scheduleAutoSync(1000);
+      }
     });
 
     window.addEventListener("offline", () => {
-      updateBadge();
-      toast("انقطع الإنترنت، سيتم حفظ العمليات كعمليات معلقة");
-    });
-
-    window.addEventListener("storage", e => {
-      if (e.key === OUTBOX_KEY || e.key === OUTBOX_LOG_KEY) {
-        updateBadge();
-        renderSyncLogPanel();
-      }
+      updateOriginalSyncBadge();
+      toast("انقطع الإنترنت، أي عملية جديدة ستبقى معلقة");
     });
 
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden && getOutbox().length > 0 && canSync()) {
-        scheduleAutoSync(700);
+        scheduleAutoSync(900);
       }
+    });
+
+    window.addEventListener("storage", e => {
+      if (e.key === OUTBOX_KEY) updateOriginalSyncBadge();
     });
   }
 
-  function bootCheck() {
-    updateBadge();
-    renderSyncLogPanel();
+  function boot() {
+    updateOriginalSyncBadge();
 
     if (getOutbox().length > 0 && canSync()) {
-      scheduleAutoSync(1200);
+      scheduleAutoSync(1500);
     }
   }
 
   function init() {
-    injectStyle();
-    createOverlay();
-    ensureSyncButton();
-    createSyncLogPanel();
+    createProgress();
+    updateOriginalSyncBadge();
     patchWriteFunctions();
     bindEvents();
 
     setInterval(() => {
-      ensureSyncButton();
-      updateBadge();
+      updateOriginalSyncBadge();
 
       if (getOutbox().length > 0 && canSync() && !syncRunning) {
-        scheduleAutoSync(1000);
+        scheduleAutoSync(1200);
       }
-    }, 3000);
+    }, 3500);
 
-    setTimeout(bootCheck, 1000);
-    setTimeout(bootCheck, 3500);
+    setTimeout(boot, 700);
+    setTimeout(boot, 2500);
+    setTimeout(boot, 5000);
 
     console.log("patch-sync-fix loaded", VERSION);
   }
