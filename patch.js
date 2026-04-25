@@ -1,32 +1,33 @@
-/* patch.js v4.1.4-final-stable
-   مبني على patch.js v4.1.2-stable-login
-   لا يتدخل نهائياً في تسجيل الدخول حتى لا يعلق المفتاح
-   يحفظ عداد المزامنة في localStorage حتى بعد تحديث الصفحة
-   مزامنة تلقائية عند رجوع الإنترنت بعد دخول التطبيق فقط
-   شريط مزامنة خطي بدل الدائرة
-   النوافذ المنبثقة فوق الشريط السفلي + زر إغلاق + زر الرجوع يغلق النافذة
-   تقارير PDF / صورة / طباعة / Excel
-   بدون تحديث ملفات الموقع من الاستضافة
+/* patch.js v4.1.5-sync-fixed
+   مبني على v4.1.4
+   لا يتدخل في تسجيل الدخول قبل فتح التطبيق
+   يحل مشكلة: المفتاح يتعرف لكن لا ينتقل للداخل
+   يحل مشكلة: المزامنة تمسح العداد بدون رفع حقيقي
+   يحفظ العمليات المعلقة بعد تحديث الصفحة
+   عند رجوع الإنترنت يزامن تلقائياً
+   يدعم المزامنة اليدوية من أيقونة المزامنة
+   خط تحميل بدل الدائرة
+   مصروفات + دفعات تجار + عملاء + تقارير + Excel/PDF/صورة/طباعة
 */
 
 (function () {
   "use strict";
 
-  const PATCH_VERSION = "4.1.4-final-stable";
+  const PATCH_VERSION = "4.1.5-sync-fixed";
   const PREFIX = "DFDFG";
   const DB_NAME = `${PREFIX}_offline_cashier_db_v6`;
   const DB_VERSION = 6;
 
-  const OUTBOX_KEY = `${PREFIX}_patch_sync_outbox_v4`;
-  const LAST_SYNC_KEY = `${PREFIX}_patch_last_sync_at_v4`;
-  const PURCHASE_ITEMS_KEY = `${PREFIX}_patch_purchase_items_v4`;
-  const MERCHANT_PAYMENTS_KEY = `${PREFIX}_patch_merchant_payments_v4`;
-  const EXPENSES_KEY = `${PREFIX}_patch_expenses_v4`;
+  const OUTBOX_KEY = `${PREFIX}_patch_sync_outbox_v5`;
+  const LAST_SYNC_KEY = `${PREFIX}_patch_last_sync_at_v5`;
+  const PURCHASE_ITEMS_KEY = `${PREFIX}_patch_purchase_items_v5`;
+  const MERCHANT_PAYMENTS_KEY = `${PREFIX}_patch_merchant_payments_v5`;
+  const EXPENSES_KEY = `${PREFIX}_patch_expenses_v5`;
 
   let syncRunning = false;
   let observerStarted = false;
   let mutationPatched = false;
-  let appReadyForPatch = false;
+  let appBooted = false;
   let modalBackPatched = false;
 
   function $(id) {
@@ -90,26 +91,62 @@
     return new Date().toISOString();
   }
 
+  function getAnySession() {
+    const keys = [
+      `${PREFIX}_USER_SESSION`,
+      "fee_rebuild_v3_license",
+      "fee_cached_license_state_v1",
+      "fee_rebuild_v3_session_state",
+      "fee_rebuild_v3_app_state"
+    ];
+
+    for (const key of keys) {
+      const val = safeJsonParse(localStorage.getItem(key), null);
+      if (val) return val;
+    }
+
+    return null;
+  }
+
   function getSession() {
     return safeJsonParse(localStorage.getItem(`${PREFIX}_USER_SESSION`), null);
   }
 
   function isMainAppVisible() {
     const mainApp = $("mainApp");
-    return !!mainApp && !mainApp.classList.contains("hidden");
+    const appRoot = $("appRoot");
+
+    if (mainApp && !mainApp.classList.contains("hidden") && !mainApp.classList.contains("hidden-force")) return true;
+    if (appRoot && !appRoot.classList.contains("hidden") && !appRoot.classList.contains("hidden-force")) return true;
+
+    return false;
   }
 
   function isLoginVisible() {
     const loginPage = $("loginPage");
-    return !!loginPage && !loginPage.classList.contains("hidden");
+    const loginRoot = $("loginRoot");
+
+    if (loginPage && !loginPage.classList.contains("hidden") && !loginPage.classList.contains("hidden-force")) return true;
+    if (loginRoot && !loginRoot.classList.contains("hidden") && !loginRoot.classList.contains("hidden-force")) return true;
+
+    return false;
   }
 
   function isOnlineMode() {
+    const session = getAnySession();
+    if (!session) return false;
+
+    if (session.appMode === "online") return true;
+    if (session.syncMode === "online_sync") return true;
+    if (session.mode === "online") return true;
+    if (session.key && session.syncMode !== "offline_local_only") return true;
+    if (session.licenseKey && session.syncMode !== "offline_local_only") return true;
+
     return getSession()?.appMode === "online";
   }
 
   function shouldSync() {
-    return !!getSession() && isOnlineMode() && navigator.onLine && isMainAppVisible();
+    return !!getAnySession() && isOnlineMode() && navigator.onLine && isMainAppVisible();
   }
 
   function getLocalArray(key) {
@@ -139,6 +176,7 @@
       createdAt: nowIso(),
       url: location.href
     });
+
     setOutbox(list);
   }
 
@@ -199,10 +237,10 @@
   }
 
   function injectStyle() {
-    if ($("patchStyleV4")) return;
+    if ($("patchStyleV415")) return;
 
     const style = document.createElement("style");
-    style.id = "patchStyleV4";
+    style.id = "patchStyleV415";
     style.textContent = `
       .patch-topbar {
         position: sticky;
@@ -270,6 +308,10 @@
         justify-content: center;
         font-weight: 900;
         flex-shrink: 0;
+      }
+
+      .patch-company-fallback.hidden {
+        display: none !important;
       }
 
       .patch-company-name {
@@ -404,18 +446,17 @@
         display: flex;
       }
 
-      .patch-sync-circle {
-        width: min(86vw, 440px);
+      .patch-sync-line {
+        width: min(86vw, 460px);
         height: 18px;
         border-radius: 999px;
         background: #e5e7eb;
-        color: transparent;
         overflow: visible;
         position: relative;
         box-shadow: inset 0 0 0 1px #dbeafe;
       }
 
-      .patch-sync-circle::before {
+      .patch-sync-line::before {
         content: "";
         display: block;
         height: 18px;
@@ -425,7 +466,7 @@
         transition: width .18s ease;
       }
 
-      .patch-sync-circle::after {
+      .patch-sync-line::after {
         content: attr(data-progress);
         position: absolute;
         inset: -38px 0 auto 0;
@@ -446,7 +487,7 @@
         color: #64748b;
         font-size: 13px;
         text-align: center;
-        max-width: 340px;
+        max-width: 360px;
         line-height: 1.8;
       }
 
@@ -656,67 +697,6 @@
         box-shadow: 0 8px 18px rgba(15,23,42,.08);
       }
 
-      .patch-payment-sheet {
-        position: fixed;
-        inset: 0;
-        z-index: 999998;
-        background: rgba(15,23,42,.45);
-        display: none;
-        align-items: flex-end;
-        justify-content: center;
-        padding: 14px 14px 94px;
-        direction: rtl;
-      }
-
-      .patch-payment-sheet.show {
-        display: flex;
-      }
-
-      .patch-payment-card {
-        width: min(520px, 100%);
-        background: #fff;
-        border-radius: 28px;
-        box-shadow: 0 24px 60px rgba(15,23,42,.28);
-        padding: 18px;
-        max-height: calc(100dvh - 130px);
-        overflow-y: auto;
-      }
-
-      .patch-payment-title {
-        font-size: 20px;
-        font-weight: 900;
-        color: #0f172a;
-        margin-bottom: 6px;
-      }
-
-      .patch-payment-sub {
-        color: #64748b;
-        font-size: 13px;
-        font-weight: 700;
-        margin-bottom: 14px;
-      }
-
-      .patch-payment-option {
-        width: 100%;
-        border: 1px solid #e5e7eb;
-        background: #fff;
-        border-radius: 18px;
-        padding: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 10px;
-        font-weight: 900;
-        color: #0f172a;
-      }
-
-      .patch-payment-option.active {
-        border-color: #1d4ed8;
-        background: #eff6ff;
-        color: #1d4ed8;
-      }
-
       @media (max-width: 900px) {
         .patch-grid-stats {
           grid-template-columns: 1fr 1fr;
@@ -834,7 +814,7 @@
     overlay.id = "patchSyncOverlay";
     overlay.className = "patch-sync-overlay";
     overlay.innerHTML = `
-      <div id="patchSyncCircle" class="patch-sync-circle" style="--p:0" data-progress="0%">0%</div>
+      <div id="patchSyncLine" class="patch-sync-line" style="--p:0" data-progress="0%"></div>
       <div>
         <div id="patchSyncTitle" class="patch-sync-title">جاري تصدير البيانات للسحابة</div>
         <div id="patchSyncSub" class="patch-sync-sub">يرجى عدم إغلاق الصفحة حتى اكتمال رفع البيانات</div>
@@ -844,13 +824,12 @@
   }
 
   function setSyncProgress(p) {
-    const circle = $("patchSyncCircle");
-    if (!circle) return;
+    const line = $("patchSyncLine");
+    if (!line) return;
 
-    const val = Math.max(0, Math.min(100, Number(p || 0)));
-    circle.style.setProperty("--p", val);
-    circle.textContent = val + "%";
-    circle.setAttribute("data-progress", val + "%");
+    const val = Math.max(0, Math.min(100, Math.round(Number(p || 0))));
+    line.style.setProperty("--p", val);
+    line.setAttribute("data-progress", val + "%");
   }
 
   async function showSyncLoader(title = "جاري تصدير البيانات للسحابة", sub = "يتم رفع البيانات المحفوظة على الجهاز إلى Firebase") {
@@ -929,17 +908,19 @@
       </div>
     `;
 
-    const mainApp = $("mainApp");
+    const mainApp = $("mainApp") || $("appRoot");
     if (mainApp) {
       mainApp.parentNode.insertBefore(topbar, mainApp);
     } else {
       document.body.prepend(topbar);
     }
 
-    const backdrop = document.createElement("div");
-    backdrop.id = "patchBackdrop";
-    backdrop.className = "patch-backdrop";
-    document.body.appendChild(backdrop);
+    if (!$("patchBackdrop")) {
+      const backdrop = document.createElement("div");
+      backdrop.id = "patchBackdrop";
+      backdrop.className = "patch-backdrop";
+      document.body.appendChild(backdrop);
+    }
 
     $("patchMenuBtn")?.addEventListener("click", openSideNav);
     $("patchBackdrop")?.addEventListener("click", closeSideNav);
@@ -954,6 +935,7 @@
 
   function createBottomNav() {
     if ($("patchBottomNav")) return;
+    if (!$("mainApp")) return;
 
     const nav = document.createElement("div");
     nav.id = "patchBottomNav";
@@ -1069,147 +1051,6 @@
     }
   }
 
-  function fixToastWrap() {
-    const wrap = q(".toast-wrap");
-    if (wrap && !wrap.id) wrap.id = "toastWrap";
-  }
-
-  function fixManualTransferSelect() {
-    const old = $("transferAccountSelectManual");
-    if (old && !$("manualTransferAccount")) {
-      old.id = "manualTransferAccount";
-    }
-  }
-
-  function fixTableHeaders() {
-    const invTr = q("#tab-invoices table thead tr");
-    if (invTr) {
-      const headers = qa("th", invTr).map(th => th.textContent.trim());
-      if (!headers.includes("الحساب")) {
-        const th = document.createElement("th");
-        th.className = "p-4";
-        th.textContent = "الحساب";
-        const notes = qa("th", invTr).find(x => x.textContent.trim() === "ملاحظات");
-        if (notes) invTr.insertBefore(th, notes);
-      }
-    }
-
-    const custTr = q("#customerHistoryModal table thead tr");
-    if (custTr) {
-      const headers = qa("th", custTr).map(th => th.textContent.trim());
-      if (!headers.includes("الحساب")) {
-        const th = document.createElement("th");
-        th.className = "p-4";
-        th.textContent = "الحساب";
-        const notes = qa("th", custTr).find(x => x.textContent.trim() === "ملاحظات");
-        if (notes) custTr.insertBefore(th, notes);
-      }
-    }
-  }
-
-  function improvePaymentOptions() {
-    const payment = $("paymentMethod");
-    if (!payment) return;
-
-    const current = payment.value || "cash";
-    payment.innerHTML = `
-      <option value="cash">كاش</option>
-      <option value="account">حساب دفع</option>
-    `;
-
-    payment.value = current === "cash" ? "cash" : "account";
-  }
-
-  function improvePlaceholders() {
-    const map = {
-      posSearch: "اكتب كود المنتج أو امسح الباركود بالكاميرا...",
-      customerName: "اسم الزبون",
-      customerPhone: "رقم الزبون",
-      invoiceNotes: "ملاحظات اختيارية",
-      prodName: "الصنف",
-      prodCode: "كود المنتج / الباركود",
-      prodStock: "الكمية",
-      prodCost: "السعر بالجملة",
-      prodPrice: "السعر للبيع",
-      purchaseSupplier: "اسم المورد / التاجر",
-      purchaseAmount: "إجمالي فاتورة المشتريات",
-      purchaseNotes: "الصنف، الكمية، السعر بالجملة، أو ملاحظات",
-      accountTypeInput: "اسم الحساب",
-      accountOwnerInput: "رقم الحساب / رقم التحويل",
-      paymentInfoInput: "أضف الحسابات من الأسفل، وستظهر في فاتورة المبيعات"
-    };
-
-    Object.entries(map).forEach(([id, val]) => {
-      const el = $(id);
-      if (el) el.placeholder = val;
-    });
-  }
-
-  function addPaymentAccountSelectToPos() {
-    if ($("posTransferAccount")) return;
-
-    const payment = $("paymentMethod");
-    if (!payment) return;
-
-    const wrap = document.createElement("div");
-    wrap.id = "posTransferAccountWrap";
-    wrap.innerHTML = `
-      <select id="posTransferAccount" class="input">
-        <option value="cash">كاش</option>
-      </select>
-    `;
-
-    payment.insertAdjacentElement("afterend", wrap);
-
-    payment.addEventListener("change", () => {
-      const select = $("posTransferAccount");
-      if (!select) return;
-
-      if (payment.value === "cash") {
-        select.value = "cash";
-      } else if (select.value === "cash") {
-        const first = qa("option", select).find(o => o.value !== "cash");
-        if (first) select.value = first.value;
-      }
-    });
-
-    fillPaymentAccountsSelect();
-  }
-
-  async function getTransferAccountsSafe() {
-    try {
-      const row = await readIndexedDbItem("meta", "transferAccounts");
-      return Array.isArray(row?.items) ? row.items : [];
-    } catch {
-      return [];
-    }
-  }
-
-  async function fillPaymentAccountsSelect() {
-    const select = $("posTransferAccount");
-    if (!select) return;
-
-    const current = select.value;
-    const accounts = await getTransferAccountsSafe();
-
-    select.innerHTML = `<option value="cash">كاش</option>`;
-
-    accounts.forEach(acc => {
-      const type = acc.type || "";
-      const owner = acc.owner || "";
-      const option = document.createElement("option");
-      option.value = `${type}|||${owner}`;
-      option.textContent = `${type} - ${owner}`;
-      select.appendChild(option);
-    });
-
-    if (current && qa("option", select).some(o => o.value === current)) {
-      select.value = current;
-    }
-
-    updatePaymentSheetButtonText();
-  }
-
   async function readIndexedDbAll(storeName) {
     return new Promise(resolve => {
       try {
@@ -1308,13 +1149,117 @@
     return readIndexedDbAll("products");
   }
 
-  async function getPurchasesSafe() {
-    if (typeof window.getAllPurchases === "function") {
-      try {
-        return await window.getAllPurchases();
-      } catch {}
+  async function getTransferAccountsSafe() {
+    try {
+      const row = await readIndexedDbItem("meta", "transferAccounts");
+      return Array.isArray(row?.items) ? row.items : [];
+    } catch {
+      return [];
     }
-    return readIndexedDbAll("purchases");
+  }
+
+  async function fillPaymentAccountsSelect() {
+    const select = $("posTransferAccount");
+    if (!select) return;
+
+    const current = select.value;
+    const accounts = await getTransferAccountsSafe();
+
+    select.innerHTML = `<option value="cash">كاش</option>`;
+
+    accounts.forEach(acc => {
+      const type = acc.type || "";
+      const owner = acc.owner || "";
+      const option = document.createElement("option");
+      option.value = `${type}|||${owner}`;
+      option.textContent = `${type} - ${owner}`;
+      select.appendChild(option);
+    });
+
+    if (current && qa("option", select).some(o => o.value === current)) {
+      select.value = current;
+    }
+  }
+
+  function fixToastWrap() {
+    const wrap = q(".toast-wrap");
+    if (wrap && !wrap.id) wrap.id = "toastWrap";
+  }
+
+  function fixManualTransferSelect() {
+    const old = $("transferAccountSelectManual");
+    if (old && !$("manualTransferAccount")) {
+      old.id = "manualTransferAccount";
+    }
+  }
+
+  function improvePaymentOptions() {
+    const payment = $("paymentMethod");
+    if (!payment) return;
+
+    const current = payment.value || "cash";
+    payment.innerHTML = `
+      <option value="cash">كاش</option>
+      <option value="account">حساب دفع</option>
+    `;
+
+    payment.value = current === "cash" ? "cash" : "account";
+  }
+
+  function improvePlaceholders() {
+    const map = {
+      posSearch: "اكتب كود المنتج أو امسح الباركود بالكاميرا...",
+      customerName: "اسم الزبون",
+      customerPhone: "رقم الزبون",
+      invoiceNotes: "ملاحظات اختيارية",
+      prodName: "الصنف",
+      prodCode: "كود المنتج / الباركود",
+      prodStock: "الكمية",
+      prodCost: "السعر بالجملة",
+      prodPrice: "السعر للبيع",
+      purchaseSupplier: "اسم المورد / التاجر",
+      purchaseAmount: "إجمالي فاتورة المشتريات",
+      purchaseNotes: "الصنف، الكمية، السعر بالجملة، أو ملاحظات",
+      accountTypeInput: "اسم الحساب",
+      accountOwnerInput: "رقم الحساب / رقم التحويل",
+      paymentInfoInput: "أضف الحسابات من الأسفل، وستظهر في فاتورة المبيعات"
+    };
+
+    Object.entries(map).forEach(([id, val]) => {
+      const el = $(id);
+      if (el) el.placeholder = val;
+    });
+  }
+
+  function addPaymentAccountSelectToPos() {
+    if ($("posTransferAccount")) return;
+
+    const payment = $("paymentMethod");
+    if (!payment) return;
+
+    const wrap = document.createElement("div");
+    wrap.id = "posTransferAccountWrap";
+    wrap.innerHTML = `
+      <select id="posTransferAccount" class="input">
+        <option value="cash">كاش</option>
+      </select>
+    `;
+
+    payment.insertAdjacentElement("afterend", wrap);
+
+    payment.addEventListener("change", () => {
+      const select = $("posTransferAccount");
+      if (!select) return;
+
+      if (payment.value === "cash") {
+        select.value = "cash";
+      } else if (select.value === "cash") {
+        const first = qa("option", select).find(o => o.value !== "cash");
+        if (first) select.value = first.value;
+      }
+    });
+
+    fillPaymentAccountsSelect();
   }
 
   function addCustomersNavButton() {
@@ -1413,8 +1358,8 @@
     const map = new Map();
 
     invoices.forEach(inv => {
-      const name = String(inv.customer || "بدون اسم").trim();
-      const phone = String(inv.phone || "").trim();
+      const name = String(inv.customer || inv.customerName || "بدون اسم").trim();
+      const phone = String(inv.phone || inv.customerPhone || "").trim();
       const key = `${name}__${phone}`;
 
       if (search && !name.toLowerCase().includes(search) && !phone.toLowerCase().includes(search)) return;
@@ -1429,7 +1374,7 @@
       row.count += 1;
       row.total += amount;
 
-      if ((inv.status || "paid") === "paid") row.paid += amount;
+      if ((inv.status || "paid") === "paid" || (inv.status || "") === "completed") row.paid += amount;
       else row.unpaid += amount;
     });
 
@@ -1456,12 +1401,13 @@
         <td class="p-4 font-bold text-red-600">${money(c.unpaid)}</td>
         <td class="p-4 font-bold text-blue-700">${money(c.total)}</td>
         <td class="p-4">
-          <button onclick="openCustomerHistory('${escapeJs(c.name)}','${escapeJs(c.phone)}')" class="text-blue-600 bg-blue-50 px-3 py-1 rounded-lg text-xs font-bold">السجل</button>
+          <button onclick="window.openCustomerHistory && openCustomerHistory('${escapeJs(c.name)}','${escapeJs(c.phone)}')" class="text-blue-600 bg-blue-50 px-3 py-1 rounded-lg text-xs font-bold">السجل</button>
         </td>
       </tr>
     `).join("");
   }
-function addExpensesPage() {
+
+  function addExpensesPage() {
     if ($("tab-expenses")) return;
 
     const navWrap = $("navButtonsWrap");
@@ -1720,6 +1666,315 @@ function addExpensesPage() {
     `).join("");
   }
 
+  function addMerchantPaymentsPage() {
+    if ($("tab-merchants")) return;
+
+    const navWrap = $("navButtonsWrap");
+    const purchasesBtn = q('[data-tab="purchases"]');
+
+    if (navWrap && !q('[data-tab="merchants"]')) {
+      const btn = document.createElement("button");
+      btn.className = "nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap";
+      btn.dataset.tab = "merchants";
+      btn.type = "button";
+      btn.innerHTML = `<i data-lucide="hand-coins"></i> <span>دفعات التجار</span>`;
+      btn.addEventListener("click", openMerchantsTab);
+
+      if (purchasesBtn?.nextSibling) navWrap.insertBefore(btn, purchasesBtn.nextSibling);
+      else navWrap.appendChild(btn);
+    }
+
+    const main = q("#mainApp main") || q("main");
+    if (!main) return;
+
+    const section = document.createElement("section");
+    section.id = "tab-merchants";
+    section.className = "tab-content hidden space-y-6";
+    section.innerHTML = `
+      <div class="flex flex-wrap justify-between items-center gap-4">
+        <h2 class="text-2xl font-bold">دفعات التجار</h2>
+        <button id="openMerchantPaymentModalBtn" class="btn-primary px-5 py-3 rounded-2xl flex items-center gap-2">
+          <i data-lucide="plus"></i> إضافة دفعة
+        </button>
+      </div>
+
+      <div class="card p-4 overflow-x-auto">
+        <table class="w-full text-right">
+          <thead class="bg-gray-50 text-gray-500">
+            <tr>
+              <th class="p-4">التاريخ</th>
+              <th class="p-4">اسم التاجر</th>
+              <th class="p-4">المبلغ</th>
+              <th class="p-4">ملاحظات</th>
+              <th class="p-4">الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="patchMerchantPaymentsTable"></tbody>
+        </table>
+      </div>
+    `;
+
+    main.appendChild(section);
+
+    const modal = document.createElement("div");
+    modal.id = "patchMerchantPaymentModal";
+    modal.className = "modal-wrap hidden";
+    modal.innerHTML = `
+      <div class="modal-card max-w-lg p-8">
+        <h3 class="text-xl font-bold mb-6">إضافة دفعة لتاجر</h3>
+        <input type="hidden" id="patchMerchantPaymentId">
+        <div class="space-y-4">
+          <input id="patchMerchantName" class="input-bordered" placeholder="اسم التاجر / المورد">
+          <input id="patchMerchantAmount" type="number" step="0.01" class="input-bordered" placeholder="المبلغ">
+          <textarea id="patchMerchantNotes" rows="4" class="input-bordered" placeholder="ملاحظات"></textarea>
+          <div class="grid grid-cols-2 gap-3">
+            <button id="patchSaveMerchantPaymentBtn" class="btn-primary py-3">حفظ</button>
+            <button type="button" onclick="toggleModal('patchMerchantPaymentModal', false)" class="bg-gray-100 py-3 rounded-xl font-bold">إلغاء</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    $("openMerchantPaymentModalBtn")?.addEventListener("click", openMerchantPaymentModal);
+    $("patchSaveMerchantPaymentBtn")?.addEventListener("click", saveMerchantPayment);
+
+    window.lucide?.createIcons?.();
+  }
+
+  async function openMerchantsTab() {
+    qa(".tab-content").forEach(el => el.classList.add("hidden"));
+    qa(".nav-btn").forEach(btn => btn.classList.remove("active"));
+
+    $("tab-merchants")?.classList.remove("hidden");
+    q('[data-tab="merchants"]')?.classList.add("active");
+
+    closeSideNav();
+    renderMerchantPayments();
+  }
+
+  function openMerchantPaymentModal() {
+    $("patchMerchantPaymentId").value = "";
+    $("patchMerchantName").value = "";
+    $("patchMerchantAmount").value = "";
+    $("patchMerchantNotes").value = "";
+    window.toggleModal?.("patchMerchantPaymentModal", true);
+  }
+
+  function saveMerchantPayment() {
+    const id = $("patchMerchantPaymentId")?.value || `mp_${Date.now()}`;
+    const merchant = $("patchMerchantName")?.value.trim() || "";
+    const amount = Number($("patchMerchantAmount")?.value || 0);
+    const notes = $("patchMerchantNotes")?.value.trim() || "";
+
+    if (!merchant || amount <= 0) {
+      alert("أدخل اسم التاجر والمبلغ");
+      return;
+    }
+
+    const items = getMerchantPayments();
+    const old = items.find(x => x.id === id);
+
+    const payload = {
+      id,
+      merchant,
+      amount,
+      notes,
+      createdAt: old?.createdAt || nowIso(),
+      updatedAt: nowIso()
+    };
+
+    const next = old ? items.map(x => x.id === id ? payload : x) : [payload, ...items];
+    setMerchantPayments(next);
+
+    addOutboxOperation("دفعة تاجر");
+    window.toggleModal?.("patchMerchantPaymentModal", false);
+    toast("تم حفظ دفعة التاجر");
+    renderMerchantPayments();
+    maybeAutoSyncAfterMutation();
+  }
+
+  function renderMerchantPayments() {
+    const tbody = $("patchMerchantPaymentsTable");
+    if (!tbody) return;
+
+    const items = getMerchantPayments().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    if (!items.length) {
+      tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-400">لا توجد دفعات</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = items.map(item => `
+      <tr class="border-b">
+        <td class="p-4 text-xs text-gray-500">${new Date(item.createdAt).toLocaleString("ar-EG")}</td>
+        <td class="p-4 font-bold">${escapeHtml(item.merchant)}</td>
+        <td class="p-4 font-bold text-blue-700">${money(item.amount)}</td>
+        <td class="p-4">${escapeHtml(item.notes || "-")}</td>
+        <td class="p-4">
+          <button class="patch-mini-btn red" onclick="window.patchDeleteMerchantPayment('${item.id}')">حذف</button>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  function deleteMerchantPayment(id) {
+    if (!confirm("حذف الدفعة؟")) return;
+    setMerchantPayments(getMerchantPayments().filter(x => x.id !== id));
+    addOutboxOperation("حذف دفعة تاجر");
+    renderMerchantPayments();
+    maybeAutoSyncAfterMutation();
+  }
+
+  function addDetailedPurchasesUi() {
+    const modal = $("purchaseModal");
+    if (!modal || $("patchPurchaseItemsBox")) return;
+
+    const amountInput = $("purchaseAmount");
+    const notesInput = $("purchaseNotes");
+
+    if (amountInput) amountInput.placeholder = "يتم حسابه تلقائياً من الأصناف";
+
+    const box = document.createElement("div");
+    box.id = "patchPurchaseItemsBox";
+    box.className = "border rounded-2xl p-4 space-y-3";
+    box.innerHTML = `
+      <div class="flex items-center justify-between gap-3">
+        <div class="font-bold">أصناف فاتورة المشتريات</div>
+        <button type="button" id="patchAddPurchaseItemBtn" class="patch-mini-btn">إضافة صنف</button>
+      </div>
+
+      <div id="patchPurchaseRows" class="space-y-3"></div>
+
+      <div class="bg-blue-50 text-blue-700 p-3 rounded-xl font-bold text-sm">
+        الإجمالي: <span id="patchPurchaseTotal">0.00 ₪</span>
+      </div>
+
+      <p class="text-xs text-gray-500">
+        عند الحفظ يتم إدخال الأصناف إلى المخزون وربط سعر الجملة وسعر البيع.
+      </p>
+    `;
+
+    if (notesInput) notesInput.parentElement.insertAdjacentElement("beforebegin", box);
+    else amountInput?.parentElement.insertAdjacentElement("afterend", box);
+
+    $("patchAddPurchaseItemBtn")?.addEventListener("click", () => addPurchaseRow());
+    addPurchaseRow();
+  }
+
+  function addPurchaseRow(data = {}) {
+    const rows = $("patchPurchaseRows");
+    if (!rows) return;
+
+    const row = document.createElement("div");
+    row.className = "patch-purchase-row";
+    row.innerHTML = `
+      <input class="input-bordered patch-pur-name" placeholder="الصنف" value="${escapeHtmlAttr(data.name || "")}">
+      <input class="input-bordered patch-pur-code" placeholder="كود / باركود" value="${escapeHtmlAttr(data.code || "")}">
+      <input type="number" class="input-bordered patch-pur-qty" placeholder="الكمية" value="${escapeHtmlAttr(data.qty || "")}">
+      <input type="number" step="0.01" class="input-bordered patch-pur-cost" placeholder="سعر الجملة" value="${escapeHtmlAttr(data.cost || "")}">
+      <input type="number" step="0.01" class="input-bordered patch-pur-price" placeholder="سعر البيع" value="${escapeHtmlAttr(data.price || "")}">
+      <button type="button" class="patch-mini-btn red patch-pur-remove">×</button>
+    `;
+
+    rows.appendChild(row);
+
+    row.querySelector(".patch-pur-remove").addEventListener("click", () => {
+      row.remove();
+      updatePurchaseTotal();
+    });
+
+    qa("input", row).forEach(input => input.addEventListener("input", updatePurchaseTotal));
+    updatePurchaseTotal();
+  }
+
+  function getPurchaseRows() {
+    return qa("#patchPurchaseRows .patch-purchase-row")
+      .map(row => ({
+        name: row.querySelector(".patch-pur-name")?.value.trim() || "",
+        code: row.querySelector(".patch-pur-code")?.value.trim() || "",
+        qty: Number(row.querySelector(".patch-pur-qty")?.value || 0),
+        cost: Number(row.querySelector(".patch-pur-cost")?.value || 0),
+        price: Number(row.querySelector(".patch-pur-price")?.value || 0)
+      }))
+      .filter(item => item.name && item.qty > 0);
+  }
+
+  function updatePurchaseTotal() {
+    const rows = getPurchaseRows();
+    const total = rows.reduce((s, i) => s + i.qty * i.cost, 0);
+
+    if ($("patchPurchaseTotal")) $("patchPurchaseTotal").textContent = money(total);
+    if ($("purchaseAmount")) $("purchaseAmount").value = total ? total.toFixed(2) : "";
+  }
+
+  async function savePurchaseItemsToInventory(purchaseId, supplier) {
+    const rows = getPurchaseRows();
+    if (!rows.length) return;
+
+    const existingProducts = await getProductsSafe();
+    const purchaseItems = getPurchaseItems();
+
+    for (const item of rows) {
+      const code = item.code || `PUR-${Date.now()}-${Math.random().toString(16).slice(2, 6)}`;
+      const found = existingProducts.find(p => String(p.code || "").trim() === String(code).trim());
+
+      if (found) {
+        const updated = {
+          ...found,
+          supplier,
+          stock: Number(found.stock || 0) + Number(item.qty || 0),
+          cost: Number(item.cost || found.cost || 0),
+          price: Number(item.price || found.price || 0),
+          updatedAt: nowIso()
+        };
+
+        await writeIndexedDbItem("products", updated);
+      } else {
+        const product = {
+          id: `p_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+          storeId: localStorage.getItem("activeStoreId") || "default",
+          supplier,
+          name: item.name,
+          code,
+          stock: Number(item.qty || 0),
+          cost: Number(item.cost || 0),
+          price: Number(item.price || 0),
+          variants: [],
+          createdAt: nowIso()
+        };
+
+        await writeIndexedDbItem("products", product);
+      }
+
+      purchaseItems.push({
+        id: `pur_item_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+        purchaseId,
+        supplier,
+        name: item.name,
+        code,
+        qty: item.qty,
+        cost: item.cost,
+        price: item.price,
+        total: item.qty * item.cost,
+        createdAt: nowIso()
+      });
+    }
+
+    setPurchaseItems(purchaseItems);
+    addOutboxOperation("إضافة مشتريات للمخزون");
+  }
+
+  function resetPurchaseRows() {
+    const rows = $("patchPurchaseRows");
+    if (!rows) return;
+
+    rows.innerHTML = "";
+    addPurchaseRow();
+    updatePurchaseTotal();
+  }
+
   function addAdvancedReportsPage() {
     if ($("patchAdvancedReports")) return;
 
@@ -1908,6 +2163,24 @@ function addExpensesPage() {
     `).join("");
   }
 
+  function paymentLabel(value) {
+    const map = {
+      cash: "كاش",
+      account: "حساب دفع",
+      bank: "بنك",
+      jawwalpay: "جوال باي",
+      app: "تطبيق دفع"
+    };
+    return map[value] || value || "-";
+  }
+
+  function buildPaymentAccountLabel(inv) {
+    if (inv.transferAccountType && inv.transferAccountName) return `${inv.transferAccountType} - ${inv.transferAccountName}`;
+    if (inv.transferAccountType) return inv.transferAccountType;
+    if (inv.transferAccountName) return inv.transferAccountName;
+    return "-";
+  }
+
   function renderPaymentBalances(invoices) {
     const tbody = $("patchPaymentBalancesTable");
     if (!tbody) return;
@@ -1916,18 +2189,9 @@ function addExpensesPage() {
 
     invoices.forEach(inv => {
       let account = buildPaymentAccountLabel(inv);
+      if (!account || account === "-") account = paymentLabel(inv.payment || "cash");
 
-      if (!account || account === "-") {
-        account = paymentLabel(inv.payment || "cash");
-      }
-
-      if (!map.has(account)) {
-        map.set(account, {
-          account,
-          total: 0,
-          count: 0
-        });
-      }
+      if (!map.has(account)) map.set(account, { account, total: 0, count: 0 });
 
       const row = map.get(account);
       row.total += Number(inv.total || 0);
@@ -1948,345 +2212,6 @@ function addExpensesPage() {
         <td class="p-3">${row.count}</td>
       </tr>
     `).join("");
-  }
-
-  function paymentLabel(value) {
-    const map = {
-      cash: "كاش",
-      account: "حساب دفع",
-      bank: "بنك",
-      jawwalpay: "جوال باي",
-      app: "تطبيق دفع"
-    };
-    return map[value] || value || "-";
-  }
-
-  function buildPaymentAccountLabel(inv) {
-    if (inv.transferAccountType && inv.transferAccountName) {
-      return `${inv.transferAccountType} - ${inv.transferAccountName}`;
-    }
-
-    if (inv.transferAccountType) return inv.transferAccountType;
-    if (inv.transferAccountName) return inv.transferAccountName;
-
-    return "-";
-  }
-
-  function addDetailedPurchasesUi() {
-    const modal = $("purchaseModal");
-    if (!modal || $("patchPurchaseItemsBox")) return;
-
-    const amountInput = $("purchaseAmount");
-    const notesInput = $("purchaseNotes");
-
-    if (amountInput) {
-      amountInput.placeholder = "يتم حسابه تلقائياً من الأصناف";
-    }
-
-    const box = document.createElement("div");
-    box.id = "patchPurchaseItemsBox";
-    box.className = "border rounded-2xl p-4 space-y-3";
-    box.innerHTML = `
-      <div class="flex items-center justify-between gap-3">
-        <div class="font-bold">أصناف فاتورة المشتريات</div>
-        <button type="button" id="patchAddPurchaseItemBtn" class="patch-mini-btn">إضافة صنف</button>
-      </div>
-
-      <div id="patchPurchaseRows" class="space-y-3"></div>
-
-      <div class="bg-blue-50 text-blue-700 p-3 rounded-xl font-bold text-sm">
-        الإجمالي: <span id="patchPurchaseTotal">0.00 ₪</span>
-      </div>
-
-      <p class="text-xs text-gray-500">
-        عند الحفظ يتم إدخال الأصناف إلى المخزون وربط سعر الجملة وسعر البيع.
-      </p>
-    `;
-
-    if (notesInput) {
-      notesInput.parentElement.insertAdjacentElement("beforebegin", box);
-    } else {
-      amountInput?.parentElement.insertAdjacentElement("afterend", box);
-    }
-
-    $("patchAddPurchaseItemBtn")?.addEventListener("click", () => addPurchaseRow());
-    addPurchaseRow();
-  }
-
-  function addPurchaseRow(data = {}) {
-    const rows = $("patchPurchaseRows");
-    if (!rows) return;
-
-    const row = document.createElement("div");
-    row.className = "patch-purchase-row";
-    row.innerHTML = `
-      <input class="input-bordered patch-pur-name" placeholder="الصنف" value="${escapeHtmlAttr(data.name || "")}">
-      <input class="input-bordered patch-pur-code" placeholder="كود / باركود" value="${escapeHtmlAttr(data.code || "")}">
-      <input type="number" class="input-bordered patch-pur-qty" placeholder="الكمية" value="${escapeHtmlAttr(data.qty || "")}">
-      <input type="number" step="0.01" class="input-bordered patch-pur-cost" placeholder="سعر الجملة" value="${escapeHtmlAttr(data.cost || "")}">
-      <input type="number" step="0.01" class="input-bordered patch-pur-price" placeholder="سعر البيع" value="${escapeHtmlAttr(data.price || "")}">
-      <button type="button" class="patch-mini-btn red patch-pur-remove">×</button>
-    `;
-
-    rows.appendChild(row);
-
-    row.querySelector(".patch-pur-remove").addEventListener("click", () => {
-      row.remove();
-      updatePurchaseTotal();
-    });
-
-    qa("input", row).forEach(input => {
-      input.addEventListener("input", updatePurchaseTotal);
-    });
-
-    updatePurchaseTotal();
-  }
-
-  function getPurchaseRows() {
-    return qa("#patchPurchaseRows .patch-purchase-row")
-      .map(row => ({
-        name: row.querySelector(".patch-pur-name")?.value.trim() || "",
-        code: row.querySelector(".patch-pur-code")?.value.trim() || "",
-        qty: Number(row.querySelector(".patch-pur-qty")?.value || 0),
-        cost: Number(row.querySelector(".patch-pur-cost")?.value || 0),
-        price: Number(row.querySelector(".patch-pur-price")?.value || 0)
-      }))
-      .filter(item => item.name && item.qty > 0);
-  }
-
-  function updatePurchaseTotal() {
-    const rows = getPurchaseRows();
-    const total = rows.reduce((s, i) => s + i.qty * i.cost, 0);
-
-    if ($("patchPurchaseTotal")) $("patchPurchaseTotal").textContent = money(total);
-    if ($("purchaseAmount")) $("purchaseAmount").value = total ? total.toFixed(2) : "";
-  }
-
-  async function savePurchaseItemsToInventory(purchaseId, supplier) {
-    const rows = getPurchaseRows();
-    if (!rows.length) return;
-
-    const existingProducts = await getProductsSafe();
-    const purchaseItems = getPurchaseItems();
-
-    for (const item of rows) {
-      const code = item.code || `PUR-${Date.now()}-${Math.random().toString(16).slice(2, 6)}`;
-      const found = existingProducts.find(p => String(p.code || "").trim() === String(code).trim());
-
-      if (found) {
-        const updated = {
-          ...found,
-          supplier,
-          stock: Number(found.stock || 0) + Number(item.qty || 0),
-          cost: Number(item.cost || found.cost || 0),
-          price: Number(item.price || found.price || 0),
-          updatedAt: nowIso()
-        };
-
-        await writeIndexedDbItem("products", updated);
-      } else {
-        const product = {
-          id: `p_${Date.now()}_${Math.random().toString(16).slice(2)}`,
-          storeId: localStorage.getItem("activeStoreId") || "default",
-          supplier,
-          name: item.name,
-          code,
-          stock: Number(item.qty || 0),
-          cost: Number(item.cost || 0),
-          price: Number(item.price || 0),
-          variants: [],
-          createdAt: nowIso()
-        };
-
-        await writeIndexedDbItem("products", product);
-      }
-
-      purchaseItems.push({
-        id: `pur_item_${Date.now()}_${Math.random().toString(16).slice(2)}`,
-        purchaseId,
-        supplier,
-        name: item.name,
-        code,
-        qty: item.qty,
-        cost: item.cost,
-        price: item.price,
-        total: item.qty * item.cost,
-        createdAt: nowIso()
-      });
-    }
-
-    setPurchaseItems(purchaseItems);
-    addOutboxOperation("إضافة مشتريات للمخزون");
-  }
-
-  function resetPurchaseRows() {
-    const rows = $("patchPurchaseRows");
-    if (!rows) return;
-
-    rows.innerHTML = "";
-    addPurchaseRow();
-    updatePurchaseTotal();
-  }
-
-  function addMerchantPaymentsPage() {
-    if ($("tab-merchants")) return;
-
-    const navWrap = $("navButtonsWrap");
-    const purchasesBtn = q('[data-tab="purchases"]');
-
-    if (navWrap && !q('[data-tab="merchants"]')) {
-      const btn = document.createElement("button");
-      btn.className = "nav-btn flex items-center gap-3 p-3 rounded-xl transition w-full whitespace-nowrap";
-      btn.dataset.tab = "merchants";
-      btn.type = "button";
-      btn.innerHTML = `<i data-lucide="hand-coins"></i> <span>دفعات التجار</span>`;
-      btn.addEventListener("click", openMerchantsTab);
-
-      if (purchasesBtn?.nextSibling) navWrap.insertBefore(btn, purchasesBtn.nextSibling);
-      else navWrap.appendChild(btn);
-    }
-
-    const main = q("#mainApp main") || q("main");
-    if (!main) return;
-
-    const section = document.createElement("section");
-    section.id = "tab-merchants";
-    section.className = "tab-content hidden space-y-6";
-    section.innerHTML = `
-      <div class="flex flex-wrap justify-between items-center gap-4">
-        <h2 class="text-2xl font-bold">دفعات التجار</h2>
-        <button id="openMerchantPaymentModalBtn" class="btn-primary px-5 py-3 rounded-2xl flex items-center gap-2">
-          <i data-lucide="plus"></i> إضافة دفعة
-        </button>
-      </div>
-
-      <div class="card p-4 overflow-x-auto">
-        <table class="w-full text-right">
-          <thead class="bg-gray-50 text-gray-500">
-            <tr>
-              <th class="p-4">التاريخ</th>
-              <th class="p-4">اسم التاجر</th>
-              <th class="p-4">المبلغ</th>
-              <th class="p-4">ملاحظات</th>
-              <th class="p-4">الإجراءات</th>
-            </tr>
-          </thead>
-          <tbody id="patchMerchantPaymentsTable"></tbody>
-        </table>
-      </div>
-    `;
-
-    main.appendChild(section);
-
-    const modal = document.createElement("div");
-    modal.id = "patchMerchantPaymentModal";
-    modal.className = "modal-wrap hidden";
-    modal.innerHTML = `
-      <div class="modal-card max-w-lg p-8">
-        <h3 class="text-xl font-bold mb-6">إضافة دفعة لتاجر</h3>
-        <input type="hidden" id="patchMerchantPaymentId">
-        <div class="space-y-4">
-          <input id="patchMerchantName" class="input-bordered" placeholder="اسم التاجر / المورد">
-          <input id="patchMerchantAmount" type="number" step="0.01" class="input-bordered" placeholder="المبلغ">
-          <textarea id="patchMerchantNotes" rows="4" class="input-bordered" placeholder="ملاحظات"></textarea>
-          <div class="grid grid-cols-2 gap-3">
-            <button id="patchSaveMerchantPaymentBtn" class="btn-primary py-3">حفظ</button>
-            <button type="button" onclick="toggleModal('patchMerchantPaymentModal', false)" class="bg-gray-100 py-3 rounded-xl font-bold">إلغاء</button>
-          </div>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(modal);
-
-    $("openMerchantPaymentModalBtn")?.addEventListener("click", openMerchantPaymentModal);
-    $("patchSaveMerchantPaymentBtn")?.addEventListener("click", saveMerchantPayment);
-
-    window.lucide?.createIcons?.();
-  }
-
-  async function openMerchantsTab() {
-    qa(".tab-content").forEach(el => el.classList.add("hidden"));
-    qa(".nav-btn").forEach(btn => btn.classList.remove("active"));
-
-    $("tab-merchants")?.classList.remove("hidden");
-    q('[data-tab="merchants"]')?.classList.add("active");
-
-    closeSideNav();
-    renderMerchantPayments();
-  }
-
-  function openMerchantPaymentModal() {
-    $("patchMerchantPaymentId").value = "";
-    $("patchMerchantName").value = "";
-    $("patchMerchantAmount").value = "";
-    $("patchMerchantNotes").value = "";
-    window.toggleModal?.("patchMerchantPaymentModal", true);
-  }
-
-  function saveMerchantPayment() {
-    const id = $("patchMerchantPaymentId")?.value || `mp_${Date.now()}`;
-    const merchant = $("patchMerchantName")?.value.trim() || "";
-    const amount = Number($("patchMerchantAmount")?.value || 0);
-    const notes = $("patchMerchantNotes")?.value.trim() || "";
-
-    if (!merchant || amount <= 0) {
-      alert("أدخل اسم التاجر والمبلغ");
-      return;
-    }
-
-    const items = getMerchantPayments();
-    const old = items.find(x => x.id === id);
-
-    const payload = {
-      id,
-      merchant,
-      amount,
-      notes,
-      createdAt: old?.createdAt || nowIso(),
-      updatedAt: nowIso()
-    };
-
-    const next = old ? items.map(x => x.id === id ? payload : x) : [payload, ...items];
-    setMerchantPayments(next);
-
-    addOutboxOperation("دفعة تاجر");
-    window.toggleModal?.("patchMerchantPaymentModal", false);
-    toast("تم حفظ دفعة التاجر");
-    renderMerchantPayments();
-    maybeAutoSyncAfterMutation();
-  }
-
-  function renderMerchantPayments() {
-    const tbody = $("patchMerchantPaymentsTable");
-    if (!tbody) return;
-
-    const items = getMerchantPayments().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    if (!items.length) {
-      tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-400">لا توجد دفعات</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = items.map(item => `
-      <tr class="border-b">
-        <td class="p-4 text-xs text-gray-500">${new Date(item.createdAt).toLocaleString("ar-EG")}</td>
-        <td class="p-4 font-bold">${escapeHtml(item.merchant)}</td>
-        <td class="p-4 font-bold text-blue-700">${money(item.amount)}</td>
-        <td class="p-4">${escapeHtml(item.notes || "-")}</td>
-        <td class="p-4">
-          <button class="patch-mini-btn red" onclick="window.patchDeleteMerchantPayment('${item.id}')">حذف</button>
-        </td>
-      </tr>
-    `).join("");
-  }
-
-  function deleteMerchantPayment(id) {
-    if (!confirm("حذف الدفعة؟")) return;
-    setMerchantPayments(getMerchantPayments().filter(x => x.id !== id));
-    addOutboxOperation("حذف دفعة تاجر");
-    renderMerchantPayments();
-    maybeAutoSyncAfterMutation();
   }
 
   function createExportArea() {
@@ -2313,15 +2238,11 @@ function addExpensesPage() {
       row.map(cell => `"${String(cell ?? "").replaceAll('"', '""')}"`).join(",")
     ).join("\n");
 
-    const blob = new Blob(["\ufeff" + csv], {
-      type: "text/csv;charset=utf-8;"
-    });
-
+    const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = `${filename}_${Date.now()}.csv`;
     a.click();
-
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }
 
@@ -2353,6 +2274,11 @@ function addExpensesPage() {
 
     if (type === "print") {
       const w = window.open("", "_blank");
+      if (!w) {
+        alert("اسمح بفتح النوافذ للطباعة");
+        return;
+      }
+
       w.document.write(`
         <html dir="rtl">
           <head>
@@ -2423,13 +2349,7 @@ function addExpensesPage() {
         x.notes || "-"
       ]);
 
-    await exportHtmlTable(
-      "تقرير المصروفات",
-      ["التاريخ", "الاسم", "المبلغ", "ملاحظات"],
-      rows,
-      type,
-      "expenses"
-    );
+    await exportHtmlTable("تقرير المصروفات", ["التاريخ", "الاسم", "المبلغ", "ملاحظات"], rows, type, "expenses");
   }
 
   async function exportAdvancedReports(type) {
@@ -2464,13 +2384,7 @@ function addExpensesPage() {
       .filter(p => Number(p.stock || 0) <= 5)
       .map(p => [p.name || "-", p.code || "-", String(Number(p.stock || 0)), money(p.price)]);
 
-    await exportHtmlTable(
-      "تقرير البضاعة الناقصة",
-      ["الصنف", "الكود", "الكمية", "سعر البيع"],
-      rows,
-      type,
-      "low_stock"
-    );
+    await exportHtmlTable("تقرير البضاعة الناقصة", ["الصنف", "الكود", "الكمية", "سعر البيع"], rows, type, "low_stock");
   }
 
   async function exportPaymentBalances(type) {
@@ -2480,39 +2394,27 @@ function addExpensesPage() {
     invoices.forEach(inv => {
       const account = buildPaymentAccountLabel(inv) || paymentLabel(inv.payment || "cash");
 
-      if (!map.has(account)) {
-        map.set(account, { account, total: 0, count: 0 });
-      }
+      if (!map.has(account)) map.set(account, { account, total: 0, count: 0 });
 
       const row = map.get(account);
       row.total += Number(inv.total || 0);
       row.count += 1;
     });
 
-    const rows = Array.from(map.values()).map(x => [
-      x.account,
-      money(x.total),
-      String(x.count)
-    ]);
+    const rows = Array.from(map.values()).map(x => [x.account, money(x.total), String(x.count)]);
 
-    await exportHtmlTable(
-      "تقرير أرصدة حسابات الدفع",
-      ["الحساب", "الرصيد", "عدد العمليات"],
-      rows,
-      type,
-      "payment_balances"
-    );
+    await exportHtmlTable("تقرير أرصدة حسابات الدفع", ["الحساب", "الرصيد", "عدد العمليات"], rows, type, "payment_balances");
   }
 
   async function updateCompanyFromUi() {
-    const sideName = $("sideStoreName")?.textContent?.trim();
-    const logoSrc = $("sideLogo")?.getAttribute("src");
+    const sideName = $("sideStoreName")?.textContent?.trim() || $("header-shop-name")?.textContent?.trim();
+    const logoSrc = $("sideLogo")?.getAttribute("src") || $("header-logo")?.getAttribute("src");
 
     const nameEl = $("patchCompanyName");
     const logo = $("patchCompanyLogo");
     const fallback = $("patchCompanyFallback");
 
-    if (nameEl && sideName && sideName !== "اسم المحل") {
+    if (nameEl && sideName && sideName !== "اسم المحل" && sideName !== "اسم الشركة") {
       nameEl.textContent = sideName;
     }
 
@@ -2527,8 +2429,8 @@ function addExpensesPage() {
   }
 
   function patchSwitchTab() {
-    if (window.__patchSwitchTabV414) return;
-    window.__patchSwitchTabV414 = true;
+    if (window.__patchSwitchTabV415) return;
+    window.__patchSwitchTabV415 = true;
 
     const oldSwitchTab = window.switchTab;
 
@@ -2538,10 +2440,7 @@ function addExpensesPage() {
       if (tabId === "merchants") return openMerchantsTab();
 
       let result;
-
-      if (typeof oldSwitchTab === "function") {
-        result = await oldSwitchTab.apply(this, arguments);
-      }
+      if (typeof oldSwitchTab === "function") result = await oldSwitchTab.apply(this, arguments);
 
       updateBottomActive(tabId);
       closeSideNav();
@@ -2552,6 +2451,7 @@ function addExpensesPage() {
         updateSyncBadge();
         fillPaymentAccountsSelect();
         hideOrShowPatchBars();
+
         if (tabId === "reports") {
           patchReportsCards();
           patchMainReportProfit();
@@ -2582,9 +2482,7 @@ function addExpensesPage() {
       if (typeof old !== "function") return;
 
       window[name] = async function patchedMutation(...args) {
-        if (name === "checkout") {
-          applyPaymentAccountToCurrentInvoiceForm();
-        }
+        if (name === "checkout") applyPaymentAccountToCurrentInvoiceForm();
 
         const result = await old.apply(this, args);
 
@@ -2595,10 +2493,7 @@ function addExpensesPage() {
           resetPurchaseRows();
         }
 
-        if (name === "saveSettings") {
-          await fillPaymentAccountsSelect();
-          buildPaymentSheetOptions();
-        }
+        if (name === "saveSettings") await fillPaymentAccountsSelect();
 
         if (isOnlineMode()) {
           addOutboxOperation(navigator.onLine ? `تغيير من ${name}` : `عملية محفوظة أوفلاين من ${name}`);
@@ -2639,126 +2534,57 @@ function addExpensesPage() {
   }
 
   function patchSaveEntityForInvoiceAccount() {
-    if (window.__patchInvoiceAccountV414) return;
-    window.__patchInvoiceAccountV414 = true;
+    if (window.__patchInvoiceAccountV415) return;
+    window.__patchInvoiceAccountV415 = true;
 
     const oldViewInvoice = window.viewInvoice;
 
     if (typeof oldViewInvoice === "function") {
       window.viewInvoice = async function patchedViewInvoice(id) {
         const result = await oldViewInvoice.apply(this, arguments);
-        setTimeout(() => {
-          fillPaymentAccountsSelect();
-        }, 100);
+        setTimeout(() => fillPaymentAccountsSelect(), 100);
         return result;
       };
     }
   }
 
-  function createPaymentSheet() {
-    if ($("patchPaymentSheet")) return;
+  async function uploadAllLocalDataToCloudSafe(progressCb) {
+    progressCb?.(40, "تجهيز البيانات");
 
-    const sheet = document.createElement("div");
-    sheet.id = "patchPaymentSheet";
-    sheet.className = "patch-payment-sheet";
-    sheet.innerHTML = `
-      <div class="patch-payment-card">
-        <div class="flex items-start justify-between gap-3 mb-3">
-          <div>
-            <div class="patch-payment-title">اختيار طريقة الدفع</div>
-            <div class="patch-payment-sub">اختر كاش أو أي حساب دفع مضاف من الإعدادات</div>
-          </div>
-          <button type="button" class="patch-modal-close-x" id="patchClosePaymentSheet">×</button>
-        </div>
-        <div id="patchPaymentOptions"></div>
-      </div>
-    `;
+    if (typeof window.uploadOfflineDataToCloud === "function") {
+      progressCb?.(55, "رفع البيانات");
+      const res = await window.uploadOfflineDataToCloud();
+      progressCb?.(78, "فحص نتيجة الرفع");
+      return res !== false;
+    }
 
-    document.body.appendChild(sheet);
+    if (typeof window.syncQueueToCloud === "function") {
+      progressCb?.(55, "رفع قائمة الانتظار");
+      const res = await window.syncQueueToCloud();
+      progressCb?.(78, "فحص نتيجة الرفع");
+      return res !== false;
+    }
 
-    $("patchClosePaymentSheet")?.addEventListener("click", closePaymentSheet);
-    sheet.addEventListener("click", e => {
-      if (e.target === sheet) closePaymentSheet();
-    });
-  }
+    if (typeof window.pushFullStateToCloud === "function") {
+      progressCb?.(55, "رفع نسخة كاملة للسحابة");
+      const res = await window.pushFullStateToCloud();
+      progressCb?.(78, "فحص نتيجة الرفع");
+      return res !== false;
+    }
 
-  function createPaymentSheetButton() {
-    const select = $("posTransferAccount");
-    if (!select || $("patchPaymentSheetBtn")) return;
-
-    select.style.display = "none";
-
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.id = "patchPaymentSheetBtn";
-    btn.className = "input";
-    btn.style.textAlign = "right";
-    btn.style.fontWeight = "900";
-    btn.innerHTML = `<span id="patchPaymentSheetBtnText">كاش</span>`;
-
-    select.insertAdjacentElement("afterend", btn);
-    btn.addEventListener("click", openPaymentSheet);
-  }
-
-  async function buildPaymentSheetOptions() {
-    createPaymentSheet();
-
-    const box = $("patchPaymentOptions");
-    const select = $("posTransferAccount");
-    if (!box || !select) return;
-
-    await fillPaymentAccountsSelect();
-
-    const options = qa("option", select);
-
-    box.innerHTML = options.map(opt => `
-      <button type="button" class="patch-payment-option ${select.value === opt.value ? "active" : ""}" data-value="${escapeHtmlAttr(opt.value)}">
-        <span>${escapeHtml(opt.textContent || "كاش")}</span>
-        <span>${select.value === opt.value ? "✓" : ""}</span>
-      </button>
-    `).join("");
-
-    qa(".patch-payment-option", box).forEach(btn => {
-      btn.addEventListener("click", () => {
-        select.value = btn.dataset.value || "cash";
-        const payment = $("paymentMethod");
-        if (payment) payment.value = select.value === "cash" ? "cash" : "account";
-        updatePaymentSheetButtonText();
-        closePaymentSheet();
-      });
-    });
-  }
-
-  function updatePaymentSheetButtonText() {
-    const select = $("posTransferAccount");
-    const text = $("patchPaymentSheetBtnText");
-    if (!select || !text) return;
-
-    const opt = qa("option", select).find(o => o.value === select.value);
-    text.textContent = opt?.textContent || "كاش";
-  }
-
-  function openPaymentSheet() {
-    createPaymentSheet();
-    buildPaymentSheetOptions();
-    $("patchPaymentSheet")?.classList.add("show");
-    pushModalHistory("patchPaymentSheet");
-  }
-
-  function closePaymentSheet() {
-    $("patchPaymentSheet")?.classList.remove("show");
+    throw new Error("لا توجد دالة مزامنة حقيقية في الصفحة");
   }
 
   async function manualSync() {
     if (syncRunning) return;
 
-    if (!getSession()) {
+    if (!getAnySession()) {
       toast("سجّل الدخول أولًا حتى تعمل المزامنة");
       return;
     }
 
     if (!isOnlineMode()) {
-      toast("زر المزامنة خاص بنسخة الأونلاين");
+      toast("المزامنة تعمل فقط مع نسخة الأونلاين");
       return;
     }
 
@@ -2769,6 +2595,11 @@ function addExpensesPage() {
 
     if (!isMainAppVisible()) {
       toast("انتظر حتى يفتح التطبيق ثم أعد المحاولة");
+      return;
+    }
+
+    if (getOutbox().length <= 0) {
+      toast("لا توجد عمليات معلقة للمزامنة");
       return;
     }
 
@@ -2786,29 +2617,31 @@ function addExpensesPage() {
     if (btn) btn.disabled = true;
 
     try {
-      await showSyncLoader(title, "يتم رفع العمليات غير المتزامنة إلى Firebase");
+      await showSyncLoader(title, "يتم رفع العمليات المحفوظة على الجهاز إلى السحابة");
 
-      for (let p = 35; p <= 78; p += 7) {
-        setSyncProgress(p);
-        await sleep(70);
-      }
+      const ok = await uploadAllLocalDataToCloudSafe((percent, label) => {
+        setSyncProgress(percent);
+        const titleEl = $("patchSyncTitle");
+        const subEl = $("patchSyncSub");
 
-      if (typeof window.uploadOfflineDataToCloud === "function") {
-        await window.uploadOfflineDataToCloud();
-      } else {
-        await sleep(900);
-      }
+        if (titleEl) titleEl.textContent = label || "جاري المزامنة";
+        if (subEl) subEl.textContent = `عمليات معلقة: ${getOutbox().length}`;
+      });
+
+      if (!ok) throw new Error("فشل رفع البيانات");
 
       setSyncProgress(92);
-      await sleep(120);
+      await sleep(180);
 
       clearOutbox();
-      await finishSyncLoader("اكتمل تصدير البيانات للسحابة");
+
+      await finishSyncLoader("اكتملت المزامنة بنجاح");
       toast("تم رفع البيانات للسحابة");
     } catch (err) {
-      console.error(err);
+      console.error("PATCH SYNC ERROR:", err);
       $("patchSyncOverlay")?.classList.remove("show");
-      toast("تعذرت المزامنة، ستتم المحاولة لاحقًا");
+      updateSyncBadge();
+      toast("فشلت المزامنة، ستبقى العمليات محفوظة على أيقونة المزامنة");
     } finally {
       syncRunning = false;
       if (btn) btn.disabled = false;
@@ -2822,11 +2655,9 @@ function addExpensesPage() {
     if (!isOnlineMode()) return;
 
     if (navigator.onLine && isMainAppVisible()) {
-      setTimeout(() => {
-        autoSync("جاري تصدير البيانات للسحابة...");
-      }, 700);
+      setTimeout(() => autoSync("جاري تصدير البيانات للسحابة..."), 900);
     } else {
-      toast("تم الحفظ أوفلاين، وتمت إضافة العملية لزر المزامنة");
+      toast("تم الحفظ أوفلاين، وتمت إضافة العملية لأيقونة المزامنة");
     }
   }
 
@@ -2836,11 +2667,11 @@ function addExpensesPage() {
       updateSyncBadge();
       toast("عاد الاتصال بالإنترنت");
 
-      if (getOutbox().length > 0 && isOnlineMode() && isMainAppVisible()) {
-        setTimeout(() => {
+      setTimeout(() => {
+        if (getOutbox().length > 0 && isOnlineMode() && isMainAppVisible()) {
           autoSync("عاد الإنترنت، جاري تصدير البيانات للسحابة...");
-        }, 900);
-      }
+        }
+      }, 1200);
     });
 
     window.addEventListener("offline", () => {
@@ -2890,13 +2721,6 @@ function addExpensesPage() {
     return qa(".modal-wrap").find(m => !m.classList.contains("hidden")) || null;
   }
 
-  function pushModalHistory(id) {
-    if (!modalBackPatched) return;
-    try {
-      history.pushState({ patchModalOpen: id }, "");
-    } catch {}
-  }
-
   function patchToggleModalBackBehavior() {
     if (modalBackPatched) return;
     modalBackPatched = true;
@@ -2909,7 +2733,11 @@ function addExpensesPage() {
 
         setTimeout(() => {
           addCloseButtonsToModals();
-          if (show === true) pushModalHistory(id);
+          if (show === true) {
+            try {
+              history.pushState({ patchModalOpen: id }, "");
+            } catch {}
+          }
         }, 50);
 
         return result;
@@ -2921,7 +2749,6 @@ function addExpensesPage() {
 
       if (open) {
         open.classList.add("hidden");
-        closePaymentSheet();
         setTimeout(() => {
           try {
             history.pushState({ patchStay: true }, "");
@@ -2939,7 +2766,16 @@ function addExpensesPage() {
     if (observerStarted) return;
     observerStarted = true;
 
-    const targets = [$("mainApp"), $("loginPage"), $("sideLogo"), $("sideStoreName")].filter(Boolean);
+    const targets = [
+      $("mainApp"),
+      $("appRoot"),
+      $("loginPage"),
+      $("loginRoot"),
+      $("sideLogo"),
+      $("sideStoreName"),
+      $("header-logo"),
+      $("header-shop-name")
+    ].filter(Boolean);
 
     const obs = new MutationObserver(() => {
       hideOrShowPatchBars();
@@ -2948,9 +2784,9 @@ function addExpensesPage() {
       updateSyncBadge();
       addCloseButtonsToModals();
 
-      if (isMainAppVisible() && !appReadyForPatch) {
-        appReadyForPatch = true;
-        afterAppVisible();
+      if (isMainAppVisible() && !appBooted) {
+        appBooted = true;
+        bootAfterAppVisible();
       }
     });
 
@@ -2972,6 +2808,7 @@ function addExpensesPage() {
     window.patchExportLowStock = exportLowStock;
     window.patchExportPaymentBalances = exportPaymentBalances;
     window.patchDeleteMerchantPayment = deleteMerchantPayment;
+    window.patchManualSync = manualSync;
   }
 
   function waitForAppFunctions(tries = 120) {
@@ -2993,8 +2830,6 @@ function addExpensesPage() {
         fillPaymentAccountsSelect();
         addDetailedPurchasesUi();
         addCloseButtonsToModals();
-        createPaymentSheetButton();
-        buildPaymentSheetOptions();
         patchReportsCards();
         patchMainReportProfit();
 
@@ -3016,19 +2851,23 @@ function addExpensesPage() {
     if (getOutbox().length > 0 && shouldSync()) {
       setTimeout(() => {
         autoSync("جاري تصدير العمليات المحفوظة للسحابة...");
-      }, 1000);
+      }, 1300);
     }
   }
 
-  function init() {
-    injectStyle();
+  function bootAfterAppVisible() {
+    if ($("patchBootedV415")) return;
+
+    const marker = document.createElement("div");
+    marker.id = "patchBootedV415";
+    marker.style.display = "none";
+    document.body.appendChild(marker);
+
     createTopbar();
     createBottomNav();
-    createSyncOverlay();
 
     fixToastWrap();
     fixManualTransferSelect();
-    fixTableHeaders();
     improvePaymentOptions();
     improvePlaceholders();
 
@@ -3039,9 +2878,6 @@ function addExpensesPage() {
     addMerchantPaymentsPage();
     addAdvancedReportsPage();
 
-    exposePatchFunctions();
-    bindNetworkEvents();
-    observeAppVisibility();
     waitForAppFunctions();
 
     updateNetworkUi();
@@ -3055,9 +2891,34 @@ function addExpensesPage() {
       }, 250);
     });
 
+    setTimeout(afterAppVisible, 1200);
+  }
+
+  function init() {
+    injectStyle();
+    createSyncOverlay();
+
+    exposePatchFunctions();
+    bindNetworkEvents();
+    observeAppVisibility();
+
+    updateSyncBadge();
+
+    const bootTimer = setInterval(() => {
+      if (isMainAppVisible()) {
+        clearInterval(bootTimer);
+        appBooted = true;
+        bootAfterAppVisible();
+      }
+    }, 400);
+
     setTimeout(() => {
-      if (isMainAppVisible()) afterAppVisible();
-    }, 1200);
+      if (isMainAppVisible()) {
+        clearInterval(bootTimer);
+        appBooted = true;
+        bootAfterAppVisible();
+      }
+    }, 1500);
 
     console.log("patch.js loaded", PATCH_VERSION);
   }
