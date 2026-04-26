@@ -1,4 +1,3 @@
-<!-- الجزء 1/5 -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -8,7 +7,6 @@
   <meta name="theme-color" content="#2563eb" />
 
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#2563eb">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -37,6 +35,10 @@
       --danger:#dc2626;
       --success:#16a34a;
       --shadow:0 18px 48px rgba(15,23,42,.08);
+      --soft-blue:#eff6ff;
+      --soft-green:#ecfdf5;
+      --soft-red:#fef2f2;
+      --soft-gold:#fffbeb;
     }
 
     *{
@@ -206,6 +208,160 @@
       transform:translateY(-1px);
     }
 
+    .icon-btn.syncing i{
+      animation:syncSpin .8s linear infinite;
+      color:#1d4ed8;
+    }
+
+    @keyframes syncSpin{
+      from{transform:rotate(0deg)}
+      to{transform:rotate(360deg)}
+    }
+
+    .sync-badge{
+      position:absolute;
+      top:-6px;
+      left:-6px;
+      min-width:20px;
+      height:20px;
+      border-radius:999px;
+      background:#ef4444;
+      color:white;
+      font-size:11px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      border:2px solid white;
+      padding:0 5px;
+    }
+
+    .sync-dot{
+      position:absolute;
+      right:-2px;
+      bottom:-2px;
+      width:13px;
+      height:13px;
+      border-radius:999px;
+      background:#22c55e;
+      border:2px solid #fff;
+      display:none;
+      box-shadow:0 0 0 4px rgba(34,197,94,.12);
+    }
+
+    .icon-btn.syncing .sync-dot{
+      display:block;
+      animation:pulseDot 1s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot{
+      0%,100%{transform:scale(1);opacity:1}
+      50%{transform:scale(1.18);opacity:.7}
+    }
+
+    .sync-popover{
+      position:fixed;
+      top:82px;
+      left:16px;
+      width:min(360px,calc(100vw - 32px));
+      background:rgba(255,255,255,.96);
+      backdrop-filter:blur(22px);
+      border:1px solid rgba(226,232,240,.95);
+      border-radius:24px;
+      box-shadow:0 24px 60px rgba(15,23,42,.16);
+      z-index:220;
+      padding:14px;
+      display:none;
+      animation:popoverIn .16s ease;
+    }
+
+    .sync-popover.show{
+      display:block;
+    }
+
+    @keyframes popoverIn{
+      from{opacity:0;transform:translateY(-8px) scale(.98)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+
+    .sync-popover-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .sync-popover-title{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:900;
+      color:#0f172a;
+    }
+
+    .sync-popover-title i{
+      color:#1d4ed8;
+    }
+
+    .sync-popover-status{
+      font-size:12px;
+      color:#64748b;
+      line-height:1.7;
+      margin-bottom:10px;
+    }
+
+    .sync-mini-progress{
+      height:9px;
+      background:#e2e8f0;
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .sync-mini-progress-bar{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#2563eb,#22c55e);
+      border-radius:999px;
+      transition:width .2s ease;
+    }
+
+    .sync-operation-list{
+      margin-top:10px;
+      max-height:165px;
+      overflow:auto;
+      display:grid;
+      gap:6px;
+    }
+
+    .sync-operation-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      background:#f8fafc;
+      border:1px solid #eef2f7;
+      border-radius:14px;
+      padding:8px 10px;
+      font-size:12px;
+      color:#334155;
+    }
+
+    .sync-operation-item b{
+      color:#0f172a;
+      font-weight:900;
+    }
+
+    .sync-operation-item .ok{
+      color:#16a34a;
+      font-weight:900;
+    }
+
+    .sync-operation-item .wait{
+      color:#d97706;
+      font-weight:900;
+    }
+
     .primary-btn,
     .gold-btn,
     .ghost-btn,
@@ -294,14 +450,8 @@
     }
 
     @keyframes fadeIn{
-      from{
-        opacity:0;
-        transform:translateY(7px);
-      }
-      to{
-        opacity:1;
-        transform:translateY(0);
-      }
+      from{opacity:0;transform:translateY(7px)}
+      to{opacity:1;transform:translateY(0)}
     }
 
     .input,
@@ -315,6 +465,7 @@
       outline:none;
       font-size:14px;
       transition:.18s;
+      min-width:0;
     }
 
     .textarea{
@@ -345,16 +496,21 @@
       margin-bottom:7px;
     }
 
-    .form-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:12px;
-    }
-
+    .form-grid,
     .form-grid-compact{
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
       gap:10px;
+      align-items:end;
+    }
+
+    .form-grid > *,
+    .form-grid-compact > *{
+      min-width:0;
+    }
+
+    .full-row{
+      grid-column:1 / -1;
     }
 
     .conditional-box{
@@ -364,8 +520,7 @@
     .conditional-box.show{
       display:block;
     }
-
-    .table-wrap{
+.table-wrap{
       width:100%;
       overflow-x:auto;
       border-radius:22px;
@@ -419,13 +574,19 @@
       margin-bottom:16px;
     }
 
-    .clean-stats-grid{
+    .clean-stats-grid,
+    .stat-grid{
       display:grid;
       grid-template-columns:repeat(4,minmax(0,1fr));
       gap:12px;
     }
 
-    .clean-stat{
+    .stat-grid{
+      margin-bottom:16px;
+    }
+
+    .clean-stat,
+    .stat{
       background:#f8fafc;
       border:1px solid rgba(241,245,249,.95);
       border-radius:22px;
@@ -452,78 +613,39 @@
       font-size:15px;
     }
 
-    .clean-stat-value{
+    .clean-stat-value,
+    .stat-value{
       font-size:24px;
       font-weight:900;
       line-height:1.1;
       direction:ltr;
       text-align:right;
-    }
-
-    .clean-stat-value.blue{
       color:#1d4ed8;
     }
 
-    .clean-stat-value.green{
-      color:#16a34a;
-    }
-
-    .clean-stat-value.red{
-      color:#dc2626;
-    }
-
-    .clean-stat-value.gold{
-      color:#d97706;
-    }
-
-    .stat-grid{
-      display:grid;
-      grid-template-columns:repeat(4,minmax(0,1fr));
-      gap:12px;
-      margin-bottom:16px;
-    }
-
-    .stat{
-      border-radius:22px;
-      padding:15px;
-      color:#0f172a;
-      min-height:94px;
-      background:#f8fafc;
-      border:1px solid rgba(241,245,249,.95);
-      box-shadow:none;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      gap:8px;
-    }
-
-    .stat-title{
-      font-size:13px;
-      color:#64748b;
-      font-weight:900;
-    }
-
-    .stat-value{
-      font-size:24px;
-      font-weight:900;
-      line-height:1.1;
-      color:#1d4ed8;
-    }
-
+    .clean-stat-value.green,
     .stat.green .stat-value{
       color:#16a34a;
     }
 
+    .clean-stat-value.red,
     .stat.red .stat-value{
       color:#dc2626;
     }
 
+    .clean-stat-value.gold,
     .stat.gold .stat-value{
       color:#d97706;
     }
 
     .stat.dark .stat-value{
       color:#0f172a;
+    }
+
+    .stat-title{
+      font-size:13px;
+      color:#64748b;
+      font-weight:900;
     }
 
     .debt-summary-strip{
@@ -593,6 +715,11 @@
     .badge.gray{
       background:#f1f5f9;
       color:#475569;
+    }
+
+    .badge.gold{
+      background:#fef3c7;
+      color:#b7791f;
     }
 
     .badge.clickable{
@@ -667,7 +794,8 @@
       background:#fee2e2;
       color:#b91c1c;
     }
-.cart-layout{
+
+    .cart-layout{
       display:grid;
       grid-template-columns:1.4fr .9fr;
       gap:14px;
@@ -795,6 +923,46 @@
       border-color:#bfdbfe;
     }
 
+    .folder-tabs{
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      padding:4px 0 12px;
+      margin-bottom:10px;
+    }
+
+    .folder-tab{
+      border:1px solid var(--border);
+      background:#fff;
+      color:#334155;
+      border-radius:18px;
+      padding:10px 13px;
+      font-weight:900;
+      white-space:nowrap;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      flex-shrink:0;
+    }
+
+    .folder-tab.active{
+      background:linear-gradient(135deg,#2563eb,#1d4ed8);
+      color:#fff;
+      border-color:transparent;
+      box-shadow:0 10px 22px rgba(37,99,235,.18);
+    }
+
+    .folder-tab small{
+      background:rgba(15,23,42,.08);
+      padding:2px 7px;
+      border-radius:999px;
+      font-size:11px;
+    }
+
+    .folder-tab.active small{
+      background:rgba(255,255,255,.2);
+      color:#fff;
+    }
     .payment-choice-grid{
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
@@ -947,64 +1115,6 @@
       animation:fadeIn .2s ease;
     }
 
-    .sync-panel{
-      position:fixed;
-      left:16px;
-      bottom:20px;
-      width:min(370px,calc(100vw - 32px));
-      background:rgba(2,6,23,.96);
-      color:white;
-      border-radius:24px;
-      padding:15px;
-      box-shadow:0 18px 50px rgba(15,23,42,.36);
-      z-index:190;
-      display:none;
-    }
-
-    .sync-panel.show{
-      display:block;
-    }
-
-    .sync-top{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:10px;
-    }
-
-    .progress{
-      height:9px;
-      background:rgba(255,255,255,.18);
-      border-radius:999px;
-      overflow:hidden;
-    }
-
-    .progress-bar{
-      height:100%;
-      width:0%;
-      background:linear-gradient(90deg,#38bdf8,#22c55e);
-      border-radius:999px;
-      transition:width .25s ease;
-    }
-
-    .sync-badge{
-      position:absolute;
-      top:-6px;
-      left:-6px;
-      min-width:20px;
-      height:20px;
-      border-radius:999px;
-      background:#ef4444;
-      color:white;
-      font-size:11px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:900;
-      border:2px solid white;
-    }
-
     .scanner-box{
       background:#020617;
       border-radius:24px;
@@ -1028,7 +1138,7 @@
       height:2px;
       background:#22c55e;
       box-shadow:0 0 18px #22c55e;
-      animation:scan 1.4s ease-in-out infinite;
+      animation:scan 1.2s ease-in-out infinite;
     }
 
     @keyframes scan{
@@ -1190,12 +1300,6 @@
         position:static;
       }
 
-      .form-grid,
-      .form-grid-compact{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        gap:8px;
-      }
-
       .stat-grid,
       .clean-stats-grid{
         grid-template-columns:repeat(2,minmax(0,1fr));
@@ -1217,8 +1321,11 @@
         margin-bottom:10px;
       }
 
-      .payment-choice-grid{
-        grid-template-columns:1fr;
+      .sync-popover{
+        top:78px;
+        left:10px;
+        right:10px;
+        width:auto;
       }
 
       .bottom-nav{
@@ -1267,10 +1374,6 @@
         padding:15px;
       }
 
-      .sync-panel{
-        bottom:96px;
-      }
-
       .toast{
         bottom:96px;
         right:10px;
@@ -1282,24 +1385,88 @@
     @media(max-width:520px){
       .form-grid,
       .form-grid-compact{
-        grid-template-columns:1fr;
-        gap:8px;
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        gap:8px !important;
+        align-items:end;
+      }
+
+      .form-grid > *,
+      .form-grid-compact > *{
+        min-width:0 !important;
       }
 
       .field-label{
         font-size:12px;
+        margin-bottom:5px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
       }
 
       .input,
       .select,
       .textarea{
-        padding:11px 10px;
+        padding:10px 9px;
         font-size:13px;
+        min-width:0;
+      }
+
+      .textarea{
+        min-height:76px;
+      }
+
+      .input-with-btn{
+        grid-template-columns:1fr 42px;
+        gap:6px;
+      }
+
+      .icon-btn{
+        width:42px;
+        height:42px;
+        border-radius:14px;
+      }
+
+      .modal{
+        padding:14px;
+      }
+
+      .modal-title{
+        font-size:17px;
+      }
+
+      .primary-btn,
+      .gold-btn,
+      .ghost-btn,
+      .danger-btn,
+      .success-btn{
+        padding:11px 12px;
+        font-size:13px;
+        border-radius:15px;
+      }
+
+      .payment-choice-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        gap:8px;
+      }
+
+      .payment-choice{
+        min-height:96px;
+        padding:12px 8px;
+        border-radius:18px;
+      }
+
+      .payment-choice i{
+        font-size:22px;
+      }
+
+      .debt-summary-strip,
+      .stat-grid,
+      .clean-stats-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
       }
     }
   </style>
 </head>
-
 <body>
   <div class="app-shell">
     <aside id="sidebar" class="sidebar">
@@ -1335,10 +1502,11 @@
           </div>
         </div>
 
-        <div style="display:flex;align-items:center;gap:8px">
-          <button id="syncNowBtn" class="icon-btn" title="مزامنة">
+        <div style="display:flex;align-items:center;gap:8px;position:relative">
+          <button id="syncNowBtn" class="icon-btn" title="المزامنة">
             <i class="fa-solid fa-rotate"></i>
             <span id="syncCountBadge" class="sync-badge" style="display:none">0</span>
+            <span class="sync-dot"></span>
           </button>
 
           <button id="notificationsBtn" class="icon-btn" title="التنبيهات">
@@ -1347,6 +1515,28 @@
           </button>
         </div>
       </header>
+
+      <div id="syncPopover" class="sync-popover">
+        <div class="sync-popover-head">
+          <div class="sync-popover-title">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span id="syncPopoverTitle">المزامنة</span>
+          </div>
+          <button id="closeSyncPopoverBtn" class="close-btn" style="width:34px;height:34px;border-radius:12px">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div id="syncPopoverStatus" class="sync-popover-status">
+          لا توجد عمليات حالياً
+        </div>
+
+        <div class="sync-mini-progress">
+          <div id="syncMiniProgressBar" class="sync-mini-progress-bar"></div>
+        </div>
+
+        <div id="syncOperationList" class="sync-operation-list"></div>
+      </div>
 
       <section id="page-home" class="section active">
         <div class="clean-stats-card">
@@ -1376,12 +1566,13 @@
         <div class="card">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
             <h2 style="margin:0;font-size:20px;font-weight:900"><i class="fa-solid fa-bolt"></i> الأصناف السريعة</h2>
-            <input id="homeProductSearch" class="input" style="max-width:330px" placeholder="بحث سريع عن صنف أو باركود أو تصنيف...">
+            <input id="homeProductSearch" class="input" style="max-width:330px" placeholder="بحث سريع عن صنف أو باركود...">
           </div>
           <div id="homeProductsGrid" class="grid-products"></div>
         </div>
       </section>
-<section id="page-cashier" class="section">
+
+      <section id="page-cashier" class="section">
         <div class="cart-layout">
           <div class="card">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
@@ -1470,7 +1661,6 @@
           </button>
         </div>
       </section>
-
       <section id="page-inventory" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
@@ -1521,8 +1711,16 @@
         </div>
 
         <div class="card" style="margin-bottom:14px">
+          <div class="folder-tabs" id="invoiceFolders">
+            <button class="folder-tab active" data-invoice-folder="all">
+              <i class="fa-solid fa-folder-open"></i>
+              الكل
+              <small id="folderCount_all">0</small>
+            </button>
+          </div>
+
           <div class="form-grid">
-            <input id="invoiceSearch" class="input" placeholder="بحث برقم الفاتورة أو العميل أو الهاتف...">
+            <input id="invoiceSearch" class="input" placeholder="بحث برقم الفاتورة أو العميل أو الصنف...">
 
             <select id="invoicePeriod" class="select">
               <option value="today">اليوم</option>
@@ -1570,7 +1768,7 @@
                   <th>الهاتف</th>
                   <th>الحالة</th>
                   <th>الدفع</th>
-                  <th>حساب الدفع</th>
+                  <th>مجلد الدفع</th>
                   <th>المجموع</th>
                   <th>الخصم</th>
                   <th>المبلغ</th>
@@ -1639,7 +1837,8 @@
           </div>
         </div>
       </section>
-<section id="page-purchases" class="section">
+
+      <section id="page-purchases" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
             <i class="fa-solid fa-truck-ramp-box"></i> المشتريات وإدخال البضاعة
@@ -1650,11 +1849,9 @@
           </button>
         </div>
 
-        <div class="card" style="margin-bottom:14px">
-          <input id="purchaseTableSearch" class="input" placeholder="بحث في المشتريات باسم المورد أو المنتج أو الملاحظات...">
-        </div>
-
         <div class="card">
+          <input id="purchaseTableSearch" class="input" placeholder="بحث في المشتريات باسم المورد أو الصنف أو الملاحظات..." style="margin-bottom:12px">
+
           <div class="table-wrap">
             <table>
               <thead>
@@ -1682,19 +1879,17 @@
       <section id="page-supplierPayments" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-hand-holding-dollar"></i> دفعات التجار والموردين
+            <i class="fa-solid fa-hand-holding-dollar"></i> دفعات التجار
           </h1>
 
-          <button id="addSupplierPaymentBtn" class="gold-btn">
+          <button id="addSupplierPaymentBtn" class="primary-btn">
             <i class="fa-solid fa-plus"></i> إضافة دفعة تاجر
           </button>
         </div>
 
-        <div class="card" style="margin-bottom:14px">
-          <input id="supplierPaymentsSearch" class="input" placeholder="بحث باسم التاجر أو الحساب أو الملاحظات...">
-        </div>
-
         <div class="card">
+          <input id="supplierPaymentsSearch" class="input" placeholder="بحث باسم التاجر أو الحساب أو الملاحظات..." style="margin-bottom:12px">
+
           <div class="table-wrap">
             <table>
               <thead>
@@ -1702,7 +1897,7 @@
                   <th>التاريخ</th>
                   <th>اسم التاجر</th>
                   <th>المبلغ</th>
-                  <th>خرجت من حساب</th>
+                  <th>من حساب</th>
                   <th>ملاحظات</th>
                   <th>الإجراءات</th>
                 </tr>
@@ -1724,11 +1919,9 @@
           </button>
         </div>
 
-        <div class="card" style="margin-bottom:14px">
-          <input id="expensesSearch" class="input" placeholder="بحث في المصروفات بالنوع أو الملاحظات...">
-        </div>
-
         <div class="card">
+          <input id="expensesSearch" class="input" placeholder="بحث في المصروفات..." style="margin-bottom:12px">
+
           <div class="table-wrap">
             <table>
               <thead>
@@ -1745,7 +1938,6 @@
           </div>
         </div>
       </section>
-
       <section id="page-reports" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
@@ -1902,9 +2094,18 @@
             </div>
 
             <div>
-              <label class="field-label">صورة / شعار المحل</label>
+              <label class="field-label">رابط شعار المحل</label>
+              <input id="settingLogoUrl" type="url" class="input" placeholder="https://example.com/logo.png">
+            </div>
+
+            <div>
+              <label class="field-label">شعار محلي من الجهاز</label>
               <input id="settingLogoFile" type="file" accept="image/*" class="input">
             </div>
+          </div>
+
+          <div class="muted" style="font-size:12px;margin-top:10px;line-height:1.8">
+            رابط الشعار يتزامن مع Firebase ويظهر على كل الأجهزة. أما شعار الجهاز فيبقى محليًا فقط ولا يتم رفعه.
           </div>
 
           <button id="saveSettingsBtn" class="primary-btn" style="margin-top:14px">
@@ -1921,6 +2122,10 @@
             <button id="addPaymentAccountBtn" class="primary-btn">
               <i class="fa-solid fa-plus"></i> حساب
             </button>
+          </div>
+
+          <div class="muted" style="font-size:12px;margin-bottom:10px;line-height:1.8">
+            كل حساب دفع يظهر كمجلد داخل الفواتير. مثال: دفع كاش، تطبيق بنك، جوال بي، بال بي.
           </div>
 
           <div id="paymentAccountsList"></div>
@@ -1942,12 +2147,8 @@
             </label>
 
             <button id="clearLocalBtn" class="danger-btn">
-              <i class="fa-solid fa-trash"></i> مسح بيانات هذا المشروع
+              <i class="fa-solid fa-trash"></i> مسح البيانات المحلية
             </button>
-          </div>
-
-          <div class="muted" style="font-size:12px;margin-top:10px">
-            التخزين المحلي منفصل حسب معلومات Firebase. عند تغيير Firebase من ملف firebase-config.js لن تظهر بيانات المشروع القديم.
           </div>
         </div>
       </section>
@@ -1985,23 +2186,6 @@
     </button>
   </nav>
 
-  <div id="syncPanel" class="sync-panel">
-    <div class="sync-top">
-      <b id="syncTitle">
-        <i class="fa-solid fa-cloud-arrow-up"></i> جاري المزامنة...
-      </b>
-      <span id="syncPercent">0%</span>
-    </div>
-
-    <div class="progress">
-      <div id="syncProgressBar" class="progress-bar"></div>
-    </div>
-
-    <div id="syncDetails" style="font-size:12px;color:#cbd5e1;margin-top:8px">
-      رفع العمليات المخزنة إلى Firebase
-    </div>
-  </div>
-
   <div id="toast" class="toast"></div>
 
   <div id="modalBackdrop" class="modal-backdrop">
@@ -2016,12 +2200,15 @@
     </div>
   </div>
 
+  <div id="customerSuggestBox" class="customer-suggest-list"></div>
+  <div id="smartSuggestBox" class="smart-suggest-list"></div>
+  <div id="printArea" style="display:none"></div>
   <div id="floatingScanner" class="floating-scanner">
     <div class="floating-scanner-card">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px">
-        <h3 style="margin:0;font-size:18px;font-weight:900">
+      <div class="modal-head">
+        <div class="modal-title">
           <i class="fa-solid fa-barcode"></i> قراءة باركود المنتج
-        </h3>
+        </div>
         <button id="floatingScannerCloseBtn" class="close-btn">
           <i class="fa-solid fa-xmark"></i>
         </button>
@@ -2033,20 +2220,12 @@
       </div>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
-        <button id="floatingManualCodeBtn" class="ghost-btn" type="button">
+        <button id="floatingManualCodeBtn" class="ghost-btn">
           <i class="fa-solid fa-keyboard"></i> إدخال يدوي
         </button>
       </div>
-
-      <div class="muted" style="font-size:12px;margin-top:10px">
-        عند قراءة الباركود سيتم وضع الرقم داخل خانة كود المنتج بدون إغلاق نموذج إضافة المنتج.
-      </div>
     </div>
   </div>
-
-  <div id="customerSuggestBox" class="customer-suggest-list"></div>
-  <div id="smartSuggestBox" class="smart-suggest-list"></div>
-  <div id="printArea" style="display:none"></div>
 
   <template id="productFormTemplate">
     <form id="productForm">
@@ -2074,7 +2253,7 @@
         </div>
 
         <div>
-          <label class="field-label">نوع الوحدة التي ستدخل بها المنتج</label>
+          <label class="field-label">نوع الوحدة</label>
           <select id="productUnitType" class="select">
             <option value="piece">قطعة</option>
             <option value="carton">كرتونة</option>
@@ -2086,43 +2265,44 @@
             <option value="custom">وحدة مخصصة</option>
           </select>
         </div>
-<div id="customUnitBox" class="conditional-box">
+
+        <div id="customUnitBox" class="conditional-box">
           <label class="field-label">اسم الوحدة المخصصة</label>
           <input id="productCustomUnit" class="input" placeholder="مثال: ربطة / باكيت">
         </div>
 
         <div id="cartonUnitsBox" class="conditional-box">
-          <label class="field-label">الكرتونة تحتوي على كم قطعة؟</label>
+          <label class="field-label">الكرتونة تحتوي كم قطعة؟</label>
           <input id="productCartonUnits" type="number" inputmode="decimal" class="input" value="1" min="1" step="0.001">
         </div>
 
         <div>
-          <label class="field-label">المخزون حسب الوحدة المختارة</label>
+          <label class="field-label">المخزون بالوحدة المختارة</label>
           <input id="productStock" type="number" inputmode="decimal" class="input" value="0" min="0" step="0.001">
         </div>
 
         <div>
-          <label class="field-label">حد التنبيه بالوحدة الأساسية</label>
+          <label class="field-label">حد التنبيه</label>
           <input id="productLowStock" type="number" inputmode="decimal" class="input" value="2" min="0" step="0.001">
         </div>
 
         <div>
-          <label class="field-label">سعر الجملة للوحدة المختارة</label>
+          <label class="field-label">سعر الجملة للوحدة</label>
           <input id="productCostPrice" type="number" inputmode="decimal" class="input" value="0" min="0" step="0.01">
         </div>
 
         <div>
-          <label class="field-label">سعر البيع للوحدة المختارة</label>
+          <label class="field-label">سعر البيع للوحدة</label>
           <input id="productSalePrice" type="number" inputmode="decimal" class="input" value="0" min="0" step="0.01">
         </div>
 
         <div>
-          <label class="field-label">النظام سيحفظ داخليًا</label>
+          <label class="field-label">الحفظ الداخلي</label>
           <input id="basePreviewText" class="input" disabled value="">
         </div>
 
         <div>
-          <label class="field-label">السعر المحسوب للوحدة الأساسية</label>
+          <label class="field-label">السعر الأساسي</label>
           <input id="piecePricePreview" class="input" disabled value="">
         </div>
       </div>
@@ -2141,6 +2321,8 @@
 
   <template id="purchaseFormTemplate">
     <form id="purchaseForm">
+      <input type="hidden" id="purchaseProduct">
+
       <div class="form-grid-compact">
         <div>
           <label class="field-label">اسم المورد أو التاجر</label>
@@ -2148,14 +2330,12 @@
         </div>
 
         <div style="position:relative">
-          <label class="field-label">ابحث عن المنتج</label>
-          <input id="purchaseProductSearch" class="input" required placeholder="اكتب اسم المنتج أو الكود أو الباركود" autocomplete="off">
-          <input type="hidden" id="purchaseProduct">
+          <label class="field-label">بحث عن المنتج</label>
+          <input id="purchaseProductSearch" class="input" required placeholder="اكتب اسم المنتج أو كوده">
         </div>
 
         <div>
-          <label class="field-label">وحدة إدخال المخزون</label>
-          <select id="purchaseUnit" class="select"></select>
+          <label class="field-label">وحدة الإدخال</label<select id="purchaseUnit" class="select"></select>
         </div>
 
         <div>
@@ -2164,32 +2344,32 @@
         </div>
 
         <div id="purchaseCartonUnitsBox" class="conditional-box">
-          <label class="field-label">الكرتونة تحتوي على كم قطعة؟</label>
+          <label class="field-label">الكرتونة تحتوي كم قطعة؟</label>
           <input id="purchaseCartonUnits" type="number" inputmode="decimal" class="input" value="1" min="1" step="0.001">
         </div>
 
         <div>
-          <label class="field-label">سعر الجملة للكمية المدخلة</label>
+          <label class="field-label">سعر الجملة للكمية</label>
           <input id="purchaseCost" type="number" inputmode="decimal" class="input" required value="0" min="0" step="0.01">
         </div>
 
         <div>
-          <label class="field-label">سعر البيع للوحدة المدخلة</label>
+          <label class="field-label">سعر البيع للوحدة</label>
           <input id="purchaseSalePrice" type="number" inputmode="decimal" class="input" value="0" min="0" step="0.01">
         </div>
 
         <div>
-          <label class="field-label">الوحدات التي ستضاف للمخزون</label>
+          <label class="field-label">سيضاف للمخزون</label>
           <input id="purchaseUnitsPreview" class="input" value="1" disabled>
         </div>
       </div>
 
-      <div style="margin-top:12px">
+      <div class="full-row" style="margin-top:12px">
         <label class="field-label">ملاحظات</label>
         <textarea id="purchaseNotes" class="textarea"></textarea>
       </div>
 
-      <button class="primary-btn" type="submit" style="margin-top:14px">
+      <button class="primary-btn" type="submit" style="margin-top:14px;width:100%">
         <i class="fa-solid fa-floppy-disk"></i> حفظ المشتريات وتحديث المخزون
       </button>
     </form>
@@ -2204,12 +2384,12 @@
         </div>
 
         <div>
-          <label class="field-label">المبلغ المدفوع</label>
+          <label class="field-label">المبلغ</label>
           <input id="supplierPaymentAmount" type="number" inputmode="decimal" class="input" required min="0" step="0.01">
         </div>
 
         <div>
-          <label class="field-label">خرجت من حساب</label>
+          <label class="field-label">من أي حساب؟</label>
           <select id="supplierPaymentAccountId" class="select"></select>
         </div>
 
@@ -2219,7 +2399,7 @@
         </div>
       </div>
 
-      <button class="gold-btn" type="submit" style="margin-top:14px">
+      <button class="primary-btn" type="submit" style="margin-top:14px;width:100%">
         <i class="fa-solid fa-floppy-disk"></i> حفظ دفعة التاجر
       </button>
     </form>
@@ -2227,6 +2407,8 @@
 
   <template id="debtCustomerFormTemplate">
     <form id="debtCustomerForm">
+      <input type="hidden" id="debtCustomerId">
+
       <div class="form-grid-compact">
         <div>
           <label class="field-label">اسم الزبون</label>
@@ -2247,10 +2429,12 @@
 
   <template id="expenseFormTemplate">
     <form id="expenseForm">
+      <input type="hidden" id="expenseId">
+
       <div class="form-grid-compact">
         <div>
           <label class="field-label">نوع المصروف</label>
-          <input id="expenseType" class="input" required placeholder="مثال: نيلون / كهرباء / مواصلات">
+          <input id="expenseType" class="input" required placeholder="مثال: كهرباء / مواصلات">
         </div>
 
         <div>
@@ -2259,12 +2443,12 @@
         </div>
       </div>
 
-      <div style="margin-top:12px">
+      <div class="full-row" style="margin-top:12px">
         <label class="field-label">ملاحظات</label>
         <textarea id="expenseNotes" class="textarea"></textarea>
       </div>
 
-      <button class="primary-btn" type="submit" style="margin-top:14px">
+      <button class="primary-btn" type="submit" style="margin-top:14px;width:100%">
         <i class="fa-solid fa-floppy-disk"></i> حفظ المصروف
       </button>
     </form>
@@ -2272,10 +2456,12 @@
 
   <template id="paymentAccountFormTemplate">
     <form id="paymentAccountForm">
+      <input type="hidden" id="paymentAccountId">
+
       <div class="form-grid-compact">
         <div>
-          <label class="field-label">اسم الحساب</label>
-          <input id="paymentAccountName" class="input" required placeholder="مثال: بنك / جوال باي / كاش">
+          <label class="field-label">اسم الحساب / المجلد</label>
+          <input id="paymentAccountName" class="input" required placeholder="مثال: دفع كاش / جوال بي">
         </div>
 
         <div>
@@ -2284,7 +2470,7 @@
         </div>
       </div>
 
-      <button class="primary-btn" type="submit" style="margin-top:14px">
+      <button class="primary-btn" type="submit" style="margin-top:14px;width:100%">
         <i class="fa-solid fa-floppy-disk"></i> حفظ الحساب
       </button>
     </form>
@@ -2307,8 +2493,8 @@
         </button>
       </div>
 
-      <div class="muted" style="font-size:12px;margin-top:10px">
-        الكاميرا تحتاج تشغيل الصفحة من رابط HTTPS والسماح للكاميرا من المتصفح.
+      <div class="muted" style="font-size:12px;margin-top:10px;line-height:1.8">
+        للحصول على أسرع قراءة: قرّب الباركود من الكاميرا واجعله واضحًا. الصفحة تحتاج HTTPS للسماح بالكاميرا.
       </div>
     </div>
   </template>
@@ -2317,34 +2503,9 @@
     <div>
       <h3 style="font-size:19px;font-weight:900;margin:0 0 12px">اختر طريقة إتمام البيع</h3>
 
-      <div class="payment-choice-grid">
-        <button class="payment-choice" data-payment-choice="cash" type="button">
-          <i class="fa-solid fa-money-bill-wave"></i>
-          <span>كاش</span>
-          <small class="muted">فاتورة مكتملة</small>
-        </button>
-
-        <button class="payment-choice" data-payment-choice="instant_app" type="button">
-          <i class="fa-solid fa-mobile-screen-button"></i>
-          <span>تطبيق فوري</span>
-          <small class="muted">بيع تطبيق مكتمل</small>
-        </button>
-
-        <button class="payment-choice" data-payment-choice="later_app" type="button">
-          <i class="fa-solid fa-clock"></i>
-          <span>تطبيق لاحق</span>
-          <small class="muted">يدخل في الدين وغير مكتمل</small>
-        </button>
-
-        <button class="payment-choice" data-payment-choice="debt" type="button">
-          <i class="fa-solid fa-address-book"></i>
-          <span>دين</span>
-          <small class="muted">اختر زبون من الحسابات</small>
-        </button>
-      </div>
+      <div id="paymentChoiceGrid" class="payment-choice-grid"></div>
     </div>
   </template>
-
   <script src="./firebase-config.js"></script>
 
   <script type="module">
@@ -2355,12 +2516,13 @@
       set,
       get,
       remove,
-      onValue
+      onValue,
+      off
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
-    const EXTERNAL_FIREBASE = window.CASHIER_FIREBASE_CONFIG || {};
+    const externalFirebase = window.CASHIER_FIREBASE_CONFIG || {};
 
-    const firebaseConfig = EXTERNAL_FIREBASE.firebaseConfig || {
+    const firebaseConfig = externalFirebase.firebaseConfig || {
       apiKey: "",
       authDomain: "",
       databaseURL: "",
@@ -2371,38 +2533,19 @@
       measurementId: ""
     };
 
-    const FIREBASE_ROOT = EXTERNAL_FIREBASE.firebaseRoot || "cashier_units_pro_885766842";
-
-    const FIREBASE_FALLBACK_ROOTS = Array.isArray(EXTERNAL_FIREBASE.fallbackRoots) && EXTERNAL_FIREBASE.fallbackRoots.length
-      ? Array.from(new Set([FIREBASE_ROOT, ...EXTERNAL_FIREBASE.fallbackRoots]))
-      : [FIREBASE_ROOT];
-
-    function safeKey(str) {
-      return String(str || "default")
-        .trim()
-        .replace(/^https?:\/\//, "")
-        .replace(/[^a-zA-Z0-9_\-]+/g, "_")
-        .replace(/^_+|_+$/g, "")
-        .slice(0, 140) || "default";
-    }
-
-    function firebaseNamespace() {
-      const raw = [
-        firebaseConfig.projectId,
-        firebaseConfig.databaseURL,
-        firebaseConfig.appId,
-        FIREBASE_ROOT
-      ].filter(Boolean).join("__");
-
-      return safeKey(raw || "cashier_default_project");
-    }
-
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const DB_NAMESPACE = firebaseNamespace();
-    const DB_NAME = `cashier_units_pro_${DB_NAMESPACE}_db_v13`;
-    const DB_VERSION = 13;
+    const firebaseProjectId = firebaseConfig.projectId || "default_project";
+    const firebaseDbUrl = firebaseConfig.databaseURL || "default_database";
+    const DB_NAMESPACE = btoa(unescape(encodeURIComponent(`${firebaseProjectId}_${firebaseDbUrl}`)))
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .slice(0, 42) || "default";
+
+    const FIREBASE_ROOT = externalFirebase.firebaseRoot || `cashier_units_pro_${DB_NAMESPACE}`;
+    const FALLBACK_ROOTS = Array.isArray(externalFirebase.fallbackRoots) ? externalFirebase.fallbackRoots : [];
+    const DB_NAME = `cashier_units_pro_${DB_NAMESPACE}_db_v14`;
+    const DB_VERSION = 14;
 
     const STORE_NAMES = [
       "products",
@@ -2414,7 +2557,7 @@
       "paymentAccounts",
       "settings",
       "syncQueue",
-      "syncMeta"
+      "localMeta"
     ];
 
     const $ = (id) => document.getElementById(id);
@@ -2432,6 +2575,14 @@
       freeLines: [],
       syncing: false,
       realtimeStarted: false,
+      activeInvoiceFolder: "all",
+      syncUi: {
+        visible: false,
+        progress: 0,
+        title: "المزامنة",
+        status: "لا توجد عمليات حالياً",
+        operations: []
+      },
       scanner: {
         reader: null,
         floatingReader: null,
@@ -2449,14 +2600,44 @@
       currency: "₪",
       lowStock: 5,
       logo: "",
+      localLogo: "",
+      logoMode: "url",
       updatedAt: Date.now()
     };
 
     const defaultAccounts = [
-      { id: "cash", name: "كاش", number: "", createdAt: Date.now(), updatedAt: Date.now() },
-      { id: "bank", name: "بنك", number: "", createdAt: Date.now(), updatedAt: Date.now() },
-      { id: "jawwalpay", name: "جوال باي", number: "", createdAt: Date.now(), updatedAt: Date.now() },
-      { id: "wallet", name: "محفظة", number: "", createdAt: Date.now(), updatedAt: Date.now() }
+      {
+        id: "cash",
+        name: "دفع كاش",
+        number: "",
+        type: "cash",
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      },
+      {
+        id: "bank",
+        name: "دفع تطبيق بنك",
+        number: "",
+        type: "app",
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      },
+      {
+        id: "jawwalpay",
+        name: "دفع تطبيق جوال بي",
+        number: "",
+        type: "app",
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      },
+      {
+        id: "palpay",
+        name: "دفع تطبيق بال بي",
+        number: "",
+        type: "app",
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      }
     ];
 
     function uid(prefix = "id") {
@@ -2522,8 +2703,10 @@
     function toast(msg, ms = 2600) {
       const el = $("toast");
       if (!el) return alert(msg);
+
       el.textContent = msg;
       el.classList.add("show");
+
       clearTimeout(el._t);
       el._t = setTimeout(() => el.classList.remove("show"), ms);
     }
@@ -2606,6 +2789,7 @@
         image: ""
       };
     }
+
     function normalizeCustomer(c = {}) {
       const oldDebt = cleanNumber(c.debt || 0);
       const oldCredit = cleanNumber(c.credit || 0);
@@ -2627,118 +2811,86 @@
       };
     }
 
-    function customerBalanceText(balance) {
-      const n = cleanNumber(balance);
-
-      if (n > 0) {
-        return {
-          text: `عليه ${money(n)}`,
-          cls: "owed"
-        };
-      }
-
-      if (n < 0) {
-        return {
-          text: `له ${money(Math.abs(n))}`,
-          cls: "credit"
-        };
-      }
-
+    function normalizePaymentAccount(a = {}) {
       return {
-        text: "مسدّد",
-        cls: "credit"
+        id: a.id || uid("acc"),
+        name: a.name || "حساب دفع",
+        number: a.number || "",
+        type: a.type || (a.id === "cash" ? "cash" : "app"),
+        createdAt: a.createdAt || Date.now(),
+        updatedAt: a.updatedAt || Date.now()
       };
     }
 
+    function customerBalanceText(balance) {
+      const n = cleanNumber(balance);
+      if (n > 0) return { text: `عليه ${money(n)}`, cls: "owed" };
+      if (n < 0) return { text: `له ${money(Math.abs(n))}`, cls: "credit" };
+      return { text: "مسدّد", cls: "credit" };
+    }
+
+    function getProductById(id) {
+      return state.products.find((p) => p.id === id);
+    }
+
+    function getProductByBarcode(code) {
+      const c = String(code || "").trim();
+      if (!c) return null;
+
+      return state.products.find(p =>
+        String(p.barcode || "").trim() === c ||
+        String(p.code || "").trim() === c
+      ) || null;
+    }
     function getSaleUnitOptions(product) {
       const p = normalizeProduct(product);
 
       if (p.unitType === "carton") {
         return [
-          {
-            value: "piece",
-            label: "قطعة",
-            factor: 1
-          },
-          {
-            value: "carton",
-            label: `كرتونة (${p.cartonUnits} قطعة)`,
-            factor: p.cartonUnits
-          }
+          { value: "piece", label: "قطعة", factor: 1 },
+          { value: "carton", label: `كرتونة (${p.cartonUnits} قطعة)`, factor: p.cartonUnits }
         ];
       }
 
       if (p.unitType === "kg") {
         return [
-          {
-            value: "g",
-            label: "جرام",
-            factor: 1
-          },
-          {
-            value: "kg",
-            label: "كيلو",
-            factor: 1000
-          }
+          { value: "g", label: "جرام", factor: 1 },
+          { value: "kg", label: "كيلو", factor: 1000 }
         ];
       }
 
       if (p.unitType === "liter") {
         return [
-          {
-            value: "ml",
-            label: "مل",
-            factor: 1
-          },
-          {
-            value: "liter",
-            label: "لتر",
-            factor: 1000
-          }
+          { value: "ml", label: "مل", factor: 1 },
+          { value: "liter", label: "لتر", factor: 1000 }
         ];
       }
 
       if (p.unitType === "custom") {
         return [
-          {
-            value: "custom",
-            label: p.customUnit || "مخصص",
-            factor: 1
-          }
+          { value: "custom", label: p.customUnit || "مخصص", factor: 1 }
         ];
       }
 
       return [
-        {
-          value: p.unitType,
-          label: unitLabel(p.unitType, p.customUnit),
-          factor: 1
-        }
+        { value: p.unitType, label: unitLabel(p.unitType, p.customUnit), factor: 1 }
       ];
     }
 
     function getDefaultSaleUnit(product) {
       const p = normalizeProduct(product);
-
       if (p.unitType === "carton") return "piece";
       if (p.unitType === "kg") return "g";
       if (p.unitType === "liter") return "ml";
-
       return p.unitType;
     }
 
     function getUnitFactor(product, selectedUnit) {
-      return cleanNumber(
-        getSaleUnitOptions(product).find(x => x.value === selectedUnit)?.factor || 1,
-        1
-      );
+      return cleanNumber(getSaleUnitOptions(product).find(x => x.value === selectedUnit)?.factor || 1, 1);
     }
 
     function getUnitText(product, selectedUnit) {
-      return (
-        getSaleUnitOptions(product).find(x => x.value === selectedUnit)?.label ||
-        unitLabel(selectedUnit, product.customUnit)
-      );
+      return getSaleUnitOptions(product).find(x => x.value === selectedUnit)?.label || unitLabel(selectedUnit, product.customUnit);
     }
 
     function priceForLine(product, qtyValue, selectedUnit) {
@@ -2762,6 +2914,32 @@
       };
     }
 
+    function makeLogoDataUrl(text) {
+      const letter = String(text || "م").trim().charAt(0) || "م";
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="160" height="160">
+          <defs>
+            <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+              <stop stop-color="#2563eb"/>
+              <stop offset="1" stop-color="#38bdf8"/>
+            </linearGradient>
+          </defs>
+          <rect width="160" height="160" rx="42" fill="url(#g)"/>
+          <text x="50%" y="58%" text-anchor="middle" font-size="80" font-family="Arial" font-weight="bold" fill="white">${escapeHtml(letter)}</text>
+        </svg>`;
+      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        if (!file) return resolve("");
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+      });
+    }
+
     function openDB() {
       return new Promise((resolve, reject) => {
         const req = indexedDB.open(DB_NAME, DB_VERSION);
@@ -2771,9 +2949,7 @@
 
           STORE_NAMES.forEach((name) => {
             if (!database.objectStoreNames.contains(name)) {
-              database.createObjectStore(name, {
-                keyPath: "id"
-              });
+              database.createObjectStore(name, { keyPath: "id" });
             }
           });
         };
@@ -2800,25 +2976,9 @@
       return new Promise((resolve, reject) => {
         const tx = database.transaction(storeName, "readwrite");
         const store = tx.objectStore(storeName);
-
-        items.forEach((item) => {
-          if (item && item.id) store.put(item);
-        });
-
+        items.forEach((item) => store.put(item));
         tx.oncomplete = () => resolve(true);
         tx.onerror = () => reject(tx.error);
-      });
-    }
-
-    async function idbGetAll(storeName) {
-      const database = await openDB();
-
-      return new Promise((resolve, reject) => {
-        const tx = database.transaction(storeName, "readonly");
-        const req = tx.objectStore(storeName).getAll();
-
-        req.onsuccess = () => resolve(req.result || []);
-        req.onerror = () => reject(req.error);
       });
     }
 
@@ -2828,8 +2988,18 @@
       return new Promise((resolve, reject) => {
         const tx = database.transaction(storeName, "readonly");
         const req = tx.objectStore(storeName).get(id);
-
         req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function idbGetAll(storeName) {
+      const database = await openDB();
+
+      return new Promise((resolve, reject) => {
+        const tx = database.transaction(storeName, "readonly");
+        const req = tx.objectStore(storeName).getAll();
+        req.onsuccess = () => resolve(req.result || []);
         req.onerror = () => reject(req.error);
       });
     }
@@ -2840,7 +3010,6 @@
       return new Promise((resolve, reject) => {
         const tx = database.transaction(storeName, "readwrite");
         tx.objectStore(storeName).delete(id);
-
         tx.oncomplete = () => resolve(true);
         tx.onerror = () => reject(tx.error);
       });
@@ -2852,23 +3021,84 @@
       return new Promise((resolve, reject) => {
         const tx = database.transaction(storeName, "readwrite");
         tx.objectStore(storeName).clear();
-
         tx.oncomplete = () => resolve(true);
         tx.onerror = () => reject(tx.error);
       });
     }
 
-    async function getSyncMeta(id, fallback = 0) {
-      const row = await idbGet("syncMeta", id);
-      return row ? row.value : fallback;
+    function firebasePath(store, itemId) {
+      return `${FIREBASE_ROOT}/${store}/${itemId}`;
     }
 
-    async function setSyncMeta(id, value) {
-      await idbPut("syncMeta", {
-        id,
-        value,
-        updatedAt: Date.now()
-      });
+    function syncStoreLabel(store) {
+      const map = {
+        products: "المنتجات",
+        invoices: "الفواتير",
+        customers: "العملاء",
+        expenses: "المصروفات",
+        purchases: "المشتريات",
+        supplierPayments: "دفعات التجار",
+        paymentAccounts: "حسابات الدفع",
+        settings: "الإعدادات"
+      };
+
+      return map[store] || store;
+    }
+
+    function updateSyncUi({
+      visible = null,
+      progress = null,
+      title = null,
+      status = null,
+      operation = null,
+      operations = null,
+      spin = null
+    } = {}) {
+      if (visible !== null) state.syncUi.visible = !!visible;
+      if (progress !== null) state.syncUi.progress = Math.max(0, Math.min(100, cleanNumber(progress)));
+      if (title !== null) state.syncUi.title = title;
+      if (status !== null) state.syncUi.status = status;
+      if (Array.isArray(operations)) state.syncUi.operations = operations.slice(-20);
+      if (operation) state.syncUi.operations = [operation, ...state.syncUi.operations].slice(0, 20);
+
+      const pop = $("syncPopover");
+      const btn = $("syncNowBtn");
+
+      if (pop) pop.classList.toggle("show", !!state.syncUi.visible);
+      if (btn && spin !== null) btn.classList.toggle("syncing", !!spin);
+
+      if ($("syncPopoverTitle")) $("syncPopoverTitle").textContent = state.syncUi.title;
+      if ($("syncPopoverStatus")) $("syncPopoverStatus").textContent = state.syncUi.status;
+      if ($("syncMiniProgressBar")) $("syncMiniProgressBar").style.width = `${Math.round(state.syncUi.progress)}%`;
+
+      if ($("syncOperationList")) {
+        $("syncOperationList").innerHTML = state.syncUi.operations.map(op => `
+          <div class="sync-operation-item">
+            <span><b>${escapeHtml(op.store || "عملية")}</b> ${escapeHtml(op.text || "")}</span>
+            <span class="${op.done ? "ok" : "wait"}">${op.done ? "تم" : "جاري"}</span>
+          </div>
+        `).join("") || `<div class="muted" style="font-size:12px;text-align:center;padding:10px">لا توجد عمليات معروضة</div>`;
+      }
+    }
+
+    function hideSyncPopoverLater(delay = 1200) {
+      clearTimeout(window.__syncPopTimer);
+      window.__syncPopTimer = setTimeout(() => {
+        if (!state.syncing) updateSyncUi({ visible: false, progress: 0, spin: false });
+      }, delay);
+    }
+
+    async function refreshPendingCount() {
+      const queue = await idbGetAll("syncQueue");
+      const count = queue.length;
+
+      $("syncCountBadge").textContent = count;
+      $("syncCountBadge").style.display = count ? "flex" : "none";
+
+      $("connectionText").textContent = navigator.onLine ? "متصل - المزامنة مفعلة" : "غير متصل - الحفظ محليًا";
+      $("connectionText").style.color = navigator.onLine ? "#16a34a" : "#dc2626";
+
+      return count;
     }
 
     async function enqueueSync(action) {
@@ -2883,26 +3113,19 @@
       await refreshPendingCount();
 
       if (navigator.onLine) {
-        setTimeout(() => syncNow(false), 180);
+        setTimeout(() => syncNow(false), 120);
       }
     }
 
     async function saveLocal(store, item, sync = true) {
-      const normalized =
-        store === "products"
-          ? normalizeProduct(item)
-          : store === "customers"
-            ? normalizeCustomer(item)
-            : item;
-
-      await idbPut(store, normalized);
+      await idbPut(store, item);
 
       if (sync) {
         await enqueueSync({
           type: "set",
           store,
-          itemId: normalized.id,
-          data: normalized
+          itemId: item.id,
+          data: item
         });
       }
     }
@@ -2924,96 +3147,66 @@
       if (Array.isArray(obj)) return obj.filter(Boolean);
       return Object.values(obj).filter(Boolean);
     }
-
-    function getItemTime(item) {
-      return Number(item?.updatedAt || item?.createdAt || 0);
-    }
-
     async function mergeStore(store, remoteItems, rootName = FIREBASE_ROOT) {
       if (!remoteItems || !remoteItems.length) return 0;
 
-      const lastKey = `lastRemote_${rootName}_${store}`;
-      const lastRemoteTime = Number(await getSyncMeta(lastKey, 0));
       const local = await idbGetAll(store);
       const map = new Map(local.map((x) => [x.id, x]));
-
       let count = 0;
-      let maxTime = lastRemoteTime;
 
       for (let remote of remoteItems) {
         if (!remote || !remote.id) continue;
 
         if (store === "products") remote = normalizeProduct(remote);
         if (store === "customers") remote = normalizeCustomer(remote);
+        if (store === "paymentAccounts") remote = normalizePaymentAccount(remote);
 
-        const remoteTime = getItemTime(remote);
-
-        if (remoteTime < lastRemoteTime) {
-          continue;
+        if (store === "settings") {
+          const current = map.get(remote.id);
+          remote = {
+            ...defaultSettings,
+            ...remote,
+            localLogo: current?.localLogo || "",
+            logoMode: current?.localLogo ? "local" : (remote.logo ? "url" : "default")
+          };
         }
 
         const old = map.get(remote.id);
-        const oldTime = getItemTime(old);
+        const remoteTime = Number(remote.updatedAt || remote.createdAt || 0);
+        const oldTime = Number(old?.updatedAt || old?.createdAt || 0);
 
         if (!old || remoteTime > oldTime) {
           await idbPut(store, remote);
           count++;
-        }
 
-        if (remoteTime > maxTime) maxTime = remoteTime;
+          updateSyncUi({
+            operation: {
+              store: syncStoreLabel(store),
+              text: `تنزيل من ${rootName}`,
+              done: true
+            }
+          });
+        }
       }
 
-      await setSyncMeta(lastKey, maxTime);
       return count;
     }
 
     async function loadFirebaseRoot(rootName) {
-      const snap = await get(ref(db, rootName));
-
-      if (!snap.exists()) return 0;
-
-      const data = snap.val() || {};
-      let totalLoaded = 0;
-
-      totalLoaded += await mergeStore("products", mapFirebaseObjectToArray(data.products), rootName);
-      totalLoaded += await mergeStore("invoices", mapFirebaseObjectToArray(data.invoices), rootName);
-      totalLoaded += await mergeStore("customers", mapFirebaseObjectToArray(data.customers), rootName);
-      totalLoaded += await mergeStore("expenses", mapFirebaseObjectToArray(data.expenses), rootName);
-      totalLoaded += await mergeStore("purchases", mapFirebaseObjectToArray(data.purchases), rootName);
-      totalLoaded += await mergeStore("supplierPayments", mapFirebaseObjectToArray(data.supplierPayments), rootName);
-      totalLoaded += await mergeStore("paymentAccounts", mapFirebaseObjectToArray(data.paymentAccounts), rootName);
-
-      if (data.settings?.main) {
-        totalLoaded += await mergeStore("settings", [{ ...defaultSettings, ...data.settings.main }], rootName);
-      }
-
-      return totalLoaded;
-    }
-
-    async function loadFirebaseOnce() {
-      if (!navigator.onLine) return;
-
-      let totalLoaded = 0;
-
-      for (const rootName of FIREBASE_FALLBACK_ROOTS) {
-        try {
-          totalLoaded += await loadFirebaseRoot(rootName);
-        } catch (e) {
-          console.warn("Firebase load error from root:", rootName, e);
-        }
-      }
-
-      if (totalLoaded > 0) {
-        await loadLocalData(true);
-        toast(`تم تحميل ${totalLoaded} عنصر جديد من Firebase`);
-      }
-    }
-
-    async function syncOldDataToNewRoot() {
-      if (!navigator.onLine) return;
+      if (!navigator.onLine) return 0;
 
       try {
-        await loadLocalData(false);
+        updateSyncUi({
+          spin: true,
+          status: `فحص بيانات ${rootName}`,
+          progress: 5
+        });
+
+        const snap = await get(ref(db, rootName));
+        if (!snap.exists()) return 0;
+
+        const data = snap.val() || {};
+        let totalLoaded = 0;
 
         const stores = [
           "products",
@@ -3025,26 +3218,71 @@
           "paymentAccounts"
         ];
 
-        for (const store of stores) {
-          for (const item of state[store]) {
-            if (!item || !item.id) continue;
-            await set(ref(db, `${FIREBASE_ROOT}/${store}/${item.id}`), item);
-          }
+        for (let i = 0; i < stores.length; i++) {
+          const store = stores[i];
+
+          updateSyncUi({
+            spin: true,
+            status: `تنزيل ${syncStoreLabel(store)}...`,
+            progress: 8 + ((i + 1) / stores.length) * 45
+          });
+
+          totalLoaded += await mergeStore(store, mapFirebaseObjectToArray(data[store]), rootName);
         }
 
-        if (state.settings) {
-          await set(ref(db, `${FIREBASE_ROOT}/settings/main`), state.settings);
+        if (data.settings?.main) {
+          totalLoaded += await mergeStore("settings", [{ ...defaultSettings, ...data.settings.main }], rootName);
         }
+
+        if (totalLoaded > 0) {
+          await loadLocalData(true);
+        }
+
+        return totalLoaded;
       } catch (e) {
-        console.warn("syncOldDataToNewRoot error", e);
+        console.warn("Firebase load error", e);
+        updateSyncUi({
+          status: "تعذر تنزيل بعض بيانات Firebase، سيتم المحاولة لاحقًا",
+          operation: {
+            store: "Firebase",
+            text: "فشل التنزيل",
+            done: false
+          }
+        });
+        return 0;
       }
     }
 
-    function startRealtimeListeners() {
-      if (state.realtimeStarted) return;
-      state.realtimeStarted = true;
+    async function loadFirebaseOnce() {
+      if (!navigator.onLine) return;
 
-      [
+      updateSyncUi({
+        visible: state.syncUi.visible,
+        spin: true,
+        title: "تنزيل البيانات",
+        status: "تنزيل البيانات الجديدة فقط من Firebase",
+        progress: 5,
+        operations: []
+      });
+
+      await loadFirebaseRoot(FIREBASE_ROOT);
+
+      for (const root of FALLBACK_ROOTS) {
+        if (root && root !== FIREBASE_ROOT) {
+          await loadFirebaseRoot(root);
+        }
+      }
+
+      await refreshPendingCount();
+    }
+
+    async function syncLocalSnapshotToFirebase() {
+      if (!navigator.onLine) return;
+
+      const meta = await idbGet("localMeta", "snapshotUploaded");
+      if (meta?.root === FIREBASE_ROOT && meta?.done) return;
+
+      const stores = [
         "products",
         "invoices",
         "customers",
@@ -3052,62 +3290,180 @@
         "purchases",
         "supplierPayments",
         "paymentAccounts"
-      ].forEach((store) => {
+      ];
+
+      let totalItems = 0;
+      let sent = 0;
+
+      for (const store of stores) {
+        const rows = await idbGetAll(store);
+        totalItems += rows.length;
+      }
+
+      if (!totalItems) {
+        await idbPut("localMeta", {
+          id: "snapshotUploaded",
+          root: FIREBASE_ROOT,
+          done: true,
+          updatedAt: Date.now()
+        });
+        return;
+      }
+
+      updateSyncUi({
+        spin: true,
+        visible: state.syncUi.visible,
+        title: "تثبيت البيانات",
+        status: "رفع نسخة المحلي للمشروع الحالي عند الحاجة",
+        progress: 5
+      });
+
+      for (const store of stores) {
+        const rows = await idbGetAll(store);
+
+        for (const item of rows) {
+          try {
+            await set(ref(db, firebasePath(store, item.id)), item);
+            sent++;
+            updateSyncUi({
+              progress: Math.min(98, (sent / totalItems) * 100),
+              status: `تثبيت ${sent} من ${totalItems}`,
+              operation: {
+                store: syncStoreLabel(store),
+                text: "تثبيت محلي",
+                done: true
+              }
+            });
+          } catch (e) {
+            console.warn("snapshot upload failed", e);
+            return;
+          }
+        }
+      }
+
+      await set(ref(db, `${FIREBASE_ROOT}/settings/main`), stripLocalOnlySettings(state.settings));
+
+      await idbPut("localMeta", {
+        id: "snapshotUploaded",
+        root: FIREBASE_ROOT,
+        done: true,
+        updatedAt: Date.now()
+      });
+    }
+
+    function stripLocalOnlySettings(settings) {
+      const s = {
+        ...defaultSettings,
+        ...(settings || {})
+      };
+
+      return {
+        ...s,
+        localLogo: "",
+        logoMode: s.logo ? "url" : "default"
+      };
+    }
+
+    function startRealtimeListeners() {
+      if (state.realtimeStarted) return;
+      state.realtimeStarted = true;
+
+      const stores = [
+        "products",
+        "invoices",
+        "customers",
+        "expenses",
+        "purchases",
+        "supplierPayments",
+        "paymentAccounts"
+      ];
+
+      stores.forEach((store) => {
         onValue(ref(db, `${FIREBASE_ROOT}/${store}`), async (snap) => {
           if (!snap.exists()) return;
 
-          await mergeStore(store, mapFirebaseObjectToArray(snap.val()), FIREBASE_ROOT);
-          await loadLocalData(true);
+          updateSyncUi({
+            spin: true,
+            title: "تنزيل تحديثات",
+            status: `وصل تحديث جديد: ${syncStoreLabel(store)}`,
+            progress: 25
+          });
+
+          const count = await mergeStore(store, mapFirebaseObjectToArray(snap.val()), FIREBASE_ROOT);
+
+          if (count > 0) {
+            await loadLocalData(true);
+            renderAll();
+
+            updateSyncUi({
+              progress: 100,
+              status: `تم تنزيل ${count} تحديث`,
+              operation: {
+                store: syncStoreLabel(store),
+                text: `تحديث مباشر ${count}`,
+                done: true
+              }
+            });
+          }
+
+          setTimeout(() => {
+            if (!state.syncing) updateSyncUi({ spin: false });
+          }, 700);
         });
       });
 
       onValue(ref(db, `${FIREBASE_ROOT}/settings/main`), async (snap) => {
         if (!snap.exists()) return;
 
-        await mergeStore("settings", [{ ...defaultSettings, ...snap.val() }], FIREBASE_ROOT);
+        updateSyncUi({
+          spin: true,
+          title: "تنزيل إعدادات",
+          status: "تنزيل إعدادات المحل",
+          progress: 35
+        });
+
+        const current = state.settings || (await idbGet("settings", "main")) || defaultSettings;
+
+        await mergeStore("settings", [{
+          ...defaultSettings,
+          ...snap.val(),
+          localLogo: current.localLogo || "",
+          logoMode: current.localLogo ? "local" : (snap.val()?.logo ? "url" : "default")
+        }], FIREBASE_ROOT);
+
         await loadLocalData(true);
+        renderAll();
+
+        updateSyncUi({
+          progress: 100,
+          status: "تم تحديث إعدادات المحل",
+          operation: {
+            store: "الإعدادات",
+            text: "تحديث مباشر",
+            done: true
+          }
+        });
+
+        setTimeout(() => {
+          if (!state.syncing) updateSyncUi({ spin: false });
+        }, 700);
       });
     }
 
-    function setSyncProgress(percent, title = "جاري المزامنة...", details = "رفع العمليات المخزنة إلى Firebase") {
-      $("syncPanel").classList.add("show");
-      $("syncTitle").innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> ${title}`;
-      $("syncPercent").textContent = `${Math.round(percent)}%`;
-      $("syncProgressBar").style.width = `${Math.round(percent)}%`;
-      $("syncDetails").textContent = details;
-    }
-
-    function hideSyncPanelNow() {
-      $("syncPanel").classList.remove("show");
-      $("syncProgressBar").style.width = "0%";
-      $("syncPercent").textContent = "0%";
-    }
-
-    function hideSyncPanelLater(delay = 900) {
-      clearTimeout(window.__syncHideTimer);
-      window.__syncHideTimer = setTimeout(() => hideSyncPanelNow(), delay);
-    }
-
-    async function refreshPendingCount() {
-      const queue = await idbGetAll("syncQueue");
-      const count = queue.length;
-
-      $("syncCountBadge").textContent = count;
-      $("syncCountBadge").style.display = count ? "flex" : "none";
-
-      $("connectionText").textContent = navigator.onLine ? "متصل - المزامنة مفعلة" : "غير متصل - الحفظ محليًا";
-      $("connectionText").style.color = navigator.onLine ? "#16a34a" : "#dc2626";
-    }
-
-    async function syncNow(showIfEmpty = true) {
+    async function syncNow(showPopover = false) {
       if (state.syncing) return;
 
       if (!navigator.onLine) {
         await refreshPendingCount();
-        hideSyncPanelNow();
 
-        if (showIfEmpty) {
-          toast("لا يوجد اتصال، البيانات محفوظة داخل هذا المشروع محليًا");
+        if (showPopover) {
+          updateSyncUi({
+            visible: true,
+            spin: false,
+            title: "لا يوجد اتصال",
+            status: "العمليات محفوظة محليًا وستُرفع عند عودة الإنترنت",
+            progress: 0
+          });
         }
 
         return;
@@ -3118,96 +3474,116 @@
       if (!queue.length) {
         await refreshPendingCount();
 
-        if (showIfEmpty) {
-          setSyncProgress(100, "لا توجد عناصر للمزامنة", "كل البيانات مرفوعة");
-          hideSyncPanelLater(650);
-        } else {
-          hideSyncPanelNow();
+        if (showPopover) {
+          updateSyncUi({
+            visible: true,
+            spin: false,
+            title: "المزامنة",
+            status: "كل البيانات مرفوعة ولا توجد عمليات معلقة",
+            progress: 100,
+            operations: []
+          });
+          hideSyncPopoverLater(900);
         }
 
         return;
       }
 
       state.syncing = true;
-      clearTimeout(window.__syncHideTimer);
-      setSyncProgress(1, "جاري رفع المحلي أولًا...", `عدد العمليات: ${queue.length}`);
+
+      updateSyncUi({
+        visible: showPopover || state.syncUi.visible,
+        spin: true,
+        title: "جاري المزامنة",
+        status: `يوجد ${queue.length} عملية تنتظر الرفع`,
+        progress: 1,
+        operations: []
+      });
 
       let done = 0;
       const total = queue.length;
 
-      for (const q of queue.sort((a, b) => Number(a.createdAt || 0) - Number(b.createdAt || 0))) {
+      for (const q of queue) {
         try {
+          const label = syncStoreLabel(q.store);
+
+          updateSyncUi({
+            spin: true,
+            status: `رفع ${label}... ${done + 1} من ${total}`,
+            progress: Math.max(2, (done / total) * 100),
+            operation: {
+              store: label,
+              text: q.type === "remove" ? "حذف" : "رفع",
+              done: false
+            }
+          });
+
           if (q.type === "set") {
-            await set(ref(db, `${FIREBASE_ROOT}/${q.store}/${q.itemId}`), q.data);
+            const dataToSave = q.store === "settings" ? stripLocalOnlySettings(q.data) : q.data;
+            await set(ref(db, firebasePath(q.store, q.itemId)), dataToSave);
           } else if (q.type === "remove") {
-            await remove(ref(db, `${FIREBASE_ROOT}/${q.store}/${q.itemId}`));
+            await remove(ref(db, firebasePath(q.store, q.itemId)));
           }
 
           await idbDelete("syncQueue", q.id);
           done++;
 
-          setSyncProgress((done / total) * 70, "جاري رفع المحلي أولًا...", `تم رفع ${done} من ${total}`);
+          updateSyncUi({
+            status: `تم رفع ${done} من ${total}`,
+            progress: (done / total) * 100,
+            operation: {
+              store: label,
+              text: q.type === "remove" ? "حذف" : "رفع",
+              done: true
+            }
+          });
+
+          await refreshPendingCount();
         } catch (e) {
           q.tries = Number(q.tries || 0) + 1;
           q.lastError = String(e?.message || e);
-
           await idbPut("syncQueue", q);
 
           console.error("Sync failed", e);
+
+          updateSyncUi({
+            status: "توقفت المزامنة مؤقتًا بسبب ضعف الاتصال، سيتم إعادة المحاولة تلقائيًا",
+            progress: Math.max(8, (done / total) * 100),
+            spin: false,
+            operation: {
+              store: syncStoreLabel(q.store),
+              text: "ينتظر اتصال أفضل",
+              done: false
+            }
+          });
+
           break;
         }
       }
 
       state.syncing = false;
-
-      const left = (await idbGetAll("syncQueue")).length;
-      await refreshPendingCount();
+      const left = await refreshPendingCount();
 
       if (left === 0) {
-        setSyncProgress(82, "تحميل الجديد من Firebase...", "بعد رفع المحلي يتم تنزيل أي بيانات جديدة");
-        await loadFirebaseOnce();
+        updateSyncUi({
+          progress: 100,
+          status: "اكتملت المزامنة بنجاح",
+          spin: false
+        });
 
-        setSyncProgress(100, "اكتملت المزامنة", "تم رفع المحلي وتنزيل الجديد");
-        hideSyncPanelLater(650);
+        hideSyncPopoverLater(showPopover ? 1000 : 450);
       } else {
-        setSyncProgress(45, "بقيت عمليات تنتظر", `بقي ${left} عمليات`);
-        hideSyncPanelLater(1200);
-        setTimeout(() => syncNow(false), 5000);
+        updateSyncUi({
+          status: `بقي ${left} عمليات معلقة وستُرفع تلقائيًا`,
+          spin: false
+        });
+
+        setTimeout(() => syncNow(false), 6000);
       }
     }
-    function makeLogoDataUrl(text) {
-      const letter = String(text || "م").trim().charAt(0) || "م";
-      const svg = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="160" height="160">
-          <defs>
-            <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
-              <stop stop-color="#2563eb"/>
-              <stop offset="1" stop-color="#38bdf8"/>
-            </linearGradient>
-          </defs>
-          <rect width="160" height="160" rx="42" fill="url(#g)"/>
-          <text x="50%" y="58%" text-anchor="middle" font-size="80" font-family="Arial" font-weight="bold" fill="white">${escapeHtml(letter)}</text>
-        </svg>
-      `;
-
-      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
-    }
-
-    function readFileAsDataUrl(file) {
-      return new Promise((resolve, reject) => {
-        if (!file) return resolve("");
-
-        const reader = new FileReader();
-
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function applySettingsToUI() {
+function applySettingsToUI() {
       const s = state.settings || defaultSettings;
-      const logo = s.logo || makeLogoDataUrl(s.shopName || "المحل");
+      const logo = s.localLogo || s.logo || makeLogoDataUrl(s.shopName || "المحل");
 
       $("topShopName").textContent = s.shopName || "المحل الرئيسي";
       $("sideShopName").textContent = s.shopName || "المحل الرئيسي";
@@ -3218,19 +3594,19 @@
       if ($("settingShopPhone")) $("settingShopPhone").value = s.shopPhone || "";
       if ($("settingCurrency")) $("settingCurrency").value = s.currency || "₪";
       if ($("settingLowStock")) $("settingLowStock").value = s.lowStock || 5;
+      if ($("settingLogoUrl")) $("settingLogoUrl").value = s.logo || "";
     }
 
-    async function loadLocalData(doRender = true) {
+    async function loadLocalData(skipRender = false) {
       state.products = (await idbGetAll("products")).map(normalizeProduct);
       state.invoices = await idbGetAll("invoices");
       state.customers = (await idbGetAll("customers")).map(normalizeCustomer);
       state.expenses = await idbGetAll("expenses");
       state.purchases = await idbGetAll("purchases");
       state.supplierPayments = await idbGetAll("supplierPayments");
-      state.paymentAccounts = await idbGetAll("paymentAccounts");
+      state.paymentAccounts = (await idbGetAll("paymentAccounts")).map(normalizePaymentAccount);
 
       const settingsRows = await idbGetAll("settings");
-
       state.settings = {
         ...defaultSettings,
         ...(settingsRows[0] || {})
@@ -3241,10 +3617,10 @@
       }
 
       if (!state.paymentAccounts.length) {
-        state.paymentAccounts = defaultAccounts;
-        await idbBulkPut("paymentAccounts", defaultAccounts);
+        state.paymentAccounts = defaultAccounts.map(normalizePaymentAccount);
+        await idbBulkPut("paymentAccounts", state.paymentAccounts);
 
-        for (const acc of defaultAccounts) {
+        for (const acc of state.paymentAccounts) {
           await enqueueSync({
             type: "set",
             store: "paymentAccounts",
@@ -3254,12 +3630,12 @@
         }
       }
 
+      rebuildCustomerBalances(false);
       applySettingsToUI();
 
-      if (doRender) {
-        renderAll();
-        await refreshPendingCount();
-      }
+      if (!skipRender) renderAll();
+
+      await refreshPendingCount();
     }
 
     function periodFilter(items, period, dateField = "createdAt", customDate = "") {
@@ -3270,49 +3646,33 @@
       const end = new Date();
 
       if (period === "today") {
-        start.setHours(0, 0, 0, 0);
-        end.setHours(23, 59, 59, 999);
+        start.setHours(0,0,0,0);
+        end.setHours(23,59,59,999);
       } else if (period === "week") {
         start.setDate(now.getDate() - 7);
-        start.setHours(0, 0, 0, 0);
-        end.setHours(23, 59, 59, 999);
+        start.setHours(0,0,0,0);
+        end.setHours(23,59,59,999);
       } else if (period === "month") {
         start.setMonth(now.getMonth() - 1);
-        start.setHours(0, 0, 0, 0);
-        end.setHours(23, 59, 59, 999);
+        start.setHours(0,0,0,0);
+        end.setHours(23,59,59,999);
       } else if (period === "year") {
         start.setFullYear(now.getFullYear() - 1);
-        start.setHours(0, 0, 0, 0);
-        end.setHours(23, 59, 59, 999);
+        start.setHours(0,0,0,0);
+        end.setHours(23,59,59,999);
       } else if (period === "custom") {
         if (!customDate) return [];
-
         const d = new Date(customDate);
         start.setTime(d.getTime());
-        start.setHours(0, 0, 0, 0);
+        start.setHours(0,0,0,0);
         end.setTime(d.getTime());
-        end.setHours(23, 59, 59, 999);
+        end.setHours(23,59,59,999);
       }
 
       return items.filter((item) => {
         const t = Number(item[dateField] || 0);
         return t >= start.getTime() && t <= end.getTime();
       });
-    }
-
-    function getProductById(id) {
-      return state.products.find((p) => p.id === id);
-    }
-
-    function getProductByBarcode(code) {
-      const c = String(code || "").trim();
-
-      if (!c) return null;
-
-      return state.products.find((p) =>
-        String(p.barcode || "").trim() === c ||
-        String(p.code || "").trim() === c
-      );
     }
 
     function getTotalOwed() {
@@ -3329,6 +3689,7 @@
       renderCart();
       renderFreeInvoice();
       renderInventory();
+      renderInvoiceFolders();
       renderInvoices();
       renderDebts();
       renderPurchases();
@@ -3351,8 +3712,8 @@
       $("homeDebtCredit").textContent = money(getTotalCredit());
     }
 
-    function productCardHtml(product) {
-      const p = normalizeProduct(product);
+    function productCardHtml(p) {
+      p = normalizeProduct(p);
       const low = cleanNumber(p.stock) <= cleanNumber(p.lowStock || state.settings?.lowStock || 5);
 
       return `
@@ -3360,14 +3721,10 @@
           <div class="product-icon"><i class="fa-solid fa-box"></i></div>
           <div class="product-name">${escapeHtml(p.name)}</div>
           <div class="money">${money(p.salePrice)} / ${escapeHtml(unitLabel(p.baseUnit, p.customUnit))}</div>
-
           <div class="product-meta">
             <span>${escapeHtml(unitLabel(p.unitType, p.customUnit))}</span>
-            <span class="stock-pill ${low ? "stock-low" : ""}">
-              ${cleanNumber(p.stock)} ${escapeHtml(unitLabel(p.baseUnit, p.customUnit))}
-            </span>
+            <span class="stock-pill ${low ? "stock-low" : ""}">${cleanNumber(p.stock)} ${escapeHtml(unitLabel(p.baseUnit, p.customUnit))}</span>
           </div>
-
           <div class="product-meta">
             <span>${p.unitType === "carton" ? `كرتونة: ${p.cartonUnits}` : `أساس: ${unitLabel(p.baseUnit, p.customUnit)}`}</span>
             <span>${escapeHtml(p.category || "-")}</span>
@@ -3384,7 +3741,6 @@
           !q ||
           String(p.name || "").toLowerCase().includes(q) ||
           String(p.barcode || "").includes(q) ||
-          String(p.code || "").includes(q) ||
           String(p.category || "").toLowerCase().includes(q)
         )
         .slice(0, 80);
@@ -3422,7 +3778,6 @@
 
     function renderCart() {
       const box = $("cartLines");
-
       if (!box) return;
 
       if (!state.cart.length) {
@@ -3477,7 +3832,6 @@
       }
 
       const totals = calculateCartTotals();
-
       $("cartSubtotal").textContent = money(totals.subtotal);
       $("cartDiscount").textContent = money(totals.discount);
       $("cartTotal").textContent = money(totals.total);
@@ -3485,13 +3839,11 @@
 
     function updateCartLine(lineId, patch = {}, rerender = true) {
       const line = state.cart.find(x => x.id === lineId);
-
       if (!line) return;
 
       Object.assign(line, patch);
 
       const product = getProductById(line.productId);
-
       if (!product) {
         if (rerender) renderCart();
         return;
@@ -3507,7 +3859,6 @@
         renderCart();
       } else {
         const totals = calculateCartTotals();
-
         $("cartSubtotal").textContent = money(totals.subtotal);
         $("cartDiscount").textContent = money(totals.discount);
         $("cartTotal").textContent = money(totals.total);
@@ -3526,16 +3877,9 @@
       const cost = state.cart.reduce((s, x) => s + cleanNumber(x.costTotal), 0);
       const profit = total - cost;
 
-      return {
-        subtotal,
-        discount,
-        total,
-        cost,
-        profit
-      };
+      return { subtotal, discount, total, cost, profit };
     }
-
-    function renderSuggestions() {
+function renderSuggestions() {
       const q = $("cashierSearch").value.trim().toLowerCase();
       const box = $("suggestionsBox");
 
@@ -3549,18 +3893,17 @@
         .filter((p) =>
           String(p.name || "").toLowerCase().includes(q) ||
           String(p.barcode || "").includes(q) ||
-          String(p.code || "").includes(q) ||
-          String(p.category || "").toLowerCase().includes(q)
+          String(p.code || "").includes(q)
         )
-        .slice(0, 7);
+        .slice(0, 8);
 
       if (!matches.length) {
         box.style.display = "none";
         return;
       }
 
-      box.innerHTML = matches.map((product) => {
-        const p = normalizeProduct(product);
+      box.innerHTML = matches.map((p) => {
+        p = normalizeProduct(p);
 
         return `
           <div data-suggest-product="${p.id}" style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px;border-bottom:1px solid #f1f5f9;cursor:pointer">
@@ -3568,7 +3911,6 @@
               <b>${escapeHtml(p.name)}</b>
               <div class="muted">${escapeHtml(p.barcode || p.code || "")} · المتوفر: ${cleanNumber(p.stock)} ${escapeHtml(unitLabel(p.baseUnit, p.customUnit))}</div>
             </div>
-
             <div style="text-align:left">
               <div class="money">${money(p.salePrice)}</div>
               <div class="muted" style="font-size:11px">${escapeHtml(unitLabel(p.unitType, p.customUnit))}</div>
@@ -3594,7 +3936,6 @@
 
     function renderFreeInvoice() {
       const box = $("freeInvoiceLines");
-
       if (!box) return;
 
       if (!state.freeLines.length) {
@@ -3646,7 +3987,6 @@
       document.querySelectorAll("[data-free-line]").forEach(el => {
         const id = el.dataset.freeLine;
         const line = state.freeLines.find(x => x.id === id);
-
         if (!line) return;
 
         line.name = el.querySelector(".free-name")?.value.trim() || "";
@@ -3665,7 +4005,6 @@
         els.forEach(el => {
           const id = el.dataset.freeLine;
           const line = state.freeLines.find(x => x.id === id);
-
           if (!line) return;
 
           line.name = el.querySelector(".free-name")?.value.trim() || "";
@@ -3686,7 +4025,8 @@
         profit: subtotal - cost
       };
     }
-function renderInventory() {
+
+    function renderInventory() {
       const q = ($("inventorySearch")?.value || "").trim().toLowerCase();
 
       const rows = state.products
@@ -3694,13 +4034,11 @@ function renderInventory() {
           !q ||
           String(p.name || "").toLowerCase().includes(q) ||
           String(p.barcode || "").includes(q) ||
-          String(p.code || "").includes(q) ||
-          String(p.category || "").toLowerCase().includes(q) ||
-          String(unitLabel(p.unitType, p.customUnit)).toLowerCase().includes(q)
+          String(p.category || "").toLowerCase().includes(q)
         )
         .sort((a,b) => String(a.name || "").localeCompare(String(b.name || ""), "ar"))
-        .map((product) => {
-          const p = normalizeProduct(product);
+        .map((p) => {
+          p = normalizeProduct(p);
           const low = cleanNumber(p.stock) <= cleanNumber(p.lowStock || state.settings?.lowStock || 5);
 
           const conversionText =
@@ -3768,6 +4106,18 @@ function renderInventory() {
       return map[method] || method || "-";
     }
 
+    function paymentFolderName(invoice) {
+      if (invoice.paymentAccountId) {
+        const acc = state.paymentAccounts.find(a => a.id === invoice.paymentAccountId);
+        if (acc) return acc.name;
+      }
+
+      if (invoice.paymentMethod === "cash") return "دفع كاش";
+      if (invoice.paymentMethod === "debt") return "دين";
+      if (invoice.paymentMethod === "later_app") return "تطبيق لاحق";
+      return "غير محدد";
+    }
+
     function statusBadge(status, method = "", invoiceId = "") {
       if (method === "later_app") {
         const paid = status === "paid";
@@ -3795,6 +4145,52 @@ function renderInventory() {
       return `<span class="badge gray">${escapeHtml(status || "-")}</span>`;
     }
 
+    function renderInvoiceFolders() {
+      const box = $("invoiceFolders");
+      if (!box) return;
+
+      const counts = {
+        all: state.invoices.length
+      };
+
+      state.paymentAccounts.forEach(acc => {
+        counts[acc.id] = state.invoices.filter(inv => inv.paymentAccountId === acc.id).length;
+      });
+
+      counts.debt = state.invoices.filter(inv => inv.paymentMethod === "debt").length;
+      counts.later_app = state.invoices.filter(inv => inv.paymentMethod === "later_app").length;
+
+      const accountTabs = state.paymentAccounts.map(acc => `
+        <button class="folder-tab ${state.activeInvoiceFolder === acc.id ? "active" : ""}" data-invoice-folder="${acc.id}">
+          <i class="fa-solid ${acc.id === "cash" ? "fa-money-bill-wave" : "fa-mobile-screen-button"}"></i>
+          ${escapeHtml(acc.name)}
+          <small>${counts[acc.id] || 0}</small>
+        </button>
+      `).join("");
+
+      box.innerHTML = `
+        <button class="folder-tab ${state.activeInvoiceFolder === "all" ? "active" : ""}" data-invoice-folder="all">
+          <i class="fa-solid fa-folder-open"></i>
+          الكل
+          <small>${counts.all || 0}</small>
+        </button>
+
+        ${accountTabs}
+
+        <button class="folder-tab ${state.activeInvoiceFolder === "debt" ? "active" : ""}" data-invoice-folder="debt">
+          <i class="fa-solid fa-user-clock"></i>
+          دين
+          <small>${counts.debt || 0}</small>
+        </button>
+
+        <button class="folder-tab ${state.activeInvoiceFolder === "later_app" ? "active" : ""}" data-invoice-folder="later_app">
+          <i class="fa-solid fa-clock"></i>
+          تطبيق لاحق
+          <small>${counts.later_app || 0}</small>
+        </button>
+      `;
+    }
+
     function renderInvoices() {
       const q = ($("invoiceSearch")?.value || "").trim().toLowerCase();
       const period = $("invoicePeriod")?.value || "today";
@@ -3807,7 +4203,10 @@ function renderInventory() {
 
       const rows = periodFilter(state.invoices, period, "createdAt", custom)
         .filter(inv => {
-          const itemsText = (inv.items || []).map(x => `${x.name} ${x.qtyText} ${x.unitLabel}`).join(" ").toLowerCase();
+          const itemsText = (inv.items || [])
+            .map(item => `${item.name || ""} ${item.qtyText || ""} ${item.unitLabel || ""}`)
+            .join(" ")
+            .toLowerCase();
 
           const searchOk =
             !q ||
@@ -3818,12 +4217,16 @@ function renderInventory() {
 
           const statusOk = status === "all" || inv.paymentMethod === status || inv.status === status;
 
-          return searchOk && statusOk;
+          const folder = state.activeInvoiceFolder || "all";
+          const folderOk =
+            folder === "all" ||
+            inv.paymentAccountId === folder ||
+            inv.paymentMethod === folder;
+
+          return searchOk && statusOk && folderOk;
         })
         .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
         .map(inv => {
-          const acc = state.paymentAccounts.find(a => a.id === inv.paymentAccountId);
-
           return `
             <tr>
               <td><b>#${inv.number}</b></td>
@@ -3832,13 +4235,16 @@ function renderInventory() {
               <td>${escapeHtml(inv.customerPhone || "-")}</td>
               <td>${statusBadge(inv.status, inv.paymentMethod, inv.id)}</td>
               <td>${escapeHtml(paymentMethodLabel(inv.paymentMethod))}</td>
-              <td>${escapeHtml(acc?.name || "-")}</td>
+              <td>${escapeHtml(paymentFolderName(inv))}</td>
               <td>${money(inv.subtotal)}</td>
               <td>${money(inv.discount)}</td>
               <td class="money">${money(inv.total)}</td>
               <td>
                 <button class="ghost-btn" data-view-invoice="${inv.id}">
                   <i class="fa-solid fa-eye"></i> عرض
+                </button>
+                <button class="ghost-btn" data-edit-invoice="${inv.id}">
+                  <i class="fa-solid fa-pen"></i> تعديل
                 </button>
                 <button class="danger-btn" data-delete-invoice="${inv.id}">
                   <i class="fa-solid fa-trash"></i> حذف
@@ -3852,8 +4258,7 @@ function renderInventory() {
         rows ||
         `<tr><td colspan="11" class="muted" style="text-align:center">لا توجد فواتير</td></tr>`;
     }
-
-    function getCustomerInvoices(customer) {
+function getCustomerInvoices(customer) {
       return state.invoices
         .filter(inv =>
           inv.customerId === customer.id ||
@@ -3865,7 +4270,6 @@ function renderInventory() {
 
     function getCustomerLastActivity(customerId) {
       const c = state.customers.find(x => x.id === customerId);
-
       if (!c) return 0;
 
       const invs = getCustomerInvoices(c);
@@ -3878,15 +4282,77 @@ function renderInventory() {
       return Math.max(lastInv, lastPay, lastManual, Number(c.updatedAt || 0));
     }
 
+    function rebuildCustomerBalances(save = true) {
+      const map = new Map(state.customers.map(c => [c.id, normalizeCustomer(c)]));
+
+      for (const c of map.values()) {
+        c.balance = 0;
+        c.totalSales = 0;
+        c.totalPaid = 0;
+        c.invoicesCount = 0;
+      }
+
+      state.invoices.forEach(inv => {
+        if (!["debt", "later_app", "instant_app"].includes(inv.paymentMethod)) return;
+
+        let customer = inv.customerId ? map.get(inv.customerId) : null;
+
+        if (!customer && (inv.customerName || inv.customerPhone)) {
+          customer = [...map.values()].find(c =>
+            (inv.customerPhone && c.phone === inv.customerPhone) ||
+            (inv.customerName && c.name === inv.customerName)
+          );
+        }
+
+        if (!customer) return;
+
+        customer.totalSales += cleanNumber(inv.total);
+        customer.invoicesCount += 1;
+
+        if (["debt", "later_app"].includes(inv.paymentMethod) && inv.status !== "paid") {
+          customer.balance += cleanNumber(inv.total);
+        }
+
+        if (inv.paymentMethod === "instant_app" || (inv.paymentMethod === "later_app" && inv.status === "paid")) {
+          customer.totalPaid += cleanNumber(inv.total);
+        }
+      });
+
+      for (const customer of map.values()) {
+        (customer.manualDebts || []).forEach(d => {
+          if (d.status !== "paid") {
+            customer.balance += cleanNumber(d.amount);
+          } else {
+            customer.totalPaid += cleanNumber(d.amount);
+          }
+        });
+
+        (customer.payments || []).forEach(p => {
+          if (p.invoiceId || p.manualDebtId) return;
+          customer.balance -= cleanNumber(p.amount);
+          customer.totalPaid += cleanNumber(p.amount);
+        });
+
+        customer.updatedAt = customer.updatedAt || Date.now();
+      }
+
+      state.customers = [...map.values()].map(normalizeCustomer);
+
+      if (save) {
+        state.customers.forEach(c => saveLocal("customers", c, true));
+      }
+    }
+
     function renderDebts() {
+      rebuildCustomerBalances(false);
+
       const q = ($("debtsSearch")?.value || "").trim().toLowerCase();
       const sort = $("debtsSort")?.value || "balance_desc";
 
       let list = state.customers.filter(c =>
         !q ||
         String(c.name || "").toLowerCase().includes(q) ||
-        String(c.phone || "").includes(q) ||
-        String(customerBalanceText(c.balance).text || "").toLowerCase().includes(q)
+        String(c.phone || "").includes(q)
       );
 
       if (sort === "balance_desc") {
@@ -3946,7 +4412,6 @@ function renderInventory() {
           !q ||
           String(p.supplier || "").toLowerCase().includes(q) ||
           String(p.productName || "").toLowerCase().includes(q) ||
-          String(p.inputUnitLabel || "").toLowerCase().includes(q) ||
           String(p.notes || "").toLowerCase().includes(q)
         )
         .sort((a,b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
@@ -3964,6 +4429,9 @@ function renderInventory() {
             <td class="money">${money(p.total)}</td>
             <td>${escapeHtml(p.notes || "-")}</td>
             <td>
+              <button class="ghost-btn" data-edit-purchase="${p.id}">
+                <i class="fa-solid fa-pen"></i> تعديل
+              </button>
               <button class="danger-btn" data-delete-purchase="${p.id}">
                 <i class="fa-solid fa-trash"></i> حذف
               </button>
@@ -3982,11 +4450,9 @@ function renderInventory() {
       const rows = state.supplierPayments
         .filter(p => {
           const acc = state.paymentAccounts.find(a => a.id === p.accountId);
-
           return !q ||
             String(p.supplierName || "").toLowerCase().includes(q) ||
             String(acc?.name || "").toLowerCase().includes(q) ||
-            String(acc?.number || "").includes(q) ||
             String(p.notes || "").toLowerCase().includes(q);
         })
         .sort((a,b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
@@ -3998,9 +4464,12 @@ function renderInventory() {
               <td>${formatDate(p.createdAt)}</td>
               <td><b>${escapeHtml(p.supplierName || "-")}</b></td>
               <td class="money">${money(p.amount)}</td>
-              <td>${escapeHtml(acc?.name || "-")} ${acc?.number ? " - " + escapeHtml(acc.number) : ""}</td>
+              <td>${escapeHtml(acc?.name || "-")}</td>
               <td>${escapeHtml(p.notes || "-")}</td>
               <td>
+                <button class="ghost-btn" data-edit-supplier-payment="${p.id}">
+                  <i class="fa-solid fa-pen"></i> تعديل
+                </button>
                 <button class="danger-btn" data-delete-supplier-payment="${p.id}">
                   <i class="fa-solid fa-trash"></i> حذف
                 </button>
@@ -4031,6 +4500,9 @@ function renderInventory() {
             <td class="money">${money(e.amount)}</td>
             <td>${escapeHtml(e.notes || "-")}</td>
             <td>
+              <button class="ghost-btn" data-edit-expense="${e.id}">
+                <i class="fa-solid fa-pen"></i> تعديل
+              </button>
               <button class="danger-btn" data-delete-expense="${e.id}">
                 <i class="fa-solid fa-trash"></i> حذف
               </button>
@@ -4060,7 +4532,7 @@ function renderReports() {
       const supplierPaymentsTotal = supplierPayments.reduce((s, x) => s + cleanNumber(x.amount), 0);
 
       const cashSales = invoices
-        .filter(x => x.paymentMethod === "cash")
+        .filter(x => x.paymentMethod === "cash" || x.paymentAccountId === "cash")
         .reduce((s, x) => s + cleanNumber(x.total), 0);
 
       const appSales = invoices
@@ -4075,14 +4547,7 @@ function renderReports() {
       $("reportProfit").textContent = money(profitTotal);
       $("reportExpenses").textContent = money(expensesTotal);
       $("reportSupplierPayments").textContent = money(supplierPaymentsTotal);
-
-      /*
-        ملاحظة مهمة:
-        دفعات التجار لا تُخصم من الربح الصافي حسب طلبك.
-        الصافي = الأرباح - المصروفات فقط.
-      */
       $("reportNet").textContent = money(profitTotal - expensesTotal);
-
       $("reportInvoicesCount").textContent = invoices.length;
       $("reportCashSales").textContent = money(cashSales);
       $("reportAppSales").textContent = money(appSales);
@@ -4090,8 +4555,8 @@ function renderReports() {
 
       const lowRows = state.products
         .filter(p => cleanNumber(p.stock) <= cleanNumber(p.lowStock || state.settings?.lowStock || 5))
-        .map(product => {
-          const p = normalizeProduct(product);
+        .map(p => {
+          p = normalizeProduct(p);
 
           return `
             <tr>
@@ -4113,7 +4578,7 @@ function renderReports() {
       invoices
         .filter(inv => inv.paymentMethod === "instant_app" || inv.paymentMethod === "cash")
         .forEach(inv => {
-          const id = inv.paymentAccountId || "cash";
+          const id = inv.paymentAccountId || (inv.paymentMethod === "cash" ? "cash" : "app");
 
           if (!accountMap[id]) {
             accountMap[id] = {
@@ -4152,9 +4617,15 @@ function renderReports() {
               <div class="muted">${escapeHtml(a.number || "بدون رقم")}</div>
             </div>
 
-            <button class="danger-btn" data-delete-account="${a.id}">
-              <i class="fa-solid fa-trash"></i> حذف
-            </button>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="ghost-btn" data-edit-account="${a.id}">
+                <i class="fa-solid fa-pen"></i> تعديل
+              </button>
+
+              <button class="danger-btn" data-delete-account="${a.id}">
+                <i class="fa-solid fa-trash"></i> حذف
+              </button>
+            </div>
           </div>
         `).join("") ||
         `<div class="muted">لا توجد حسابات</div>`;
@@ -4258,44 +4729,50 @@ function renderReports() {
       $("productForm").onsubmit = async (e) => {
         e.preventDefault();
 
-        const currentId = $("productId").value || "";
-        const barcode = $("productBarcode").value.trim();
-        const oldById = currentId ? getProductById(currentId) : null;
-        const oldByBarcode = barcode ? getProductByBarcode(barcode) : null;
-
+        const id = $("productId").value || uid("prod");
+        const old = getProductById(id);
         const unitType = $("productUnitType").value;
-        const cartonUnits = unitType === "carton"
-          ? Math.max(1, cleanNumber($("productCartonUnits").value, 1))
-          : 1;
-
+        const cartonUnits = unitType === "carton" ? Math.max(1, cleanNumber($("productCartonUnits").value, 1)) : 1;
         const factor = factorForUnitType(unitType, cartonUnits);
 
         const enteredStock = cleanNumber($("productStock").value, 0);
         const enteredCost = cleanNumber($("productCostPrice").value, 0);
         const enteredSale = cleanNumber($("productSalePrice").value, 0);
-        const addedBaseStock = enteredStock * factor;
 
-        let target = oldById || oldByBarcode || null;
-        let merged = false;
+        const barcode = $("productBarcode").value.trim();
+        const existingByBarcode = barcode
+          ? state.products.find(p => p.id !== id && (String(p.barcode || "") === barcode || String(p.code || "") === barcode))
+          : null;
 
-        if (!oldById && oldByBarcode) {
-          merged = true;
+        if (existingByBarcode && !old) {
+          const ex = normalizeProduct(existingByBarcode);
+          ex.stock = cleanNumber(ex.stock) + enteredStock * factor;
+          ex.costPrice = factor > 0 ? enteredCost / factor : enteredCost;
+          ex.salePrice = factor > 0 ? enteredSale / factor : enteredSale;
+          ex.displayCostPrice = enteredCost;
+          ex.displaySalePrice = enteredSale;
+          ex.category = $("productCategory").value.trim() || ex.category;
+          ex.updatedAt = Date.now();
+
+          await saveLocal("products", ex, true);
+          state.products = state.products.map(p => p.id === ex.id ? ex : p);
+
+          closeModal();
+          renderAll();
+          toast(`الباركود موجود، تم دمج الكمية. المخزون الجديد: ${cleanNumber(ex.stock)}`);
+          return;
         }
 
-        const id = target?.id || uid("prod");
-        const oldStock = cleanNumber(target?.stock || 0);
-
-        const productToSave = normalizeProduct({
-          ...(target || {}),
+        const product = normalizeProduct({
           id,
-          code: barcode || target?.code || String(Date.now()).slice(-8),
-          barcode: barcode || target?.barcode || generateEAN13(),
-          name: $("productName").value.trim() || target?.name || "منتج",
-          category: $("productCategory").value.trim() || target?.category || "",
+          code: barcode || String(Date.now()).slice(-8),
+          barcode: barcode || generateEAN13(),
+          name: $("productName").value.trim(),
+          category: $("productCategory").value.trim(),
           unitType,
           customUnit: unitType === "custom" ? $("productCustomUnit").value.trim() : "",
           cartonUnits,
-          stock: merged ? oldStock + addedBaseStock : addedBaseStock,
+          stock: enteredStock * factor,
           lowStock: cleanNumber($("productLowStock").value, state.settings?.lowStock || 5),
           costPrice: factor > 0 ? enteredCost / factor : enteredCost,
           salePrice: factor > 0 ? enteredSale / factor : enteredSale,
@@ -4303,28 +4780,22 @@ function renderReports() {
           displaySalePrice: enteredSale,
           cartonPrice: unitType === "carton" ? enteredSale : 0,
           image: "",
-          createdAt: target?.createdAt || Date.now(),
+          createdAt: old?.createdAt || Date.now(),
           updatedAt: Date.now()
         });
 
-        await saveLocal("products", productToSave, true);
+        await saveLocal("products", product, true);
 
         const i = state.products.findIndex(p => p.id === id);
-        if (i >= 0) state.products[i] = productToSave;
-        else state.products.push(productToSave);
+        if (i >= 0) state.products[i] = product;
+        else state.products.push(product);
 
         closeModal();
         renderAll();
-
-        if (merged) {
-          toast(`الباركود موجود مسبقًا، كان ${oldStock} وأصبح ${productToSave.stock}`);
-        } else {
-          toast("تم حفظ المنتج وتحويله للوحدة الأساسية");
-        }
+        toast("تم حفظ المنتج وتحويله للوحدة الأساسية");
       };
     }
-
-    function generateEAN13() {
+function generateEAN13() {
       let code = "729" + Math.floor(Math.random() * 1000000000).toString().padStart(9, "0");
       const digits = code.split("").map(Number);
       const sum = digits.reduce((s, d, i) => s + d * (i % 2 === 0 ? 1 : 3), 0);
@@ -4369,12 +4840,6 @@ function renderReports() {
       }, 50);
     }
 
-    function paymentAccountsOptions(includeCash = true) {
-      return state.paymentAccounts
-        .filter(a => includeCash || a.id !== "cash")
-        .map(a => `<option value="${a.id}">${escapeHtml(a.name)} ${a.number ? " - " + escapeHtml(a.number) : ""}</option>`)
-        .join("") || `<option value="cash">كاش</option>`;
-    }
     function showSmartProductSuggestions(inputEl, onSelect) {
       const q = String(inputEl.value || "").trim().toLowerCase();
       const box = $("smartSuggestBox");
@@ -4444,9 +4909,11 @@ function renderReports() {
       }, 180);
     }
 
-    function openPurchaseForm() {
+    function openPurchaseForm(purchaseId = "") {
       const node = cloneTemplate("purchaseFormTemplate");
-      openModal("فاتورة مشتريات", node);
+      openModal(purchaseId ? "تعديل فاتورة مشتريات" : "فاتورة مشتريات", node);
+
+      const oldPurchase = purchaseId ? state.purchases.find(p => p.id === purchaseId) : null;
 
       function selectPurchaseProduct(product) {
         const p = normalizeProduct(product);
@@ -4470,6 +4937,10 @@ function renderReports() {
 
         $("purchaseCartonUnits").value = product.cartonUnits || 1;
         $("purchaseSalePrice").value = cleanNumber(product.displaySalePrice || product.salePrice || 0);
+
+        if (oldPurchase && oldPurchase.inputUnit) {
+          $("purchaseUnit").value = oldPurchase.inputUnit;
+        }
 
         updatePurchasePreview();
       }
@@ -4503,7 +4974,19 @@ function renderReports() {
       $("purchaseQty").oninput = updatePurchasePreview;
       $("purchaseCartonUnits").oninput = updatePurchasePreview;
 
-      if (state.products.length) {
+      if (oldPurchase) {
+        $("purchaseProduct").value = oldPurchase.productId || "";
+        $("purchaseProductSearch").value = oldPurchase.productName || "";
+        $("purchaseSupplier").value = oldPurchase.supplier || "";
+        $("purchaseQty").value = cleanNumber(oldPurchase.qty, 1);
+        $("purchaseCost").value = cleanNumber(oldPurchase.cost, 0);
+        $("purchaseSalePrice").value = cleanNumber(oldPurchase.salePrice, 0);
+        $("purchaseCartonUnits").value = cleanNumber(oldPurchase.cartonUnits, 1);
+        $("purchaseNotes").value = oldPurchase.notes || "";
+
+        const prod = getProductById(oldPurchase.productId);
+        if (prod) selectPurchaseProduct(prod);
+      } else if (state.products.length) {
         selectPurchaseProduct(state.products[0]);
       }
 
@@ -4512,6 +4995,16 @@ function renderReports() {
 
         const product = normalizeProduct(getProductById($("purchaseProduct").value));
         if (!product || !product.id) return toast("اختر المنتج من البحث");
+
+        if (oldPurchase) {
+          const oldProduct = getProductById(oldPurchase.productId);
+          if (oldProduct) {
+            oldProduct.stock = cleanNumber(oldProduct.stock) - cleanNumber(oldPurchase.qtyBase);
+            oldProduct.updatedAt = Date.now();
+            await saveLocal("products", normalizeProduct(oldProduct), true);
+            state.products = state.products.map(p => p.id === oldProduct.id ? normalizeProduct(oldProduct) : p);
+          }
+        }
 
         const unit = $("purchaseUnit").value;
         const qty = cleanNumber($("purchaseQty").value, 0);
@@ -4527,7 +5020,7 @@ function renderReports() {
         const baseSale = factor > 0 && enteredSale > 0 ? enteredSale / factor : product.salePrice;
 
         const purchase = {
-          id: uid("pur"),
+          id: oldPurchase?.id || uid("pur"),
           supplier: $("purchaseSupplier").value.trim(),
           productId: product.id,
           productName: product.name,
@@ -4541,7 +5034,7 @@ function renderReports() {
           salePrice: enteredSale || product.displaySalePrice || product.salePrice,
           total: enteredCost,
           notes: $("purchaseNotes").value.trim(),
-          createdAt: Date.now(),
+          createdAt: oldPurchase?.createdAt || Date.now(),
           updatedAt: Date.now()
         };
 
@@ -4561,31 +5054,44 @@ function renderReports() {
         await saveLocal("purchases", purchase, true);
         await saveLocal("products", normalizeProduct(product), true);
 
-        state.purchases.push(purchase);
+        if (oldPurchase) {
+          state.purchases = state.purchases.map(p => p.id === purchase.id ? purchase : p);
+        } else {
+          state.purchases.push(purchase);
+        }
+
         state.products = state.products.map(p => p.id === product.id ? normalizeProduct(product) : p);
 
         closeModal();
         renderAll();
-        toast("تم حفظ المشتريات وتحديث المخزون");
+        toast(oldPurchase ? "تم تعديل المشتريات وإعادة حساب المخزون" : "تم حفظ المشتريات وتحديث المخزون");
       };
     }
-
-    function openSupplierPaymentForm() {
+    function openSupplierPaymentForm(paymentId = "") {
       const node = cloneTemplate("supplierPaymentFormTemplate");
-      openModal("إضافة دفعة تاجر", node);
+      openModal(paymentId ? "تعديل دفعة تاجر" : "إضافة دفعة تاجر", node);
+
+      const old = paymentId ? state.supplierPayments.find(p => p.id === paymentId) : null;
 
       $("supplierPaymentAccountId").innerHTML = paymentAccountsOptions(true);
+
+      if (old) {
+        $("supplierPaymentName").value = old.supplierName || "";
+        $("supplierPaymentAmount").value = cleanNumber(old.amount, 0);
+        $("supplierPaymentAccountId").value = old.accountId || "cash";
+        $("supplierPaymentNotes").value = old.notes || "";
+      }
 
       $("supplierPaymentForm").onsubmit = async (e) => {
         e.preventDefault();
 
         const payment = {
-          id: uid("sp"),
+          id: old?.id || uid("sp"),
           supplierName: $("supplierPaymentName").value.trim(),
           amount: cleanNumber($("supplierPaymentAmount").value, 0),
           accountId: $("supplierPaymentAccountId").value,
           notes: $("supplierPaymentNotes").value.trim(),
-          createdAt: Date.now(),
+          createdAt: old?.createdAt || Date.now(),
           updatedAt: Date.now()
         };
 
@@ -4593,36 +5099,55 @@ function renderReports() {
         if (payment.amount <= 0) return toast("أدخل مبلغ صحيح");
 
         await saveLocal("supplierPayments", payment, true);
-        state.supplierPayments.push(payment);
+
+        if (old) {
+          state.supplierPayments = state.supplierPayments.map(p => p.id === payment.id ? payment : p);
+        } else {
+          state.supplierPayments.push(payment);
+        }
 
         closeModal();
         renderAll();
-        toast("تم حفظ دفعة التاجر");
+        toast(old ? "تم تعديل دفعة التاجر" : "تم حفظ دفعة التاجر");
       };
     }
 
-    function openExpenseForm() {
+    function openExpenseForm(expenseId = "") {
       const node = cloneTemplate("expenseFormTemplate");
-      openModal("إضافة مصروف", node);
+      openModal(expenseId ? "تعديل مصروف" : "إضافة مصروف", node);
+
+      const old = expenseId ? state.expenses.find(e => e.id === expenseId) : null;
+
+      if (old) {
+        $("expenseId").value = old.id;
+        $("expenseType").value = old.type || "";
+        $("expenseAmount").value = cleanNumber(old.amount, 0);
+        $("expenseNotes").value = old.notes || "";
+      }
 
       $("expenseForm").onsubmit = async (e) => {
         e.preventDefault();
 
         const expense = {
-          id: uid("exp"),
+          id: old?.id || uid("exp"),
           type: $("expenseType").value.trim(),
           amount: cleanNumber($("expenseAmount").value, 0),
           notes: $("expenseNotes").value.trim(),
-          createdAt: Date.now(),
+          createdAt: old?.createdAt || Date.now(),
           updatedAt: Date.now()
         };
 
         await saveLocal("expenses", expense, true);
-        state.expenses.push(expense);
+
+        if (old) {
+          state.expenses = state.expenses.map(e => e.id === expense.id ? expense : e);
+        } else {
+          state.expenses.push(expense);
+        }
 
         closeModal();
         renderAll();
-        toast("تم حفظ المصروف");
+        toast(old ? "تم تعديل المصروف" : "تم حفظ المصروف");
       };
     }
 
@@ -4633,6 +5158,7 @@ function renderReports() {
       const customer = customerId ? state.customers.find(c => c.id === customerId) : null;
 
       if (customer) {
+        $("debtCustomerId").value = customer.id;
         $("debtCustomerName").value = customer.name || "";
         $("debtCustomerPhone").value = customer.phone || "";
       }
@@ -4650,39 +5176,63 @@ function renderReports() {
           updatedAt: Date.now()
         });
 
+        state.invoices.forEach(inv => {
+          if (old.id && inv.customerId === old.id) {
+            inv.customerName = item.name;
+            inv.customerPhone = item.phone;
+            inv.updatedAt = Date.now();
+            saveLocal("invoices", inv, true);
+          }
+        });
+
         await saveLocal("customers", item, true);
 
         const i = state.customers.findIndex(c => c.id === item.id);
         if (i >= 0) state.customers[i] = item;
         else state.customers.push(item);
 
+        rebuildCustomerBalances(true);
         closeModal();
         renderAll();
-        toast("تم حفظ حساب الزبون");
+        toast("تم حفظ حساب الزبون وإعادة الحسابات");
       };
     }
 
-    function openPaymentAccountForm() {
+    function openPaymentAccountForm(accountId = "") {
       const node = cloneTemplate("paymentAccountFormTemplate");
-      openModal("إضافة حساب دفع", node);
+      openModal(accountId ? "تعديل حساب دفع" : "إضافة حساب دفع", node);
+
+      const old = accountId ? state.paymentAccounts.find(a => a.id === accountId) : null;
+
+      if (old) {
+        $("paymentAccountId").value = old.id;
+        $("paymentAccountName").value = old.name || "";
+        $("paymentAccountNumber").value = old.number || "";
+      }
 
       $("paymentAccountForm").onsubmit = async (e) => {
         e.preventDefault();
 
-        const account = {
-          id: uid("acc"),
+        const account = normalizePaymentAccount({
+          id: old?.id || uid("acc"),
           name: $("paymentAccountName").value.trim(),
           number: $("paymentAccountNumber").value.trim(),
-          createdAt: Date.now(),
+          type: old?.type || "app",
+          createdAt: old?.createdAt || Date.now(),
           updatedAt: Date.now()
-        };
+        });
 
         await saveLocal("paymentAccounts", account, true);
-        state.paymentAccounts.push(account);
+
+        if (old) {
+          state.paymentAccounts = state.paymentAccounts.map(a => a.id === account.id ? account : a);
+        } else {
+          state.paymentAccounts.push(account);
+        }
 
         closeModal();
         renderAll();
-        toast("تم حفظ حساب الدفع");
+        toast(old ? "تم تعديل حساب الدفع" : "تم حفظ حساب الدفع");
       };
     }
 
@@ -4733,7 +5283,6 @@ function renderReports() {
       box.querySelectorAll("[data-pick-customer]").forEach(el => {
         el.onclick = () => {
           const c = state.customers.find(x => x.id === el.dataset.pickCustomer);
-
           if (!c) return;
 
           inputEl.value = c.name || "";
@@ -4756,6 +5305,15 @@ function renderReports() {
         }
       }, 180);
     }
+
+    function paymentAccountsOptions(includeCash = false) {
+      const list = state.paymentAccounts.filter(a => includeCash || a.id !== "cash");
+
+      return list
+        .map(a => `<option value="${a.id}">${escapeHtml(a.name)} ${a.number ? " - " + escapeHtml(a.number) : ""}</option>`)
+        .join("") || `<option value="bank">بنك</option>`;
+    }
+
     function findCustomerByNameOrPhone(name, phone) {
       const n = String(name || "").trim();
       const p = String(phone || "").trim();
@@ -4786,14 +5344,15 @@ function renderReports() {
         });
 
         state.customers.push(customer);
+        saveLocal("customers", customer, true);
       }
 
       customer.name = name || customer.name;
       customer.phone = phone || customer.phone;
+
       return customer;
     }
-
-    function openPaymentChoice(isFreeInvoice = false) {
+function openPaymentChoice(isFreeInvoice = false) {
       const source = isFreeInvoice ? "free" : "cart";
 
       if (source === "cart" && !state.cart.length) {
@@ -4814,6 +5373,43 @@ function renderReports() {
 
       const node = cloneTemplate("paymentChoiceTemplate");
       openModal("إتمام البيع", node);
+
+      const grid = $("paymentChoiceGrid");
+
+      const buttons = [
+        {
+          method: "cash",
+          icon: "fa-money-bill-wave",
+          title: "كاش",
+          sub: "بيع مباشر مكتمل"
+        },
+        {
+          method: "instant_app",
+          icon: "fa-mobile-screen-button",
+          title: "تطبيق فوري",
+          sub: "تحويل تم استلامه"
+        },
+        {
+          method: "later_app",
+          icon: "fa-clock",
+          title: "تطبيق لاحق",
+          sub: "ينضاف على حساب الزبون"
+        },
+        {
+          method: "debt",
+          icon: "fa-user-clock",
+          title: "دين",
+          sub: "حفظ على حساب زبون"
+        }
+      ];
+
+      grid.innerHTML = buttons.map(btn => `
+        <button class="payment-choice" data-payment-choice="${btn.method}" type="button">
+          <i class="fa-solid ${btn.icon}"></i>
+          <span>${escapeHtml(btn.title)}</span>
+          <small class="muted">${escapeHtml(btn.sub)}</small>
+        </button>
+      `).join("");
 
       document.querySelectorAll("[data-payment-choice]").forEach(btn => {
         btn.onclick = () => openPaymentDetails(btn.dataset.paymentChoice, source);
@@ -4868,7 +5464,7 @@ function renderReports() {
               </div>
 
               <div>
-                <label class="field-label">حساب التحويل</label>
+                <label class="field-label">حساب التحويل / مجلد الفاتورة</label>
                 <select id="payAccountId" class="select">${paymentAccountsOptions(false)}</select>
               </div>
 
@@ -4922,7 +5518,7 @@ function renderReports() {
               </div>
 
               <div>
-                <label class="field-label">على أي محفظة / بنك سيحوّل؟</label>
+                <label class="field-label">على أي حساب سيحوّل؟</label>
                 <select id="payAccountId" class="select">${paymentAccountsOptions(false)}</select>
               </div>
 
@@ -5108,8 +5704,7 @@ function renderReports() {
         });
       };
     }
-
-    function buildSaleItems(source) {
+function buildSaleItems(source) {
       if (source === "free") {
         return state.freeLines
           .filter(x => x.name && cleanNumber(x.price) > 0)
@@ -5135,8 +5730,7 @@ function renderReports() {
 
     function validateStockForCart() {
       for (const line of state.cart) {
-        const product = getProductById(line.productId);
-        if (!product) continue;
+        const product =if (!product) continue;
 
         if (cleanNumber(product.stock) < cleanNumber(line.baseQty)) {
           toast(`المخزون غير كافٍ للصنف: ${product.name}`);
@@ -5206,8 +5800,6 @@ function renderReports() {
         }
       }
 
-      let customerToOpen = null;
-
       if (["debt", "later_app"].includes(payment.paymentMethod)) {
         let customer = payment.customerId
           ? state.customers.find(c => c.id === payment.customerId)
@@ -5218,13 +5810,6 @@ function renderReports() {
             id: uid("cus"),
             name: payment.customerName || "زبون",
             phone: payment.customerPhone || "",
-            balance: 0,
-            totalSales: 0,
-            totalPaid: 0,
-            invoicesCount: 0,
-            dueDate: "",
-            payments: [],
-            manualDebts: [],
             createdAt: Date.now(),
             updatedAt: Date.now()
           });
@@ -5234,10 +5819,6 @@ function renderReports() {
 
         customer.name = payment.customerName || customer.name;
         customer.phone = payment.customerPhone || customer.phone;
-        customer.balance = cleanNumber(customer.balance) + cleanNumber(totals.total);
-        customer.totalSales = cleanNumber(customer.totalSales) + cleanNumber(totals.total);
-        customer.invoicesCount = cleanNumber(customer.invoicesCount) + 1;
-        customer.dueDate = payment.dueDate || customer.dueDate || "";
         customer.updatedAt = Date.now();
 
         invoice.customerId = customer.id;
@@ -5245,7 +5826,6 @@ function renderReports() {
         invoice.customerPhone = customer.phone;
 
         await saveLocal("customers", normalizeCustomer(customer), true);
-        customerToOpen = customer;
       }
 
       if (payment.paymentMethod === "instant_app" && (payment.customerName || payment.customerPhone)) {
@@ -5254,9 +5834,6 @@ function renderReports() {
         if (customer) {
           customer.name = payment.customerName || customer.name;
           customer.phone = payment.customerPhone || customer.phone;
-          customer.totalSales = cleanNumber(customer.totalSales) + cleanNumber(totals.total);
-          customer.totalPaid = cleanNumber(customer.totalPaid) + cleanNumber(totals.total);
-          customer.invoicesCount = cleanNumber(customer.invoicesCount) + 1;
           customer.updatedAt = Date.now();
 
           invoice.customerId = customer.id;
@@ -5273,6 +5850,8 @@ function renderReports() {
       state.invoices.push(invoice);
       state.products = state.products.map(p => changedProducts.find(x => x.id === p.id) || p);
 
+      rebuildCustomerBalances(true);
+
       if (source === "cart") {
         state.cart = [];
       } else {
@@ -5282,15 +5861,185 @@ function renderReports() {
       renderAll();
       toast("تم حفظ الفاتورة بنجاح");
 
-      if (customerToOpen) {
+      if (["debt", "later_app"].includes(payment.paymentMethod) && invoice.customerId) {
         closeModal();
         switchPage("debts");
-        setTimeout(() => openCustomerAccount(customerToOpen.id), 200);
+        setTimeout(() => openCustomerAccount(invoice.customerId), 180);
       } else {
         openInvoiceView(invoice);
       }
     }
-async function payCustomer(customerId) {
+
+    async function restoreInvoiceStock(invoice) {
+      if (!invoice || invoice.source !== "cart") return;
+
+      for (const item of invoice.items || []) {
+        if (!item.productId) continue;
+
+        const product = getProductById(item.productId);
+        if (!product) continue;
+
+        product.stock = cleanNumber(product.stock) + cleanNumber(item.baseQty);
+        product.updatedAt = Date.now();
+
+        await saveLocal("products", normalizeProduct(product), true);
+
+        state.products = state.products.map(p =>
+          p.id === product.id ? normalizeProduct(product) : p
+        );
+      }
+    }
+
+    async function applyInvoiceStock(invoice) {
+      if (!invoice || invoice.source !== "cart") return;
+
+      for (const item of invoice.items || []) {
+        if (!item.productId) continue;
+
+        const product = getProductById(item.productId);
+        if (!product) continue;
+
+        product.stock = cleanNumber(product.stock) - cleanNumber(item.baseQty);
+        product.updatedAt = Date.now();
+
+        await saveLocal("products", normalizeProduct(product), true);
+
+        state.products = state.products.map(p =>
+          p.id === product.id ? normalizeProduct(product) : p
+        );
+      }
+    }
+
+    async function deleteInvoice(invoiceId) {
+      const invoice = state.invoices.find(i => i.id === invoiceId);
+      if (!invoice) return;
+
+      if (!confirm("حذف الفاتورة؟ سيتم إرجاع المخزون وإعادة حساب الديون.")) return;
+
+      await restoreInvoiceStock(invoice);
+
+      state.invoices = state.invoices.filter(i => i.id !== invoiceId);
+      await removeLocal("invoices", invoiceId, true);
+
+      rebuildCustomerBalances(true);
+      renderAll();
+      toast("تم حذف الفاتورة وإعادة الحسابات");
+    }
+
+    function openEditInvoiceForm(invoiceId) {
+      const invoice = state.invoices.find(i => i.id === invoiceId);
+      if (!invoice) return;
+
+      openModal(`تعديل فاتورة #${invoice.number}`, `
+        <form id="editInvoiceForm">
+          <div class="form-grid-compact">
+            <div>
+              <label class="field-label">اسم الزبون</label>
+              <input id="editInvoiceCustomerName" class="input" value="${escapeHtml(invoice.customerName || "")}">
+            </div>
+
+            <div>
+              <label class="field-label">رقم الزبون</label>
+              <input id="editInvoiceCustomerPhone" class="input" value="${escapeHtml(invoice.customerPhone || "")}">
+            </div>
+
+            <div>
+              <label class="field-label">طريقة الدفع</label>
+              <select id="editInvoicePaymentMethod" class="select">
+                <option value="cash" ${invoice.paymentMethod === "cash" ? "selected" : ""}>كاش</option>
+                <option value="instant_app" ${invoice.paymentMethod === "instant_app" ? "selected" : ""}>تطبيق فوري</option>
+                <option value="later_app" ${invoice.paymentMethod === "later_app" ? "selected" : ""}>تطبيق لاحق</option>
+                <option value="debt" ${invoice.paymentMethod === "debt" ? "selected" : ""}>دين</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="field-label">حساب الدفع / المجلد</label>
+              <select id="editInvoicePaymentAccount" class="select">
+                <option value="">بدون</option>
+                ${state.paymentAccounts.map(acc => `
+                  <option value="${acc.id}" ${invoice.paymentAccountId === acc.id ? "selected" : ""}>
+                    ${escapeHtml(acc.name)}
+                  </option>
+                `).join("")}
+              </select>
+            </div>
+
+            <div>
+              <label class="field-label">الحالة</label>
+              <select id="editInvoiceStatus" class="select">
+                <option value="paid" ${invoice.status === "paid" ? "selected" : ""}>مكتملة</option>
+                <option value="unpaid" ${invoice.status !== "paid" ? "selected" : ""}>غير مكتملة</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="field-label">تاريخ السداد</label>
+              <input id="editInvoiceDueDate" type="date" class="input" value="${escapeHtml(invoice.dueDate || "")}">
+            </div>
+
+            <div>
+              <label class="field-label">الخصم</label>
+              <input id="editInvoiceDiscount" type="number" inputmode="decimal" class="input" value="${cleanNumber(invoice.discount)}" min="0" step="0.01">
+            </div>
+
+            <div>
+              <label class="field-label">ملاحظات</label>
+              <input id="editInvoiceNotes" class="input" value="${escapeHtml(invoice.notes || "")}">
+            </div>
+          </div>
+
+          <div class="muted" style="font-size:12px;line-height:1.8;margin-top:10px">
+            تعديل الأصناف والكمية يتم من خلال حذف الفاتورة وإصدار فاتورة جديدة حالياً، حتى لا تختلط حسابات المخزون.
+          </div>
+
+          <button class="primary-btn" type="submit" style="width:100%;margin-top:14px">
+            <i class="fa-solid fa-floppy-disk"></i> حفظ التعديل وإعادة الحساب
+          </button>
+        </form>
+      `);
+
+      $("editInvoiceForm").onsubmit = async (e) => {
+        e.preventDefault();
+
+        const discount = cleanNumber($("editInvoiceDiscount").value, 0);
+        const subtotal = cleanNumber(invoice.subtotal);
+        const total = Math.max(0, subtotal - discount);
+        const cost = cleanNumber(invoice.cost);
+
+        invoice.customerName = $("editInvoiceCustomerName").value.trim();
+        invoice.customerPhone = $("editInvoiceCustomerPhone").value.trim();
+        invoice.paymentMethod = $("editInvoicePaymentMethod").value;
+        invoice.paymentAccountId = $("editInvoicePaymentAccount").value;
+        invoice.status = $("editInvoiceStatus").value;
+        invoice.dueDate = $("editInvoiceDueDate").value || "";
+        invoice.discount = discount;
+        invoice.total = total;
+        invoice.profit = total - cost;
+        invoice.notes = $("editInvoiceNotes").value.trim();
+        invoice.updatedAt = Date.now();
+
+        if (invoice.customerName || invoice.customerPhone) {
+          const customer = ensureCustomer(invoice.customerName, invoice.customerPhone);
+          invoice.customerId = customer.id;
+          invoice.customerName = customer.name;
+          invoice.customerPhone = customer.phone;
+        } else {
+          invoice.customerId = "";
+        }
+
+        await saveLocal("invoices", invoice, true);
+
+        state.invoices = state.invoices.map(i => i.id === invoice.id ? invoice : i);
+
+        rebuildCustomerBalances(true);
+        closeModal();
+        renderAll();
+        toast("تم تعديل الفاتورة وإعادة الحسابات");
+      };
+    }
+
+    async function payCustomer(customerId) {
       const customer = state.customers.find(c => c.id === customerId);
       if (!customer) return;
 
@@ -5332,28 +6081,31 @@ async function payCustomer(customerId) {
         const amount = cleanNumber($("customerPaymentAmount").value, 0);
         if (amount <= 0) return toast("أدخل قيمة صحيحة");
 
-        customer.balance = cleanNumber(customer.balance) - amount;
-        customer.totalPaid = cleanNumber(customer.totalPaid) + amount;
         customer.payments = customer.payments || [];
         customer.payments.push({
           id: uid("cp"),
           amount,
           note: $("customerPaymentNote").value.trim(),
-          createdAt: Date.now()
+          createdAt: Date.now(),
+          updatedAt: Date.now()
         });
+
         customer.updatedAt = Date.now();
 
         await saveLocal("customers", normalizeCustomer(customer), true);
 
-        state.customers = state.customers.map(c => c.id === customer.id ? normalizeCustomer(customer) : c);
+        state.customers = state.customers.map(c =>
+          c.id === customer.id ? normalizeCustomer(customer) : c
+        );
+
+        rebuildCustomerBalances(true);
 
         closeModal();
         renderAll();
         setTimeout(() => openCustomerAccount(customer.id, "payments"), 150);
-        toast("تم حفظ الدفعة");
+        toast("تم حفظ الدفعة وإعادة الحساب");
       };
     }
-
     function addManualDebt(customerId) {
       const customer = state.customers.find(c => c.id === customerId);
       if (!customer) return;
@@ -5394,7 +6146,6 @@ async function payCustomer(customerId) {
         const amount = cleanNumber($("manualDebtAmount").value, 0);
         if (amount <= 0) return toast("أدخل مبلغ صحيح");
 
-        customer.balance = cleanNumber(customer.balance) + amount;
         customer.manualDebts = customer.manualDebts || [];
         customer.manualDebts.push({
           id: uid("md"),
@@ -5402,19 +6153,122 @@ async function payCustomer(customerId) {
           note: $("manualDebtNote").value.trim(),
           dueDate: $("manualDebtDueDate").value || "",
           status: "unpaid",
-          createdAt: Date.now()
+          createdAt: Date.now(),
+          updatedAt: Date.now()
         });
+
         customer.updatedAt = Date.now();
 
         await saveLocal("customers", normalizeCustomer(customer), true);
 
-        state.customers = state.customers.map(c => c.id === customer.id ? normalizeCustomer(customer) : c);
+        state.customers = state.customers.map(c =>
+          c.id === customer.id ? normalizeCustomer(customer) : c
+        );
+
+        rebuildCustomerBalances(true);
 
         closeModal();
         renderAll();
         setTimeout(() => openCustomerAccount(customer.id, "manual"), 120);
-        toast("تم إضافة الدين اليدوي");
+        toast("تم إضافة الدين اليدوي وإعادة الحساب");
       };
+    }
+
+    function openEditManualDebtForm(customerId, debtId) {
+      const customer = state.customers.find(c => c.id === customerId);
+      if (!customer) return;
+
+      const debt = (customer.manualDebts || []).find(d => d.id === debtId);
+      if (!debt) return;
+
+      openModal("تعديل دين يدوي", `
+        <form id="editManualDebtForm">
+          <div class="form-grid-compact">
+            <div>
+              <label class="field-label">اسم الزبون</label>
+              <input class="input" value="${escapeHtml(customer.name)}" disabled>
+            </div>
+
+            <div>
+              <label class="field-label">المبلغ</label>
+              <input id="editManualDebtAmount" type="number" inputmode="decimal" class="input" min="0" step="0.001" required value="${cleanNumber(debt.amount)}">
+            </div>
+
+            <div>
+              <label class="field-label">تاريخ السداد</label>
+              <input id="editManualDebtDueDate" type="date" class="input" value="${escapeHtml(debt.dueDate || "")}">
+            </div>
+
+            <div>
+              <label class="field-label">الحالة</label>
+              <select id="editManualDebtStatus" class="select">
+                <option value="unpaid" ${debt.status !== "paid" ? "selected" : ""}>غير مكتمل</option>
+                <option value="paid" ${debt.status === "paid" ? "selected" : ""}>مكتمل</option>
+              </select>
+            </div>
+
+            <div class="full-row">
+              <label class="field-label">ملاحظة</label>
+              <input id="editManualDebtNote" class="input" value="${escapeHtml(debt.note || "")}">
+            </div>
+          </div>
+
+          <button class="primary-btn" style="width:100%;margin-top:14px" type="submit">
+            <i class="fa-solid fa-floppy-disk"></i> حفظ التعديل
+          </button>
+        </form>
+      `);
+
+      $("editManualDebtForm").onsubmit = async (e) => {
+        e.preventDefault();
+
+        debt.amount = cleanNumber($("editManualDebtAmount").value, 0);
+        debt.note = $("editManualDebtNote").value.trim();
+        debt.dueDate = $("editManualDebtDueDate").value || "";
+        debt.status = $("editManualDebtStatus").value;
+        debt.updatedAt = Date.now();
+
+        if (debt.status === "paid" && !debt.paidAt) debt.paidAt = Date.now();
+        if (debt.status !== "paid") delete debt.paidAt;
+
+        customer.updatedAt = Date.now();
+
+        await saveLocal("customers", normalizeCustomer(customer), true);
+
+        state.customers = state.customers.map(c =>
+          c.id === customer.id ? normalizeCustomer(customer) : c
+        );
+
+        rebuildCustomerBalances(true);
+
+        closeModal();
+        renderAll();
+        setTimeout(() => openCustomerAccount(customer.id, "manual"), 120);
+        toast("تم تعديل الدين وإعادة الحساب");
+      };
+    }
+
+    async function deleteManualDebt(customerId, debtId) {
+      const customer = state.customers.find(c => c.id === customerId);
+      if (!customer) return;
+
+      if (!confirm("حذف الدين اليدوي؟ سيتم إعادة حساب رصيد العميل.")) return;
+
+      customer.manualDebts = (customer.manualDebts || []).filter(d => d.id !== debtId);
+      customer.updatedAt = Date.now();
+
+      await saveLocal("customers", normalizeCustomer(customer), true);
+
+      state.customers = state.customers.map(c =>
+        c.id === customer.id ? normalizeCustomer(customer) : c
+      );
+
+      rebuildCustomerBalances(true);
+
+      closeModal();
+      renderAll();
+      setTimeout(() => openCustomerAccount(customer.id, "manual"), 120);
+      toast("تم حذف الدين وإعادة الحساب");
     }
 
     async function markManualDebtPaid(customerId, debtId) {
@@ -5431,30 +6285,103 @@ async function payCustomer(customerId) {
 
       debt.status = "paid";
       debt.paidAt = Date.now();
+      debt.updatedAt = Date.now();
 
-      customer.balance = cleanNumber(customer.balance) - cleanNumber(debt.amount);
-      customer.totalPaid = cleanNumber(customer.totalPaid) + cleanNumber(debt.amount);
-      customer.payments = customer.payments || [];
-      customer.payments.push({
-        id: uid("cp"),
-        amount: cleanNumber(debt.amount),
-        note: `سداد دين يدوي: ${debt.note || "-"}`,
-        manualDebtId: debt.id,
-        createdAt: Date.now()
-      });
       customer.updatedAt = Date.now();
 
       await saveLocal("customers", normalizeCustomer(customer), true);
 
-      state.customers = state.customers.map(c => c.id === customer.id ? normalizeCustomer(customer) : c);
+      state.customers = state.customers.map(c =>
+        c.id === customer.id ? normalizeCustomer(customer) : c
+      );
+
+      rebuildCustomerBalances(true);
 
       closeModal();
       renderAll();
       setTimeout(() => openCustomerAccount(customer.id, "manual"), 120);
-      toast("تم تحويل الدين اليدوي إلى مكتمل");
+      toast("تم تحويل الدين اليدوي إلى مكتمل وإعادة الحساب");
     }
 
-    async function markLaterInvoicePaid(invoiceId) {
+    function openEditCustomerPaymentForm(customerId, paymentId) {
+      const customer = state.customers.find(c => c.id === customerId);
+      if (!customer) return;
+
+      const payment = (customer.payments || []).find(p => p.id === paymentId);
+      if (!payment) return;
+
+      openModal("تعديل دفعة زبون", `
+        <form id="editCustomerPaymentForm">
+          <div class="form-grid-compact">
+            <div>
+              <label class="field-label">اسم الزبون</label>
+              <input class="input" value="${escapeHtml(customer.name)}" disabled>
+            </div>
+
+            <div>
+              <label class="field-label">قيمة الدفعة</label>
+              <input id="editCustomerPaymentAmount" type="number" inputmode="decimal" class="input" min="0" step="0.001" required value="${cleanNumber(payment.amount)}">
+            </div>
+
+            <div class="full-row">
+              <label class="field-label">ملاحظات</label>
+              <input id="editCustomerPaymentNote" class="input" value="${escapeHtml(payment.note || "")}">
+            </div>
+          </div>
+
+          <button class="success-btn" style="width:100%;margin-top:14px" type="submit">
+            <i class="fa-solid fa-floppy-disk"></i> حفظ التعديل
+          </button>
+        </form>
+      `);
+
+      $("editCustomerPaymentForm").onsubmit = async (e) => {
+        e.preventDefault();
+
+        payment.amount = cleanNumber($("editCustomerPaymentAmount").value, 0);
+        payment.note = $("editCustomerPaymentNote").value.trim();
+        payment.updatedAt = Date.now();
+
+        customer.updatedAt = Date.now();
+
+        await saveLocal("customers", normalizeCustomer(customer), true);
+
+        state.customers = state.customers.map(c =>
+          c.id === customer.id ? normalizeCustomer(customer) : c
+        );
+
+        rebuildCustomerBalances(true);
+
+        closeModal();
+        renderAll();
+        setTimeout(() => openCustomerAccount(customer.id, "payments"), 120);
+        toast("تم تعديل الدفعة وإعادة الحساب");
+      };
+    }
+
+    async function deleteCustomerPayment(customerId, paymentId) {
+      const customer = state.customers.find(c => c.id === customerId);
+      if (!customer) return;
+
+      if (!confirm("حذف دفعة الزبون؟ سيتم إعادة حساب الرصيد.")) return;
+
+      customer.payments = (customer.payments || []).filter(p => p.id !== paymentId);
+      customer.updatedAt = Date.now();
+
+      await saveLocal("customers", normalizeCustomer(customer), true);
+
+      state.customers = state.customers.map(c =>
+        c.id === customer.id ? normalizeCustomer(customer) : c
+      );
+
+      rebuildCustomerBalances(true);
+
+      closeModal();
+      renderAll();
+      setTimeout(() => openCustomerAccount(customer.id, "payments"), 120);
+      toast("تم حذف الدفعة وإعادة الحساب");
+    }
+async function markLaterInvoicePaid(invoiceId) {
       const invoice = state.invoices.find(i => i.id === invoiceId);
       if (!invoice) return;
 
@@ -5469,43 +6396,22 @@ async function payCustomer(customerId) {
         return;
       }
 
-      const customer = state.customers.find(c =>
-        c.id === invoice.customerId ||
-        (invoice.customerPhone && c.phone === invoice.customerPhone) ||
-        (invoice.customerName && c.name === invoice.customerName)
-      );
-
       invoice.status = "paid";
       invoice.paidAt = Date.now();
       invoice.updatedAt = Date.now();
 
       await saveLocal("invoices", invoice, true);
 
-      if (customer) {
-        customer.balance = cleanNumber(customer.balance) - cleanNumber(invoice.total);
-        customer.totalPaid = cleanNumber(customer.totalPaid) + cleanNumber(invoice.total);
-        customer.payments = customer.payments || [];
-        customer.payments.push({
-          id: uid("cp"),
-          amount: cleanNumber(invoice.total),
-          note: `تحويل تطبيق لاحق مكتمل - فاتورة #${invoice.number}`,
-          invoiceId: invoice.id,
-          createdAt: Date.now()
-        });
-        customer.updatedAt = Date.now();
-
-        await saveLocal("customers", normalizeCustomer(customer), true);
-        state.customers = state.customers.map(c => c.id === customer.id ? normalizeCustomer(customer) : c);
-      }
-
       state.invoices = state.invoices.map(i => i.id === invoice.id ? invoice : i);
+
+      rebuildCustomerBalances(true);
 
       closeModal();
       renderAll();
-      toast("تم تحويل التطبيق اللاحق إلى مكتمل وخصمه من الدين");
+      toast("تم تحويل التطبيق اللاحق إلى مكتمل وإعادة حساب الدين");
 
-      if (customer) {
-        setTimeout(() => openCustomerAccount(customer.id, "payments"), 120);
+      if (invoice.customerId) {
+        setTimeout(() => openCustomerAccount(invoice.customerId, "payments"), 120);
       }
     }
 
@@ -5526,7 +6432,7 @@ async function payCustomer(customerId) {
           </div>
 
           <button id="markLaterPaidBtn" class="success-btn" style="width:100%;margin-bottom:10px">
-            <i class="fa-solid fa-circle-check"></i> تحويل إلى مكتملة وخصمها من الدين
+            <i class="fa-solid fa-circle-check"></i> تحويل إلى مكتملة وإعادة الحساب
           </button>
 
           <button id="closeLaterStatusBtn" class="ghost-btn" style="width:100%">
@@ -5538,7 +6444,8 @@ async function payCustomer(customerId) {
       $("markLaterPaidBtn").onclick = () => markLaterInvoicePaid(invoice.id);
       $("closeLaterStatusBtn").onclick = closeModal;
     }
-function getCustomerTableRows(customer, tab = "all") {
+
+    function getCustomerTableRows(customer, tab = "all") {
       const rows = [];
       const invoices = getCustomerInvoices(customer);
 
@@ -5557,7 +6464,12 @@ function getCustomerTableRows(customer, tab = "all") {
           _createdAt: inv.createdAt,
           _htmlActions: inv.paymentMethod === "later_app"
             ? `<span class="badge ${inv.status === "paid" ? "green" : "yellow"} clickable" data-open-later-status="${inv.id}">${inv.status === "paid" ? "مكتملة" : "غير مكتملة"}</span>`
-            : ""
+            : "",
+          _rowActions: `
+            <button class="ghost-btn" data-view-invoice="${inv.id}" style="padding:7px 9px"><i class="fa-solid fa-eye"></i></button>
+            <button class="ghost-btn" data-edit-invoice="${inv.id}" style="padding:7px 9px"><i class="fa-solid fa-pen"></i></button>
+            <button class="danger-btn" data-delete-invoice="${inv.id}" style="padding:7px 9px"><i class="fa-solid fa-trash"></i></button>
+          `
         });
       });
 
@@ -5574,7 +6486,11 @@ function getCustomerTableRows(customer, tab = "all") {
           دائن: cleanNumber(pay.amount),
           ملاحظات: pay.note || "-",
           _createdAt: pay.createdAt,
-          _htmlActions: ""
+          _htmlActions: "",
+          _rowActions: `
+            <button class="ghost-btn" data-edit-customer-payment="${customer.id}|${pay.id}" style="padding:7px 9px"><i class="fa-solid fa-pen"></i></button>
+            <button class="danger-btn" data-delete-customer-payment="${customer.id}|${pay.id}" style="padding:7px 9px"><i class="fa-solid fa-trash"></i></button>
+          `
         });
       });
 
@@ -5593,7 +6509,11 @@ function getCustomerTableRows(customer, tab = "all") {
           _createdAt: d.createdAt,
           _htmlActions: d.status === "paid"
             ? `<span class="badge green">مكتملة</span>`
-            : `<span class="badge yellow clickable" data-mark-manual-debt-paid="${customer.id}|${d.id}">غير مكتملة</span>`
+            : `<span class="badge yellow clickable" data-mark-manual-debt-paid="${customer.id}|${d.id}">غير مكتملة</span>`,
+          _rowActions: `
+            <button class="ghost-btn" data-edit-manual-debt="${customer.id}|${d.id}" style="padding:7px 9px"><i class="fa-solid fa-pen"></i></button>
+            <button class="danger-btn" data-delete-manual-debt="${customer.id}|${d.id}" style="padding:7px 9px"><i class="fa-solid fa-trash"></i></button>
+          `
         });
       });
 
@@ -5604,10 +6524,13 @@ function getCustomerTableRows(customer, tab = "all") {
       const customer = state.customers.find(c => c.id === customerId);
       if (!customer) return;
 
-      const bal = customerBalanceText(customer.balance);
-      const rows = getCustomerTableRows(customer, tab);
+      rebuildCustomerBalances(false);
 
-      openModal(`حساب ${customer.name}`, `
+      const freshCustomer = state.customers.find(c => c.id === customerId) || customer;
+      const bal = customerBalanceText(freshCustomer.balance);
+      const rows = getCustomerTableRows(freshCustomer, tab);
+
+      openModal(`حساب ${freshCustomer.name}`, `
         <div class="debt-summary-strip" style="box-shadow:none">
           <div class="debt-summary-item">
             <span>الرصيد</span>
@@ -5616,55 +6539,59 @@ function getCustomerTableRows(customer, tab = "all") {
 
           <div class="debt-summary-item">
             <span>إجمالي المبيعات</span>
-            <b>${money(customer.totalSales)}</b>
+            <b>${money(freshCustomer.totalSales)}</b>
           </div>
 
           <div class="debt-summary-item">
             <span>إجمالي الدفعات</span>
-            <b>${money(customer.totalPaid)}</b>
+            <b>${money(freshCustomer.totalPaid)}</b>
           </div>
 
           <div class="debt-summary-item">
             <span>عدد الفواتير</span>
-            <b>${getCustomerInvoices(customer).length}</b>
+            <b>${getCustomerInvoices(freshCustomer).length}</b>
           </div>
         </div>
 
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-          <button class="success-btn" data-pay-customer="${customer.id}">
+          <button class="success-btn" data-pay-customer="${freshCustomer.id}">
             <i class="fa-solid fa-hand-holding-dollar"></i> إضافة دفعة
           </button>
 
-          <button class="gold-btn" data-add-manual-debt="${customer.id}">
+          <button class="gold-btn" data-add-manual-debt="${freshCustomer.id}">
             <i class="fa-solid fa-plus"></i> إضافة دين
           </button>
 
-          <button class="ghost-btn" data-edit-debt-customer="${customer.id}">
-            <i class="fa-solid fa-pen"></i> تعديل
+          <button class="ghost-btn" data-edit-debt-customer="${freshCustomer.id}">
+            <i class="fa-solid fa-pen"></i> تعديل العميل
           </button>
 
-          <button class="ghost-btn" data-print-customer="${customer.id}">
+          <button class="danger-btn" data-delete-customer="${freshCustomer.id}">
+            <i class="fa-solid fa-trash"></i> حذف العميل
+          </button>
+
+          <button class="ghost-btn" data-print-customer="${freshCustomer.id}">
             <i class="fa-solid fa-print"></i> طباعة
           </button>
 
-          <button class="success-btn" data-image-customer="${customer.id}">
+          <button class="success-btn" data-image-customer="${freshCustomer.id}">
             <i class="fa-solid fa-image"></i> صورة
           </button>
 
-          <button class="danger-btn" data-pdf-customer="${customer.id}">
+          <button class="danger-btn" data-pdf-customer="${freshCustomer.id}">
             <i class="fa-solid fa-file-pdf"></i> PDF
           </button>
 
-          <button class="ghost-btn" data-excel-customer="${customer.id}">
+          <button class="ghost-btn" data-excel-customer="${freshCustomer.id}">
             <i class="fa-solid fa-file-excel"></i> Excel
           </button>
         </div>
 
         <div class="tabs-row">
-          <button class="tab-btn ${tab === "all" ? "active" : ""}" data-customer-tab="${customer.id}|all">الكل</button>
-          <button class="tab-btn ${tab === "invoices" ? "active" : ""}" data-customer-tab="${customer.id}|invoices">الفواتير</button>
-          <button class="tab-btn ${tab === "payments" ? "active" : ""}" data-customer-tab="${customer.id}|payments">الدفعات</button>
-          <button class="tab-btn ${tab === "manual" ? "active" : ""}" data-customer-tab="${customer.id}|manual">ديون يدوية</button>
+          <button class="tab-btn ${tab === "all" ? "active" : ""}" data-customer-tab="${freshCustomer.id}|all">الكل</button>
+          <button class="tab-btn ${tab === "invoices" ? "active" : ""}" data-customer-tab="${freshCustomer.id}|invoices">الفواتير</button>
+          <button class="tab-btn ${tab === "payments" ? "active" : ""}" data-customer-tab="${freshCustomer.id}|payments">الدفعات</button>
+          <button class="tab-btn ${tab === "manual" ? "active" : ""}" data-customer-tab="${freshCustomer.id}|manual">ديون يدوية</button>
         </div>
 
         <div class="table-wrap">
@@ -5679,6 +6606,7 @@ function getCustomerTableRows(customer, tab = "all") {
                 <th>مدين</th>
                 <th>دائن</th>
                 <th>ملاحظات</th>
+                <th>الإجراءات</th>
               </tr>
             </thead>
             <tbody>
@@ -5693,9 +6621,10 @@ function getCustomerTableRows(customer, tab = "all") {
                     <td>${money(r.مدين)}</td>
                     <td>${money(r.دائن)}</td>
                     <td>${escapeHtml(r.ملاحظات)}</td>
+                    <td>${r._rowActions || ""}</td>
                   </tr>
                 `).join("") ||
-                `<tr><td colspan="8" style="text-align:center" class="muted">لا توجد حركات</td></tr>`
+                `<tr><td colspan="9" style="text-align:center" class="muted">لا توجد حركات</td></tr>`
               }
             </tbody>
           </table>
@@ -5703,10 +6632,40 @@ function getCustomerTableRows(customer, tab = "all") {
       `, true);
     }
 
-    function buildInvoiceHtml(invoice) {
+    async function deleteCustomer(customerId) {
+      const customer = state.customers.find(c => c.id === customerId);
+      if (!customer) return;
+
+      const relatedInvoices = getCustomerInvoices(customer);
+
+      if (relatedInvoices.length) {
+        if (!confirm(`هذا العميل لديه ${relatedInvoices.length} فواتير. سيتم حذف العميل فقط وفصل الفواتير عنه، هل تريد المتابعة؟`)) return;
+
+        for (const inv of relatedInvoices) {
+          if (inv.customerId === customerId) {
+            inv.customerId = "";
+            inv.customerName = inv.customerName || customer.name;
+            inv.customerPhone = inv.customerPhone || customer.phone;
+            inv.updatedAt = Date.now();
+            await saveLocal("invoices", inv, true);
+          }
+        }
+      } else {
+        if (!confirm("حذف العميل؟")) return;
+      }
+
+      state.customers = state.customers.filter(c => c.id !== customerId);
+      await removeLocal("customers", customerId, true);
+
+      rebuildCustomerBalances(true);
+      closeModal();
+      renderAll();
+      toast("تم حذف العميل وإعادة الحسابات");
+    }
+function buildInvoiceHtml(invoice) {
       const s = state.settings || defaultSettings;
       const acc = state.paymentAccounts.find(a => a.id === invoice.paymentAccountId);
-      const logo = s.logo || makeLogoDataUrl(s.shopName);
+      const logo = s.localLogo || s.logo || makeLogoDataUrl(s.shopName);
 
       return `
         <div class="invoice-paper" style="direction:rtl;font-family:Cairo,Arial,sans-serif">
@@ -5741,7 +6700,7 @@ function getCustomerTableRows(customer, tab = "all") {
             </div>
 
             <div style="background:#f8fafc;border-radius:14px;padding:10px;font-size:12px">
-              <b>حساب الدفع:</b> ${escapeHtml(acc?.name || "-")} ${acc?.number ? " - " + escapeHtml(acc.number) : ""}
+              <b>مجلد الدفع:</b> ${escapeHtml(acc?.name || paymentFolderName(invoice))}
             </div>
           </div>
 
@@ -5811,6 +6770,10 @@ function getCustomerTableRows(customer, tab = "all") {
           <button id="pdfInvoiceBtn" class="danger-btn">
             <i class="fa-solid fa-file-pdf"></i> PDF
           </button>
+
+          <button id="editInvoiceInsideBtn" class="primary-btn">
+            <i class="fa-solid fa-pen"></i> تعديل
+          </button>
         </div>
       `, true);
 
@@ -5827,8 +6790,10 @@ function getCustomerTableRows(customer, tab = "all") {
         $("printInvoiceBtn").onclick = () => printHtml($("invoiceViewBox").innerHTML);
         $("imageInvoiceBtn").onclick = () => downloadElementImage($("invoiceViewBox"), `invoice-${invoice.number}.png`);
         $("pdfInvoiceBtn").onclick = () => downloadElementPdf($("invoiceViewBox"), `invoice-${invoice.number}.pdf`);
+        $("editInvoiceInsideBtn").onclick = () => openEditInvoiceForm(invoice.id);
       }, 80);
     }
+
     function printHtml(html) {
       const area = $("printArea");
 
@@ -5890,10 +6855,9 @@ function getCustomerTableRows(customer, tab = "all") {
 
       pdf.save(filename);
     }
-
-    function reportShell(title, bodyHtml) {
+function reportShell(title, bodyHtml) {
       const s = state.settings || defaultSettings;
-      const logo = s.logo || makeLogoDataUrl(s.shopName);
+      const logo = s.localLogo || s.logo || makeLogoDataUrl(s.shopName);
 
       return `
         <div class="invoice-paper" style="direction:rtl;font-family:Cairo,Arial,sans-serif">
@@ -6017,7 +6981,6 @@ function getCustomerTableRows(customer, tab = "all") {
       XLSX.utils.book_append_sheet(wb, ws, "كشف الحساب");
       XLSX.writeFile(wb, `customer-${customer.name}-${todayKey()}.xlsx`);
     }
-
     function buildFullInvoicesReportHtml() {
       const period = $("invoicePeriod")?.value || "today";
       const custom = $("invoiceCustomDate")?.value || "";
@@ -6026,7 +6989,10 @@ function getCustomerTableRows(customer, tab = "all") {
 
       const invoices = periodFilter(state.invoices, period, "createdAt", custom)
         .filter(inv => {
-          const itemsText = (inv.items || []).map(x => `${x.name} ${x.qtyText} ${x.unitLabel}`).join(" ").toLowerCase();
+          const itemsText = (inv.items || [])
+            .map(item => `${item.name || ""} ${item.qtyText || ""} ${item.unitLabel || ""}`)
+            .join(" ")
+            .toLowerCase();
 
           const searchOk =
             !q ||
@@ -6037,7 +7003,13 @@ function getCustomerTableRows(customer, tab = "all") {
 
           const statusOk = status === "all" || inv.paymentMethod === status || inv.status === status;
 
-          return searchOk && statusOk;
+          const folder = state.activeInvoiceFolder || "all";
+          const folderOk =
+            folder === "all" ||
+            inv.paymentAccountId === folder ||
+            inv.paymentMethod === folder;
+
+          return searchOk && statusOk && folderOk;
         })
         .sort((a,b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
 
@@ -6054,7 +7026,7 @@ function getCustomerTableRows(customer, tab = "all") {
               <td>${escapeHtml(inv.customerName || "زبون نقدي")}</td>
               <td>${escapeHtml(inv.customerPhone || "-")}</td>
               <td>${escapeHtml(paymentMethodLabel(inv.paymentMethod))}</td>
-              <td>${escapeHtml(acc?.name || "-")}</td>
+              <td>${escapeHtml(acc?.name || paymentFolderName(inv))}</td>
               <td>-</td>
               <td>-</td>
               <td>-</td>
@@ -6071,7 +7043,7 @@ function getCustomerTableRows(customer, tab = "all") {
                 <td>${escapeHtml(inv.customerName || "زبون نقدي")}</td>
                 <td>${escapeHtml(inv.customerPhone || "-")}</td>
                 <td>${escapeHtml(paymentMethodLabel(inv.paymentMethod))}</td>
-                <td>${escapeHtml(acc?.name || "-")}</td>
+                <td>${escapeHtml(acc?.name || paymentFolderName(inv))}</td>
                 <td>${escapeHtml(item.name || "-")}</td>
                 <td>${escapeHtml(item.qtyText || item.qty || "1")}</td>
                 <td>${escapeHtml(item.unitLabel || "-")}</td>
@@ -6092,7 +7064,7 @@ function getCustomerTableRows(customer, tab = "all") {
               <th style="border:1px solid #e5e7eb;background:#eff6ff;padding:7px;font-size:10px">العميل</th>
               <th style="border:1px solid #e5e7eb;background:#eff6ff;padding:7px;font-size:10px">الهاتف</th>
               <th style="border:1px solid #e5e7eb;background:#eff6ff;padding:7px;font-size:10px">الدفع</th>
-              <th style="border:1px solid #e5e7eb;background:#eff6ff;padding:7px;font-size:10px">الحساب</th>
+              <th style="border:1px solid #e5e7eb;background:#eff6ff;padding:7px;font-size:10px">المجلد</th>
               <th style="border:1px solid #e5e7eb;background:#eff6ff;padding:7px;font-size:10px">الصنف</th>
               <th style="border:1px solid #e5e7eb;background:#eff6ff;padding:7px;font-size:10px">الكمية</th>
               <th style="border:1px solid #e5e7eb;background:#eff6ff;padding:7px;font-size:10px">الوحدة</th>
@@ -6106,6 +7078,7 @@ function getCustomerTableRows(customer, tab = "all") {
         </table>
       `);
     }
+
     function buildFullReportsHtml() {
       const period = $("reportsPeriod")?.value || "today";
       const custom = $("reportsCustomDate")?.value || "";
@@ -6121,6 +7094,7 @@ function getCustomerTableRows(customer, tab = "all") {
           <td>${formatDate(inv.createdAt)}</td>
           <td>${escapeHtml(inv.customerName || "زبون نقدي")}</td>
           <td>${escapeHtml(paymentMethodLabel(inv.paymentMethod))}</td>
+          <td>${escapeHtml(paymentFolderName(inv))}</td>
           <td>${money(inv.total)}</td>
           <td>${money(inv.profit)}</td>
         </tr>
@@ -6170,11 +7144,12 @@ function getCustomerTableRows(customer, tab = "all") {
               <th style="border:1px solid #e5e7eb;background:#eff6ff;padding:7px;font-size:10px">التاريخ</th>
               <th style="border:1px solid #e5e7eb;background:#eff6ff;padding:7px;font-size:10px">العميل</th>
               <th style="border:1px solid #e5e7eb;background:#eff6ff;padding:7px;font-size:10px">الدفع</th>
+              <th style="border:1px solid #e5e7eb;background:#eff6ff;padding:7px;font-size:10px">المجلد</th>
               <th style="border:1px solid #e5e7eb;background:#eff6ff;padding:7px;font-size:10px">المبلغ</th>
               <th style="border:1px solid #e5e7eb;background:#eff6ff;padding:7px;font-size:10px">الربح</th>
             </tr>
           </thead>
-          <tbody>${invoiceRows || `<tr><td colspan="6" style="text-align:center;padding:12px">لا توجد فواتير</td></tr>`}</tbody>
+          <tbody>${invoiceRows || `<tr><td colspan="7" style="text-align:center;padding:12px">لا توجد فواتير</td></tr>`}</tbody>
         </table>
 
         <h3 style="font-size:14px;margin:14px 0 10px">المصروفات</h3>
@@ -6277,13 +7252,14 @@ function getCustomerTableRows(customer, tab = "all") {
 
       downloadElementPdf(wrap, `reports-full-${todayKey()}.pdf`).finally(() => wrap.remove());
     }
+async function saveSettings() {
+      const logoUrl = $("settingLogoUrl")?.value.trim() || "";
+      const file = $("settingLogoFile")?.files?.[0] || null;
 
-    async function saveSettings() {
-      const file = $("settingLogoFile").files[0];
-      let logo = state.settings?.logo || "";
+      let localLogo = state.settings?.localLogo || "";
 
       if (file) {
-        logo = await readFileAsDataUrl(file);
+        localLogo = await readFileAsDataUrl(file);
       }
 
       state.settings = {
@@ -6294,14 +7270,24 @@ function getCustomerTableRows(customer, tab = "all") {
         shopPhone: $("settingShopPhone").value.trim(),
         currency: $("settingCurrency").value.trim() || "₪",
         lowStock: cleanNumber($("settingLowStock").value, 5),
-        logo,
+        logo: logoUrl,
+        localLogo,
+        logoMode: localLogo ? ""local" : (logoUrl ? "url" : "default"),
         updatedAt: Date.now()
       };
 
-      await saveLocal("settings", state.settings, true);
+      await idbPut("settings", state.settings);
+
+      await enqueueSync({
+        type: "set",
+        store: "settings",
+        itemId: "main",
+        data: stripLocalOnlySettings(state.settings)
+      });
+
       applySettingsToUI();
       renderAll();
-      toast("تم حفظ الإعدادات");
+      toast("تم حفظ الإعدادات، الشعار المحلي لا يرفع و رابط الشعار يتزامن");
     }
 
     function exportBackup() {
@@ -6346,7 +7332,7 @@ function getCustomerTableRows(customer, tab = "all") {
         if (Array.isArray(data.expenses)) await idbBulkPut("expenses", data.expenses);
         if (Array.isArray(data.purchases)) await idbBulkPut("purchases", data.purchases);
         if (Array.isArray(data.supplierPayments)) await idbBulkPut("supplierPayments", data.supplierPayments);
-        if (Array.isArray(data.paymentAccounts)) await idbBulkPut("paymentAccounts", data.paymentAccounts);
+        if (Array.isArray(data.paymentAccounts)) await idbBulkPut("paymentAccounts", data.paymentAccounts.map(normalizePaymentAccount));
         if (data.settings) await idbPut("settings", { ...defaultSettings, ...data.settings, id: "main" });
 
         await loadLocalData(true);
@@ -6366,9 +7352,10 @@ function getCustomerTableRows(customer, tab = "all") {
           type: "set",
           store: "settings",
           itemId: "main",
-          data: state.settings
+          data: stripLocalOnlySettings(state.settings)
         });
 
+        renderAll();
         toast("تم استيراد النسخة الاحتياطية لهذا المشروع");
       } catch (e) {
         console.error(e);
@@ -6389,22 +7376,29 @@ function getCustomerTableRows(customer, tab = "all") {
       state.expenses = [];
       state.purchases = [];
       state.supplierPayments = [];
-      state.paymentAccounts = [];
+      state.paymentAccounts = defaultAccounts.map(normalizePaymentAccount);
       state.cart = [];
-      state.freeLines = [];
+      state.freeLines = [{ id: uid("free"), name: "", qty: 1, cost: 0, price: 0 }];
       state.settings = { ...defaultSettings };
 
       await idbPut("settings", state.settings);
-      await idbBulkPut("paymentAccounts", defaultAccounts);
-
-      state.paymentAccounts = defaultAccounts;
+      await idbBulkPut("paymentAccounts", state.paymentAccounts);
 
       renderAll();
       await refreshPendingCount();
       toast("تم مسح بيانات هذا المشروع محليًا");
     }
+
     async function deleteProduct(productId) {
-      if (!confirm("حذف المنتج؟")) return;
+      const hasInvoices = state.invoices.some(inv =>
+        (inv.items || []).some(item => item.productId === productId)
+      );
+
+      if (hasInvoices) {
+        if (!confirm("هذا المنتج مستخدم في فواتير. سيتم حذف المنتج فقط وتبقى الفواتير كما هي. متابعة؟")) return;
+      } else {
+        if (!confirm("حذف المنتج؟")) return;
+      }
 
       state.products = state.products.filter(p => p.id !== productId);
       await removeLocal("products", productId, true);
@@ -6413,34 +7407,29 @@ function getCustomerTableRows(customer, tab = "all") {
       toast("تم حذف المنتج");
     }
 
-    async function deleteInvoice(invoiceId) {
-      if (!confirm("حذف الفاتورة؟ لن يتم إرجاع المخزون تلقائياً.")) return;
-
-      state.invoices = state.invoices.filter(i => i.id !== invoiceId);
-      await removeLocal("invoices", invoiceId, true);
-
-      renderAll();
-      toast("تم حذف الفاتورة");
-    }
-
-    async function deleteExpense(expenseId) {
-      if (!confirm("حذف المصروف؟")) return;
-
-      state.expenses = state.expenses.filter(e => e.id !== expenseId);
-      await removeLocal("expenses", expenseId, true);
-
-      renderAll();
-      toast("تم حذف المصروف");
-    }
-
     async function deletePurchase(purchaseId) {
-      if (!confirm("حذف سجل المشتريات؟")) return;
+      const purchase = state.purchases.find(p => p.id === purchaseId);
+      if (!purchase) return;
+
+      if (!confirm("حذف سجل المشتريات؟ سيتم خصم الكمية التي أضافها من المخزون.")) return;
+
+      const product = getProductById(purchase.productId);
+
+      if (product) {
+        product.stock = cleanNumber(product.stock) - cleanNumber(purchase.qtyBase);
+        product.updatedAt = Date.now();
+        await saveLocal("products", normalizeProduct(product), true);
+
+        state.products = state.products.map(p =>
+          p.id === product.id ? normalizeProduct(product) : p
+        );
+      }
 
       state.purchases = state.purchases.filter(p => p.id !== purchaseId);
       await removeLocal("purchases", purchaseId, true);
 
       renderAll();
-      toast("تم حذف سجل المشتريات");
+      toast("تم حذف المشتريات وإعادة حساب المخزون");
     }
 
     async function deleteSupplierPayment(paymentId) {
@@ -6453,19 +7442,35 @@ function getCustomerTableRows(customer, tab = "all") {
       toast("تم حذف دفعة التاجر");
     }
 
+    async function deleteExpense(expenseId) {
+      if (!confirm("حذف المصروف؟")) return;
+
+      state.expenses = state.expenses.filter(e => e.id !== expenseId);
+      await removeLocal("expenses", expenseId, true);
+
+      renderAll();
+      toast("تم حذف المصروف");
+    }
+
     async function deletePaymentAccount(accountId) {
-      if (["cash", "bank", "jawwalpay", "wallet"].includes(accountId)) {
-        toast("لا يمكن حذف الحسابات الافتراضية");
+      if (accountId === "cash") {
+        toast("لا يمكن حذف حساب الكاش الأساسي");
         return;
       }
 
-      if (!confirm("حذف حساب الدفع؟")) return;
+      const used = state.invoices.some(inv => inv.paymentAccountId === accountId);
+
+      if (used) {
+        if (!confirm("هذا الحساب مستخدم في فواتير. سيتم حذف الحساب وتبقى الفواتير مرتبطة باسمه القديم فقط. متابعة؟")) return;
+      } else {
+        if (!confirm("حذف حساب الدفع؟")) return;
+      }
 
       state.paymentAccounts = state.paymentAccounts.filter(a => a.id !== accountId);
       await removeLocal("paymentAccounts", accountId, true);
 
       renderAll();
-      toast("تم حذف الحساب");
+      toast("تم حذف حساب الدفع");
     }
 
     function openNotifications() {
@@ -6529,8 +7534,7 @@ function getCustomerTableRows(customer, tab = "all") {
         </div>
       `, true);
     }
-
-    function stopScanner() {
+function stopScanner() {
       if (state.scanner.reader) {
         try {
           state.scanner.reader.reset();
@@ -6738,7 +7742,8 @@ function getCustomerTableRows(customer, tab = "all") {
         }
       }, 120);
     }
-function closeSidebarIfOutside(e) {
+
+    function closeSidebarIfOutside(e) {
       const sidebar = $("sidebar");
       const menuBtn = $("openMenuBtn");
 
@@ -6748,8 +7753,7 @@ function closeSidebarIfOutside(e) {
 
       sidebar.classList.remove("open");
     }
-
-    function bindEvents() {
+function bindEvents() {
       document.addEventListener("click", async (e) => {
         closeSidebarIfOutside(e);
 
@@ -6776,6 +7780,14 @@ function closeSidebarIfOutside(e) {
           addToCart(getProductById(suggest.dataset.suggestProduct));
           $("cashierSearch").value = "";
           $("suggestionsBox").style.display = "none";
+          return;
+        }
+
+        const invoiceFolder = e.target.closest("[data-invoice-folder]");
+        if (invoiceFolder) {
+          state.activeInvoiceFolder = invoiceFolder.dataset.invoiceFolder || "all";
+          renderInvoiceFolders();
+          renderInvoices();
           return;
         }
 
@@ -6838,6 +7850,12 @@ function closeSidebarIfOutside(e) {
           return;
         }
 
+        const editInvoiceBtn = e.target.closest("[data-edit-invoice]");
+        if (editInvoiceBtn) {
+          openEditInvoiceForm(editInvoiceBtn.dataset.editInvoice);
+          return;
+        }
+
         const deleteInvoiceBtn = e.target.closest("[data-delete-invoice]");
         if (deleteInvoiceBtn) {
           await deleteInvoice(deleteInvoiceBtn.dataset.deleteInvoice);
@@ -6850,6 +7868,12 @@ function closeSidebarIfOutside(e) {
           return;
         }
 
+        const deleteCustomerBtn = e.target.closest("[data-delete-customer]");
+        if (deleteCustomerBtn) {
+          await deleteCustomer(deleteCustomerBtn.dataset.deleteCustomer);
+          return;
+        }
+
         const payCustomerBtn = e.target.closest("[data-pay-customer]");
         if (payCustomerBtn) {
           payCustomer(payCustomerBtn.dataset.payCustomer);
@@ -6859,6 +7883,34 @@ function closeSidebarIfOutside(e) {
         const addManualDebtBtn = e.target.closest("[data-add-manual-debt]");
         if (addManualDebtBtn) {
           addManualDebt(addManualDebtBtn.dataset.addManualDebt);
+          return;
+        }
+
+        const editManualDebtBtn = e.target.closest("[data-edit-manual-debt]");
+        if (editManualDebtBtn) {
+          const [customerId, debtId] = editManualDebtBtn.dataset.editManualDebt.split("|");
+          openEditManualDebtForm(customerId, debtId);
+          return;
+        }
+
+        const deleteManualDebtBtn = e.target.closest("[data-delete-manual-debt]");
+        if (deleteManualDebtBtn) {
+          const [customerId, debtId] = deleteManualDebtBtn.dataset.deleteManualDebt.split("|");
+          await deleteManualDebt(customerId, debtId);
+          return;
+        }
+
+        const editCustomerPaymentBtn = e.target.closest("[data-edit-customer-payment]");
+        if (editCustomerPaymentBtn) {
+          const [customerId, paymentId] = editCustomerPaymentBtn.dataset.editCustomerPayment.split("|");
+          openEditCustomerPaymentForm(customerId, paymentId);
+          return;
+        }
+
+        const deleteCustomerPaymentBtn = e.target.closest("[data-delete-customer-payment]");
+        if (deleteCustomerPaymentBtn) {
+          const [customerId, paymentId] = deleteCustomerPaymentBtn.dataset.deleteCustomerPayment.split("|");
+          await deleteCustomerPayment(customerId, paymentId);
           return;
         }
 
@@ -6912,9 +7964,21 @@ function closeSidebarIfOutside(e) {
           return;
         }
 
+        const editPurchaseBtn = e.target.closest("[data-edit-purchase]");
+        if (editPurchaseBtn) {
+          openPurchaseForm(editPurchaseBtn.dataset.editPurchase);
+          return;
+        }
+
         const deletePurchaseBtn = e.target.closest("[data-delete-purchase]");
         if (deletePurchaseBtn) {
           await deletePurchase(deletePurchaseBtn.dataset.deletePurchase);
+          return;
+        }
+
+        const editSupplierPaymentBtn = e.target.closest("[data-edit-supplier-payment]");
+        if (editSupplierPaymentBtn) {
+          openSupplierPaymentForm(editSupplierPaymentBtn.dataset.editSupplierPayment);
           return;
         }
 
@@ -6924,9 +7988,21 @@ function closeSidebarIfOutside(e) {
           return;
         }
 
+        const editExpenseBtn = e.target.closest("[data-edit-expense]");
+        if (editExpenseBtn) {
+          openExpenseForm(editExpenseBtn.dataset.editExpense);
+          return;
+        }
+
         const deleteExpenseBtn = e.target.closest("[data-delete-expense]");
         if (deleteExpenseBtn) {
           await deleteExpense(deleteExpenseBtn.dataset.deleteExpense);
+          return;
+        }
+
+        const editAccountBtn = e.target.closest("[data-edit-account]");
+        if (editAccountBtn) {
+          openPaymentAccountForm(editAccountBtn.dataset.editAccount);
           return;
         }
 
@@ -6983,8 +8059,24 @@ function closeSidebarIfOutside(e) {
 
       $("quickAddBtn").onclick = openQuickAddMenu;
 
-      $("syncNowBtn").onclick = async () => {
-        await syncNow(true);
+      $("syncNowBtn").onclick = async (e) => {
+        e.stopPropagation();
+        const shouldShow = !$("syncPopover").classList.contains("show");
+
+        updateSyncUi({
+          visible: shouldShow,
+          title: "المزامنة",
+          status: "فحص العمليات المعلقة...",
+          progress: state.syncing ? state.syncUi.progress : 0
+        });
+
+        if (shouldShow) {
+          await syncNow(true);
+        }
+      };
+
+      $("closeSyncPopoverBtn").onclick = () => {
+        updateSyncUi({ visible: false });
       };
 
       $("notificationsBtn").onclick = openNotifications;
@@ -7083,7 +8175,10 @@ function closeSidebarIfOutside(e) {
 
       window.addEventListener("offline", () => {
         refreshPendingCount();
-        hideSyncPanelNow();
+        updateSyncUi({
+          spin: false,
+          status: "لا يوجد اتصال، سيتم الحفظ محليًا"
+        });
       });
 
       document.addEventListener("keydown", (e) => {
@@ -7094,13 +8189,23 @@ function closeSidebarIfOutside(e) {
 
         if (e.key === "Escape" && $("modalBackdrop").classList.contains("show")) {
           closeModal();
+          return;
+        }
+
+        if (e.key === "Escape" && $("syncPopover").classList.contains("show")) {
+          updateSyncUi({ visible: false });
         }
       });
 
-      window.addEventListener("popstate", () => {
-        if ($("modalBackdrop").classList.contains("show")) {
-          closeModal();
-        }
+      document.addEventListener("click", (e) => {
+        const pop = $("syncPopover");
+        const btn = $("syncNowBtn");
+
+        if (!pop || !pop.classList.contains("show")) return;
+        if (pop.contains(e.target)) return;
+        if (btn.contains(e.target)) return;
+
+        updateSyncUi({ visible: false });
       });
     }
 
@@ -7108,7 +8213,14 @@ function closeSidebarIfOutside(e) {
       await openDB();
       bindEvents();
 
-      setSyncProgress(2, "تشغيل التطبيق...", "تحميل بيانات هذا المشروع من التخزين المحلي");
+      updateSyncUi({
+        spin: true,
+        visible: false,
+        title: "تشغيل التطبيق",
+        status: "تحميل بيانات هذا المشروع من التخزين المحلي",
+        progress: 8
+      });
+
       await loadLocalData(true);
 
       if (!state.freeLines.length) {
@@ -7118,21 +8230,53 @@ function closeSidebarIfOutside(e) {
       renderAll();
 
       if (navigator.onLine) {
-        setSyncProgress(8, "رفع المحلي أولًا...", "أي بيانات محفوظة بدون نت سيتم رفعها قبل تنزيل Firebase");
+        updateSyncUi({
+          spin: true,
+          visible: false,
+          title: "المزامنة",
+          status: "رفع العمليات المحلية أولاً",
+          progress: 20
+        });
+
         await syncNow(false);
 
-        setSyncProgress(55, "تحميل بيانات Firebase...", "تنزيل الجديد فقط وتخزينه محليًا لهذا المشروع");
+        updateSyncUi({
+          spin: true,
+          visible: false,
+          title: "المزامنة",
+          status: "تنزيل تحديثات Firebase الجديدة",
+          progress: 45
+        });
+
         await loadFirebaseOnce();
 
-        setSyncProgress(78, "تثبيت البيانات...", "رفع نسخة المحلي للمسار الحالي عند الحاجة");
-        await syncOldDataToNewRoot();
+        updateSyncUi({
+          spin: true,
+          visible: false,
+          title: "المزامنة",
+          status: "تثبيت نسخة الجهاز على المشروع الحالي عند الحاجة",
+          progress: 72
+        });
+
+        await syncLocalSnapshotToFirebase();
 
         startRealtimeListeners();
 
-        setSyncProgress(100, "جاهز", "تم تحميل ومزامنة بيانات هذا المشروع");
-        hideSyncPanelLater(750);
+        updateSyncUi({
+          spin: false,
+          visible: false,
+          title: "جاهز",
+          status: "تم تشغيل المزامنة المباشرة",
+          progress: 100
+        });
       } else {
-        hideSyncPanelNow();
+        updateSyncUi({
+          spin: false,
+          visible: false,
+          title: "أوفلاين",
+          status: "التطبيق يعمل من التخزين المحلي",
+          progress: 0
+        });
       }
 
       await refreshPendingCount();
@@ -7142,8 +8286,6 @@ function closeSidebarIfOutside(e) {
 
         if (navigator.onLine) {
           await syncNow(false);
-        } else {
-          hideSyncPanelNow();
         }
       }, 12000);
     }
@@ -7161,7 +8303,13 @@ function closeSidebarIfOutside(e) {
     boot().catch((e) => {
       console.error(e);
       toast("حدث خطأ أثناء تشغيل التطبيق");
-      hideSyncPanelNow();
+      updateSyncUi({
+        spin: false,
+        visible: true,
+        title: "خطأ",
+        status: String(e?.message || e),
+        progress: 0
+      });
     });
   </script>
 </body>
