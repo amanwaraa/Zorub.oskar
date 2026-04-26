@@ -1,5 +1,7 @@
-const CACHE_VERSION = "cashier-offline-v1.0.3";
-const RUNTIME_CACHE = "cashier-runtime-v1.0.3";
+/* sw.js */
+const CACHE_VERSION = "cashier-pro-v15-2026-04-26";
+const STATIC_CACHE = `${CACHE_VERSION}-static`;
+const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
 const APP_SHELL = [
   "./",
@@ -17,191 +19,224 @@ const APP_SHELL = [
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 ];
 
-self.addEventListener("install", event => {
+self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_VERSION)
-      .then(cache => {
+    caches.open(STATIC_CACHE)
+      .then((cache) => {
         return Promise.allSettled(
-          APP_SHELL.map(url =>
-            fetch(url, { cache: "reload" })
-              .then(res => {
-                if (!res || !res.ok) {
-                  throw new Error("Bad response: " + url);
-                }
-                return cache.put(url, res);
-              })
-              .catch(err => {
-                console.warn("Cache failed:", url, err);
-              })
-          )
+          APP_SHELL.map((url) => {
+            return cache.add(new Request(url, { cache: "reload" }));
+          })
         );
       })
       .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener("activate", event => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
-      .then(keys =>
-        Promise.all(
+      .then((keys) => {
+        return Promise.all(
           keys
-            .filter(key => key !== CACHE_VERSION && key !== RUNTIME_CACHE)
-            .map(key => caches.delete(key))
-        )
-      )
+            .filter((key) => key !== STATIC_CACHE && key !== RUNTIME_CACHE)
+            .map((key) => caches.delete(key))
+        );
+      })
       .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", (event) => {
   const req = event.request;
 
   if (req.method !== "GET") return;
 
   const url = new URL(req.url);
 
-  const isFirebaseRequest =
-    url.hostname.includes("firebaseio.com") ||
-    url.hostname.includes("firebasedatabase.app") ||
-    url.hostname.includes("googleapis.com") ||
-    (url.hostname.includes("gstatic.com") && url.pathname.includes("firebase"));
-
-  if (isFirebaseRequest) {
-    event.respondWith(
-      fetch(req).catch(() => {
-        return new Response(JSON.stringify({
-          offline: true,
-          message: "Firebase غير متاح بدون إنترنت، البيانات محفوظة محليًا"
-        }), {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json;charset=utf-8"
-          }
-        });
-      })
-    );
+  if (
+    url.protocol !== "http:" &&
+    url.protocol !== "https:"
+  ) {
     return;
   }
 
   if (req.mode === "navigate") {
-    event.respondWith(
-      fetch(req)
-        .then(res => {
-          const copy = res.clone();
-
-          caches.open(CACHE_VERSION)
-            .then(cache => {
-              cache.put("./index.html", copy).catch(() => {});
-            })
-            .catch(() => {});
-
-          return res;
-        })
-        .catch(async () => {
-          const cachedIndex =
-            await caches.match("./index.html") ||
-            await caches.match("./") ||
-            await caches.match(req);
-
-          return cachedIndex || new Response(
-            `
-            <!doctype html>
-            <html lang="ar" dir="rtl">
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width,initial-scale=1">
-              <title>التطبيق غير محفوظ</title>
-              <style>
-                body{
-                  margin:0;
-                  min-height:100vh;
-                  display:flex;
-                  align-items:center;
-                  justify-content:center;
-                  font-family:Arial,sans-serif;
-                  background:#eef3f9;
-                  color:#0f172a;
-                  text-align:center;
-                  padding:24px;
-                }
-                .box{
-                  background:white;
-                  border-radius:24px;
-                  padding:24px;
-                  box-shadow:0 20px 50px rgba(15,23,42,.12);
-                  max-width:420px;
-                }
-                h2{margin:0 0 10px}
-                p{color:#64748b;line-height:1.8}
-              </style>
-            </head>
-            <body>
-              <div class="box">
-                <h2>التطبيق غير محفوظ بعد</h2>
-                <p>افتح التطبيق مرة واحدة مع الإنترنت، ثم سيعمل بدون نت حتى عند تحديث الصفحة.</p>
-              </div>
-            </body>
-            </html>
-            `,
-            {
-              status: 200,
-              headers: {
-                "Content-Type": "text/html;charset=utf-8"
-              }
-            }
-          );
-        })
-    );
+    event.respondWith(networkFirstNavigation(req));
     return;
   }
+
+  if (isFirebaseRequest(url)) {
+    event.respondWith(networkOnly(req));
+    return;
+  }
+
+  if (isStaticAsset(req, url)) {
+    event.respondWith(staleWhileRevalidate(req));
+    return;
+  }
+
+  event.respondWith(cacheFirst(req));
+});
+
+async function networkFirstNavigation(req) {
+  try {
+    const fresh = await fetch(req);
+    const cache = await caches.open(STATIC_CACHE);
+    cache.put("./index.html", fresh.clone());
+    cache.put(req, fresh.clone());
+    return fresh;
+  } catch (err) {
+    const cachedReq = await caches.match(req);
+    if (cachedReq) return cachedReq;
+
+    const cachedIndex = await caches.match("./index.html");
+    if (cachedIndex) return cachedIndex;
+
+    return new Response(
+      `<!DOCTYPE html>
+      <html lang="ar" dir="rtl">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>أوفلاين</title>
+        <style>
+          body{
+            margin:0;
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-family:Arial,sans-serif;
+            background:#eff6ff;
+            color:#0f172a;
+            direction:rtl;
+            text-align:center;
+            padding:20px;
+          }
+          .box{
+            background:white;
+            border-radius:24px;
+            padding:24px;
+            max-width:420px;
+            box-shadow:0 20px 50px rgba(15,23,42,.12);
+          }
+          h1{margin:0 0 10px;font-size:24px}
+          p{color:#64748b;line-height:1.8}
+        </style>
+      </head>
+      <body>
+        <div class="box">
+          <h1>التطبيق غير محفوظ بعد</h1>
+          <p>افتح التطبيق مرة واحدة بوجود الإنترنت حتى يتم حفظه، وبعدها سيعمل بدون إنترنت حتى مع تحديث الصفحة.</p>
+        </div>
+      </body>
+      </html>`,
+      {
+        headers: {
+          "Content-Type": "text/html; charset=UTF-8"
+        }
+      }
+    );
+  }
+}
+
+async function staleWhileRevalidate(req) {
+  const cache = await caches.open(STATIC_CACHE);
+  const cached = await cache.match(req);
+
+  const fetchPromise = fetch(req)
+    .then((fresh) => {
+      if (fresh && fresh.ok) {
+        cache.put(req, fresh.clone());
+      }
+      return fresh;
+    })
+    .catch(() => null);
+
+  return cached || fetchPromise || new Response("", { status: 504 });
+}
+
+async function cacheFirst(req) {
+  const cached = await caches.match(req);
+  if (cached) return cached;
+
+  try {
+    const fresh = await fetch(req);
+    if (fresh && fresh.ok) {
+      const cache = await caches.open(RUNTIME_CACHE);
+      cache.put(req, fresh.clone());
+    }
+    return fresh;
+  } catch (err) {
+    return new Response("", { status: 504 });
+  }
+}
+
+async function networkOnly(req) {
+  try {
+    return await fetch(req);
+  } catch (err) {
+    return new Response(
+      JSON.stringify({
+        offline: true,
+        message: "Firebase request skipped while offline"
+      }),
+      {
+        status: 503,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  }
+}
+
+function isStaticAsset(req, url) {
+  const dest = req.destination;
 
   if (
-    req.destination === "script" ||
-    req.destination === "style" ||
-    req.destination === "font" ||
-    req.destination === "image" ||
-    req.destination === "manifest"
+    dest === "script" ||
+    dest === "style" ||
+    dest === "font" ||
+    dest === "image" ||
+    dest === "manifest"
   ) {
-    event.respondWith(
-      caches.match(req).then(cached => {
-        const networkFetch = fetch(req)
-          .then(res => {
-            if (res && res.ok) {
-              const copy = res.clone();
-
-              caches.open(RUNTIME_CACHE)
-                .then(cache => {
-                  cache.put(req, copy).catch(() => {});
-                })
-                .catch(() => {});
-            }
-
-            return res;
-          })
-          .catch(() => cached);
-
-        return cached || networkFetch;
-      })
-    );
-    return;
+    return true;
   }
 
-  event.respondWith(
-    fetch(req)
-      .then(res => {
-        if (res && res.ok) {
-          const copy = res.clone();
-
-          caches.open(RUNTIME_CACHE)
-            .then(cache => {
-              cache.put(req, copy).catch(() => {});
-            })
-            .catch(() => {});
-        }
-
-        return res;
-      })
-      .catch(() => caches.match(req))
+  return (
+    url.pathname.endsWith(".js") ||
+    url.pathname.endsWith(".css") ||
+    url.pathname.endsWith(".json") ||
+    url.pathname.endsWith(".png") ||
+    url.pathname.endsWith(".jpg") ||
+    url.pathname.endsWith(".jpeg") ||
+    url.pathname.endsWith(".webp") ||
+    url.pathname.endsWith(".svg") ||
+    url.pathname.endsWith(".woff") ||
+    url.pathname.endsWith(".woff2")
   );
+}
+
+function isFirebaseRequest(url) {
+  return (
+    url.hostname.includes("firebaseio.com") ||
+    url.hostname.includes("googleapis.com") ||
+    url.hostname.includes("gstatic.com") && url.pathname.includes("firebase")
+  );
+}
+
+self.addEventListener("message", (event) => {
+  if (!event.data) return;
+
+  if (event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+
+  if (event.data.type === "CLEAR_CACHE") {
+    event.waitUntil(
+      caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+    );
+  }
 });

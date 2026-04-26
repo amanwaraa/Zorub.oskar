@@ -2335,7 +2335,8 @@
         </div>
 
         <div>
-          <label class="field-label">وحدة الإدخال</label<select id="purchaseUnit" class="select"></select>
+          <label class="field-label">وحدة الإدخال</label>
+<select id="purchaseUnit" class="select"></select>
         </div>
 
         <div>
@@ -5729,8 +5730,6 @@ function buildSaleItems(source) {
     }
 
     function validateStockForCart() {
-      for (const line of state.cart) {
-        function validateStockForCart() {
   for (const line of state.cart) {
     const product = getProductById(line.productId);
     if (!product) continue;
@@ -7275,7 +7274,7 @@ async function saveSettings() {
         lowStock: cleanNumber($("settingLowStock").value, 5),
         logo: logoUrl,
         localLogo,
-        logoMode: localLogo ? ""local" : (logoUrl ? "url" : "default"),
+        logoMode: localLogo ? "local" : (logoUrl ? "url" : "default"),
         updatedAt: Date.now()
       };
 
