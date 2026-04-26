@@ -1,3 +1,4 @@
+<!-- الجزء 1/5 -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -5,6 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>نظام كاشير احترافي</title>
   <meta name="theme-color" content="#2563eb" />
+
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="نظام كاشير">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@zxing/library@latest"></script>
@@ -659,8 +667,7 @@
       background:#fee2e2;
       color:#b91c1c;
     }
-
-    .cart-layout{
+.cart-layout{
       display:grid;
       grid-template-columns:1.4fr .9fr;
       gap:14px;
@@ -703,7 +710,8 @@
       font-weight:900;
       font-size:18px;
     }
-.debt-card{
+
+    .debt-card{
       background:#fff;
       border:1px solid var(--border);
       border-radius:18px;
@@ -1184,7 +1192,7 @@
 
       .form-grid,
       .form-grid-compact{
-        grid-template-columns:1fr 1fr;
+        grid-template-columns:repeat(2,minmax(0,1fr));
         gap:8px;
       }
 
@@ -1290,14 +1298,6 @@
       }
     }
   </style>
-  
-  <link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#2563eb">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="نظام كاشير">
-  
 </head>
 
 <body>
@@ -1446,7 +1446,7 @@
         </div>
       </section>
 
-      <section id="page-free-freeInvoice" class="section">
+      <section id="page-freeInvoice" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
             <i class="fa-solid fa-file-circle-plus"></i> فاتورة بدون مخزون
@@ -1639,8 +1639,7 @@
           </div>
         </div>
       </section>
-
-      <section id="page-purchases" class="section">
+<section id="page-purchases" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
             <i class="fa-solid fa-truck-ramp-box"></i> المشتريات وإدخال البضاعة
@@ -1828,7 +1827,8 @@
               </div>
             </div>
           </div>
-<div class="card" style="margin-bottom:14px">
+
+          <div class="card" style="margin-bottom:14px">
             <h2 style="margin:0 0 12px;font-size:19px;font-weight:900">
               <i class="fa-solid fa-triangle-exclamation"></i> البضاعة الناقصة
             </h2>
@@ -1942,8 +1942,12 @@
             </label>
 
             <button id="clearLocalBtn" class="danger-btn">
-              <i class="fa-solid fa-trash"></i> مسح البيانات المحلية
+              <i class="fa-solid fa-trash"></i> مسح بيانات هذا المشروع
             </button>
+          </div>
+
+          <div class="muted" style="font-size:12px;margin-top:10px">
+            التخزين المحلي منفصل حسب معلومات Firebase. عند تغيير Firebase من ملف firebase-config.js لن تظهر بيانات المشروع القديم.
           </div>
         </div>
       </section>
@@ -2082,8 +2086,7 @@
             <option value="custom">وحدة مخصصة</option>
           </select>
         </div>
-
-        <div id="customUnitBox" class="conditional-box">
+<div id="customUnitBox" class="conditional-box">
           <label class="field-label">اسم الوحدة المخصصة</label>
           <input id="productCustomUnit" class="input" placeholder="مثال: ربطة / باكيت">
         </div>
@@ -2221,6 +2224,7 @@
       </button>
     </form>
   </template>
+
   <template id="debtCustomerFormTemplate">
     <form id="debtCustomerForm">
       <div class="form-grid-compact">
@@ -2341,6 +2345,8 @@
     </div>
   </template>
 
+  <script src="./firebase-config.js"></script>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import {
@@ -2352,31 +2358,51 @@
       onValue
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAFV1QhNHzfetfrfg_C-vFWKmGo8toQ0pI",
-      authDomain: "zorub-ee652.firebaseapp.com",
-      databaseURL: "https://zorub-ee652-default-rtdb.firebaseio.com",
-      projectId: "zorub-ee652",
-      storageBucket: "zorub-ee652.firebasestorage.app",
-      messagingSenderId: "125000693386",
-      appId: "1:125000693386:web:aec04c4734a9ce601a1f73",
-      measurementId: "G-92GM5526WR"
+    const EXTERNAL_FIREBASE = window.CASHIER_FIREBASE_CONFIG || {};
+
+    const firebaseConfig = EXTERNAL_FIREBASE.firebaseConfig || {
+      apiKey: "",
+      authDomain: "",
+      databaseURL: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: "",
+      measurementId: ""
     };
+
+    const FIREBASE_ROOT = EXTERNAL_FIREBASE.firebaseRoot || "cashier_units_pro_885766842";
+
+    const FIREBASE_FALLBACK_ROOTS = Array.isArray(EXTERNAL_FIREBASE.fallbackRoots) && EXTERNAL_FIREBASE.fallbackRoots.length
+      ? Array.from(new Set([FIREBASE_ROOT, ...EXTERNAL_FIREBASE.fallbackRoots]))
+      : [FIREBASE_ROOT];
+
+    function safeKey(str) {
+      return String(str || "default")
+        .trim()
+        .replace(/^https?:\/\//, "")
+        .replace(/[^a-zA-Z0-9_\-]+/g, "_")
+        .replace(/^_+|_+$/g, "")
+        .slice(0, 140) || "default";
+    }
+
+    function firebaseNamespace() {
+      const raw = [
+        firebaseConfig.projectId,
+        firebaseConfig.databaseURL,
+        firebaseConfig.appId,
+        FIREBASE_ROOT
+      ].filter(Boolean).join("__");
+
+      return safeKey(raw || "cashier_default_project");
+    }
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const FIREBASE_ROOT = "cashier_units_pro_885766842";
-    const FIREBASE_FALLBACK_ROOTS = [
-      "cashier_units_pro_885766842",
-      "cashier_debts_pro_885766842",
-      "cashier_debts_pro_885766842_db",
-      "cashier_pro_885766842",
-      "cashier_885766842"
-    ];
-
-    const DB_NAME = "cashier_units_pro_885766842_db_v12";
-    const DB_VERSION = 12;
+    const DB_NAMESPACE = firebaseNamespace();
+    const DB_NAME = `cashier_units_pro_${DB_NAMESPACE}_db_v13`;
+    const DB_VERSION = 13;
 
     const STORE_NAMES = [
       "products",
@@ -2580,7 +2606,6 @@
         image: ""
       };
     }
-
     function normalizeCustomer(c = {}) {
       const oldDebt = cleanNumber(c.debt || 0);
       const oldCredit = cleanNumber(c.credit || 0);
@@ -2604,9 +2629,25 @@
 
     function customerBalanceText(balance) {
       const n = cleanNumber(balance);
-      if (n > 0) return { text: `عليه ${money(n)}`, cls: "owed" };
-      if (n < 0) return { text: `له ${money(Math.abs(n))}`, cls: "credit" };
-      return { text: "مسدّد", cls: "credit" };
+
+      if (n > 0) {
+        return {
+          text: `عليه ${money(n)}`,
+          cls: "owed"
+        };
+      }
+
+      if (n < 0) {
+        return {
+          text: `له ${money(Math.abs(n))}`,
+          cls: "credit"
+        };
+      }
+
+      return {
+        text: "مسدّد",
+        cls: "credit"
+      };
     }
 
     function getSaleUnitOptions(product) {
@@ -2614,46 +2655,90 @@
 
       if (p.unitType === "carton") {
         return [
-          { value: "piece", label: "قطعة", factor: 1 },
-          { value: "carton", label: `كرتونة (${p.cartonUnits} قطعة)`, factor: p.cartonUnits }
+          {
+            value: "piece",
+            label: "قطعة",
+            factor: 1
+          },
+          {
+            value: "carton",
+            label: `كرتونة (${p.cartonUnits} قطعة)`,
+            factor: p.cartonUnits
+          }
         ];
       }
 
       if (p.unitType === "kg") {
         return [
-          { value: "g", label: "جرام", factor: 1 },
-          { value: "kg", label: "كيلو", factor: 1000 }
+          {
+            value: "g",
+            label: "جرام",
+            factor: 1
+          },
+          {
+            value: "kg",
+            label: "كيلو",
+            factor: 1000
+          }
         ];
       }
 
       if (p.unitType === "liter") {
         return [
-          { value: "ml", label: "مل", factor: 1 },
-          { value: "liter", label: "لتر", factor: 1000 }
+          {
+            value: "ml",
+            label: "مل",
+            factor: 1
+          },
+          {
+            value: "liter",
+            label: "لتر",
+            factor: 1000
+          }
         ];
       }
 
       if (p.unitType === "custom") {
-        return [{ value: "custom", label: p.customUnit || "مخصص", factor: 1 }];
+        return [
+          {
+            value: "custom",
+            label: p.customUnit || "مخصص",
+            factor: 1
+          }
+        ];
       }
 
-      return [{ value: p.unitType, label: unitLabel(p.unitType, p.customUnit), factor: 1 }];
+      return [
+        {
+          value: p.unitType,
+          label: unitLabel(p.unitType, p.customUnit),
+          factor: 1
+        }
+      ];
     }
 
     function getDefaultSaleUnit(product) {
       const p = normalizeProduct(product);
+
       if (p.unitType === "carton") return "piece";
       if (p.unitType === "kg") return "g";
       if (p.unitType === "liter") return "ml";
+
       return p.unitType;
     }
 
     function getUnitFactor(product, selectedUnit) {
-      return cleanNumber(getSaleUnitOptions(product).find(x => x.value === selectedUnit)?.factor || 1, 1);
+      return cleanNumber(
+        getSaleUnitOptions(product).find(x => x.value === selectedUnit)?.factor || 1,
+        1
+      );
     }
 
     function getUnitText(product, selectedUnit) {
-      return getSaleUnitOptions(product).find(x => x.value === selectedUnit)?.label || unitLabel(selectedUnit, product.customUnit);
+      return (
+        getSaleUnitOptions(product).find(x => x.value === selectedUnit)?.label ||
+        unitLabel(selectedUnit, product.customUnit)
+      );
     }
 
     function priceForLine(product, qtyValue, selectedUnit) {
@@ -2683,9 +2768,12 @@
 
         req.onupgradeneeded = () => {
           const database = req.result;
+
           STORE_NAMES.forEach((name) => {
             if (!database.objectStoreNames.contains(name)) {
-              database.createObjectStore(name, { keyPath: "id" });
+              database.createObjectStore(name, {
+                keyPath: "id"
+              });
             }
           });
         };
@@ -2694,7 +2782,8 @@
         req.onerror = () => reject(req.error);
       });
     }
-async function idbPut(storeName, value) {
+
+    async function idbPut(storeName, value) {
       const database = await openDB();
 
       return new Promise((resolve, reject) => {
@@ -2711,7 +2800,11 @@ async function idbPut(storeName, value) {
       return new Promise((resolve, reject) => {
         const tx = database.transaction(storeName, "readwrite");
         const store = tx.objectStore(storeName);
-        items.forEach((item) => store.put(item));
+
+        items.forEach((item) => {
+          if (item && item.id) store.put(item);
+        });
+
         tx.oncomplete = () => resolve(true);
         tx.onerror = () => reject(tx.error);
       });
@@ -2723,6 +2816,7 @@ async function idbPut(storeName, value) {
       return new Promise((resolve, reject) => {
         const tx = database.transaction(storeName, "readonly");
         const req = tx.objectStore(storeName).getAll();
+
         req.onsuccess = () => resolve(req.result || []);
         req.onerror = () => reject(req.error);
       });
@@ -2734,6 +2828,7 @@ async function idbPut(storeName, value) {
       return new Promise((resolve, reject) => {
         const tx = database.transaction(storeName, "readonly");
         const req = tx.objectStore(storeName).get(id);
+
         req.onsuccess = () => resolve(req.result || null);
         req.onerror = () => reject(req.error);
       });
@@ -2745,6 +2840,7 @@ async function idbPut(storeName, value) {
       return new Promise((resolve, reject) => {
         const tx = database.transaction(storeName, "readwrite");
         tx.objectStore(storeName).delete(id);
+
         tx.oncomplete = () => resolve(true);
         tx.onerror = () => reject(tx.error);
       });
@@ -2756,6 +2852,7 @@ async function idbPut(storeName, value) {
       return new Promise((resolve, reject) => {
         const tx = database.transaction(storeName, "readwrite");
         tx.objectStore(storeName).clear();
+
         tx.oncomplete = () => resolve(true);
         tx.onerror = () => reject(tx.error);
       });
@@ -2839,6 +2936,7 @@ async function idbPut(storeName, value) {
       const lastRemoteTime = Number(await getSyncMeta(lastKey, 0));
       const local = await idbGetAll(store);
       const map = new Map(local.map((x) => [x.id, x]));
+
       let count = 0;
       let maxTime = lastRemoteTime;
 
@@ -2849,6 +2947,7 @@ async function idbPut(storeName, value) {
         if (store === "customers") remote = normalizeCustomer(remote);
 
         const remoteTime = getItemTime(remote);
+
         if (remoteTime < lastRemoteTime) {
           continue;
         }
@@ -2868,23 +2967,24 @@ async function idbPut(storeName, value) {
       return count;
     }
 
-    async function loadFirebaseRoot(root) {
-      const snap = await get(ref(db, root));
+    async function loadFirebaseRoot(rootName) {
+      const snap = await get(ref(db, rootName));
+
       if (!snap.exists()) return 0;
 
       const data = snap.val() || {};
       let totalLoaded = 0;
 
-      totalLoaded += await mergeStore("products", mapFirebaseObjectToArray(data.products), root);
-      totalLoaded += await mergeStore("invoices", mapFirebaseObjectToArray(data.invoices), root);
-      totalLoaded += await mergeStore("customers", mapFirebaseObjectToArray(data.customers), root);
-      totalLoaded += await mergeStore("expenses", mapFirebaseObjectToArray(data.expenses), root);
-      totalLoaded += await mergeStore("purchases", mapFirebaseObjectToArray(data.purchases), root);
-      totalLoaded += await mergeStore("supplierPayments", mapFirebaseObjectToArray(data.supplierPayments), root);
-      totalLoaded += await mergeStore("paymentAccounts", mapFirebaseObjectToArray(data.paymentAccounts), root);
+      totalLoaded += await mergeStore("products", mapFirebaseObjectToArray(data.products), rootName);
+      totalLoaded += await mergeStore("invoices", mapFirebaseObjectToArray(data.invoices), rootName);
+      totalLoaded += await mergeStore("customers", mapFirebaseObjectToArray(data.customers), rootName);
+      totalLoaded += await mergeStore("expenses", mapFirebaseObjectToArray(data.expenses), rootName);
+      totalLoaded += await mergeStore("purchases", mapFirebaseObjectToArray(data.purchases), rootName);
+      totalLoaded += await mergeStore("supplierPayments", mapFirebaseObjectToArray(data.supplierPayments), rootName);
+      totalLoaded += await mergeStore("paymentAccounts", mapFirebaseObjectToArray(data.paymentAccounts), rootName);
 
       if (data.settings?.main) {
-        totalLoaded += await mergeStore("settings", [{ ...defaultSettings, ...data.settings.main }], root);
+        totalLoaded += await mergeStore("settings", [{ ...defaultSettings, ...data.settings.main }], rootName);
       }
 
       return totalLoaded;
@@ -2895,11 +2995,11 @@ async function idbPut(storeName, value) {
 
       let totalLoaded = 0;
 
-      for (const root of FIREBASE_FALLBACK_ROOTS) {
+      for (const rootName of FIREBASE_FALLBACK_ROOTS) {
         try {
-          totalLoaded += await loadFirebaseRoot(root);
+          totalLoaded += await loadFirebaseRoot(rootName);
         } catch (e) {
-          console.warn("Firebase load error from root:", root, e);
+          console.warn("Firebase load error from root:", rootName, e);
         }
       }
 
@@ -2955,6 +3055,7 @@ async function idbPut(storeName, value) {
       ].forEach((store) => {
         onValue(ref(db, `${FIREBASE_ROOT}/${store}`), async (snap) => {
           if (!snap.exists()) return;
+
           await mergeStore(store, mapFirebaseObjectToArray(snap.val()), FIREBASE_ROOT);
           await loadLocalData(true);
         });
@@ -3004,7 +3105,11 @@ async function idbPut(storeName, value) {
       if (!navigator.onLine) {
         await refreshPendingCount();
         hideSyncPanelNow();
-        if (showIfEmpty) toast("لا يوجد اتصال، البيانات محفوظة داخل الجهاز");
+
+        if (showIfEmpty) {
+          toast("لا يوجد اتصال، البيانات محفوظة داخل هذا المشروع محليًا");
+        }
+
         return;
       }
 
@@ -3025,12 +3130,12 @@ async function idbPut(storeName, value) {
 
       state.syncing = true;
       clearTimeout(window.__syncHideTimer);
-      setSyncProgress(1, "جاري رفع المحلي أولاً...", `عدد العمليات: ${queue.length}`);
+      setSyncProgress(1, "جاري رفع المحلي أولًا...", `عدد العمليات: ${queue.length}`);
 
       let done = 0;
       const total = queue.length;
 
-      for (const q of queue.sort((a,b) => Number(a.createdAt || 0) - Number(b.createdAt || 0))) {
+      for (const q of queue.sort((a, b) => Number(a.createdAt || 0) - Number(b.createdAt || 0))) {
         try {
           if (q.type === "set") {
             await set(ref(db, `${FIREBASE_ROOT}/${q.store}/${q.itemId}`), q.data);
@@ -3040,11 +3145,14 @@ async function idbPut(storeName, value) {
 
           await idbDelete("syncQueue", q.id);
           done++;
-          setSyncProgress((done / total) * 70, "جاري رفع المحلي أولاً...", `تم رفع ${done} من ${total}`);
+
+          setSyncProgress((done / total) * 70, "جاري رفع المحلي أولًا...", `تم رفع ${done} من ${total}`);
         } catch (e) {
           q.tries = Number(q.tries || 0) + 1;
           q.lastError = String(e?.message || e);
+
           await idbPut("syncQueue", q);
+
           console.error("Sync failed", e);
           break;
         }
@@ -3067,7 +3175,6 @@ async function idbPut(storeName, value) {
         setTimeout(() => syncNow(false), 5000);
       }
     }
-
     function makeLogoDataUrl(text) {
       const letter = String(text || "م").trim().charAt(0) || "م";
       const svg = `
@@ -3080,13 +3187,18 @@ async function idbPut(storeName, value) {
           </defs>
           <rect width="160" height="160" rx="42" fill="url(#g)"/>
           <text x="50%" y="58%" text-anchor="middle" font-size="80" font-family="Arial" font-weight="bold" fill="white">${escapeHtml(letter)}</text>
-        </svg>`;
+        </svg>
+      `;
+
       return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
     }
-function readFileAsDataUrl(file) {
+
+    function readFileAsDataUrl(file) {
       return new Promise((resolve, reject) => {
         if (!file) return resolve("");
+
         const reader = new FileReader();
+
         reader.onload = () => resolve(reader.result);
         reader.onerror = () => reject(reader.error);
         reader.readAsDataURL(file);
@@ -3118,6 +3230,7 @@ function readFileAsDataUrl(file) {
       state.paymentAccounts = await idbGetAll("paymentAccounts");
 
       const settingsRows = await idbGetAll("settings");
+
       state.settings = {
         ...defaultSettings,
         ...(settingsRows[0] || {})
@@ -3157,27 +3270,28 @@ function readFileAsDataUrl(file) {
       const end = new Date();
 
       if (period === "today") {
-        start.setHours(0,0,0,0);
-        end.setHours(23,59,59,999);
+        start.setHours(0, 0, 0, 0);
+        end.setHours(23, 59, 59, 999);
       } else if (period === "week") {
         start.setDate(now.getDate() - 7);
-        start.setHours(0,0,0,0);
-        end.setHours(23,59,59,999);
+        start.setHours(0, 0, 0, 0);
+        end.setHours(23, 59, 59, 999);
       } else if (period === "month") {
         start.setMonth(now.getMonth() - 1);
-        start.setHours(0,0,0,0);
-        end.setHours(23,59,59,999);
+        start.setHours(0, 0, 0, 0);
+        end.setHours(23, 59, 59, 999);
       } else if (period === "year") {
         start.setFullYear(now.getFullYear() - 1);
-        start.setHours(0,0,0,0);
-        end.setHours(23,59,59,999);
+        start.setHours(0, 0, 0, 0);
+        end.setHours(23, 59, 59, 999);
       } else if (period === "custom") {
         if (!customDate) return [];
+
         const d = new Date(customDate);
         start.setTime(d.getTime());
-        start.setHours(0,0,0,0);
+        start.setHours(0, 0, 0, 0);
         end.setTime(d.getTime());
-        end.setHours(23,59,59,999);
+        end.setHours(23, 59, 59, 999);
       }
 
       return items.filter((item) => {
@@ -3192,6 +3306,7 @@ function readFileAsDataUrl(file) {
 
     function getProductByBarcode(code) {
       const c = String(code || "").trim();
+
       if (!c) return null;
 
       return state.products.find((p) =>
@@ -3236,8 +3351,8 @@ function readFileAsDataUrl(file) {
       $("homeDebtCredit").textContent = money(getTotalCredit());
     }
 
-    function productCardHtml(p) {
-      p = normalizeProduct(p);
+    function productCardHtml(product) {
+      const p = normalizeProduct(product);
       const low = cleanNumber(p.stock) <= cleanNumber(p.lowStock || state.settings?.lowStock || 5);
 
       return `
@@ -3245,10 +3360,14 @@ function readFileAsDataUrl(file) {
           <div class="product-icon"><i class="fa-solid fa-box"></i></div>
           <div class="product-name">${escapeHtml(p.name)}</div>
           <div class="money">${money(p.salePrice)} / ${escapeHtml(unitLabel(p.baseUnit, p.customUnit))}</div>
+
           <div class="product-meta">
             <span>${escapeHtml(unitLabel(p.unitType, p.customUnit))}</span>
-            <span class="stock-pill ${low ? "stock-low" : ""}">${cleanNumber(p.stock)} ${escapeHtml(unitLabel(p.baseUnit, p.customUnit))}</span>
+            <span class="stock-pill ${low ? "stock-low" : ""}">
+              ${cleanNumber(p.stock)} ${escapeHtml(unitLabel(p.baseUnit, p.customUnit))}
+            </span>
           </div>
+
           <div class="product-meta">
             <span>${p.unitType === "carton" ? `كرتونة: ${p.cartonUnits}` : `أساس: ${unitLabel(p.baseUnit, p.customUnit)}`}</span>
             <span>${escapeHtml(p.category || "-")}</span>
@@ -3358,6 +3477,7 @@ function readFileAsDataUrl(file) {
       }
 
       const totals = calculateCartTotals();
+
       $("cartSubtotal").textContent = money(totals.subtotal);
       $("cartDiscount").textContent = money(totals.discount);
       $("cartTotal").textContent = money(totals.total);
@@ -3365,6 +3485,7 @@ function readFileAsDataUrl(file) {
 
     function updateCartLine(lineId, patch = {}, rerender = true) {
       const line = state.cart.find(x => x.id === lineId);
+
       if (!line) return;
 
       Object.assign(line, patch);
@@ -3386,6 +3507,7 @@ function readFileAsDataUrl(file) {
         renderCart();
       } else {
         const totals = calculateCartTotals();
+
         $("cartSubtotal").textContent = money(totals.subtotal);
         $("cartDiscount").textContent = money(totals.discount);
         $("cartTotal").textContent = money(totals.total);
@@ -3404,7 +3526,13 @@ function readFileAsDataUrl(file) {
       const cost = state.cart.reduce((s, x) => s + cleanNumber(x.costTotal), 0);
       const profit = total - cost;
 
-      return { subtotal, discount, total, cost, profit };
+      return {
+        subtotal,
+        discount,
+        total,
+        cost,
+        profit
+      };
     }
 
     function renderSuggestions() {
@@ -3431,14 +3559,16 @@ function readFileAsDataUrl(file) {
         return;
       }
 
-      box.innerHTML = matches.map((p) => {
-        p = normalizeProduct(p);
+      box.innerHTML = matches.map((product) => {
+        const p = normalizeProduct(product);
+
         return `
           <div data-suggest-product="${p.id}" style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px;border-bottom:1px solid #f1f5f9;cursor:pointer">
             <div>
               <b>${escapeHtml(p.name)}</b>
               <div class="muted">${escapeHtml(p.barcode || p.code || "")} · المتوفر: ${cleanNumber(p.stock)} ${escapeHtml(unitLabel(p.baseUnit, p.customUnit))}</div>
             </div>
+
             <div style="text-align:left">
               <div class="money">${money(p.salePrice)}</div>
               <div class="muted" style="font-size:11px">${escapeHtml(unitLabel(p.unitType, p.customUnit))}</div>
@@ -3464,10 +3594,19 @@ function readFileAsDataUrl(file) {
 
     function renderFreeInvoice() {
       const box = $("freeInvoiceLines");
+
       if (!box) return;
 
       if (!state.freeLines.length) {
-        state.freeLines = [{ id: uid("free"), name: "", qty: 1, cost: 0, price: 0 }];
+        state.freeLines = [
+          {
+            id: uid("free"),
+            name: "",
+            qty: 1,
+            cost: 0,
+            price: 0
+          }
+        ];
       }
 
       box.innerHTML = state.freeLines.map(line => `
@@ -3507,6 +3646,7 @@ function readFileAsDataUrl(file) {
       document.querySelectorAll("[data-free-line]").forEach(el => {
         const id = el.dataset.freeLine;
         const line = state.freeLines.find(x => x.id === id);
+
         if (!line) return;
 
         line.name = el.querySelector(".free-name")?.value.trim() || "";
@@ -3525,6 +3665,7 @@ function readFileAsDataUrl(file) {
         els.forEach(el => {
           const id = el.dataset.freeLine;
           const line = state.freeLines.find(x => x.id === id);
+
           if (!line) return;
 
           line.name = el.querySelector(".free-name")?.value.trim() || "";
@@ -3558,8 +3699,8 @@ function renderInventory() {
           String(unitLabel(p.unitType, p.customUnit)).toLowerCase().includes(q)
         )
         .sort((a,b) => String(a.name || "").localeCompare(String(b.name || ""), "ar"))
-        .map((p) => {
-          p = normalizeProduct(p);
+        .map((product) => {
+          const p = normalizeProduct(product);
           const low = cleanNumber(p.stock) <= cleanNumber(p.lowStock || state.settings?.lowStock || 5);
 
           const conversionText =
@@ -3630,6 +3771,7 @@ function renderInventory() {
     function statusBadge(status, method = "", invoiceId = "") {
       if (method === "later_app") {
         const paid = status === "paid";
+
         return `
           <span class="badge ${paid ? "green" : "yellow"} clickable" data-open-later-status="${invoiceId}">
             <i class="fa-solid ${paid ? "fa-circle-check" : "fa-clock"}"></i>
@@ -3675,6 +3817,7 @@ function renderInventory() {
             itemsText.includes(q);
 
           const statusOk = status === "all" || inv.paymentMethod === status || inv.status === status;
+
           return searchOk && statusOk;
         })
         .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
@@ -3722,6 +3865,7 @@ function renderInventory() {
 
     function getCustomerLastActivity(customerId) {
       const c = state.customers.find(x => x.id === customerId);
+
       if (!c) return 0;
 
       const invs = getCustomerInvoices(c);
@@ -3838,6 +3982,7 @@ function renderInventory() {
       const rows = state.supplierPayments
         .filter(p => {
           const acc = state.paymentAccounts.find(a => a.id === p.accountId);
+
           return !q ||
             String(p.supplierName || "").toLowerCase().includes(q) ||
             String(acc?.name || "").toLowerCase().includes(q) ||
@@ -3897,8 +4042,7 @@ function renderInventory() {
         rows ||
         `<tr><td colspan="5" class="muted" style="text-align:center">لا توجد مصروفات</td></tr>`;
     }
-
-    function renderReports() {
+function renderReports() {
       const period = $("reportsPeriod")?.value || "today";
       const custom = $("reportsCustomDate")?.value || "";
 
@@ -3915,15 +4059,30 @@ function renderInventory() {
       const expensesTotal = expenses.reduce((s, x) => s + cleanNumber(x.amount), 0);
       const supplierPaymentsTotal = supplierPayments.reduce((s, x) => s + cleanNumber(x.amount), 0);
 
-      const cashSales = invoices.filter(x => x.paymentMethod === "cash").reduce((s, x) => s + cleanNumber(x.total), 0);
-      const appSales = invoices.filter(x => x.paymentMethod === "instant_app").reduce((s, x) => s + cleanNumber(x.total), 0);
-      const debtSales = invoices.filter(x => x.paymentMethod === "debt" || x.paymentMethod === "later_app").reduce((s, x) => s + cleanNumber(x.total), 0);
+      const cashSales = invoices
+        .filter(x => x.paymentMethod === "cash")
+        .reduce((s, x) => s + cleanNumber(x.total), 0);
+
+      const appSales = invoices
+        .filter(x => x.paymentMethod === "instant_app")
+        .reduce((s, x) => s + cleanNumber(x.total), 0);
+
+      const debtSales = invoices
+        .filter(x => x.paymentMethod === "debt" || x.paymentMethod === "later_app")
+        .reduce((s, x) => s + cleanNumber(x.total), 0);
 
       $("reportSales").textContent = money(salesTotal);
       $("reportProfit").textContent = money(profitTotal);
       $("reportExpenses").textContent = money(expensesTotal);
       $("reportSupplierPayments").textContent = money(supplierPaymentsTotal);
+
+      /*
+        ملاحظة مهمة:
+        دفعات التجار لا تُخصم من الربح الصافي حسب طلبك.
+        الصافي = الأرباح - المصروفات فقط.
+      */
       $("reportNet").textContent = money(profitTotal - expensesTotal);
+
       $("reportInvoicesCount").textContent = invoices.length;
       $("reportCashSales").textContent = money(cashSales);
       $("reportAppSales").textContent = money(appSales);
@@ -3931,8 +4090,9 @@ function renderInventory() {
 
       const lowRows = state.products
         .filter(p => cleanNumber(p.stock) <= cleanNumber(p.lowStock || state.settings?.lowStock || 5))
-        .map(p => {
-          p = normalizeProduct(p);
+        .map(product => {
+          const p = normalizeProduct(product);
+
           return `
             <tr>
               <td><b>${escapeHtml(p.name)}</b></td>
@@ -3982,6 +4142,7 @@ function renderInventory() {
         accRows ||
         `<tr><td colspan="3" class="muted" style="text-align:center">لا توجد أرصدة</td></tr>`;
     }
+
     function renderSettingsAccounts() {
       $("paymentAccountsList").innerHTML =
         state.paymentAccounts.map(a => `
@@ -4103,7 +4264,10 @@ function renderInventory() {
         const oldByBarcode = barcode ? getProductByBarcode(barcode) : null;
 
         const unitType = $("productUnitType").value;
-        const cartonUnits = unitType === "carton" ? Math.max(1, cleanNumber($("productCartonUnits").value, 1)) : 1;
+        const cartonUnits = unitType === "carton"
+          ? Math.max(1, cleanNumber($("productCartonUnits").value, 1))
+          : 1;
+
         const factor = factorForUnitType(unitType, cartonUnits);
 
         const enteredStock = cleanNumber($("productStock").value, 0);
@@ -4121,7 +4285,7 @@ function renderInventory() {
         const id = target?.id || uid("prod");
         const oldStock = cleanNumber(target?.stock || 0);
 
-        const product = normalizeProduct({
+        const productToSave = normalizeProduct({
           ...(target || {}),
           id,
           code: barcode || target?.code || String(Date.now()).slice(-8),
@@ -4143,17 +4307,17 @@ function renderInventory() {
           updatedAt: Date.now()
         });
 
-        await saveLocal("products", product, true);
+        await saveLocal("products", productToSave, true);
 
         const i = state.products.findIndex(p => p.id === id);
-        if (i >= 0) state.products[i] = product;
-        else state.products.push(product);
+        if (i >= 0) state.products[i] = productToSave;
+        else state.products.push(productToSave);
 
         closeModal();
         renderAll();
 
         if (merged) {
-          toast(`الباركود موجود مسبقًا، تم دمج الكمية: كان ${oldStock} وأصبح ${product.stock}`);
+          toast(`الباركود موجود مسبقًا، كان ${oldStock} وأصبح ${productToSave.stock}`);
         } else {
           toast("تم حفظ المنتج وتحويله للوحدة الأساسية");
         }
@@ -4211,7 +4375,6 @@ function renderInventory() {
         .map(a => `<option value="${a.id}">${escapeHtml(a.name)} ${a.number ? " - " + escapeHtml(a.number) : ""}</option>`)
         .join("") || `<option value="cash">كاش</option>`;
     }
-
     function showSmartProductSuggestions(inputEl, onSelect) {
       const q = String(inputEl.value || "").trim().toLowerCase();
       const box = $("smartSuggestBox");
@@ -4241,8 +4404,9 @@ function renderInventory() {
       box.style.top = `${rect.bottom + window.scrollY + 6}px`;
       box.style.right = `${window.innerWidth - rect.right + window.scrollX}px`;
 
-      box.innerHTML = matches.map(p => {
-        p = normalizeProduct(p);
+      box.innerHTML = matches.map(product => {
+        const p = normalizeProduct(product);
+
         return `
           <div class="smart-suggest-item" data-smart-product="${p.id}">
             <div>
@@ -4262,6 +4426,7 @@ function renderInventory() {
         el.onclick = () => {
           const p = getProductById(el.dataset.smartProduct);
           if (!p) return;
+
           box.style.display = "none";
           onSelect(p);
         };
@@ -4271,18 +4436,21 @@ function renderInventory() {
     function hideSmartSuggestions() {
       setTimeout(() => {
         const box = $("smartSuggestBox");
+
         if (box) {
           box.style.display = "none";
           box.innerHTML = "";
         }
       }, 180);
     }
+
     function openPurchaseForm() {
       const node = cloneTemplate("purchaseFormTemplate");
       openModal("فاتورة مشتريات", node);
 
       function selectPurchaseProduct(product) {
         const p = normalizeProduct(product);
+
         $("purchaseProduct").value = p.id;
         $("purchaseProductSearch").value = `${p.name} - ${p.barcode || p.code || ""}`;
 
@@ -4291,6 +4459,7 @@ function renderInventory() {
 
       function fillPurchaseUnits() {
         const product = normalizeProduct(getProductById($("purchaseProduct").value));
+
         if (!product || !product.id) return;
 
         const opts = getSaleUnitOptions(product);
@@ -4301,11 +4470,13 @@ function renderInventory() {
 
         $("purchaseCartonUnits").value = product.cartonUnits || 1;
         $("purchaseSalePrice").value = cleanNumber(product.displaySalePrice || product.salePrice || 0);
+
         updatePurchasePreview();
       }
 
       function updatePurchasePreview() {
         const product = normalizeProduct(getProductById($("purchaseProduct").value));
+
         if (!product || !product.id) {
           $("purchaseUnitsPreview").value = "اختر المنتج أولاً";
           return;
@@ -4376,9 +4547,14 @@ function renderInventory() {
 
         product.stock = cleanNumber(product.stock) + qtyBase;
         product.costPrice = baseCost;
-        if (enteredSale > 0) product.salePrice = baseSale;
+
+        if (enteredSale > 0) {
+          product.salePrice = baseSale;
+          product.displaySalePrice = enteredSale;
+        }
+
         if (isCarton) product.cartonUnits = cartonUnits;
-        if (enteredSale > 0) product.displaySalePrice = enteredSale;
+
         product.displayCostPrice = enteredCost;
         product.updatedAt = Date.now();
 
@@ -4534,11 +4710,13 @@ function renderInventory() {
       }
 
       const rect = inputEl.getBoundingClientRect();
+
       box.style.top = `${rect.bottom + window.scrollY + 6}px`;
       box.style.right = `${window.innerWidth - rect.right + window.scrollX}px`;
 
       box.innerHTML = matches.map(c => {
         const bal = customerBalanceText(c.balance);
+
         return `
           <div class="customer-suggest-item" data-pick-customer="${c.id}">
             <div>
@@ -4555,10 +4733,12 @@ function renderInventory() {
       box.querySelectorAll("[data-pick-customer]").forEach(el => {
         el.onclick = () => {
           const c = state.customers.find(x => x.id === el.dataset.pickCustomer);
+
           if (!c) return;
 
           inputEl.value = c.name || "";
           if (phoneEl) phoneEl.value = c.phone || "";
+
           box.style.display = "none";
 
           if (typeof onSelect === "function") onSelect(c);
@@ -4569,6 +4749,7 @@ function renderInventory() {
     function hideCustomerSuggestions() {
       setTimeout(() => {
         const box = $("customerSuggestBox");
+
         if (box) {
           box.style.display = "none";
           box.innerHTML = "";
@@ -4622,6 +4803,7 @@ function renderInventory() {
 
       if (source === "free") {
         syncFreeLinesFromDom();
+
         const valid = state.freeLines.some(x => x.name && cleanNumber(x.price) > 0);
 
         if (!valid) {
@@ -5025,6 +5207,7 @@ function renderInventory() {
       }
 
       let customerToOpen = null;
+
       if (["debt", "later_app"].includes(payment.paymentMethod)) {
         let customer = payment.customerId
           ? state.customers.find(c => c.id === payment.customerId)
@@ -5107,8 +5290,7 @@ function renderInventory() {
         openInvoiceView(invoice);
       }
     }
-
-    async function payCustomer(customerId) {
+async function payCustomer(customerId) {
       const customer = state.customers.find(c => c.id === customerId);
       if (!customer) return;
 
@@ -5358,7 +5540,6 @@ function renderInventory() {
     }
 function getCustomerTableRows(customer, tab = "all") {
       const rows = [];
-
       const invoices = getCustomerInvoices(customer);
 
       invoices.forEach(inv => {
@@ -5648,11 +5829,12 @@ function getCustomerTableRows(customer, tab = "all") {
         $("pdfInvoiceBtn").onclick = () => downloadElementPdf($("invoiceViewBox"), `invoice-${invoice.number}.pdf`);
       }, 80);
     }
-
     function printHtml(html) {
       const area = $("printArea");
+
       area.style.display = "block";
       area.innerHTML = html;
+
       window.print();
 
       setTimeout(() => {
@@ -5708,7 +5890,8 @@ function getCustomerTableRows(customer, tab = "all") {
 
       pdf.save(filename);
     }
-function reportShell(title, bodyHtml) {
+
+    function reportShell(title, bodyHtml) {
       const s = state.settings || defaultSettings;
       const logo = s.logo || makeLogoDataUrl(s.shopName);
 
@@ -5853,6 +6036,7 @@ function reportShell(title, bodyHtml) {
             itemsText.includes(q);
 
           const statusOk = status === "all" || inv.paymentMethod === status || inv.status === status;
+
           return searchOk && statusOk;
         })
         .sort((a,b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
@@ -5922,7 +6106,6 @@ function reportShell(title, bodyHtml) {
         </table>
       `);
     }
-
     function buildFullReportsHtml() {
       const period = $("reportsPeriod")?.value || "today";
       const custom = $("reportsCustomDate")?.value || "";
@@ -5966,6 +6149,7 @@ function reportShell(title, bodyHtml) {
 
       const supplierPaymentRows = supplierPayments.map(p => {
         const acc = state.paymentAccounts.find(a => a.id === p.accountId);
+
         return `
           <tr>
             <td>${formatDate(p.createdAt)}</td>
@@ -6037,7 +6221,8 @@ function reportShell(title, bodyHtml) {
         </table>
       `);
     }
-function printCurrentInvoices() {
+
+    function printCurrentInvoices() {
       printHtml(buildFullInvoicesReportHtml());
     }
 
@@ -6122,6 +6307,9 @@ function printCurrentInvoices() {
     function exportBackup() {
       const data = {
         version: DB_VERSION,
+        dbName: DB_NAME,
+        firebaseNamespace: DB_NAMESPACE,
+        firebaseRoot: FIREBASE_ROOT,
         exportedAt: Date.now(),
         products: state.products,
         invoices: state.invoices,
@@ -6133,10 +6321,13 @@ function printCurrentInvoices() {
         settings: state.settings
       };
 
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: "application/json"
+      });
+
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `cashier-backup-${todayKey()}.json`;
+      a.download = `cashier-backup-${DB_NAMESPACE}-${todayKey()}.json`;
       a.click();
 
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -6178,7 +6369,7 @@ function printCurrentInvoices() {
           data: state.settings
         });
 
-        toast("تم استيراد النسخة الاحتياطية");
+        toast("تم استيراد النسخة الاحتياطية لهذا المشروع");
       } catch (e) {
         console.error(e);
         toast("فشل استيراد النسخة");
@@ -6186,7 +6377,7 @@ function printCurrentInvoices() {
     }
 
     async function clearLocalData() {
-      if (!confirm("هل أنت متأكد من مسح البيانات المحلية؟")) return;
+      if (!confirm("هل أنت متأكد من مسح بيانات هذا المشروع فقط؟")) return;
 
       for (const store of STORE_NAMES) {
         await idbClear(store);
@@ -6205,13 +6396,13 @@ function printCurrentInvoices() {
 
       await idbPut("settings", state.settings);
       await idbBulkPut("paymentAccounts", defaultAccounts);
+
       state.paymentAccounts = defaultAccounts;
 
       renderAll();
       await refreshPendingCount();
-      toast("تم مسح البيانات المحلية");
+      toast("تم مسح بيانات هذا المشروع محليًا");
     }
-
     async function deleteProduct(productId) {
       if (!confirm("حذف المنتج؟")) return;
 
@@ -6338,6 +6529,7 @@ function printCurrentInvoices() {
         </div>
       `, true);
     }
+
     function stopScanner() {
       if (state.scanner.reader) {
         try {
@@ -6358,7 +6550,11 @@ function printCurrentInvoices() {
       }
 
       state.scanner.floatingReader = null;
-      $("floatingScanner").classList.remove("show");
+
+      if ($("floatingScanner")) {
+        $("floatingScanner").classList.remove("show");
+      }
+
       state.scanner.locked = false;
     }
 
@@ -6375,6 +6571,7 @@ function printCurrentInvoices() {
         if (!code) return;
 
         const input = $(targetInputId);
+
         if (input) {
           input.value = code.trim();
           input.dispatchEvent(new Event("input", { bubbles: true }));
@@ -6451,10 +6648,7 @@ function printCurrentInvoices() {
     function handleScannedCode(code) {
       stopScanner();
 
-      const product = state.products.find(p =>
-        String(p.barcode || "") === String(code) ||
-        String(p.code || "") === String(code)
-      );
+      const product = getProductByBarcode(code);
 
       if (product) {
         closeModal();
@@ -6469,10 +6663,7 @@ function printCurrentInvoices() {
       const code = prompt("أدخل الباركود أو كود المنتج");
       if (!code) return;
 
-      const product = state.products.find(p =>
-        String(p.barcode || "") === String(code) ||
-        String(p.code || "") === String(code)
-      );
+      const product = getProductByBarcode(code);
 
       if (product) {
         addToCart(product);
@@ -6547,8 +6738,7 @@ function printCurrentInvoices() {
         }
       }, 120);
     }
-
-    function closeSidebarIfOutside(e) {
+function closeSidebarIfOutside(e) {
       const sidebar = $("sidebar");
       const menuBtn = $("openMenuBtn");
 
@@ -6913,11 +7103,12 @@ function printCurrentInvoices() {
         }
       });
     }
+
     async function boot() {
       await openDB();
       bindEvents();
 
-      setSyncProgress(2, "تشغيل التطبيق...", "تحميل البيانات المحلية");
+      setSyncProgress(2, "تشغيل التطبيق...", "تحميل بيانات هذا المشروع من التخزين المحلي");
       await loadLocalData(true);
 
       if (!state.freeLines.length) {
@@ -6927,18 +7118,18 @@ function printCurrentInvoices() {
       renderAll();
 
       if (navigator.onLine) {
-        setSyncProgress(8, "رفع المحلي أولاً...", "أي بيانات محفوظة أوفلاين سيتم رفعها قبل تنزيل Firebase");
+        setSyncProgress(8, "رفع المحلي أولًا...", "أي بيانات محفوظة بدون نت سيتم رفعها قبل تنزيل Firebase");
         await syncNow(false);
 
-        setSyncProgress(55, "تحميل بيانات Firebase...", "تنزيل الجديد فقط وتخزينه محليًا");
+        setSyncProgress(55, "تحميل بيانات Firebase...", "تنزيل الجديد فقط وتخزينه محليًا لهذا المشروع");
         await loadFirebaseOnce();
 
-        setSyncProgress(78, "تثبيت المسار الحالي...", "رفع نسخة من المحلي للمسار الحالي حتى لا تضيع البيانات القديمة");
+        setSyncProgress(78, "تثبيت البيانات...", "رفع نسخة المحلي للمسار الحالي عند الحاجة");
         await syncOldDataToNewRoot();
 
         startRealtimeListeners();
 
-        setSyncProgress(100, "جاهز", "تم تحميل ومزامنة البيانات");
+        setSyncProgress(100, "جاهز", "تم تحميل ومزامنة بيانات هذا المشروع");
         hideSyncPanelLater(750);
       } else {
         hideSyncPanelNow();
@@ -6957,32 +7148,21 @@ function printCurrentInvoices() {
       }, 12000);
     }
 
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", async () => {
+        try {
+          await navigator.serviceWorker.register("./sw.js", { scope: "./" });
+        } catch (err) {
+          console.warn("Service Worker registration failed:", err);
+        }
+      });
+    }
+
     boot().catch((e) => {
       console.error(e);
       toast("حدث خطأ أثناء تشغيل التطبيق");
       hideSyncPanelNow();
     });
   </script>
-  
-<script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", async () => {
-      try {
-        const reg = await navigator.serviceWorker.register("./sw.js", {
-          scope: "./"
-        });
-
-        console.log("Service Worker مسجل:", reg.scope);
-
-        if (navigator.serviceWorker.controller) {
-          console.log("التطبيق يعمل تحت Service Worker");
-        }
-      } catch (err) {
-        console.error("فشل تسجيل Service Worker:", err);
-      }
-    });
-  }
-</script>
-  
 </body>
 </html>

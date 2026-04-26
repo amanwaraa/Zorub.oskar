@@ -1,10 +1,11 @@
-const CACHE_VERSION = "cashier-offline-v1.0.0";
-const RUNTIME_CACHE = "cashier-runtime-v1.0.0";
+const CACHE_VERSION = "cashier-offline-v1.0.2";
+const RUNTIME_CACHE = "cashier-runtime-v1.0.2";
 
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.json",
+  "./firebase-config.js",
 
   "https://cdn.tailwindcss.com",
   "https://unpkg.com/@zxing/library@latest",
@@ -24,8 +25,13 @@ self.addEventListener("install", event => {
           APP_SHELL.map(url =>
             fetch(url, { cache: "reload" })
               .then(res => {
-                if (!res || !res.ok) throw new Error("Bad response: " + url);
+                if (!res || !res.ok) {
+                  throw new Error("Bad response: " + url);
+                }
                 return cache.put(url, res);
+              })
+              .catch(err => {
+                console.warn("Cache failed:", url, err);
               })
           )
         );
@@ -37,11 +43,13 @@ self.addEventListener("install", event => {
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(
-        keys
-          .filter(key => key !== CACHE_VERSION && key !== RUNTIME_CACHE)
-          .map(key => caches.delete(key))
-      ))
+      .then(keys =>
+        Promise.all(
+          keys
+            .filter(key => key !== CACHE_VERSION && key !== RUNTIME_CACHE)
+            .map(key => caches.delete(key))
+        )
+      )
       .then(() => self.clients.claim())
   );
 });
@@ -53,18 +61,23 @@ self.addEventListener("fetch", event => {
 
   const url = new URL(req.url);
 
-  if (
+  const isFirebaseRequest =
     url.hostname.includes("firebaseio.com") ||
+    url.hostname.includes("firebasedatabase.app") ||
     url.hostname.includes("googleapis.com") ||
-    url.hostname.includes("gstatic.com") && url.pathname.includes("firebase")
-  ) {
+    url.hostname.includes("gstatic.com") && url.pathname.includes("firebase");
+
+  if (isFirebaseRequest) {
     event.respondWith(
       fetch(req).catch(() => {
         return new Response(JSON.stringify({
           offline: true,
           message: "Firebase غير متاح بدون إنترنت، البيانات محفوظة محليًا"
         }), {
-          headers: { "Content-Type": "application/json" }
+          status: 200,
+          headers: {
+            "Content-Type": "application/json;charset=utf-8"
+          }
         });
       })
     );
@@ -76,18 +89,63 @@ self.addEventListener("fetch", event => {
       fetch(req)
         .then(res => {
           const copy = res.clone();
-          caches.open(CACHE_VERSION).then(cache => cache.put("./index.html", copy)).catch(() => {});
+          caches.open(CACHE_VERSION)
+            .then(cache => cache.put("./index.html", copy))
+            .catch(() => {});
           return res;
         })
         .catch(async () => {
-          const cached =
+          const cachedIndex =
             await caches.match("./index.html") ||
             await caches.match("./") ||
             await caches.match(req);
 
-          return cached || new Response(
-            "<!doctype html><html lang='ar' dir='rtl'><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><body style='font-family:Arial;text-align:center;padding:30px'><h2>التطبيق غير محفوظ بعد</h2><p>افتحه مرة واحدة مع الإنترنت ليعمل بدون نت.</p></body></html>",
-            { headers: { "Content-Type": "text/html;charset=utf-8" } }
+          return cachedIndex || new Response(
+            `
+            <!doctype html>
+            <html lang="ar" dir="rtl">
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width,initial-scale=1">
+              <title>التطبيق غير محفوظ</title>
+              <style>
+                body{
+                  margin:0;
+                  min-height:100vh;
+                  display:flex;
+                  align-items:center;
+                  justify-content:center;
+                  font-family:Arial,sans-serif;
+                  background:#eef3f9;
+                  color:#0f172a;
+                  text-align:center;
+                  padding:24px;
+                }
+                .box{
+                  background:white;
+                  border-radius:24px;
+                  padding:24px;
+                  box-shadow:0 20px 50px rgba(15,23,42,.12);
+                  max-width:420px;
+                }
+                h2{margin:0 0 10px}
+                p{color:#64748b;line-height:1.8}
+              </style>
+            </head>
+            <body>
+              <div class="box">
+                <h2>التطبيق غير محفوظ بعد</h2>
+                <p>افتح التطبيق مرة واحدة مع الإنترنت، ثم سيعمل بدون نت حتى عند تحديث الصفحة.</p>
+              </div>
+            </body>
+            </html>
+            `,
+            {
+              status: 200,
+              headers: {
+                "Content-Type": "text/html;charset=utf-8"
+              }
+            }
           );
         })
     );
@@ -107,7 +165,9 @@ self.addEventListener("fetch", event => {
           .then(res => {
             if (res && res.ok) {
               const copy = res.clone();
-              caches.open(RUNTIME_CACHE).then(cache => cache.put(req, copy)).catch(() => {});
+              caches.open(RUNTIME_CACHE)
+                .then(cache => cache.put(req, copy))
+                .catch(() => {});
             }
             return res;
           })
@@ -124,7 +184,9 @@ self.addEventListener("fetch", event => {
       .then(res => {
         if (res && res.ok) {
           const copy = res.clone();
-          caches.open(RUNTIME_CACHE).then(cache => cache.put(req, copy)).catch(() => {});
+          caches.open(RUNTIME_CACHE)
+            .then(cache => cache.put(req, copy))
+            .catch(() => {});
         }
         return res;
       })
