@@ -1,5 +1,5 @@
-const CACHE_VERSION = "cashier-offline-v1.0.2";
-const RUNTIME_CACHE = "cashier-runtime-v1.0.2";
+const CACHE_VERSION = "cashier-offline-v1.0.3";
+const RUNTIME_CACHE = "cashier-runtime-v1.0.3";
 
 const APP_SHELL = [
   "./",
@@ -65,7 +65,7 @@ self.addEventListener("fetch", event => {
     url.hostname.includes("firebaseio.com") ||
     url.hostname.includes("firebasedatabase.app") ||
     url.hostname.includes("googleapis.com") ||
-    url.hostname.includes("gstatic.com") && url.pathname.includes("firebase");
+    (url.hostname.includes("gstatic.com") && url.pathname.includes("firebase"));
 
   if (isFirebaseRequest) {
     event.respondWith(
@@ -89,9 +89,13 @@ self.addEventListener("fetch", event => {
       fetch(req)
         .then(res => {
           const copy = res.clone();
+
           caches.open(CACHE_VERSION)
-            .then(cache => cache.put("./index.html", copy))
+            .then(cache => {
+              cache.put("./index.html", copy).catch(() => {});
+            })
             .catch(() => {});
+
           return res;
         })
         .catch(async () => {
@@ -165,10 +169,14 @@ self.addEventListener("fetch", event => {
           .then(res => {
             if (res && res.ok) {
               const copy = res.clone();
+
               caches.open(RUNTIME_CACHE)
-                .then(cache => cache.put(req, copy))
+                .then(cache => {
+                  cache.put(req, copy).catch(() => {});
+                })
                 .catch(() => {});
             }
+
             return res;
           })
           .catch(() => cached);
@@ -184,10 +192,14 @@ self.addEventListener("fetch", event => {
       .then(res => {
         if (res && res.ok) {
           const copy = res.clone();
+
           caches.open(RUNTIME_CACHE)
-            .then(cache => cache.put(req, copy))
+            .then(cache => {
+              cache.put(req, copy).catch(() => {});
+            })
             .catch(() => {});
         }
+
         return res;
       })
       .catch(() => caches.match(req))
