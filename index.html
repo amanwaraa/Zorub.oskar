@@ -1278,25 +1278,95 @@
         max-width:none;
       }
     }
+    
+    
+    .full-row{
+  grid-column:1 / -1;
+}
 
     @media(max-width:520px){
-      .form-grid,
-      .form-grid-compact{
-        grid-template-columns:1fr;
-        gap:8px;
-      }
+  .form-grid,
+  .form-grid-compact{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px !important;
+    align-items:end;
+  }
 
-      .field-label{
-        font-size:12px;
-      }
+  .form-grid > *,
+  .form-grid-compact > *{
+    min-width:0 !important;
+  }
 
-      .input,
-      .select,
-      .textarea{
-        padding:11px 10px;
-        font-size:13px;
-      }
-    }
+  .field-label{
+    font-size:12px;
+    margin-bottom:5px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .input,
+  .select,
+  .textarea{
+    padding:10px 9px;
+    font-size:13px;
+    min-width:0;
+  }
+
+  .textarea{
+    min-height:76px;
+  }
+
+  .input-with-btn{
+    grid-template-columns:1fr 42px;
+    gap:6px;
+  }
+
+  .icon-btn{
+    width:42px;
+    height:42px;
+    border-radius:14px;
+  }
+
+  .modal{
+    padding:14px;
+  }
+
+  .modal-title{
+    font-size:17px;
+  }
+
+  .primary-btn,
+  .gold-btn,
+  .ghost-btn,
+  .danger-btn,
+  .success-btn{
+    padding:11px 12px;
+    font-size:13px;
+    border-radius:15px;
+  }
+
+  .payment-choice-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px;
+  }
+
+  .payment-choice{
+    min-height:96px;
+    padding:12px 8px;
+    border-radius:18px;
+  }
+
+  .payment-choice i{
+    font-size:22px;
+  }
+
+  .debt-summary-strip,
+  .stat-grid,
+  .clean-stats-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+}
   </style>
 </head>
 
@@ -2184,10 +2254,10 @@
         </div>
       </div>
 
-      <div style="margin-top:12px">
-        <label class="field-label">ملاحظات</label>
-        <textarea id="purchaseNotes" class="textarea"></textarea>
-      </div>
+      <div class="full-row" style="margin-top:12px">
+  <label class="field-label">ملاحظات</label>
+  <textarea id="purchaseNotes" class="textarea"></textarea>
+</div>
 
       <button class="primary-btn" type="submit" style="margin-top:14px">
         <i class="fa-solid fa-floppy-disk"></i> حفظ المشتريات وتحديث المخزون
