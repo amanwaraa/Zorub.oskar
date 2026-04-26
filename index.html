@@ -3054,8 +3054,14 @@
       totalLoaded += await mergeStore("paymentAccounts", mapFirebaseObjectToArray(data.paymentAccounts), rootName);
 
       if (data.settings?.main) {
-        totalLoaded += await mergeStore("settings", [{ ...defaultSettings, ...data.settings.main }], rootName);
-      }
+  const localSettings = state.settings || (await idbGet("settings", "main")) || defaultSettings;
+
+  totalLoaded += await mergeStore("settings", [{
+    ...defaultSettings,
+    ...data.settings.main,
+    logo: localSettings.logo || ""
+  }], rootName);
+}
 
       return totalLoaded;
     }
@@ -3134,7 +3140,13 @@
       onValue(ref(db, `${FIREBASE_ROOT}/settings/main`), async (snap) => {
         if (!snap.exists()) return;
 
-        await mergeStore("settings", [{ ...defaultSettings, ...snap.val() }], FIREBASE_ROOT);
+        const localSettings = state.settings || (await idbGet("settings", "main")) || defaultSettings;
+
+await mergeStore("settings", [{
+  ...defaultSettings,
+  ...snap.val(),
+  logo: localSettings.logo || ""
+}], FIREBASE_ROOT);
         await loadLocalData(true);
       });
     }
@@ -6349,30 +6361,43 @@ function getCustomerTableRows(customer, tab = "all") {
     }
 
     async function saveSettings() {
-      const file = $("settingLogoFile").files[0];
-      let logo = state.settings?.logo || "";
+  const file = $("settingLogoFile").files[0];
+  let logo = state.settings?.logo || "";
 
-      if (file) {
-        logo = await readFileAsDataUrl(file);
-      }
+  if (file) {
+    logo = await readFileAsDataUrl(file);
+  }
 
-      state.settings = {
-        ...defaultSettings,
-        ...state.settings,
-        id: "main",
-        shopName: $("settingShopName").value.trim() || "المحل الرئيسي",
-        shopPhone: $("settingShopPhone").value.trim(),
-        currency: $("settingCurrency").value.trim() || "₪",
-        lowStock: cleanNumber($("settingLowStock").value, 5),
-        logo,
-        updatedAt: Date.now()
-      };
+  state.settings = {
+    ...defaultSettings,
+    ...state.settings,
+    id: "main",
+    shopName: $("settingShopName").value.trim() || "المحل الرئيسي",
+    shopPhone: $("settingShopPhone").value.trim(),
+    currency: $("settingCurrency").value.trim() || "₪",
+    lowStock: cleanNumber($("settingLowStock").value, 5),
+    logo,
+    updatedAt: Date.now()
+  };
 
-      await saveLocal("settings", state.settings, true);
-      applySettingsToUI();
-      renderAll();
-      toast("تم حفظ الإعدادات");
-    }
+  await idbPut("settings", state.settings);
+
+  const settingsForFirebase = {
+    ...state.settings,
+    logo: ""
+  };
+
+  await enqueueSync({
+    type: "set",
+    store: "settings",
+    itemId: "main",
+    data: settingsForFirebase
+  });
+
+  applySettingsToUI();
+  renderAll();
+  toast("تم حفظ الإعدادات، والشعار محفوظ محليًا فقط");
+}
 
     function exportBackup() {
       const data = {
