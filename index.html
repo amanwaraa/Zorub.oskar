@@ -31,7 +31,10 @@
       --shadow:0 18px 48px rgba(15,23,42,.08);
     }
 
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    *{
+      box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+    }
 
     body{
       margin:0;
@@ -44,10 +47,19 @@
       overflow-x:hidden;
     }
 
-    button,input,select,textarea{font-family:inherit}
-    button{cursor:pointer;user-select:none}
+    button,input,select,textarea{
+      font-family:inherit;
+    }
 
-    .app-shell{min-height:100vh;display:flex}
+    button{
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .app-shell{
+      min-height:100vh;
+      display:flex;
+    }
 
     .sidebar{
       width:268px;
@@ -88,7 +100,12 @@
       margin-bottom:18px;
     }
 
-    .brand{display:flex;align-items:center;gap:11px;min-width:0}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:11px;
+      min-width:0;
+    }
 
     .shop-logo{
       width:46px;
@@ -111,7 +128,11 @@
       max-width:230px;
     }
 
-    .brand-sub{font-size:11px;color:var(--muted);margin-top:2px}
+    .brand-sub{
+      font-size:11px;
+      color:var(--muted);
+      margin-top:2px;
+    }
 
     .sidebar-header{
       display:flex;
@@ -138,9 +159,22 @@
       text-align:right;
     }
 
-    .nav-btn:hover{background:#f1f5f9;color:#1d4ed8}
-    .nav-btn.active{background:linear-gradient(135deg,var(--primary),var(--primary2));color:white;box-shadow:0 10px 24px rgba(37,99,235,.24)}
-    .nav-icon{width:23px;text-align:center;font-size:16px}
+    .nav-btn:hover{
+      background:#f1f5f9;
+      color:#1d4ed8;
+    }
+
+    .nav-btn.active{
+      background:linear-gradient(135deg,var(--primary),var(--primary2));
+      color:white;
+      box-shadow:0 10px 24px rgba(37,99,235,.24);
+    }
+
+    .nav-icon{
+      width:23px;
+      text-align:center;
+      font-size:16px;
+    }
 
     .icon-btn{
       width:44px;
@@ -158,9 +192,17 @@
       font-size:16px;
     }
 
-    .icon-btn:hover{background:#e0edff;color:#1d4ed8;transform:translateY(-1px)}
+    .icon-btn:hover{
+      background:#e0edff;
+      color:#1d4ed8;
+      transform:translateY(-1px);
+    }
 
-    .primary-btn,.gold-btn,.ghost-btn,.danger-btn,.success-btn{
+    .primary-btn,
+    .gold-btn,
+    .ghost-btn,
+    .danger-btn,
+    .success-btn{
       border:0;
       border-radius:17px;
       padding:12px 16px;
@@ -172,13 +214,41 @@
       transition:.18s;
     }
 
-    .primary-btn{background:linear-gradient(135deg,var(--primary),var(--primary2));color:white;box-shadow:0 12px 26px rgba(37,99,235,.25)}
-    .gold-btn{background:linear-gradient(135deg,#e0ad45,#c99024);color:white;box-shadow:0 12px 26px rgba(217,164,65,.25)}
-    .ghost-btn{border:1px solid var(--border);background:#fff;color:#111827}
-    .danger-btn{background:#fee2e2;color:#b91c1c}
-    .success-btn{background:#dcfce7;color:#15803d}
+    .primary-btn{
+      background:linear-gradient(135deg,var(--primary),var(--primary2));
+      color:white;
+      box-shadow:0 12px 26px rgba(37,99,235,.25);
+    }
 
-    .primary-btn:hover,.gold-btn:hover,.ghost-btn:hover,.danger-btn:hover,.success-btn:hover{transform:translateY(-1px)}
+    .gold-btn{
+      background:linear-gradient(135deg,#e0ad45,#c99024);
+      color:white;
+      box-shadow:0 12px 26px rgba(217,164,65,.25);
+    }
+
+    .ghost-btn{
+      border:1px solid var(--border);
+      background:#fff;
+      color:#111827;
+    }
+
+    .danger-btn{
+      background:#fee2e2;
+      color:#b91c1c;
+    }
+
+    .success-btn{
+      background:#dcfce7;
+      color:#15803d;
+    }
+
+    .primary-btn:hover,
+    .gold-btn:hover,
+    .ghost-btn:hover,
+    .danger-btn:hover,
+    .success-btn:hover{
+      transform:translateY(-1px);
+    }
 
     .fab-add{
       position:fixed;
@@ -206,15 +276,29 @@
       padding:16px;
     }
 
-    .section{display:none;animation:fadeIn .2s ease}
-    .section.active{display:block}
-
-    @keyframes fadeIn{
-      from{opacity:0;transform:translateY(7px)}
-      to{opacity:1;transform:translateY(0)}
+    .section{
+      display:none;
+      animation:fadeIn .2s ease;
     }
 
-    .input,.select,.textarea{
+    .section.active{
+      display:block;
+    }
+
+    @keyframes fadeIn{
+      from{
+        opacity:0;
+        transform:translateY(7px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    .input,
+    .select,
+    .textarea{
       width:100%;
       border:1px solid transparent;
       background:#f8fafc;
@@ -225,20 +309,53 @@
       transition:.18s;
     }
 
-    .textarea{min-height:92px;resize:vertical}
+    .textarea{
+      min-height:92px;
+      resize:vertical;
+    }
 
-    .input:focus,.select:focus,.textarea:focus{
+    .input:focus,
+    .select:focus,
+    .textarea:focus{
       border-color:rgba(37,99,235,.45);
       background:#fff;
       box-shadow:0 0 0 4px rgba(37,99,235,.08);
     }
 
-    .input-with-btn{display:grid;grid-template-columns:1fr 48px;gap:8px;align-items:center}
-    .field-label{display:block;font-size:13px;font-weight:900;color:#334155;margin-bottom:7px}
-    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-    .form-grid-compact{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-    .conditional-box{display:none}
-    .conditional-box.show{display:block}
+    .input-with-btn{
+      display:grid;
+      grid-template-columns:1fr 48px;
+      gap:8px;
+      align-items:center;
+    }
+
+    .field-label{
+      display:block;
+      font-size:13px;
+      font-weight:900;
+      color:#334155;
+      margin-bottom:7px;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+
+    .form-grid-compact{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+    }
+
+    .conditional-box{
+      display:none;
+    }
+
+    .conditional-box.show{
+      display:block;
+    }
 
     .table-wrap{
       width:100%;
@@ -248,7 +365,11 @@
       background:#fff;
     }
 
-    table{width:100%;border-collapse:collapse;min-width:840px}
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:840px;
+    }
 
     th{
       background:#f8fafc;
@@ -268,9 +389,18 @@
       white-space:nowrap;
     }
 
-    tr:last-child td{border-bottom:0}
-    .money{color:#1d4ed8;font-weight:900}
-    .muted{color:var(--muted)}
+    tr:last-child td{
+      border-bottom:0;
+    }
+
+    .money{
+      color:#1d4ed8;
+      font-weight:900;
+    }
+
+    .muted{
+      color:var(--muted);
+    }
 
     .clean-stats-card{
       background:rgba(255,255,255,.94);
@@ -309,7 +439,10 @@
       font-weight:900;
     }
 
-    .clean-stat-title i{color:#64748b;font-size:15px}
+    .clean-stat-title i{
+      color:#64748b;
+      font-size:15px;
+    }
 
     .clean-stat-value{
       font-size:24px;
@@ -319,10 +452,21 @@
       text-align:right;
     }
 
-    .clean-stat-value.blue{color:#1d4ed8}
-    .clean-stat-value.green{color:#16a34a}
-    .clean-stat-value.red{color:#dc2626}
-    .clean-stat-value.gold{color:#d97706}
+    .clean-stat-value.blue{
+      color:#1d4ed8;
+    }
+
+    .clean-stat-value.green{
+      color:#16a34a;
+    }
+
+    .clean-stat-value.red{
+      color:#dc2626;
+    }
+
+    .clean-stat-value.gold{
+      color:#d97706;
+    }
 
     .stat-grid{
       display:grid;
@@ -345,12 +489,34 @@
       gap:8px;
     }
 
-    .stat-title{font-size:13px;color:#64748b;font-weight:900}
-    .stat-value{font-size:24px;font-weight:900;line-height:1.1;color:#1d4ed8}
-    .stat.green .stat-value{color:#16a34a}
-    .stat.red .stat-value{color:#dc2626}
-    .stat.gold .stat-value{color:#d97706}
-    .stat.dark .stat-value{color:#0f172a}
+    .stat-title{
+      font-size:13px;
+      color:#64748b;
+      font-weight:900;
+    }
+
+    .stat-value{
+      font-size:24px;
+      font-weight:900;
+      line-height:1.1;
+      color:#1d4ed8;
+    }
+
+    .stat.green .stat-value{
+      color:#16a34a;
+    }
+
+    .stat.red .stat-value{
+      color:#dc2626;
+    }
+
+    .stat.gold .stat-value{
+      color:#d97706;
+    }
+
+    .stat.dark .stat-value{
+      color:#0f172a;
+    }
 
     .debt-summary-strip{
       display:grid;
@@ -375,8 +541,16 @@
       gap:4px;
     }
 
-    .debt-summary-item span{color:var(--muted);font-size:12px;font-weight:800}
-    .debt-summary-item b{font-size:18px;font-weight:900}
+    .debt-summary-item span{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .debt-summary-item b{
+      font-size:18px;
+      font-weight:900;
+    }
 
     .badge{
       display:inline-flex;
@@ -388,13 +562,34 @@
       font-weight:900;
     }
 
-    .badge.green{background:#dcfce7;color:#15803d}
-    .badge.red{background:#fee2e2;color:#b91c1c}
-    .badge.blue{background:#dbeafe;color:#1d4ed8}
-    .badge.yellow{background:#fef3c7;color:#b45309}
-    .badge.gray{background:#f1f5f9;color:#475569}
-    .badge.gold{background:#fef3c7;color:#b7791f}
-    .badge.clickable{cursor:pointer}
+    .badge.green{
+      background:#dcfce7;
+      color:#15803d;
+    }
+
+    .badge.red{
+      background:#fee2e2;
+      color:#b91c1c;
+    }
+
+    .badge.blue{
+      background:#dbeafe;
+      color:#1d4ed8;
+    }
+
+    .badge.yellow{
+      background:#fef3c7;
+      color:#b45309;
+    }
+
+    .badge.gray{
+      background:#f1f5f9;
+      color:#475569;
+    }
+
+    .badge.clickable{
+      cursor:pointer;
+    }
 
     .grid-products{
       display:grid;
@@ -415,7 +610,10 @@
       min-height:138px;
     }
 
-    .product-card:hover{transform:translateY(-2px);border-color:rgba(37,99,235,.35)}
+    .product-card:hover{
+      transform:translateY(-2px);
+      border-color:rgba(37,99,235,.35);
+    }
 
     .product-icon{
       width:44px;
@@ -457,7 +655,10 @@
       font-weight:900;
     }
 
-    .stock-low{background:#fee2e2;color:#b91c1c}
+    .stock-low{
+      background:#fee2e2;
+      color:#b91c1c;
+    }
 
     .cart-layout{
       display:grid;
@@ -466,7 +667,10 @@
       align-items:start;
     }
 
-    .cart-summary{position:sticky;top:104px}
+    .cart-summary{
+      position:sticky;
+      top:104px;
+    }
 
     .search-row{
       display:flex;
@@ -486,7 +690,9 @@
       font-size:13px;
     }
 
-    .cart-line:last-child{border-bottom:0}
+    .cart-line:last-child{
+      border-bottom:0;
+    }
 
     .qty-btn{
       width:34px;
@@ -497,8 +703,7 @@
       font-weight:900;
       font-size:18px;
     }
-
-    .debt-card{
+.debt-card{
       background:#fff;
       border:1px solid var(--border);
       border-radius:18px;
@@ -512,12 +717,36 @@
       cursor:pointer;
     }
 
-    .debt-card:hover{border-color:rgba(217,164,65,.65);box-shadow:0 10px 26px rgba(217,164,65,.12)}
-    .debt-name{font-size:16px;font-weight:900;color:#111827}
-    .debt-sub{font-size:12px;color:var(--muted);margin-top:3px}
-    .debt-amount{font-size:18px;font-weight:900;text-align:left}
-    .debt-amount.owed{color:#dc2626}
-    .debt-amount.credit{color:#16a34a}
+    .debt-card:hover{
+      border-color:rgba(217,164,65,.65);
+      box-shadow:0 10px 26px rgba(217,164,65,.12);
+    }
+
+    .debt-name{
+      font-size:16px;
+      font-weight:900;
+      color:#111827;
+    }
+
+    .debt-sub{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:3px;
+    }
+
+    .debt-amount{
+      font-size:18px;
+      font-weight:900;
+      text-align:left;
+    }
+
+    .debt-amount.owed{
+      color:#dc2626;
+    }
+
+    .debt-amount.credit{
+      color:#16a34a;
+    }
 
     .debt-footer{
       position:sticky;
@@ -534,9 +763,29 @@
       margin-top:12px;
     }
 
-    .tabs-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-    .tab-btn{border:1px solid var(--border);background:#fff;border-radius:16px;padding:10px 12px;font-weight:900;display:inline-flex;align-items:center;gap:7px}
-    .tab-btn.active{background:#dbeafe;color:#1d4ed8;border-color:#bfdbfe}
+    .tabs-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin:12px 0;
+    }
+
+    .tab-btn{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:16px;
+      padding:10px 12px;
+      font-weight:900;
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+    }
+
+    .tab-btn.active{
+      background:#dbeafe;
+      color:#1d4ed8;
+      border-color:#bfdbfe;
+    }
 
     .payment-choice-grid{
       display:grid;
@@ -560,9 +809,19 @@
       transition:.18s;
     }
 
-    .payment-choice i{font-size:28px;color:var(--primary)}
-    .payment-choice:hover{transform:translateY(-2px);border-color:rgba(37,99,235,.35);box-shadow:0 14px 30px rgba(37,99,235,.12)}
-    .customer-suggest-list{
+    .payment-choice i{
+      font-size:28px;
+      color:var(--primary);
+    }
+
+    .payment-choice:hover{
+      transform:translateY(-2px);
+      border-color:rgba(37,99,235,.35);
+      box-shadow:0 14px 30px rgba(37,99,235,.12);
+    }
+
+    .customer-suggest-list,
+    .smart-suggest-list{
       position:absolute;
       z-index:250;
       background:#fff;
@@ -572,11 +831,12 @@
       padding:6px;
       display:none;
       width:min(420px,calc(100vw - 40px));
-      max-height:230px;
+      max-height:260px;
       overflow:auto;
     }
 
-    .customer-suggest-item{
+    .customer-suggest-item,
+    .smart-suggest-item{
       padding:10px;
       border-radius:14px;
       cursor:pointer;
@@ -587,7 +847,10 @@
       font-size:13px;
     }
 
-    .customer-suggest-item:hover{background:#eff6ff}
+    .customer-suggest-item:hover,
+    .smart-suggest-item:hover{
+      background:#eff6ff;
+    }
 
     .modal-backdrop{
       position:fixed;
@@ -601,7 +864,9 @@
       z-index:100;
     }
 
-    .modal-backdrop.show{display:flex}
+    .modal-backdrop.show{
+      display:flex;
+    }
 
     .modal{
       width:min(900px,100%);
@@ -614,11 +879,19 @@
       animation:modalIn .18s ease;
     }
 
-    .modal.large{width:min(1120px,100%)}
+    .modal.large{
+      width:min(1120px,100%);
+    }
 
     @keyframes modalIn{
-      from{opacity:0;transform:translateY(18px) scale(.98)}
-      to{opacity:1;transform:translateY(0) scale(1)}
+      from{
+        opacity:0;
+        transform:translateY(18px) scale(.98);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+      }
     }
 
     .modal-head{
@@ -631,7 +904,10 @@
       margin-bottom:14px;
     }
 
-    .modal-title{font-size:18px;font-weight:900}
+    .modal-title{
+      font-size:18px;
+      font-weight:900;
+    }
 
     .close-btn{
       width:40px;
@@ -658,7 +934,10 @@
       max-width:340px;
     }
 
-    .toast.show{display:block;animation:fadeIn .2s ease}
+    .toast.show{
+      display:block;
+      animation:fadeIn .2s ease;
+    }
 
     .sync-panel{
       position:fixed;
@@ -674,7 +953,9 @@
       display:none;
     }
 
-    .sync-panel.show{display:block}
+    .sync-panel.show{
+      display:block;
+    }
 
     .sync-top{
       display:flex;
@@ -743,8 +1024,36 @@
     }
 
     @keyframes scan{
-      0%,100%{transform:translateY(-80px)}
-      50%{transform:translateY(80px)}
+      0%,100%{
+        transform:translateY(-80px);
+      }
+      50%{
+        transform:translateY(80px);
+      }
+    }
+
+    .floating-scanner{
+      position:fixed;
+      inset:0;
+      z-index:260;
+      background:rgba(15,23,42,.55);
+      backdrop-filter:blur(8px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+    }
+
+    .floating-scanner.show{
+      display:flex;
+    }
+
+    .floating-scanner-card{
+      width:min(520px,100%);
+      background:#fff;
+      border-radius:28px;
+      padding:16px;
+      box-shadow:0 30px 70px rgba(15,23,42,.28);
     }
 
     .invoice-paper{
@@ -790,34 +1099,119 @@
       text-align:center;
     }
 
-    .barcode-svg{max-width:150px;height:46px}
-    .bottom-nav{display:none}
-    .hamburger{display:none}
+    .barcode-svg{
+      max-width:150px;
+      height:46px;
+    }
+
+    .bottom-nav{
+      display:none;
+    }
+
+    .hamburger{
+      display:none;
+    }
 
     @media print{
-      body *{visibility:hidden!important}
-      #printArea,#printArea *{visibility:visible!important}
-      #printArea{position:absolute;inset:0;width:100%;background:white}
-      .no-print{display:none!important}
+      body *{
+        visibility:hidden!important;
+      }
+
+      #printArea,
+      #printArea *{
+        visibility:visible!important;
+      }
+
+      #printArea{
+        position:absolute;
+        inset:0;
+        width:100%;
+        background:white;
+      }
+
+      .no-print{
+        display:none!important;
+      }
     }
 
     @media(max-width:900px){
-      .sidebar{transform:translateX(105%);width:285px}
-      .sidebar.open{transform:translateX(0)}
-      .main{margin-right:0;padding:10px 10px 88px}
-      .topbar{min-height:66px;border-radius:22px;top:8px;padding:10px 12px}
-      .hamburger{display:inline-flex}
-      .brand-title{max-width:130px;font-size:15px}
-      .brand-sub{display:none}
-      .shop-logo{width:42px;height:42px}
-      .cart-layout{grid-template-columns:1fr}
-      .cart-summary{position:static}
-      .form-grid,.form-grid-compact{grid-template-columns:1fr 1fr;gap:8px}
-      .stat-grid,.clean-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .debt-summary-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .grid-products{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .cart-line{grid-template-columns:1fr;border:1px solid #f1f5f9;border-radius:18px;padding:12px;margin-bottom:10px}
-      .payment-choice-grid{grid-template-columns:1fr}
+      .sidebar{
+        transform:translateX(105%);
+        width:285px;
+      }
+
+      .sidebar.open{
+        transform:translateX(0);
+      }
+
+      .main{
+        margin-right:0;
+        padding:10px 10px 88px;
+      }
+
+      .topbar{
+        min-height:66px;
+        border-radius:22px;
+        top:8px;
+        padding:10px 12px;
+      }
+
+      .hamburger{
+        display:inline-flex;
+      }
+
+      .brand-title{
+        max-width:130px;
+        font-size:15px;
+      }
+
+      .brand-sub{
+        display:none;
+      }
+
+      .shop-logo{
+        width:42px;
+        height:42px;
+      }
+
+      .cart-layout{
+        grid-template-columns:1fr;
+      }
+
+      .cart-summary{
+        position:static;
+      }
+
+      .form-grid,
+      .form-grid-compact{
+        grid-template-columns:1fr 1fr;
+        gap:8px;
+      }
+
+      .stat-grid,
+      .clean-stats-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+
+      .debt-summary-strip{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+
+      .grid-products{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+
+      .cart-line{
+        grid-template-columns:1fr;
+        border:1px solid #f1f5f9;
+        border-radius:18px;
+        padding:12px;
+        margin-bottom:10px;
+      }
+
+      .payment-choice-grid{
+        grid-template-columns:1fr;
+      }
 
       .bottom-nav{
         position:fixed;
@@ -850,17 +1244,50 @@
         color:#475569;
       }
 
-      .bottom-btn.active{background:#dbeafe;color:#1d4ed8}
-      .bottom-btn span:first-child{font-size:17px}
-      .modal{max-height:88vh;border-radius:24px;padding:15px}
-      .sync-panel{bottom:96px}
-      .toast{bottom:96px;right:10px;left:10px;max-width:none}
+      .bottom-btn.active{
+        background:#dbeafe;
+        color:#1d4ed8;
+      }
+
+      .bottom-btn span:first-child{
+        font-size:17px;
+      }
+
+      .modal{
+        max-height:88vh;
+        border-radius:24px;
+        padding:15px;
+      }
+
+      .sync-panel{
+        bottom:96px;
+      }
+
+      .toast{
+        bottom:96px;
+        right:10px;
+        left:10px;
+        max-width:none;
+      }
     }
 
     @media(max-width:520px){
-      .form-grid,.form-grid-compact{grid-template-columns:1fr 1fr;gap:8px}
-      .field-label{font-size:12px}
-      .input,.select,.textarea{padding:11px 10px;font-size:13px}
+      .form-grid,
+      .form-grid-compact{
+        grid-template-columns:1fr;
+        gap:8px;
+      }
+
+      .field-label{
+        font-size:12px;
+      }
+
+      .input,
+      .select,
+      .textarea{
+        padding:11px 10px;
+        font-size:13px;
+      }
     }
   </style>
 </head>
@@ -883,6 +1310,7 @@
       <button class="nav-btn" data-page="invoices"><span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span> الفواتير</button>
       <button class="nav-btn" data-page="debts"><span class="nav-icon"><i class="fa-solid fa-address-book"></i></span> الديون</button>
       <button class="nav-btn" data-page="purchases"><span class="nav-icon"><i class="fa-solid fa-truck-ramp-box"></i></span> المشتريات</button>
+      <button class="nav-btn" data-page="supplierPayments"><span class="nav-icon"><i class="fa-solid fa-hand-holding-dollar"></i></span> دفعات التجار</button>
       <button class="nav-btn" data-page="expenses"><span class="nav-icon"><i class="fa-solid fa-money-bill-wave"></i></span> المصروفات</button>
       <button class="nav-btn" data-page="reports"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span> التقارير</button>
       <button class="nav-btn" data-page="settings"><span class="nav-icon"><i class="fa-solid fa-gear"></i></span> الإعدادات</button>
@@ -940,13 +1368,12 @@
         <div class="card">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
             <h2 style="margin:0;font-size:20px;font-weight:900"><i class="fa-solid fa-bolt"></i> الأصناف السريعة</h2>
-            <input id="homeProductSearch" class="input" style="max-width:330px" placeholder="بحث سريع عن صنف أو باركود...">
+            <input id="homeProductSearch" class="input" style="max-width:330px" placeholder="بحث سريع عن صنف أو باركود أو تصنيف...">
           </div>
           <div id="homeProductsGrid" class="grid-products"></div>
         </div>
       </section>
-
-      <section id="page-cashier" class="section">
+<section id="page-cashier" class="section">
         <div class="cart-layout">
           <div class="card">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
@@ -1010,7 +1437,8 @@
           </div>
         </div>
       </section>
-      <section id="page-freeInvoice" class="section">
+
+      <section id="page-free-freeInvoice" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
             <i class="fa-solid fa-file-circle-plus"></i> فاتورة بدون مخزون
@@ -1036,7 +1464,7 @@
       </section>
 
       <section id="page-inventory" class="section">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
             <i class="fa-solid fa-boxes-stacked"></i> المخزون والمنتجات
           </h1>
@@ -1074,7 +1502,7 @@
       </section>
 
       <section id="page-invoices" class="section">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
             <i class="fa-solid fa-file-invoice-dollar"></i> الفواتير
           </h1>
@@ -1086,7 +1514,7 @@
 
         <div class="card" style="margin-bottom:14px">
           <div class="form-grid">
-            <input id="invoiceSearch" class="input" placeholder="بحث برقم الفاتورة أو العميل...">
+            <input id="invoiceSearch" class="input" placeholder="بحث برقم الفاتورة أو العميل أو الهاتف...">
 
             <select id="invoicePeriod" class="select">
               <option value="today">اليوم</option>
@@ -1205,7 +1633,7 @@
       </section>
 
       <section id="page-purchases" class="section">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
             <i class="fa-solid fa-truck-ramp-box"></i> المشتريات وإدخال البضاعة
           </h1>
@@ -1213,6 +1641,10 @@
           <button id="addPurchaseBtn" class="primary-btn">
             <i class="fa-solid fa-plus"></i> فاتورة مشتريات
           </button>
+        </div>
+
+        <div class="card" style="margin-bottom:14px">
+          <input id="purchaseTableSearch" class="input" placeholder="بحث في المشتريات باسم المورد أو المنتج أو الملاحظات...">
         </div>
 
         <div class="card">
@@ -1240,8 +1672,42 @@
         </div>
       </section>
 
+      <section id="page-supplierPayments" class="section">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+          <h1 style="font-size:24px;font-weight:900;margin:0">
+            <i class="fa-solid fa-hand-holding-dollar"></i> دفعات التجار والموردين
+          </h1>
+
+          <button id="addSupplierPaymentBtn" class="gold-btn">
+            <i class="fa-solid fa-plus"></i> إضافة دفعة تاجر
+          </button>
+        </div>
+
+        <div class="card" style="margin-bottom:14px">
+          <input id="supplierPaymentsSearch" class="input" placeholder="بحث باسم التاجر أو الحساب أو الملاحظات...">
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>التاريخ</th>
+                  <th>اسم التاجر</th>
+                  <th>المبلغ</th>
+                  <th>خرجت من حساب</th>
+                  <th>ملاحظات</th>
+                  <th>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="supplierPaymentsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <section id="page-expenses" class="section">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
             <i class="fa-solid fa-money-bill-wave"></i> المصروفات
           </h1>
@@ -1249,6 +1715,10 @@
           <button id="addExpenseBtn" class="primary-btn">
             <i class="fa-solid fa-plus"></i> إضافة مصروف
           </button>
+        </div>
+
+        <div class="card" style="margin-bottom:14px">
+          <input id="expensesSearch" class="input" placeholder="بحث في المصروفات بالنوع أو الملاحظات...">
         </div>
 
         <div class="card">
@@ -1270,7 +1740,7 @@
       </section>
 
       <section id="page-reports" class="section">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
             <i class="fa-solid fa-chart-line"></i> التقارير المالية
           </h1>
@@ -1302,6 +1772,11 @@
             <div class="stat red">
               <div class="stat-title"><i class="fa-solid fa-money-bill-wave"></i> إجمالي المصاريف</div>
               <div id="reportExpenses" class="stat-value">₪ 0.00</div>
+            </div>
+
+            <div class="stat gold">
+              <div class="stat-title"><i class="fa-solid fa-hand-holding-dollar"></i> دفعات التجار</div>
+              <div id="reportSupplierPayments" class="stat-value">₪ 0.00</div>
             </div>
 
             <div class="stat dark">
@@ -1345,8 +1820,7 @@
               </div>
             </div>
           </div>
-
-          <div class="card" style="margin-bottom:14px">
+<div class="card" style="margin-bottom:14px">
             <h2 style="margin:0 0 12px;font-size:19px;font-weight:900">
               <i class="fa-solid fa-triangle-exclamation"></i> البضاعة الناقصة
             </h2>
@@ -1387,6 +1861,7 @@
           </div>
         </div>
       </section>
+
       <section id="page-settings" class="section">
         <h1 style="font-size:24px;font-weight:900;margin:0 0 14px">
           <i class="fa-solid fa-gear"></i> الإعدادات
@@ -1430,7 +1905,7 @@
         </div>
 
         <div class="card" style="margin-bottom:14px">
-          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
             <h2 style="margin:0;font-size:19px;font-weight:900">
               <i class="fa-solid fa-credit-card"></i> حسابات الدفع والتحويل
             </h2>
@@ -1529,7 +2004,36 @@
     </div>
   </div>
 
+  <div id="floatingScanner" class="floating-scanner">
+    <div class="floating-scanner-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px">
+        <h3 style="margin:0;font-size:18px;font-weight:900">
+          <i class="fa-solid fa-barcode"></i> قراءة باركود المنتج
+        </h3>
+        <button id="floatingScannerCloseBtn" class="close-btn">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="scanner-box">
+        <video id="floatingScannerVideo" playsinline muted></video>
+        <div class="scan-line"></div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button id="floatingManualCodeBtn" class="ghost-btn" type="button">
+          <i class="fa-solid fa-keyboard"></i> إدخال يدوي
+        </button>
+      </div>
+
+      <div class="muted" style="font-size:12px;margin-top:10px">
+        عند قراءة الباركود سيتم وضع الرقم داخل خانة كود المنتج بدون إغلاق نموذج إضافة المنتج.
+      </div>
+    </div>
+  </div>
+
   <div id="customerSuggestBox" class="customer-suggest-list"></div>
+  <div id="smartSuggestBox" class="smart-suggest-list"></div>
   <div id="printArea" style="display:none"></div>
 
   <template id="productFormTemplate">
@@ -1632,9 +2136,10 @@
           <input id="purchaseSupplier" class="input" required placeholder="مثال: محمد">
         </div>
 
-        <div>
-          <label class="field-label">اختر المنتج</label>
-          <select id="purchaseProduct" class="select" required></select>
+        <div style="position:relative">
+          <label class="field-label">ابحث عن المنتج</label>
+          <input id="purchaseProductSearch" class="input" required placeholder="اكتب اسم المنتج أو الكود أو الباركود" autocomplete="off">
+          <input type="hidden" id="purchaseProduct">
         </div>
 
         <div>
@@ -1675,6 +2180,36 @@
 
       <button class="primary-btn" type="submit" style="margin-top:14px">
         <i class="fa-solid fa-floppy-disk"></i> حفظ المشتريات وتحديث المخزون
+      </button>
+    </form>
+  </template>
+
+  <template id="supplierPaymentFormTemplate">
+    <form id="supplierPaymentForm">
+      <div class="form-grid-compact">
+        <div>
+          <label class="field-label">اسم التاجر / المورد</label>
+          <input id="supplierPaymentName" class="input" required placeholder="مثال: شركة الأمل">
+        </div>
+
+        <div>
+          <label class="field-label">المبلغ المدفوع</label>
+          <input id="supplierPaymentAmount" type="number" inputmode="decimal" class="input" required min="0" step="0.01">
+        </div>
+
+        <div>
+          <label class="field-label">خرجت من حساب</label>
+          <select id="supplierPaymentAccountId" class="select"></select>
+        </div>
+
+        <div>
+          <label class="field-label">ملاحظات</label>
+          <input id="supplierPaymentNotes" class="input" placeholder="اختياري">
+        </div>
+      </div>
+
+      <button class="gold-btn" type="submit" style="margin-top:14px">
+        <i class="fa-solid fa-floppy-disk"></i> حفظ دفعة التاجر
       </button>
     </form>
   </template>
@@ -1825,14 +2360,15 @@
 
     const FIREBASE_ROOT = "cashier_units_pro_885766842";
     const FIREBASE_FALLBACK_ROOTS = [
-  "cashier_units_pro_885766842",
-  "cashier_debts_pro_885766842",
-  "cashier_debts_pro_885766842_db",
-  "cashier_pro_885766842",
-  "cashier_885766842"
-];
-    const DB_NAME = "cashier_units_pro_885766842_db_v10";
-    const DB_VERSION = 10;
+      "cashier_units_pro_885766842",
+      "cashier_debts_pro_885766842",
+      "cashier_debts_pro_885766842_db",
+      "cashier_pro_885766842",
+      "cashier_885766842"
+    ];
+
+    const DB_NAME = "cashier_units_pro_885766842_db_v12";
+    const DB_VERSION = 12;
 
     const STORE_NAMES = [
       "products",
@@ -1840,9 +2376,11 @@
       "customers",
       "expenses",
       "purchases",
+      "supplierPayments",
       "paymentAccounts",
       "settings",
-      "syncQueue"
+      "syncQueue",
+      "syncMeta"
     ];
 
     const $ = (id) => document.getElementById(id);
@@ -1853,6 +2391,7 @@
       customers: [],
       expenses: [],
       purchases: [],
+      supplierPayments: [],
       paymentAccounts: [],
       settings: null,
       cart: [],
@@ -1861,6 +2400,7 @@
       realtimeStarted: false,
       scanner: {
         reader: null,
+        floatingReader: null,
         active: false,
         locked: false,
         mode: "sale",
@@ -1972,10 +2512,10 @@
     }
 
     function closeModal() {
-  $("modalBackdrop").classList.remove("show");
-  $("modalBox").classList.remove("large");
-  if (typeof stopScanner === "function") stopScanner();
-}
+      $("modalBackdrop").classList.remove("show");
+      $("modalBox").classList.remove("large");
+      stopScanner();
+    }
 
     function unitLabel(unit, custom = "") {
       const map = {
@@ -2032,6 +2572,7 @@
         image: ""
       };
     }
+
     function normalizeCustomer(c = {}) {
       const oldDebt = cleanNumber(c.debt || 0);
       const oldCredit = cleanNumber(c.credit || 0);
@@ -2145,8 +2686,7 @@
         req.onerror = () => reject(req.error);
       });
     }
-
-    async function idbPut(storeName, value) {
+async function idbPut(storeName, value) {
       const database = await openDB();
 
       return new Promise((resolve, reject) => {
@@ -2180,6 +2720,17 @@
       });
     }
 
+    async function idbGet(storeName, id) {
+      const database = await openDB();
+
+      return new Promise((resolve, reject) => {
+        const tx = database.transaction(storeName, "readonly");
+        const req = tx.objectStore(storeName).get(id);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
     async function idbDelete(storeName, id) {
       const database = await openDB();
 
@@ -2202,6 +2753,19 @@
       });
     }
 
+    async function getSyncMeta(id, fallback = 0) {
+      const row = await idbGet("syncMeta", id);
+      return row ? row.value : fallback;
+    }
+
+    async function setSyncMeta(id, value) {
+      await idbPut("syncMeta", {
+        id,
+        value,
+        updatedAt: Date.now()
+      });
+    }
+
     async function enqueueSync(action) {
       const item = {
         id: uid("queue"),
@@ -2214,19 +2778,26 @@
       await refreshPendingCount();
 
       if (navigator.onLine) {
-        setTimeout(() => syncNow(false), 220);
+        setTimeout(() => syncNow(false), 180);
       }
     }
 
     async function saveLocal(store, item, sync = true) {
-      await idbPut(store, item);
+      const normalized =
+        store === "products"
+          ? normalizeProduct(item)
+          : store === "customers"
+            ? normalizeCustomer(item)
+            : item;
+
+      await idbPut(store, normalized);
 
       if (sync) {
         await enqueueSync({
           type: "set",
           store,
-          itemId: item.id,
-          data: item
+          itemId: normalized.id,
+          data: normalized
         });
       }
     }
@@ -2249,12 +2820,19 @@
       return Object.values(obj).filter(Boolean);
     }
 
-    async function mergeStore(store, remoteItems) {
+    function getItemTime(item) {
+      return Number(item?.updatedAt || item?.createdAt || 0);
+    }
+
+    async function mergeStore(store, remoteItems, rootName = FIREBASE_ROOT) {
       if (!remoteItems || !remoteItems.length) return 0;
 
+      const lastKey = `lastRemote_${rootName}_${store}`;
+      const lastRemoteTime = Number(await getSyncMeta(lastKey, 0));
       const local = await idbGetAll(store);
       const map = new Map(local.map((x) => [x.id, x]));
       let count = 0;
+      let maxTime = lastRemoteTime;
 
       for (let remote of remoteItems) {
         if (!remote || !remote.id) continue;
@@ -2262,41 +2840,95 @@
         if (store === "products") remote = normalizeProduct(remote);
         if (store === "customers") remote = normalizeCustomer(remote);
 
-        const old = map.get(remote.id);
-        const remoteTime = Number(remote.updatedAt || remote.createdAt || 0);
-        const oldTime = Number(old?.updatedAt || old?.createdAt || 0);
+        const remoteTime = getItemTime(remote);
+        if (remoteTime < lastRemoteTime) {
+          continue;
+        }
 
-        if (!old || remoteTime >= oldTime) {
+        const old = map.get(remote.id);
+        const oldTime = getItemTime(old);
+
+        if (!old || remoteTime > oldTime) {
           await idbPut(store, remote);
           count++;
         }
+
+        if (remoteTime > maxTime) maxTime = remoteTime;
       }
 
+      await setSyncMeta(lastKey, maxTime);
       return count;
+    }
+
+    async function loadFirebaseRoot(root) {
+      const snap = await get(ref(db, root));
+      if (!snap.exists()) return 0;
+
+      const data = snap.val() || {};
+      let totalLoaded = 0;
+
+      totalLoaded += await mergeStore("products", mapFirebaseObjectToArray(data.products), root);
+      totalLoaded += await mergeStore("invoices", mapFirebaseObjectToArray(data.invoices), root);
+      totalLoaded += await mergeStore("customers", mapFirebaseObjectToArray(data.customers), root);
+      totalLoaded += await mergeStore("expenses", mapFirebaseObjectToArray(data.expenses), root);
+      totalLoaded += await mergeStore("purchases", mapFirebaseObjectToArray(data.purchases), root);
+      totalLoaded += await mergeStore("supplierPayments", mapFirebaseObjectToArray(data.supplierPayments), root);
+      totalLoaded += await mergeStore("paymentAccounts", mapFirebaseObjectToArray(data.paymentAccounts), root);
+
+      if (data.settings?.main) {
+        totalLoaded += await mergeStore("settings", [{ ...defaultSettings, ...data.settings.main }], root);
+      }
+
+      return totalLoaded;
     }
 
     async function loadFirebaseOnce() {
       if (!navigator.onLine) return;
 
+      let totalLoaded = 0;
+
+      for (const root of FIREBASE_FALLBACK_ROOTS) {
+        try {
+          totalLoaded += await loadFirebaseRoot(root);
+        } catch (e) {
+          console.warn("Firebase load error from root:", root, e);
+        }
+      }
+
+      if (totalLoaded > 0) {
+        await loadLocalData(true);
+        toast(`تم تحميل ${totalLoaded} عنصر جديد من Firebase`);
+      }
+    }
+
+    async function syncOldDataToNewRoot() {
+      if (!navigator.onLine) return;
+
       try {
-        const snap = await get(ref(db, FIREBASE_ROOT));
-        if (!snap.exists()) return;
+        await loadLocalData(false);
 
-        const data = snap.val() || {};
-        await mergeStore("products", mapFirebaseObjectToArray(data.products));
-        await mergeStore("invoices", mapFirebaseObjectToArray(data.invoices));
-        await mergeStore("customers", mapFirebaseObjectToArray(data.customers));
-        await mergeStore("expenses", mapFirebaseObjectToArray(data.expenses));
-        await mergeStore("purchases", mapFirebaseObjectToArray(data.purchases));
-        await mergeStore("paymentAccounts", mapFirebaseObjectToArray(data.paymentAccounts));
+        const stores = [
+          "products",
+          "invoices",
+          "customers",
+          "expenses",
+          "purchases",
+          "supplierPayments",
+          "paymentAccounts"
+        ];
 
-        if (data.settings?.main) {
-          await mergeStore("settings", [{ ...defaultSettings, ...data.settings.main }]);
+        for (const store of stores) {
+          for (const item of state[store]) {
+            if (!item || !item.id) continue;
+            await set(ref(db, `${FIREBASE_ROOT}/${store}/${item.id}`), item);
+          }
         }
 
-        await loadLocalData();
+        if (state.settings) {
+          await set(ref(db, `${FIREBASE_ROOT}/settings/main`), state.settings);
+        }
       } catch (e) {
-        console.warn("Firebase load error", e);
+        console.warn("syncOldDataToNewRoot error", e);
       }
     }
 
@@ -2304,18 +2936,27 @@
       if (state.realtimeStarted) return;
       state.realtimeStarted = true;
 
-      ["products", "invoices", "customers", "expenses", "purchases", "paymentAccounts"].forEach((store) => {
+      [
+        "products",
+        "invoices",
+        "customers",
+        "expenses",
+        "purchases",
+        "supplierPayments",
+        "paymentAccounts"
+      ].forEach((store) => {
         onValue(ref(db, `${FIREBASE_ROOT}/${store}`), async (snap) => {
           if (!snap.exists()) return;
-          await mergeStore(store, mapFirebaseObjectToArray(snap.val()));
-          await loadLocalData();
+          await mergeStore(store, mapFirebaseObjectToArray(snap.val()), FIREBASE_ROOT);
+          await loadLocalData(true);
         });
       });
 
       onValue(ref(db, `${FIREBASE_ROOT}/settings/main`), async (snap) => {
         if (!snap.exists()) return;
-        await idbPut("settings", { ...defaultSettings, ...snap.val() });
-        await loadLocalData();
+
+        await mergeStore("settings", [{ ...defaultSettings, ...snap.val() }], FIREBASE_ROOT);
+        await loadLocalData(true);
       });
     }
 
@@ -2363,23 +3004,25 @@
 
       if (!queue.length) {
         await refreshPendingCount();
+
         if (showIfEmpty) {
           setSyncProgress(100, "لا توجد عناصر للمزامنة", "كل البيانات مرفوعة");
           hideSyncPanelLater(650);
         } else {
           hideSyncPanelNow();
         }
+
         return;
       }
 
       state.syncing = true;
       clearTimeout(window.__syncHideTimer);
-      setSyncProgress(1, "جاري المزامنة...", `عدد العمليات: ${queue.length}`);
+      setSyncProgress(1, "جاري رفع المحلي أولاً...", `عدد العمليات: ${queue.length}`);
 
       let done = 0;
       const total = queue.length;
 
-      for (const q of queue) {
+      for (const q of queue.sort((a,b) => Number(a.createdAt || 0) - Number(b.createdAt || 0))) {
         try {
           if (q.type === "set") {
             await set(ref(db, `${FIREBASE_ROOT}/${q.store}/${q.itemId}`), q.data);
@@ -2389,7 +3032,7 @@
 
           await idbDelete("syncQueue", q.id);
           done++;
-          setSyncProgress((done / total) * 100, "جاري المزامنة...", `تم رفع ${done} من ${total}`);
+          setSyncProgress((done / total) * 70, "جاري رفع المحلي أولاً...", `تم رفع ${done} من ${total}`);
         } catch (e) {
           q.tries = Number(q.tries || 0) + 1;
           q.lastError = String(e?.message || e);
@@ -2400,11 +3043,15 @@
       }
 
       state.syncing = false;
+
       const left = (await idbGetAll("syncQueue")).length;
       await refreshPendingCount();
 
       if (left === 0) {
-        setSyncProgress(100, "اكتملت المزامنة", "تم رفع كل البيانات");
+        setSyncProgress(82, "تحميل الجديد من Firebase...", "بعد رفع المحلي يتم تنزيل أي بيانات جديدة");
+        await loadFirebaseOnce();
+
+        setSyncProgress(100, "اكتملت المزامنة", "تم رفع المحلي وتنزيل الجديد");
         hideSyncPanelLater(650);
       } else {
         setSyncProgress(45, "بقيت عمليات تنتظر", `بقي ${left} عمليات`);
@@ -2412,6 +3059,7 @@
         setTimeout(() => syncNow(false), 5000);
       }
     }
+
     function makeLogoDataUrl(text) {
       const letter = String(text || "م").trim().charAt(0) || "م";
       const svg = `
@@ -2427,8 +3075,7 @@
         </svg>`;
       return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
     }
-
-    function readFileAsDataUrl(file) {
+function readFileAsDataUrl(file) {
       return new Promise((resolve, reject) => {
         if (!file) return resolve("");
         const reader = new FileReader();
@@ -2453,12 +3100,13 @@
       if ($("settingLowStock")) $("settingLowStock").value = s.lowStock || 5;
     }
 
-    async function loadLocalData() {
+    async function loadLocalData(doRender = true) {
       state.products = (await idbGetAll("products")).map(normalizeProduct);
       state.invoices = await idbGetAll("invoices");
       state.customers = (await idbGetAll("customers")).map(normalizeCustomer);
       state.expenses = await idbGetAll("expenses");
       state.purchases = await idbGetAll("purchases");
+      state.supplierPayments = await idbGetAll("supplierPayments");
       state.paymentAccounts = await idbGetAll("paymentAccounts");
 
       const settingsRows = await idbGetAll("settings");
@@ -2486,8 +3134,11 @@
       }
 
       applySettingsToUI();
-      renderAll();
-      await refreshPendingCount();
+
+      if (doRender) {
+        renderAll();
+        await refreshPendingCount();
+      }
     }
 
     function periodFilter(items, period, dateField = "createdAt", customDate = "") {
@@ -2531,6 +3182,16 @@
       return state.products.find((p) => p.id === id);
     }
 
+    function getProductByBarcode(code) {
+      const c = String(code || "").trim();
+      if (!c) return null;
+
+      return state.products.find((p) =>
+        String(p.barcode || "").trim() === c ||
+        String(p.code || "").trim() === c
+      );
+    }
+
     function getTotalOwed() {
       return state.customers.reduce((s, c) => s + Math.max(0, cleanNumber(c.balance)), 0);
     }
@@ -2548,6 +3209,7 @@
       renderInvoices();
       renderDebts();
       renderPurchases();
+      renderSupplierPayments();
       renderExpenses();
       renderReports();
       renderSettingsAccounts();
@@ -2595,6 +3257,7 @@
           !q ||
           String(p.name || "").toLowerCase().includes(q) ||
           String(p.barcode || "").includes(q) ||
+          String(p.code || "").includes(q) ||
           String(p.category || "").toLowerCase().includes(q)
         )
         .slice(0, 80);
@@ -2699,6 +3362,7 @@
       Object.assign(line, patch);
 
       const product = getProductById(line.productId);
+
       if (!product) {
         if (rerender) renderCart();
         return;
@@ -2710,8 +3374,9 @@
 
       Object.assign(line, pricing);
 
-      if (rerender) renderCart();
-      else {
+      if (rerender) {
+        renderCart();
+      } else {
         const totals = calculateCartTotals();
         $("cartSubtotal").textContent = money(totals.subtotal);
         $("cartDiscount").textContent = money(totals.discount);
@@ -2748,7 +3413,8 @@
         .filter((p) =>
           String(p.name || "").toLowerCase().includes(q) ||
           String(p.barcode || "").includes(q) ||
-          String(p.code || "").includes(q)
+          String(p.code || "").includes(q) ||
+          String(p.category || "").toLowerCase().includes(q)
         )
         .slice(0, 7);
 
@@ -2775,6 +3441,7 @@
 
       box.style.display = "block";
     }
+
     function addFreeLine(data = {}) {
       state.freeLines.push({
         id: uid("free"),
@@ -2783,6 +3450,7 @@
         cost: cleanNumber(data.cost || 0),
         price: cleanNumber(data.price || 0)
       });
+
       renderFreeInvoice();
     }
 
@@ -2869,8 +3537,7 @@
         profit: subtotal - cost
       };
     }
-
-    function renderInventory() {
+function renderInventory() {
       const q = ($("inventorySearch")?.value || "").trim().toLowerCase();
 
       const rows = state.products
@@ -2878,7 +3545,9 @@
           !q ||
           String(p.name || "").toLowerCase().includes(q) ||
           String(p.barcode || "").includes(q) ||
-          String(p.category || "").toLowerCase().includes(q)
+          String(p.code || "").includes(q) ||
+          String(p.category || "").toLowerCase().includes(q) ||
+          String(unitLabel(p.unitType, p.customUnit)).toLowerCase().includes(q)
         )
         .sort((a,b) => String(a.name || "").localeCompare(String(b.name || ""), "ar"))
         .map((p) => {
@@ -2988,11 +3657,14 @@
 
       const rows = periodFilter(state.invoices, period, "createdAt", custom)
         .filter(inv => {
+          const itemsText = (inv.items || []).map(x => `${x.name} ${x.qtyText} ${x.unitLabel}`).join(" ").toLowerCase();
+
           const searchOk =
             !q ||
             String(inv.number).includes(q) ||
             String(inv.customerName || "").toLowerCase().includes(q) ||
-            String(inv.customerPhone || "").includes(q);
+            String(inv.customerPhone || "").includes(q) ||
+            itemsText.includes(q);
 
           const statusOk = status === "all" || inv.paymentMethod === status || inv.status === status;
           return searchOk && statusOk;
@@ -3029,6 +3701,7 @@
         rows ||
         `<tr><td colspan="11" class="muted" style="text-align:center">لا توجد فواتير</td></tr>`;
     }
+
     function getCustomerInvoices(customer) {
       return state.invoices
         .filter(inv =>
@@ -3054,69 +3727,76 @@
     }
 
     function renderDebts() {
-  const q = ($("debtsSearch")?.value || "").trim().toLowerCase();
-  const sort = $("debtsSort")?.value || "balance_desc";
+      const q = ($("debtsSearch")?.value || "").trim().toLowerCase();
+      const sort = $("debtsSort")?.value || "balance_desc";
 
-  let list = state.customers.filter(c =>
-    !q ||
-    String(c.name || "").toLowerCase().includes(q) ||
-    String(c.phone || "").includes(q)
-  );
+      let list = state.customers.filter(c =>
+        !q ||
+        String(c.name || "").toLowerCase().includes(q) ||
+        String(c.phone || "").includes(q) ||
+        String(customerBalanceText(c.balance).text || "").toLowerCase().includes(q)
+      );
 
-  if (sort === "balance_desc") {
-    list = list.sort((a,b) => cleanNumber(b.balance) - cleanNumber(a.balance));
-  } else if (sort === "credit_desc") {
-    list = list.sort((a,b) => cleanNumber(a.balance) - cleanNumber(b.balance));
-  } else if (sort === "name") {
-    list = list.sort((a,b) => String(a.name || "").localeCompare(String(b.name || ""), "ar"));
-  } else {
-    list = list.sort((a,b) => getCustomerLastActivity(b.id) - getCustomerLastActivity(a.id));
-  }
+      if (sort === "balance_desc") {
+        list = list.sort((a,b) => cleanNumber(b.balance) - cleanNumber(a.balance));
+      } else if (sort === "credit_desc") {
+        list = list.sort((a,b) => cleanNumber(a.balance) - cleanNumber(b.balance));
+      } else if (sort === "name") {
+        list = list.sort((a,b) => String(a.name || "").localeCompare(String(b.name || ""), "ar"));
+      } else {
+        list = list.sort((a,b) => getCustomerLastActivity(b.id) - getCustomerLastActivity(a.id));
+      }
 
-  const totalOwed = getTotalOwed();
-  const totalCredit = getTotalCredit();
+      const totalOwed = getTotalOwed();
+      const totalCredit = getTotalCredit();
 
-  const laterUnpaid = state.invoices.filter(i => i.paymentMethod === "later_app" && i.status !== "paid").length;
-  const manualUnpaid = state.customers.flatMap(c => (c.manualDebts || []).filter(d => d.status !== "paid")).length;
+      const laterUnpaid = state.invoices.filter(i => i.paymentMethod === "later_app" && i.status !== "paid").length;
+      const manualUnpaid = state.customers.flatMap(c => (c.manualDebts || []).filter(d => d.status !== "paid")).length;
 
-  $("debtsTotalOwed").textContent = money(totalOwed);
-  $("debtsTotalCredit").textContent = money(totalCredit);
-  $("debtsCustomersCount").textContent = state.customers.length;
-  $("debtsOverdueCount").textContent = laterUnpaid + manualUnpaid;
-  $("debtsFooterOwed").textContent = money(totalOwed);
-  $("debtsFooterCredit").textContent = money(totalCredit);
-  $("debtsFooterNet").textContent = money(totalOwed - totalCredit);
+      $("debtsTotalOwed").textContent = money(totalOwed);
+      $("debtsTotalCredit").textContent = money(totalCredit);
+      $("debtsCustomersCount").textContent = state.customers.length;
+      $("debtsOverdueCount").textContent = laterUnpaid + manualUnpaid;
+      $("debtsFooterOwed").textContent = money(totalOwed);
+      $("debtsFooterCredit").textContent = money(totalCredit);
+      $("debtsFooterNet").textContent = money(totalOwed - totalCredit);
 
-  $("debtsList").innerHTML = list.map(c => {
-    const bal = customerBalanceText(c.balance);
-    const last = getCustomerLastActivity(c.id);
-    const customerInvoices = getCustomerInvoices(c);
+      $("debtsList").innerHTML = list.map(c => {
+        const bal = customerBalanceText(c.balance);
+        const last = getCustomerLastActivity(c.id);
+        const customerInvoices = getCustomerInvoices(c);
+        const firstDebt = customerInvoices.find(inv =>
+          ["debt", "later_app"].includes(inv.paymentMethod) && inv.status !== "paid"
+        );
+        const ageText = firstDebt ? ` · الدين ${formatAge(firstDebt.createdAt)}` : "";
 
-    const firstDebt = customerInvoices.find(inv =>
-      ["debt", "later_app"].includes(inv.paymentMethod) && inv.status !== "paid"
-    );
-
-    const ageText = firstDebt ? ` · الدين ${formatAge(firstDebt.createdAt)}` : "";
-
-    return `
-      <div class="debt-card" data-open-customer="${c.id}">
-        <div>
-          <div class="debt-name">${escapeHtml(c.name)}</div>
-          <div class="debt-sub">
-            ${escapeHtml(c.phone || "بدون رقم")}
-            · فواتير: ${customerInvoices.length}
-            ${last ? ` · آخر حركة: ${formatDate(last)}` : ""}
-            ${ageText}
+        return `
+          <div class="debt-card" data-open-customer="${c.id}">
+            <div>
+              <div class="debt-name">${escapeHtml(c.name)}</div>
+              <div class="debt-sub">
+                ${escapeHtml(c.phone || "بدون رقم")} · فواتير: ${customerInvoices.length}
+                ${last ? ` · آخر حركة: ${formatDate(last)}` : ""}
+                ${ageText}
+              </div>
+            </div>
+            <div class="debt-amount ${bal.cls}">${bal.text}</div>
           </div>
-        </div>
-        <div class="debt-amount ${bal.cls}">${bal.text}</div>
-      </div>
-    `;
-  }).join("") || `<div class="muted" style="text-align:center;padding:28px">لا توجد حسابات ديون</div>`;
-}
+        `;
+      }).join("") || `<div class="muted" style="text-align:center;padding:28px">لا توجد حسابات ديون</div>`;
+    }
 
     function renderPurchases() {
+      const q = ($("purchaseTableSearch")?.value || "").trim().toLowerCase();
+
       const rows = state.purchases
+        .filter(p =>
+          !q ||
+          String(p.supplier || "").toLowerCase().includes(q) ||
+          String(p.productName || "").toLowerCase().includes(q) ||
+          String(p.inputUnitLabel || "").toLowerCase().includes(q) ||
+          String(p.notes || "").toLowerCase().includes(q)
+        )
         .sort((a,b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
         .map(p => `
           <tr>
@@ -3144,8 +3824,52 @@
         `<tr><td colspan="12" class="muted" style="text-align:center">لا توجد مشتريات</td></tr>`;
     }
 
+    function renderSupplierPayments() {
+      const q = ($("supplierPaymentsSearch")?.value || "").trim().toLowerCase();
+
+      const rows = state.supplierPayments
+        .filter(p => {
+          const acc = state.paymentAccounts.find(a => a.id === p.accountId);
+          return !q ||
+            String(p.supplierName || "").toLowerCase().includes(q) ||
+            String(acc?.name || "").toLowerCase().includes(q) ||
+            String(acc?.number || "").includes(q) ||
+            String(p.notes || "").toLowerCase().includes(q);
+        })
+        .sort((a,b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
+        .map(p => {
+          const acc = state.paymentAccounts.find(a => a.id === p.accountId);
+
+          return `
+            <tr>
+              <td>${formatDate(p.createdAt)}</td>
+              <td><b>${escapeHtml(p.supplierName || "-")}</b></td>
+              <td class="money">${money(p.amount)}</td>
+              <td>${escapeHtml(acc?.name || "-")} ${acc?.number ? " - " + escapeHtml(acc.number) : ""}</td>
+              <td>${escapeHtml(p.notes || "-")}</td>
+              <td>
+                <button class="danger-btn" data-delete-supplier-payment="${p.id}">
+                  <i class="fa-solid fa-trash"></i> حذف
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join("");
+
+      $("supplierPaymentsTable").innerHTML =
+        rows ||
+        `<tr><td colspan="6" class="muted" style="text-align:center">لا توجد دفعات تجار</td></tr>`;
+    }
+
     function renderExpenses() {
+      const q = ($("expensesSearch")?.value || "").trim().toLowerCase();
+
       const rows = state.expenses
+        .filter(e =>
+          !q ||
+          String(e.type || "").toLowerCase().includes(q) ||
+          String(e.notes || "").toLowerCase().includes(q)
+        )
         .sort((a,b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
         .map(e => `
           <tr>
@@ -3176,10 +3900,12 @@
 
       const invoices = periodFilter(state.invoices, period, "createdAt", custom);
       const expenses = periodFilter(state.expenses, period, "createdAt", custom);
+      const supplierPayments = periodFilter(state.supplierPayments, period, "createdAt", custom);
 
       const salesTotal = invoices.reduce((s, x) => s + cleanNumber(x.total), 0);
       const profitTotal = invoices.reduce((s, x) => s + cleanNumber(x.profit), 0);
       const expensesTotal = expenses.reduce((s, x) => s + cleanNumber(x.amount), 0);
+      const supplierPaymentsTotal = supplierPayments.reduce((s, x) => s + cleanNumber(x.amount), 0);
 
       const cashSales = invoices.filter(x => x.paymentMethod === "cash").reduce((s, x) => s + cleanNumber(x.total), 0);
       const appSales = invoices.filter(x => x.paymentMethod === "instant_app").reduce((s, x) => s + cleanNumber(x.total), 0);
@@ -3188,6 +3914,7 @@
       $("reportSales").textContent = money(salesTotal);
       $("reportProfit").textContent = money(profitTotal);
       $("reportExpenses").textContent = money(expensesTotal);
+      $("reportSupplierPayments").textContent = money(supplierPaymentsTotal);
       $("reportNet").textContent = money(profitTotal - expensesTotal);
       $("reportInvoicesCount").textContent = invoices.length;
       $("reportCashSales").textContent = money(cashSales);
@@ -3247,7 +3974,6 @@
         accRows ||
         `<tr><td colspan="3" class="muted" style="text-align:center">لا توجد أرصدة</td></tr>`;
     }
-
     function renderSettingsAccounts() {
       $("paymentAccountsList").innerHTML =
         state.paymentAccounts.map(a => `
@@ -3321,6 +4047,7 @@
       $("piecePricePreview").value =
         `جملة: ${money(baseCost)} / بيع: ${money(baseSale)} لكل ${unitLabel(baseUnit, $("productCustomUnit").value.trim())}`;
     }
+
     function openProductForm(productId = "") {
       const node = cloneTemplate("productFormTemplate");
       openModal(productId ? "تعديل المنتج" : "إضافة منتج", node);
@@ -3357,13 +4084,16 @@
         toast("تم إصدار باركود للمنتج");
       };
 
-      $("scanProductBarcodeBtn").onclick = () => openScanner("productInput", "productBarcode");
+      $("scanProductBarcodeBtn").onclick = () => openFloatingProductBarcodeScanner("productBarcode");
 
       $("productForm").onsubmit = async (e) => {
         e.preventDefault();
 
-        const id = $("productId").value || uid("prod");
-        const old = getProductById(id);
+        const currentId = $("productId").value || "";
+        const barcode = $("productBarcode").value.trim();
+        const oldById = currentId ? getProductById(currentId) : null;
+        const oldByBarcode = barcode ? getProductByBarcode(barcode) : null;
+
         const unitType = $("productUnitType").value;
         const cartonUnits = unitType === "carton" ? Math.max(1, cleanNumber($("productCartonUnits").value, 1)) : 1;
         const factor = factorForUnitType(unitType, cartonUnits);
@@ -3371,17 +4101,29 @@
         const enteredStock = cleanNumber($("productStock").value, 0);
         const enteredCost = cleanNumber($("productCostPrice").value, 0);
         const enteredSale = cleanNumber($("productSalePrice").value, 0);
+        const addedBaseStock = enteredStock * factor;
+
+        let target = oldById || oldByBarcode || null;
+        let merged = false;
+
+        if (!oldById && oldByBarcode) {
+          merged = true;
+        }
+
+        const id = target?.id || uid("prod");
+        const oldStock = cleanNumber(target?.stock || 0);
 
         const product = normalizeProduct({
+          ...(target || {}),
           id,
-          code: $("productBarcode").value.trim() || String(Date.now()).slice(-8),
-          barcode: $("productBarcode").value.trim() || generateEAN13(),
-          name: $("productName").value.trim(),
-          category: $("productCategory").value.trim(),
+          code: barcode || target?.code || String(Date.now()).slice(-8),
+          barcode: barcode || target?.barcode || generateEAN13(),
+          name: $("productName").value.trim() || target?.name || "منتج",
+          category: $("productCategory").value.trim() || target?.category || "",
           unitType,
           customUnit: unitType === "custom" ? $("productCustomUnit").value.trim() : "",
           cartonUnits,
-          stock: enteredStock * factor,
+          stock: merged ? oldStock + addedBaseStock : addedBaseStock,
           lowStock: cleanNumber($("productLowStock").value, state.settings?.lowStock || 5),
           costPrice: factor > 0 ? enteredCost / factor : enteredCost,
           salePrice: factor > 0 ? enteredSale / factor : enteredSale,
@@ -3389,7 +4131,7 @@
           displaySalePrice: enteredSale,
           cartonPrice: unitType === "carton" ? enteredSale : 0,
           image: "",
-          createdAt: old?.createdAt || Date.now(),
+          createdAt: target?.createdAt || Date.now(),
           updatedAt: Date.now()
         });
 
@@ -3401,7 +4143,12 @@
 
         closeModal();
         renderAll();
-        toast("تم حفظ المنتج وتحويله للوحدة الأساسية");
+
+        if (merged) {
+          toast(`الباركود موجود مسبقًا، تم دمج الكمية: كان ${oldStock} وأصبح ${product.stock}`);
+        } else {
+          toast("تم حفظ المنتج وتحويله للوحدة الأساسية");
+        }
       };
     }
 
@@ -3450,15 +4197,94 @@
       }, 50);
     }
 
+    function paymentAccountsOptions(includeCash = true) {
+      return state.paymentAccounts
+        .filter(a => includeCash || a.id !== "cash")
+        .map(a => `<option value="${a.id}">${escapeHtml(a.name)} ${a.number ? " - " + escapeHtml(a.number) : ""}</option>`)
+        .join("") || `<option value="cash">كاش</option>`;
+    }
+
+    function showSmartProductSuggestions(inputEl, onSelect) {
+      const q = String(inputEl.value || "").trim().toLowerCase();
+      const box = $("smartSuggestBox");
+
+      if (!q) {
+        box.style.display = "none";
+        box.innerHTML = "";
+        return;
+      }
+
+      const matches = state.products
+        .filter(p =>
+          String(p.name || "").toLowerCase().includes(q) ||
+          String(p.barcode || "").includes(q) ||
+          String(p.code || "").includes(q) ||
+          String(p.category || "").toLowerCase().includes(q)
+        )
+        .slice(0, 12);
+
+      if (!matches.length) {
+        box.style.display = "none";
+        box.innerHTML = "";
+        return;
+      }
+
+      const rect = inputEl.getBoundingClientRect();
+      box.style.top = `${rect.bottom + window.scrollY + 6}px`;
+      box.style.right = `${window.innerWidth - rect.right + window.scrollX}px`;
+
+      box.innerHTML = matches.map(p => {
+        p = normalizeProduct(p);
+        return `
+          <div class="smart-suggest-item" data-smart-product="${p.id}">
+            <div>
+              <b>${escapeHtml(p.name)}</b>
+              <div class="muted" style="font-size:11px">
+                ${escapeHtml(p.barcode || p.code || "-")} · ${escapeHtml(p.category || "-")}
+              </div>
+            </div>
+            <span class="badge blue">${cleanNumber(p.stock)} ${escapeHtml(unitLabel(p.baseUnit, p.customUnit))}</span>
+          </div>
+        `;
+      }).join("");
+
+      box.style.display = "block";
+
+      box.querySelectorAll("[data-smart-product]").forEach(el => {
+        el.onclick = () => {
+          const p = getProductById(el.dataset.smartProduct);
+          if (!p) return;
+          box.style.display = "none";
+          onSelect(p);
+        };
+      });
+    }
+
+    function hideSmartSuggestions() {
+      setTimeout(() => {
+        const box = $("smartSuggestBox");
+        if (box) {
+          box.style.display = "none";
+          box.innerHTML = "";
+        }
+      }, 180);
+    }
     function openPurchaseForm() {
       const node = cloneTemplate("purchaseFormTemplate");
       openModal("فاتورة مشتريات", node);
 
-      $("purchaseProduct").innerHTML =
-        state.products.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
+      function selectPurchaseProduct(product) {
+        const p = normalizeProduct(product);
+        $("purchaseProduct").value = p.id;
+        $("purchaseProductSearch").value = `${p.name} - ${p.barcode || p.code || ""}`;
+
+        fillPurchaseUnits();
+      }
 
       function fillPurchaseUnits() {
         const product = normalizeProduct(getProductById($("purchaseProduct").value));
+        if (!product || !product.id) return;
+
         const opts = getSaleUnitOptions(product);
 
         $("purchaseUnit").innerHTML = opts.map(opt => `
@@ -3466,11 +4292,17 @@
         `).join("");
 
         $("purchaseCartonUnits").value = product.cartonUnits || 1;
+        $("purchaseSalePrice").value = cleanNumber(product.displaySalePrice || product.salePrice || 0);
         updatePurchasePreview();
       }
 
       function updatePurchasePreview() {
         const product = normalizeProduct(getProductById($("purchaseProduct").value));
+        if (!product || !product.id) {
+          $("purchaseUnitsPreview").value = "اختر المنتج أولاً";
+          return;
+        }
+
         const unit = $("purchaseUnit").value;
         const qty = cleanNumber($("purchaseQty").value, 0);
 
@@ -3486,18 +4318,21 @@
         $("purchaseUnitsPreview").value = `${qty * factor} ${unitLabel(product.baseUnit, product.customUnit)}`;
       }
 
-      $("purchaseProduct").onchange = fillPurchaseUnits;
+      $("purchaseProductSearch").oninput = () => showSmartProductSuggestions($("purchaseProductSearch"), selectPurchaseProduct);
+      $("purchaseProductSearch").onblur = hideSmartSuggestions;
       $("purchaseUnit").onchange = updatePurchasePreview;
       $("purchaseQty").oninput = updatePurchasePreview;
       $("purchaseCartonUnits").oninput = updatePurchasePreview;
 
-      fillPurchaseUnits();
+      if (state.products.length) {
+        selectPurchaseProduct(state.products[0]);
+      }
 
       $("purchaseForm").onsubmit = async (e) => {
         e.preventDefault();
 
         const product = normalizeProduct(getProductById($("purchaseProduct").value));
-        if (!product) return toast("اختر المنتج");
+        if (!product || !product.id) return toast("اختر المنتج من البحث");
 
         const unit = $("purchaseUnit").value;
         const qty = cleanNumber($("purchaseQty").value, 0);
@@ -3548,6 +4383,37 @@
         closeModal();
         renderAll();
         toast("تم حفظ المشتريات وتحديث المخزون");
+      };
+    }
+
+    function openSupplierPaymentForm() {
+      const node = cloneTemplate("supplierPaymentFormTemplate");
+      openModal("إضافة دفعة تاجر", node);
+
+      $("supplierPaymentAccountId").innerHTML = paymentAccountsOptions(true);
+
+      $("supplierPaymentForm").onsubmit = async (e) => {
+        e.preventDefault();
+
+        const payment = {
+          id: uid("sp"),
+          supplierName: $("supplierPaymentName").value.trim(),
+          amount: cleanNumber($("supplierPaymentAmount").value, 0),
+          accountId: $("supplierPaymentAccountId").value,
+          notes: $("supplierPaymentNotes").value.trim(),
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        };
+
+        if (!payment.supplierName) return toast("أدخل اسم التاجر");
+        if (payment.amount <= 0) return toast("أدخل مبلغ صحيح");
+
+        await saveLocal("supplierPayments", payment, true);
+        state.supplierPayments.push(payment);
+
+        closeModal();
+        renderAll();
+        toast("تم حفظ دفعة التاجر");
       };
     }
 
@@ -3701,14 +4567,6 @@
         }
       }, 180);
     }
-
-    function paymentAccountsOptions() {
-      return state.paymentAccounts
-        .filter(a => a.id !== "cash")
-        .map(a => `<option value="${a.id}">${escapeHtml(a.name)} ${a.number ? " - " + escapeHtml(a.number) : ""}</option>`)
-        .join("") || `<option value="bank">بنك</option>`;
-    }
-
     function findCustomerByNameOrPhone(name, phone) {
       const n = String(name || "").trim();
       const p = String(phone || "").trim();
@@ -3737,6 +4595,7 @@
           createdAt: Date.now(),
           updatedAt: Date.now()
         });
+
         state.customers.push(customer);
       }
 
@@ -3744,6 +4603,7 @@
       customer.phone = phone || customer.phone;
       return customer;
     }
+
     function openPaymentChoice(isFreeInvoice = false) {
       const source = isFreeInvoice ? "free" : "cart";
 
@@ -3755,6 +4615,7 @@
       if (source === "free") {
         syncFreeLinesFromDom();
         const valid = state.freeLines.some(x => x.name && cleanNumber(x.price) > 0);
+
         if (!valid) {
           toast("أضف صنف واحد على الأقل في الفاتورة الحرة");
           return;
@@ -3818,7 +4679,7 @@
 
               <div>
                 <label class="field-label">حساب التحويل</label>
-                <select id="payAccountId" class="select">${paymentAccountsOptions()}</select>
+                <select id="payAccountId" class="select">${paymentAccountsOptions(false)}</select>
               </div>
 
               <div>
@@ -3838,6 +4699,7 @@
 
         $("paymentDetailsForm").onsubmit = (e) => {
           e.preventDefault();
+
           const existing = findCustomerByNameOrPhone($("payCustomerName").value, $("payCustomerPhone").value);
 
           saveSaleWithPayment({
@@ -3871,7 +4733,7 @@
 
               <div>
                 <label class="field-label">على أي محفظة / بنك سيحوّل؟</label>
-                <select id="payAccountId" class="select">${paymentAccountsOptions()}</select>
+                <select id="payAccountId" class="select">${paymentAccountsOptions(false)}</select>
               </div>
 
               <div>
@@ -3927,6 +4789,7 @@
         .sort((a,b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0))
         .map(c => {
           const bal = customerBalanceText(c.balance);
+
           return `
             <div class="debt-card" data-select-debt-customer="${c.id}">
               <div>
@@ -3940,7 +4803,7 @@
 
       openModal("اختيار حساب الدين", `
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-          <button id="addCustomerInsideDebtBtn" class="gold-btn">
+          <button id="addCustomerInsideDebtBtn" class="gold-btn" type="button">
             <i class="fa-solid fa-user-plus"></i> إضافة اسم جديد
           </button>
         </div>
@@ -4090,8 +4953,10 @@
           return false;
         }
       }
+
       return true;
     }
+
     async function saveSaleWithPayment(payment) {
       const source = payment.source || "cart";
 
@@ -4102,12 +4967,14 @@
 
       if (source === "free") {
         syncFreeLinesFromDom();
+
         if (!state.freeLines.some(x => x.name && cleanNumber(x.price) > 0)) {
           return toast("الفاتورة الحرة فارغة");
         }
       }
 
       const totals = source === "free" ? getFreeInvoiceTotals() : calculateCartTotals();
+
       const invoiceNumber =
         (state.invoices.length ? Math.max(...state.invoices.map(x => cleanNumber(x.number))) : 0) + 1;
 
@@ -4150,7 +5017,6 @@
       }
 
       let customerToOpen = null;
-
       if (["debt", "later_app"].includes(payment.paymentMethod)) {
         let customer = payment.customerId
           ? state.customers.find(c => c.id === payment.customerId)
@@ -4171,6 +5037,7 @@
             createdAt: Date.now(),
             updatedAt: Date.now()
           });
+
           state.customers.push(customer);
         }
 
@@ -4396,7 +5263,8 @@
       setTimeout(() => openCustomerAccount(customer.id, "manual"), 120);
       toast("تم تحويل الدين اليدوي إلى مكتمل");
     }
-async function markLaterInvoicePaid(invoiceId) {
+
+    async function markLaterInvoicePaid(invoiceId) {
       const invoice = state.invoices.find(i => i.id === invoiceId);
       if (!invoice) return;
 
@@ -4480,8 +5348,7 @@ async function markLaterInvoicePaid(invoiceId) {
       $("markLaterPaidBtn").onclick = () => markLaterInvoicePaid(invoice.id);
       $("closeLaterStatusBtn").onclick = closeModal;
     }
-
-    function getCustomerTableRows(customer, tab = "all") {
+function getCustomerTableRows(customer, tab = "all") {
       const rows = [];
 
       const invoices = getCustomerInvoices(customer);
@@ -4646,6 +5513,7 @@ async function markLaterInvoicePaid(invoiceId) {
         </div>
       `, true);
     }
+
     function buildInvoiceHtml(invoice) {
       const s = state.settings || defaultSettings;
       const acc = state.paymentAccounts.find(a => a.id === invoice.paymentAccountId);
@@ -4700,7 +5568,7 @@ async function markLaterInvoicePaid(invoiceId) {
             </thead>
 
             <tbody>
-              ${invoice.items.map(item => `
+              ${(invoice.items || []).map(item => `
                 <tr>
                   <td style="border:1px solid #e5e7eb;padding:8px;font-size:11px">${escapeHtml(item.name)}</td>
                   <td style="border:1px solid #e5e7eb;padding:8px;font-size:11px">${escapeHtml(item.qtyText || item.qty || "1")}</td>
@@ -4832,8 +5700,7 @@ async function markLaterInvoicePaid(invoiceId) {
 
       pdf.save(filename);
     }
-
-    function reportShell(title, bodyHtml) {
+function reportShell(title, bodyHtml) {
       const s = state.settings || defaultSettings;
       const logo = s.logo || makeLogoDataUrl(s.shopName);
 
@@ -4918,6 +5785,7 @@ async function markLaterInvoicePaid(invoiceId) {
 
       downloadElementImage(wrap, `customer-${customer.name}-${todayKey()}.png`).finally(() => wrap.remove());
     }
+
     function pdfCustomer(customerId) {
       const customer = state.customers.find(c => c.id === customerId);
       if (!customer) return;
@@ -4967,11 +5835,14 @@ async function markLaterInvoicePaid(invoiceId) {
 
       const invoices = periodFilter(state.invoices, period, "createdAt", custom)
         .filter(inv => {
+          const itemsText = (inv.items || []).map(x => `${x.name} ${x.qtyText} ${x.unitLabel}`).join(" ").toLowerCase();
+
           const searchOk =
             !q ||
             String(inv.number).includes(q) ||
             String(inv.customerName || "").toLowerCase().includes(q) ||
-            String(inv.customerPhone || "").includes(q);
+            String(inv.customerPhone || "").includes(q) ||
+            itemsText.includes(q);
 
           const statusOk = status === "all" || inv.paymentMethod === status || inv.status === status;
           return searchOk && statusOk;
@@ -5051,6 +5922,7 @@ async function markLaterInvoicePaid(invoiceId) {
       const invoices = periodFilter(state.invoices, period, "createdAt", custom);
       const expenses = periodFilter(state.expenses, period, "createdAt", custom);
       const purchases = periodFilter(state.purchases, period, "createdAt", custom);
+      const supplierPayments = periodFilter(state.supplierPayments, period, "createdAt", custom);
 
       const invoiceRows = invoices.map(inv => `
         <tr>
@@ -5083,6 +5955,19 @@ async function markLaterInvoicePaid(invoiceId) {
           <td>${money(p.total)}</td>
         </tr>
       `).join("");
+
+      const supplierPaymentRows = supplierPayments.map(p => {
+        const acc = state.paymentAccounts.find(a => a.id === p.accountId);
+        return `
+          <tr>
+            <td>${formatDate(p.createdAt)}</td>
+            <td>${escapeHtml(p.supplierName || "-")}</td>
+            <td>${money(p.amount)}</td>
+            <td>${escapeHtml(acc?.name || "-")}</td>
+            <td>${escapeHtml(p.notes || "-")}</td>
+          </tr>
+        `;
+      }).join("");
 
       return reportShell("تقرير مالي شامل", `
         <h3 style="font-size:14px;margin:10px 0">الفواتير</h3>
@@ -5128,10 +6013,23 @@ async function markLaterInvoicePaid(invoiceId) {
           </thead>
           <tbody>${purchaseRows || `<tr><td colspan="7" style="text-align:center;padding:12px">لا توجد مشتريات</td></tr>`}</tbody>
         </table>
+
+        <h3 style="font-size:14px;margin:14px 0 10px">دفعات التجار</h3>
+        <table style="width:100%;border-collapse:collapse;min-width:0">
+          <thead>
+            <tr>
+              <th style="border:1px solid #e5e7eb;background:#fef3c7;padding:7px;font-size:10px">التاريخ</th>
+              <th style="border:1px solid #e5e7eb;background:#fef3c7;padding:7px;font-size:10px">التاجر</th>
+              <th style="border:1px solid #e5e7eb;background:#fef3c7;padding:7px;font-size:10px">المبلغ</th>
+              <th style="border:1px solid #e5e7eb;background:#fef3c7;padding:7px;font-size:10px">الحساب</th>
+              <th style="border:1px solid #e5e7eb;background:#fef3c7;padding:7px;font-size:10px">ملاحظات</th>
+            </tr>
+          </thead>
+          <tbody>${supplierPaymentRows || `<tr><td colspan="5" style="text-align:center;padding:12px">لا توجد دفعات تجار</td></tr>`}</tbody>
+        </table>
       `);
     }
-
-    function printCurrentInvoices() {
+function printCurrentInvoices() {
       printHtml(buildFullInvoicesReportHtml());
     }
 
@@ -5143,6 +6041,7 @@ async function markLaterInvoicePaid(invoiceId) {
       wrap.style.width = "1200px";
       wrap.innerHTML = buildFullInvoicesReportHtml();
       document.body.appendChild(wrap);
+
       downloadElementImage(wrap, `invoices-full-${todayKey()}.png`).finally(() => wrap.remove());
     }
 
@@ -5154,6 +6053,7 @@ async function markLaterInvoicePaid(invoiceId) {
       wrap.style.width = "1200px";
       wrap.innerHTML = buildFullInvoicesReportHtml();
       document.body.appendChild(wrap);
+
       downloadElementPdf(wrap, `invoices-full-${todayKey()}.pdf`).finally(() => wrap.remove());
     }
 
@@ -5169,6 +6069,7 @@ async function markLaterInvoicePaid(invoiceId) {
       wrap.style.width = "1200px";
       wrap.innerHTML = buildFullReportsHtml();
       document.body.appendChild(wrap);
+
       downloadElementImage(wrap, `reports-full-${todayKey()}.png`).finally(() => wrap.remove());
     }
 
@@ -5180,9 +6081,11 @@ async function markLaterInvoicePaid(invoiceId) {
       wrap.style.width = "1200px";
       wrap.innerHTML = buildFullReportsHtml();
       document.body.appendChild(wrap);
+
       downloadElementPdf(wrap, `reports-full-${todayKey()}.pdf`).finally(() => wrap.remove());
     }
-async function saveSettings() {
+
+    async function saveSettings() {
       const file = $("settingLogoFile").files[0];
       let logo = state.settings?.logo || "";
 
@@ -5217,6 +6120,7 @@ async function saveSettings() {
         customers: state.customers,
         expenses: state.expenses,
         purchases: state.purchases,
+        supplierPayments: state.supplierPayments,
         paymentAccounts: state.paymentAccounts,
         settings: state.settings
       };
@@ -5242,12 +6146,13 @@ async function saveSettings() {
         if (Array.isArray(data.customers)) await idbBulkPut("customers", data.customers.map(normalizeCustomer));
         if (Array.isArray(data.expenses)) await idbBulkPut("expenses", data.expenses);
         if (Array.isArray(data.purchases)) await idbBulkPut("purchases", data.purchases);
+        if (Array.isArray(data.supplierPayments)) await idbBulkPut("supplierPayments", data.supplierPayments);
         if (Array.isArray(data.paymentAccounts)) await idbBulkPut("paymentAccounts", data.paymentAccounts);
         if (data.settings) await idbPut("settings", { ...defaultSettings, ...data.settings, id: "main" });
 
-        await loadLocalData();
+        await loadLocalData(true);
 
-        for (const store of ["products", "invoices", "customers", "expenses", "purchases", "paymentAccounts"]) {
+        for (const store of ["products", "invoices", "customers", "expenses", "purchases", "supplierPayments", "paymentAccounts"]) {
           for (const item of state[store]) {
             await enqueueSync({
               type: "set",
@@ -5284,6 +6189,7 @@ async function saveSettings() {
       state.customers = [];
       state.expenses = [];
       state.purchases = [];
+      state.supplierPayments = [];
       state.paymentAccounts = [];
       state.cart = [];
       state.freeLines = [];
@@ -5336,6 +6242,16 @@ async function saveSettings() {
 
       renderAll();
       toast("تم حذف سجل المشتريات");
+    }
+
+    async function deleteSupplierPayment(paymentId) {
+      if (!confirm("حذف دفعة التاجر؟")) return;
+
+      state.supplierPayments = state.supplierPayments.filter(p => p.id !== paymentId);
+      await removeLocal("supplierPayments", paymentId, true);
+
+      renderAll();
+      toast("تم حذف دفعة التاجر");
     }
 
     async function deletePaymentAccount(accountId) {
@@ -5414,7 +6330,6 @@ async function saveSettings() {
         </div>
       `, true);
     }
-
     function stopScanner() {
       if (state.scanner.reader) {
         try {
@@ -5427,9 +6342,73 @@ async function saveSettings() {
       state.scanner.locked = false;
     }
 
+    function stopFloatingScanner() {
+      if (state.scanner.floatingReader) {
+        try {
+          state.scanner.floatingReader.reset();
+        } catch {}
+      }
+
+      state.scanner.floatingReader = null;
+      $("floatingScanner").classList.remove("show");
+      state.scanner.locked = false;
+    }
+
+    async function openFloatingProductBarcodeScanner(targetInputId = "productBarcode") {
+      state.scanner.targetInputId = targetInputId;
+      state.scanner.locked = false;
+
+      $("floatingScanner").classList.add("show");
+
+      $("floatingScannerCloseBtn").onclick = stopFloatingScanner;
+
+      $("floatingManualCodeBtn").onclick = () => {
+        const code = prompt("أدخل الباركود يدويًا");
+        if (!code) return;
+
+        const input = $(targetInputId);
+        if (input) {
+          input.value = code.trim();
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+
+        stopFloatingScanner();
+        toast("تم إدخال الباركود");
+      };
+
+      try {
+        state.scanner.floatingReader = new ZXing.BrowserMultiFormatReader();
+
+        await state.scanner.floatingReader.decodeFromVideoDevice(
+          null,
+          "floatingScannerVideo",
+          (result) => {
+            if (!result || state.scanner.locked) return;
+
+            state.scanner.locked = true;
+
+            const code = String(result.text || "").trim();
+            const input = $(targetInputId);
+
+            if (input) {
+              input.value = code;
+              input.dispatchEvent(new Event("input", { bubbles: true }));
+            }
+
+            stopFloatingScanner();
+            toast("تمت قراءة الباركود ووضعه في خانة كود المنتج");
+          }
+        );
+      } catch (e) {
+        console.error(e);
+        toast("تعذر فتح الكاميرا، تأكد من الصلاحيات و HTTPS");
+      }
+    }
+
     async function openScanner(mode = "sale", targetInputId = "") {
       state.scanner.mode = mode;
       state.scanner.targetInputId = targetInputId || "";
+      state.scanner.locked = false;
 
       const node = cloneTemplate("scannerTemplate");
       openModal("قراءة باركود بالكاميرا", node);
@@ -5450,6 +6429,7 @@ async function saveSettings() {
           "scannerVideo",
           (result) => {
             if (!result || state.scanner.locked) return;
+
             state.scanner.locked = true;
             handleScannedCode(result.text);
           }
@@ -5462,16 +6442,6 @@ async function saveSettings() {
 
     function handleScannedCode(code) {
       stopScanner();
-
-      if (state.scanner.mode === "productInput" && state.scanner.targetInputId) {
-        const targetId = state.scanner.targetInputId;
-        closeModal();
-        setTimeout(() => {
-          const input = $(targetId);
-          if (input) input.value = code;
-        }, 50);
-        return;
-      }
 
       const product = state.products.find(p =>
         String(p.barcode || "") === String(code) ||
@@ -5486,6 +6456,7 @@ async function saveSettings() {
         toast("لم يتم العثور على منتج بهذا الباركود");
       }
     }
+
     function openManualBarcode() {
       const code = prompt("أدخل الباركود أو كود المنتج");
       if (!code) return;
@@ -5517,6 +6488,12 @@ async function saveSettings() {
             <small class="muted">إدخال بضاعة</small>
           </button>
 
+          <button class="payment-choice" data-quick-action="supplierPayment" type="button">
+            <i class="fa-solid fa-hand-holding-dollar"></i>
+            <span>دفعة تاجر</span>
+            <small class="muted">تسجيل دفعة لمورد</small>
+          </button>
+
           <button class="payment-choice" data-quick-action="customer" type="button">
             <i class="fa-solid fa-user-plus"></i>
             <span>زبون</span>
@@ -5546,6 +6523,11 @@ async function saveSettings() {
           openPurchaseForm();
         }
 
+        if (action === "supplierPayment") {
+          switchPage("supplierPayments");
+          openSupplierPaymentForm();
+        }
+
         if (action === "customer") {
           switchPage("debts");
           openDebtCustomerForm();
@@ -5558,8 +6540,21 @@ async function saveSettings() {
       }, 120);
     }
 
+    function closeSidebarIfOutside(e) {
+      const sidebar = $("sidebar");
+      const menuBtn = $("openMenuBtn");
+
+      if (!sidebar || !sidebar.classList.contains("open")) return;
+      if (sidebar.contains(e.target)) return;
+      if (menuBtn && menuBtn.contains(e.target)) return;
+
+      sidebar.classList.remove("open");
+    }
+
     function bindEvents() {
       document.addEventListener("click", async (e) => {
+        closeSidebarIfOutside(e);
+
         const nav = e.target.closest("[data-page]");
         if (nav) {
           switchPage(nav.dataset.page);
@@ -5725,6 +6720,12 @@ async function saveSettings() {
           return;
         }
 
+        const deleteSupplierPaymentBtn = e.target.closest("[data-delete-supplier-payment]");
+        if (deleteSupplierPaymentBtn) {
+          await deleteSupplierPayment(deleteSupplierPaymentBtn.dataset.deleteSupplierPayment);
+          return;
+        }
+
         const deleteExpenseBtn = e.target.closest("[data-delete-expense]");
         if (deleteExpenseBtn) {
           await deleteExpense(deleteExpenseBtn.dataset.deleteExpense);
@@ -5777,11 +6778,16 @@ async function saveSettings() {
         if (e.target.id === "modalBackdrop") closeModal();
       };
 
-      $("openMenuBtn").onclick = () => $("sidebar").classList.add("open");
+      $("openMenuBtn").onclick = (e) => {
+        e.stopPropagation();
+        $("sidebar").classList.add("open");
+      };
 
       $("quickAddBtn").onclick = openQuickAddMenu;
 
-      $("syncNowBtn").onclick = () => syncNow(true);
+      $("syncNowBtn").onclick = async () => {
+        await syncNow(true);
+      };
 
       $("notificationsBtn").onclick = openNotifications;
 
@@ -5793,6 +6799,11 @@ async function saveSettings() {
       $("addPurchaseBtn").onclick = () => {
         switchPage("purchases");
         openPurchaseForm();
+      };
+
+      $("addSupplierPaymentBtn").onclick = () => {
+        switchPage("supplierPayments");
+        openSupplierPaymentForm();
       };
 
       $("addExpenseBtn").onclick = () => {
@@ -5840,6 +6851,10 @@ async function saveSettings() {
       $("debtsSearch").oninput = renderDebts;
       $("debtsSort").onchange = renderDebts;
 
+      $("purchaseTableSearch").oninput = renderPurchases;
+      $("supplierPaymentsSearch").oninput = renderSupplierPayments;
+      $("expensesSearch").oninput = renderExpenses;
+
       $("reportsPeriod").onchange = renderReports;
       $("reportsCustomDate").onchange = renderReports;
 
@@ -5862,9 +6877,9 @@ async function saveSettings() {
       $("imageReportsBtn").onclick = imageCurrentReports;
       $("pdfReportsBtn").onclick = pdfCurrentReports;
 
-      window.addEventListener("online", () => {
-        refreshPendingCount();
-        syncNow(false);
+      window.addEventListener("online", async () => {
+        await refreshPendingCount();
+        await syncNow(false);
         startRealtimeListeners();
       });
 
@@ -5874,6 +6889,11 @@ async function saveSettings() {
       });
 
       document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && $("floatingScanner").classList.contains("show")) {
+          stopFloatingScanner();
+          return;
+        }
+
         if (e.key === "Escape" && $("modalBackdrop").classList.contains("show")) {
           closeModal();
         }
@@ -5885,12 +6905,12 @@ async function saveSettings() {
         }
       });
     }
-
     async function boot() {
       await openDB();
       bindEvents();
 
-      await loadLocalData();
+      setSyncProgress(2, "تشغيل التطبيق...", "تحميل البيانات المحلية");
+      await loadLocalData(true);
 
       if (!state.freeLines.length) {
         state.freeLines = [{ id: uid("free"), name: "", qty: 1, cost: 0, price: 0 }];
@@ -5899,9 +6919,19 @@ async function saveSettings() {
       renderAll();
 
       if (navigator.onLine) {
-        await loadFirebaseOnce();
+        setSyncProgress(8, "رفع المحلي أولاً...", "أي بيانات محفوظة أوفلاين سيتم رفعها قبل تنزيل Firebase");
         await syncNow(false);
+
+        setSyncProgress(55, "تحميل بيانات Firebase...", "تنزيل الجديد فقط وتخزينه محليًا");
+        await loadFirebaseOnce();
+
+        setSyncProgress(78, "تثبيت المسار الحالي...", "رفع نسخة من المحلي للمسار الحالي حتى لا تضيع البيانات القديمة");
+        await syncOldDataToNewRoot();
+
         startRealtimeListeners();
+
+        setSyncProgress(100, "جاهز", "تم تحميل ومزامنة البيانات");
+        hideSyncPanelLater(750);
       } else {
         hideSyncPanelNow();
       }
@@ -5910,17 +6940,19 @@ async function saveSettings() {
 
       setInterval(async () => {
         await refreshPendingCount();
+
         if (navigator.onLine) {
           await syncNow(false);
         } else {
           hideSyncPanelNow();
         }
-      }, 30000);
+      }, 12000);
     }
 
     boot().catch((e) => {
       console.error(e);
       toast("حدث خطأ أثناء تشغيل التطبيق");
+      hideSyncPanelNow();
     });
   </script>
 </body>
