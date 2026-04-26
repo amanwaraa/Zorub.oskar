@@ -1901,10 +1901,11 @@
               <input id="settingLowStock" type="number" inputmode="decimal" class="input" value="5">
             </div>
 
-<div>
-  <label class="field-label">رابط شعار المحل</label>
-  <input id="settingLogoUrl" type="url" class="input" placeholder="https://example.com/logo.png">
-</div>
+            <div>
+              <label class="field-label">صورة / شعار المحل</label>
+              <input id="settingLogoFile" type="file" accept="image/*" class="input">
+            </div>
+          </div>
 
           <button id="saveSettingsBtn" class="primary-btn" style="margin-top:14px">
             <i class="fa-solid fa-floppy-disk"></i> حفظ الإعدادات
@@ -3192,7 +3193,17 @@
       return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
     }
 
-    
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        if (!file) return resolve("");
+
+        const reader = new FileReader();
+
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+      });
+    }
 
     function applySettingsToUI() {
       const s = state.settings || defaultSettings;
@@ -3204,10 +3215,10 @@
       $("sideShopLogo").src = logo;
 
       if ($("settingShopName")) $("settingShopName").value = s.shopName || "";
-if ($("settingShopPhone")) $("settingShopPhone").value = s.shopPhone || "";
-if ($("settingCurrency")) $("settingCurrency").value = s.currency || "₪";
-if ($("settingLowStock")) $("settingLowStock").value = s.lowStock || 5;
-if ($("settingLogoUrl")) $("settingLogoUrl").value = s.logo || "";
+      if ($("settingShopPhone")) $("settingShopPhone").value = s.shopPhone || "";
+      if ($("settingCurrency")) $("settingCurrency").value = s.currency || "₪";
+      if ($("settingLowStock")) $("settingLowStock").value = s.lowStock || 5;
+    }
 
     async function loadLocalData(doRender = true) {
       state.products = (await idbGetAll("products")).map(normalizeProduct);
@@ -6268,26 +6279,30 @@ function getCustomerTableRows(customer, tab = "all") {
     }
 
     async function saveSettings() {
-  const logoUrl = $("settingLogoUrl")?.value.trim() || "";
+      const file = $("settingLogoFile").files[0];
+      let logo = state.settings?.logo || "";
 
-  state.settings = {
-    ...defaultSettings,
-    ...state.settings,
-    id: "main",
-    shopName: $("settingShopName").value.trim() || "المحل الرئيسي",
-    shopPhone: $("settingShopPhone").value.trim(),
-    currency: $("settingCurrency").value.trim() || "₪",
-    lowStock: cleanNumber($("settingLowStock").value, 5),
-    logo: logoUrl,
-    updatedAt: Date.now()
-  };
+      if (file) {
+        logo = await readFileAsDataUrl(file);
+      }
 
-  await saveLocal("settings", state.settings, true);
+      state.settings = {
+        ...defaultSettings,
+        ...state.settings,
+        id: "main",
+        shopName: $("settingShopName").value.trim() || "المحل الرئيسي",
+        shopPhone: $("settingShopPhone").value.trim(),
+        currency: $("settingCurrency").value.trim() || "₪",
+        lowStock: cleanNumber($("settingLowStock").value, 5),
+        logo,
+        updatedAt: Date.now()
+      };
 
-  applySettingsToUI();
-  renderAll();
-  toast("تم حفظ الإعدادات ومزامنة رابط الشعار");
-}
+      await saveLocal("settings", state.settings, true);
+      applySettingsToUI();
+      renderAll();
+      toast("تم حفظ الإعدادات");
+    }
 
     function exportBackup() {
       const data = {
