@@ -5730,16 +5730,19 @@ function buildSaleItems(source) {
 
     function validateStockForCart() {
       for (const line of state.cart) {
-        const product =if (!product) continue;
+        function validateStockForCart() {
+  for (const line of state.cart) {
+    const product = getProductById(line.productId);
+    if (!product) continue;
 
-        if (cleanNumber(product.stock) < cleanNumber(line.baseQty)) {
-          toast(`المخزون غير كافٍ للصنف: ${product.name}`);
-          return false;
-        }
-      }
-
-      return true;
+    if (cleanNumber(product.stock) < cleanNumber(line.baseQty)) {
+      toast(`المخزون غير كافٍ للصنف: ${product.name}`);
+      return false;
     }
+  }
+
+  return true;
+}
 
     async function saveSaleWithPayment(payment) {
       const source = payment.source || "cart";
