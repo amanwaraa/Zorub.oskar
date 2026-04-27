@@ -3,13 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>قارئ باركود المنتجات</title>
+  <title>كاميرا قارئ الباركود</title>
 
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
-
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
@@ -17,413 +15,156 @@
 
     body {
       margin: 0;
-      font-family: "Cairo", sans-serif;
-      background:
-        radial-gradient(circle at top right, rgba(34,197,94,.22), transparent 32%),
-        radial-gradient(circle at bottom left, rgba(37,99,235,.20), transparent 35%),
-        linear-gradient(135deg, #020617, #0f172a);
-      color: #fff;
+      background: #020617;
       min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    .app {
-      width: min(460px, 100%);
-      margin: auto;
-      min-height: 100vh;
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .header {
-      padding: 18px;
-      border-radius: 26px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.14);
-      backdrop-filter: blur(16px);
-      box-shadow: 0 20px 55px rgba(0,0,0,.25);
-    }
-
-    .badge {
-      width: fit-content;
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: rgba(34,197,94,.15);
-      border: 1px solid rgba(34,197,94,.35);
-      color: #86efac;
-      font-size: 12px;
-      font-weight: 800;
-      margin-bottom: 10px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 24px;
-      font-weight: 900;
-      line-height: 1.4;
-    }
-
-    .subtitle {
-      margin: 8px 0 0;
-      color: #cbd5e1;
-      font-size: 14px;
-      line-height: 1.8;
-    }
-
-    .scanner-card {
-      position: relative;
-      border-radius: 30px;
-      padding: 12px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.14);
       overflow: hidden;
-      box-shadow: 0 25px 65px rgba(0,0,0,.35);
+      font-family: Arial, sans-serif;
+    }
+
+    .camera-page {
+      position: fixed;
+      inset: 0;
+      background: #000;
     }
 
     #reader {
-      width: 100%;
-      min-height: 330px;
-      border-radius: 24px;
-      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
       background: #000;
-      position: relative;
     }
 
     #reader video {
+      width: 100vw !important;
+      height: 100vh !important;
       object-fit: cover !important;
-      border-radius: 24px;
+    }
+
+    #reader__scan_region {
+      display: none !important;
+    }
+
+    #reader__dashboard {
+      display: none !important;
     }
 
     .scan-frame {
       pointer-events: none;
-      position: absolute;
-      inset: 28px;
-      border-radius: 28px;
-      border: 3px solid rgba(255,255,255,.35);
-      z-index: 5;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: min(82vw, 420px);
+      height: 230px;
+      transform: translate(-50%, -50%);
+      border: 3px solid rgba(255,255,255,.55);
+      border-radius: 26px;
+      z-index: 10;
       transition: .15s ease;
       box-shadow:
-        inset 0 0 0 9999px rgba(0,0,0,.04),
-        0 0 28px rgba(255,255,255,.08);
+        0 0 0 9999px rgba(0,0,0,.18),
+        0 0 30px rgba(255,255,255,.15);
     }
 
     .scan-frame::before,
     .scan-frame::after {
       content: "";
       position: absolute;
-      width: 52px;
-      height: 52px;
+      width: 54px;
+      height: 54px;
       border-color: #22c55e;
       border-style: solid;
-      filter: drop-shadow(0 0 10px rgba(34,197,94,.8));
+      filter: drop-shadow(0 0 12px rgba(34,197,94,.95));
     }
 
     .scan-frame::before {
-      right: -3px;
-      top: -3px;
-      border-width: 5px 5px 0 0;
+      top: -4px;
+      right: -4px;
+      border-width: 6px 6px 0 0;
       border-radius: 0 22px 0 0;
     }
 
     .scan-frame::after {
-      left: -3px;
-      bottom: -3px;
-      border-width: 0 0 5px 5px;
+      left: -4px;
+      bottom: -4px;
+      border-width: 0 0 6px 6px;
       border-radius: 0 0 0 22px;
     }
 
     .laser {
-      position: absolute;
-      right: 34px;
-      left: 34px;
-      height: 3px;
+      position: fixed;
       top: 50%;
-      z-index: 6;
+      left: 50%;
+      width: min(72vw, 360px);
+      height: 3px;
+      transform: translate(-50%, -50%);
+      z-index: 11;
       border-radius: 999px;
       background: linear-gradient(90deg, transparent, #22c55e, transparent);
-      box-shadow: 0 0 18px #22c55e;
-      animation: laserMove 1.25s ease-in-out infinite;
+      box-shadow: 0 0 22px #22c55e;
+      animation: laserMove 1.2s ease-in-out infinite;
       pointer-events: none;
     }
 
     @keyframes laserMove {
-      0%, 100% { transform: translateY(-100px); opacity: .55; }
-      50% { transform: translateY(100px); opacity: 1; }
+      0%, 100% {
+        transform: translate(-50%, calc(-50% - 95px));
+        opacity: .55;
+      }
+
+      50% {
+        transform: translate(-50%, calc(-50% + 95px));
+        opacity: 1;
+      }
     }
 
-    .scanner-card.detected .scan-frame {
+    .detected .scan-frame {
       border-color: #22c55e;
       box-shadow:
-        0 0 0 5px rgba(34,197,94,.18),
-        0 0 35px rgba(34,197,94,.75),
-        inset 0 0 45px rgba(34,197,94,.18);
-      animation: popGreen .28s ease;
+        0 0 0 9999px rgba(0,0,0,.13),
+        0 0 40px rgba(34,197,94,.9),
+        inset 0 0 35px rgba(34,197,94,.25);
+      animation: greenPop .28s ease;
     }
 
-    .scanner-card.detected .laser {
-      background: linear-gradient(90deg, transparent, #bbf7d0, transparent);
-      box-shadow: 0 0 26px #86efac;
-    }
-
-    @keyframes popGreen {
-      0% { transform: scale(.97); }
-      60% { transform: scale(1.015); }
-      100% { transform: scale(1); }
-    }
-
-    .status {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 12px 14px;
-      border-radius: 20px;
-      background: rgba(15,23,42,.78);
-      border: 1px solid rgba(255,255,255,.12);
-      margin-top: 10px;
-      color: #cbd5e1;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #f59e0b;
-      box-shadow: 0 0 14px #f59e0b;
-      flex: none;
-    }
-
-    .dot.on {
-      background: #22c55e;
-      box-shadow: 0 0 14px #22c55e;
-    }
-
-    .dot.err {
-      background: #ef4444;
-      box-shadow: 0 0 14px #ef4444;
-    }
-
-    .result-box {
-      padding: 16px;
-      border-radius: 26px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.14);
-      box-shadow: 0 20px 50px rgba(0,0,0,.24);
-    }
-
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 900;
-      color: #e2e8f0;
-      margin-bottom: 8px;
-    }
-
-    .input-wrap {
-      display: flex;
-      gap: 8px;
-    }
-
-    input {
-      width: 100%;
-      border: 0;
-      outline: none;
-      border-radius: 18px;
-      padding: 15px 14px;
-      font-size: 20px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      color: #022c22;
-      background: #ecfdf5;
-      border: 2px solid rgba(34,197,94,.28);
-      direction: ltr;
-      text-align: center;
-    }
-
-    button {
-      border: 0;
-      outline: none;
-      cursor: pointer;
-      border-radius: 18px;
-      padding: 0 16px;
-      font-family: inherit;
-      font-weight: 900;
-      color: white;
-      background: linear-gradient(135deg, #16a34a, #15803d);
-      box-shadow: 0 14px 28px rgba(22,163,74,.28);
-      transition: .2s ease;
-      min-height: 54px;
-      white-space: nowrap;
-    }
-
-    button:active {
-      transform: scale(.96);
-    }
-
-    .buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .btn-secondary {
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.16);
-      box-shadow: none;
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, #ef4444, #b91c1c);
-      box-shadow: 0 14px 28px rgba(239,68,68,.25);
-    }
-
-    .history {
-      padding: 16px;
-      border-radius: 26px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.14);
-      display: none;
-    }
-
-    .history.show {
-      display: block;
-    }
-
-    .history-title {
-      font-size: 14px;
-      font-weight: 900;
-      margin-bottom: 10px;
-      color: #e2e8f0;
-    }
-
-    .history-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 180px;
-      overflow: auto;
-    }
-
-    .history-item {
-      padding: 10px 12px;
-      border-radius: 16px;
-      background: rgba(15,23,42,.68);
-      border: 1px solid rgba(255,255,255,.08);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      direction: ltr;
-      font-weight: 900;
-      color: #bbf7d0;
-    }
-
-    .small {
-      font-size: 11px;
-      color: #94a3b8;
-      direction: rtl;
-      font-weight: 700;
-    }
-
-    .hint {
-      color: #94a3b8;
-      font-size: 12px;
-      line-height: 1.8;
-      margin-top: 10px;
+    @keyframes greenPop {
+      0% { transform: translate(-50%, -50%) scale(.96); }
+      60% { transform: translate(-50%, -50%) scale(1.03); }
+      100% { transform: translate(-50%, -50%) scale(1); }
     }
 
     .toast {
       position: fixed;
       right: 16px;
       left: 16px;
-      bottom: 18px;
-      z-index: 99;
-      padding: 14px 16px;
+      bottom: 28px;
+      z-index: 50;
+      padding: 15px 18px;
       border-radius: 18px;
-      background: rgba(15,23,42,.96);
-      color: white;
-      border: 1px solid rgba(255,255,255,.14);
-      box-shadow: 0 20px 50px rgba(0,0,0,.35);
-      transform: translateY(120%);
+      background: rgba(15, 23, 42, .96);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 800;
+      text-align: center;
+      box-shadow: 0 18px 45px rgba(0,0,0,.4);
+      border: 1px solid rgba(255,255,255,.15);
+      transform: translateY(130%);
       opacity: 0;
       transition: .25s ease;
-      text-align: center;
-      font-weight: 900;
+      direction: ltr;
     }
 
     .toast.show {
       transform: translateY(0);
       opacity: 1;
     }
-
-    @media (max-width: 420px) {
-      #reader {
-        min-height: 300px;
-      }
-
-      h1 {
-        font-size: 21px;
-      }
-
-      .buttons {
-        grid-template-columns: 1fr;
-      }
-    }
   </style>
 </head>
 
 <body>
-  <main class="app">
-    <section class="header">
-      <div class="badge">⚡ قارئ سريع للمنتجات</div>
-      <h1>قارئ باركود احترافي بالكاميرا</h1>
-      <p class="subtitle">
-        وجّه الكاميرا على الباركود، سيتم التقاطه تلقائيًا، إصدار صوت، وتعبئة رقم المنتج مباشرة.
-      </p>
-    </section>
-
-    <section id="scannerCard" class="scanner-card">
-      <div id="reader"></div>
-      <div class="scan-frame"></div>
-      <div class="laser"></div>
-
-      <div class="status">
-        <span>
-          <span id="statusDot" class="dot"></span>
-          <span id="statusText">جاري تجهيز الكاميرا...</span>
-        </span>
-        <span id="scanCount">0 قراءة</span>
-      </div>
-    </section>
-
-    <section class="result-box">
-      <label for="productCode">رقم المنتج / الباركود</label>
-
-      <div class="input-wrap">
-        <input id="productCode" type="text" placeholder="سيظهر رقم المنتج هنا" autocomplete="off" />
-        <button type="button" onclick="copyCode()">نسخ</button>
-      </div>
-
-      <div class="buttons">
-        <button type="button" id="startBtn" onclick="startScanner()">تشغيل الكاميرا</button>
-        <button type="button" class="btn-danger" onclick="stopScanner()">إيقاف الكاميرا</button>
-      </div>
-
-      <p class="hint">
-        للحصول على أسرع قراءة: قرّب الباركود من منتصف الإطار، وخلّي الإضاءة واضحة. يدعم أغلب أنواع الباركود و QR.
-      </p>
-    </section>
-
-    <section id="historyBox" class="history">
-      <div class="history-title">آخر القراءات</div>
-      <div id="historyList" class="history-list"></div>
-    </section>
-  </main>
+  <div id="cameraPage" class="camera-page">
+    <div id="reader"></div>
+    <div class="scan-frame"></div>
+    <div class="laser"></div>
+  </div>
 
   <div id="toast" class="toast"></div>
 
@@ -432,30 +173,18 @@
     let isRunning = false;
     let lastCode = "";
     let lastTime = 0;
-    let scanCounter = 0;
-    const history = [];
 
-    const productCodeInput = document.getElementById("productCode");
-    const scannerCard = document.getElementById("scannerCard");
-    const statusText = document.getElementById("statusText");
-    const statusDot = document.getElementById("statusDot");
-    const scanCount = document.getElementById("scanCount");
-    const historyBox = document.getElementById("historyBox");
-    const historyList = document.getElementById("historyList");
+    const cameraPage = document.getElementById("cameraPage");
+    const toastBox = document.getElementById("toast");
 
-    function setStatus(text, mode = "wait") {
-      statusText.textContent = text;
-      statusDot.className = "dot";
-      if (mode === "on") statusDot.classList.add("on");
-      if (mode === "err") statusDot.classList.add("err");
-    }
+    function showToast(code) {
+      toastBox.textContent = code;
+      toastBox.classList.add("show");
 
-    function toast(msg) {
-      const el = document.getElementById("toast");
-      el.textContent = msg;
-      el.classList.add("show");
       clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(() => el.classList.remove("show"), 1700);
+      window.__toastTimer = setTimeout(() => {
+        toastBox.classList.remove("show");
+      }, 1800);
     }
 
     function playBeep() {
@@ -463,89 +192,59 @@
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const ctx = new AudioContext();
 
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
+        function tone(start, freq) {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
 
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(1150, ctx.currentTime);
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
 
-        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.35, ctx.currentTime + 0.015);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.13);
+          gain.gain.setValueAtTime(0.0001, ctx.currentTime + start);
+          gain.gain.exponentialRampToValueAtTime(0.16, ctx.currentTime + start + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + 0.11);
 
-        osc.connect(gain);
-        gain.connect(ctx.destination);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
 
-        osc.start();
-        osc.stop(ctx.currentTime + 0.14);
+          osc.start(ctx.currentTime + start);
+          osc.stop(ctx.currentTime + start + 0.12);
+        }
+
+        tone(0, 600);
+        tone(0.13, 720);
       } catch (e) {
-        console.warn("Audio error:", e);
+        console.warn(e);
       }
     }
 
-    function vibrate() {
+    function vibratePhone() {
       if (navigator.vibrate) {
-        navigator.vibrate([70, 30, 70]);
+        navigator.vibrate([55, 25, 55]);
       }
     }
 
     function markDetected() {
-      scannerCard.classList.add("detected");
-      clearTimeout(window.__greenFrameTimer);
-      window.__greenFrameTimer = setTimeout(() => {
-        scannerCard.classList.remove("detected");
-      }, 650);
-    }
+      cameraPage.classList.add("detected");
 
-    function addToHistory(code) {
-      history.unshift({
-        code,
-        time: new Date().toLocaleTimeString("ar")
-      });
-
-      if (history.length > 8) history.pop();
-
-      historyBox.classList.add("show");
-      historyList.innerHTML = history.map(item => `
-        <div class="history-item">
-          <span>${escapeHtml(item.code)}</span>
-          <span class="small">${item.time}</span>
-        </div>
-      `).join("");
-    }
-
-    function escapeHtml(str) {
-      return String(str).replace(/[&<>"']/g, s => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      }[s]));
+      clearTimeout(window.__detectedTimer);
+      window.__detectedTimer = setTimeout(() => {
+        cameraPage.classList.remove("detected");
+      }, 550);
     }
 
     function onScanSuccess(decodedText, decodedResult) {
       const now = Date.now();
 
-      // منع تكرار نفس القراءة خلال ثانية
-      if (decodedText === lastCode && now - lastTime < 1200) return;
+      if (decodedText === lastCode && now - lastTime < 1400) return;
 
       lastCode = decodedText;
       lastTime = now;
 
-      productCodeInput.value = decodedText;
-      scanCounter++;
-      scanCount.textContent = scanCounter + " قراءة";
-
-      setStatus("تم التقاط الباركود بنجاح", "on");
       markDetected();
       playBeep();
-      vibrate();
-      addToHistory(decodedText);
+      vibratePhone();
+      showToast(decodedText);
 
-      toast("تم قراءة الباركود: " + decodedText);
-
-      // حدث مخصص حتى تربطه مع نظام الكاشير عندك
       window.dispatchEvent(new CustomEvent("barcode:scanned", {
         detail: {
           code: decodedText,
@@ -554,25 +253,12 @@
       }));
     }
 
-    function onScanFailure(error) {
-      // لا نعرض أخطاء القراءة المستمرة حتى لا يزعج المستخدم
-    }
+    function onScanFailure(error) {}
 
-    async function startScanner() {
-      if (isRunning) {
-        toast("الكاميرا تعمل بالفعل");
-        return;
-      }
-
-      if (!window.Html5Qrcode) {
-        setStatus("لم يتم تحميل مكتبة قراءة الباركود", "err");
-        toast("تأكد من وجود اتصال إنترنت أول مرة لتحميل المكتبة");
-        return;
-      }
+    async function startCameraScanner() {
+      if (isRunning) return;
 
       try {
-        setStatus("جاري تشغيل الكاميرا...", "wait");
-
         scanner = new Html5Qrcode("reader", {
           formatsToSupport: [
             Html5QrcodeSupportedFormats.QR_CODE,
@@ -595,14 +281,12 @@
         const config = {
           fps: 30,
           qrbox: function(viewfinderWidth, viewfinderHeight) {
-            const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-
             return {
-              width: Math.floor(minEdge * 0.86),
-              height: Math.floor(minEdge * 0.62)
+              width: Math.floor(viewfinderWidth * 0.82),
+              height: Math.floor(viewfinderHeight * 0.34)
             };
           },
-          aspectRatio: 1.0,
+          aspectRatio: 1.7777778,
           disableFlip: false,
           experimentalFeatures: {
             useBarCodeDetectorIfSupported: true
@@ -627,53 +311,27 @@
         );
 
         isRunning = true;
-        setStatus("الكاميرا تعمل — وجّهها نحو الباركود", "on");
       } catch (err) {
         console.error(err);
-        isRunning = false;
-        setStatus("تعذر تشغيل الكاميرا", "err");
-        toast("اسمح للمتصفح باستخدام الكاميرا ثم جرّب مرة أخرى");
+        showToast("اسمح باستخدام الكاميرا");
       }
     }
 
-    async function stopScanner() {
-      try {
-        if (scanner && isRunning) {
+    window.addEventListener("load", () => {
+      setTimeout(startCameraScanner, 300);
+    });
+
+    document.addEventListener("visibilitychange", async () => {
+      if (document.hidden && scanner && isRunning) {
+        try {
           await scanner.stop();
           await scanner.clear();
-        }
-
+        } catch (e) {}
         isRunning = false;
-        scanner = null;
-        setStatus("تم إيقاف الكاميرا", "wait");
-        toast("تم إيقاف قارئ الباركود");
-      } catch (err) {
-        console.error(err);
-        setStatus("حدث خطأ أثناء إيقاف الكاميرا", "err");
-      }
-    }
-
-    async function copyCode() {
-      const code = productCodeInput.value.trim();
-
-      if (!code) {
-        toast("لا يوجد باركود لنسخه");
-        return;
       }
 
-      try {
-        await navigator.clipboard.writeText(code);
-        toast("تم نسخ رقم المنتج");
-      } catch (e) {
-        productCodeInput.select();
-        document.execCommand("copy");
-        toast("تم نسخ رقم المنتج");
-      }
-    }
-
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden && isRunning) {
-        stopScanner();
+      if (!document.hidden && !isRunning) {
+        setTimeout(startCameraScanner, 300);
       }
     });
 
@@ -681,13 +339,6 @@
       if (scanner && isRunning) {
         scanner.stop().catch(() => {});
       }
-    });
-
-    // تشغيل تلقائي بعد فتح الصفحة
-    window.addEventListener("load", () => {
-      setTimeout(() => {
-        startScanner();
-      }, 500);
     });
   </script>
 </body>
