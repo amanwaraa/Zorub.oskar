@@ -10523,14 +10523,21 @@
   setTimeout(window.fixCashierAuthButtons, 1800);
 })();
 </script>
+  
   <script>
-/* fix-logout-and-admin-password.js */
+/* final-force-auth-actions-fix.js */
 (function () {
   "use strict";
 
   const DEFAULT_ADMIN_PIN = "0000";
   const ADMIN_PERMISSION = "__admin__";
-  const AUTH_SESSION_KEY = "cashier_auth_session_v1";
+  const SESSION_KEYS = [
+    "cashier_auth_session_v1",
+    "cashier_auth_session",
+    "cashier_user_session",
+    "auth_session",
+    "user_session"
+  ];
 
   function $(id) {
     return document.getElementById(id);
@@ -10553,13 +10560,7 @@
     return String(h >>> 0);
   }
 
-  function isAdmin() {
-    const u = window.state?.auth?.user;
-    if (!u) return false;
-    return u.role === "admin" || (u.permissions || []).includes(ADMIN_PERMISSION);
-  }
-
-  function ensureAuthState() {
+  function ensureState() {
     window.state = window.state || {};
     window.state.auth = window.state.auth || {};
     window.state.settings = window.state.settings || {};
@@ -10569,81 +10570,119 @@
     }
   }
 
-  function hideAllModals() {
-    $("modalBackdrop")?.classList.remove("show");
-    $("modalBox")?.classList.remove("large");
-
-    const floatingScanner = $("floatingScanner");
-    if (floatingScanner) floatingScanner.classList.remove("show");
-
-    const syncPopover = $("syncPopover");
-    if (syncPopover) syncPopover.classList.remove("show");
+  function getCurrentUser() {
+    ensureState();
+    return window.state.auth?.user || null;
   }
 
-  function showLoginScreen() {
-    const lock = $("authLock");
-    if (lock) lock.classList.remove("hide");
+  function isAdmin() {
+    const u = getCurrentUser();
 
-    const adminInput = $("adminPasswordInput");
-    const empName = $("employeeNameInput");
-    const empPass = $("employeePasswordInput");
+    if (!u) return false;
 
-    if (adminInput) adminInput.value = "";
-    if (empName) empName.value = "";
-    if (empPass) empPass.value = "";
+    return (
+      u.role === "admin" ||
+      u.type === "admin" ||
+      u.id === "admin" ||
+      u.name === "المدير" ||
+      (Array.isArray(u.permissions) && u.permissions.includes(ADMIN_PERMISSION))
+    );
+  }
+
+  function showFieldError(input, msg) {
+    if (!input) {
+      toast(msg);
+      return;
+    }
+
+    input.focus();
+    input.style.borderColor = "#dc2626";
+    input.style.boxShadow = "0 0 0 4px rgba(220,38,38,.12)";
 
     setTimeout(function () {
-      adminInput?.focus();
-    }, 150);
+      input.style.borderColor = "";
+      input.style.boxShadow = "";
+    }, 1600);
+
+    toast(msg);
   }
 
-  function updateUserPillLoggedOut() {
-    const txt = `<i class="fa-solid fa-lock"></i> غير مسجل`;
-
-    if ($("authUserPill")) $("authUserPill").innerHTML = txt;
-
-    const topPill = document.querySelector(".topbar #authUserPill");
-    if (topPill) topPill.innerHTML = txt;
-  }
-
-  function forceLogout() {
-    ensureAuthState();
-
+  function clearSessions() {
     try {
-      localStorage.removeItem(AUTH_SESSION_KEY);
-      localStorage.removeItem("cashier_auth_session");
-      localStorage.removeItem("cashier_user_session");
-      sessionStorage.removeItem(AUTH_SESSION_KEY);
+      SESSION_KEYS.forEach(function (key) {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+      });
     } catch {}
+  }
+
+  function closeAnythingOpen() {
+    try {
+      $("modalBackdrop")?.classList.remove("show");
+      $("modalBox")?.classList.remove("large");
+      $("floatingScanner")?.classList.remove("show");
+      $("syncPopover")?.classList.remove("show");
+      $("sidebar")?.classList.remove("open");
+    } catch {}
+  }
+
+  function showLogin() {
+    const lock = $("authLock");
+
+    if (lock) {
+      lock.classList.remove("hide");
+      lock.style.display = "flex";
+      lock.style.visibility = "visible";
+      lock.style.opacity = "1";
+      lock.style.pointerEvents = "auto";
+      lock.style.zIndex = "99999";
+    }
+
+    setTimeout(function () {
+      $("adminPasswordInput")?.focus();
+    }, 100);
+  }
+
+  function setUserPillLoggedOut() {
+    const pill = $("authUserPill");
+    if (pill) pill.innerHTML = `<i class="fa-solid fa-lock"></i> غير مسجل`;
+  }
+
+  function forceLogoutNow() {
+    ensureState();
+
+    clearSessions();
 
     window.state.auth.user = null;
     window.state.auth.session = null;
+    window.state.auth.currentUser = null;
 
-    hideAllModals();
-    updateUserPillLoggedOut();
-    showLoginScreen();
+    closeAnythingOpen();
+    setUserPillLoggedOut();
+    showLogin();
 
     if (typeof window.renderAll === "function") {
       try {
         window.renderAll();
-      } catch {}
+      } catch (e) {
+        console.warn("renderAll after logout failed", e);
+      }
     }
 
-    toast("تم تسجيل الخروج");
+    toast("تم تسجيل الخروج بنجاح");
   }
 
-  async function saveAdminPasswordHash(newHash) {
-    ensureAuthState();
+  async function saveSettingsOnly() {
+    ensureState();
 
-    window.state.settings.adminPasswordHash = newHash;
-    window.state.settings.updatedAt = Date.now();
+    const item = {
+      id: "main",
+      ...window.state.settings,
+      updatedAt: Date.now()
+    };
 
     if (typeof window.idbPut === "function") {
-      await window.idbPut("settings", {
-        id: "main",
-        ...window.state.settings,
-        updatedAt: Date.now()
-      });
+      await window.idbPut("settings", item);
     }
 
     if (typeof window.enqueueSync === "function") {
@@ -10652,13 +10691,17 @@
         store: "settings",
         itemId: "main",
         data: {
-          id: "main",
-          ...window.state.settings,
+          ...item,
           localLogo: "",
-          logoMode: window.state.settings.logo ? "url" : "default",
-          updatedAt: Date.now()
+          logoMode: item.logo ? "url" : "default"
         }
       });
+    }
+
+    if (typeof window.applySettingsToUI === "function") {
+      try {
+        window.applySettingsToUI();
+      } catch {}
     }
 
     if (typeof window.renderAll === "function") {
@@ -10668,95 +10711,126 @@
     }
   }
 
-  async function forceChangeAdminPassword() {
-    ensureAuthState();
+  async function changeAdminPasswordNow() {
+    ensureState();
 
-    if (!isAdmin()) {
-      toast("تغيير كلمة مرور المدير متاح للمدير فقط");
+    const p1Input = $("settingAdminPassword");
+    const p2Input = $("settingAdminPassword2");
+
+    const p1 = String(p1Input?.value || "").trim();
+    const p2 = String(p2Input?.value || "").trim();
+
+    if (!p1) {
+      showFieldError(p1Input, "أدخل كلمة مرور المدير الجديدة");
       return;
     }
 
-    const p1 = $("settingAdminPassword")?.value || "";
-    const p2 = $("settingAdminPassword2")?.value || "";
-
-    if (!p1 || !p2) {
-      toast("أدخل كلمة المرور الجديدة وتأكيدها");
+    if (!p2) {
+      showFieldError(p2Input, "أعد كتابة كلمة مرور المدير للتأكيد");
       return;
     }
 
     if (p1.length < 4) {
-      toast("كلمة المرور يجب أن تكون 4 خانات على الأقل");
+      showFieldError(p1Input, "كلمة مرور المدير يجب أن تكون 4 خانات على الأقل");
       return;
     }
 
     if (p1 !== p2) {
-      toast("كلمتا المرور غير متطابقتين");
+      showFieldError(p2Input, "كلمتا المرور غير متطابقتين");
+      return;
+    }
+
+    if (!isAdmin()) {
+      toast("لا يمكن تغيير كلمة مرور المدير إلا من حساب المدير");
       return;
     }
 
     try {
-      await saveAdminPasswordHash(simpleHash(p1));
+      window.state.settings.adminPasswordHash = simpleHash(p1);
+      window.state.settings.updatedAt = Date.now();
 
-      if ($("settingAdminPassword")) $("settingAdminPassword").value = "";
-      if ($("settingAdminPassword2")) $("settingAdminPassword2").value = "";
+      await saveSettingsOnly();
+
+      if (p1Input) p1Input.value = "";
+      if (p2Input) p2Input.value = "";
 
       toast("تم تغيير كلمة مرور المدير بنجاح");
     } catch (err) {
       console.error(err);
-      toast("فشل تغيير كلمة مرور المدير");
+      toast("فشل حفظ كلمة مرور المدير");
     }
   }
 
-  function installFix() {
-    const logoutButtons = [
-      $("logoutBtn"),
-      $("topLogoutBtn")
-    ].filter(Boolean);
+  function ensureLogoutButtonExists() {
+    const topActions = document.querySelector(".topbar > div:last-child");
+    if (!topActions) return;
 
-    logoutButtons.forEach(function (btn) {
-      btn.onclick = function (e) {
+    if (!$("logoutBtn")) {
+      const btn = document.createElement("button");
+      btn.id = "logoutBtn";
+      btn.type = "button";
+      btn.className = "icon-btn";
+      btn.title = "تسجيل الخروج";
+      btn.innerHTML = `<i class="fa-solid fa-arrow-right-from-bracket"></i>`;
+      topActions.prepend(btn);
+    }
+  }
+
+  function hardBindButtons() {
+    ensureLogoutButtonExists();
+
+    const logoutBtn = $("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.type = "button";
+      logoutBtn.onclick = function (e) {
         e.preventDefault();
         e.stopPropagation();
-        forceLogout();
+        forceLogoutNow();
+        return false;
       };
-    });
+    }
 
     const changeBtn = $("changeAdminPasswordBtn");
     if (changeBtn) {
+      changeBtn.type = "button";
       changeBtn.onclick = function (e) {
         e.preventDefault();
         e.stopPropagation();
-        forceChangeAdminPassword();
+        changeAdminPasswordNow();
+        return false;
       };
     }
-
-    document.addEventListener("click", function (e) {
-      const logout = e.target.closest("#logoutBtn, #topLogoutBtn");
-      if (logout) {
-        e.preventDefault();
-        e.stopPropagation();
-        forceLogout();
-        return;
-      }
-
-      const change = e.target.closest("#changeAdminPasswordBtn");
-      if (change) {
-        e.preventDefault();
-        e.stopPropagation();
-        forceChangeAdminPassword();
-      }
-    }, true);
-
-    window.logout = forceLogout;
-    window.forceLogout = forceLogout;
-    window.forceChangeAdminPassword = forceChangeAdminPassword;
   }
 
-  setTimeout(installFix, 300);
-  setTimeout(installFix, 1200);
-  setTimeout(installFix, 2500);
+  document.addEventListener("click", function (e) {
+    const logoutBtn = e.target.closest("#logoutBtn, [data-logout], .logout-btn");
+    if (logoutBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      forceLogoutNow();
+      return false;
+    }
+
+    const changeBtn = e.target.closest("#changeAdminPasswordBtn");
+    if (changeBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      changeAdminPasswordNow();
+      return false;
+    }
+  }, true);
+
+  window.forceLogoutNow = forceLogoutNow;
+  window.logout = forceLogoutNow;
+  window.changeAdminPasswordNow = changeAdminPasswordNow;
+
+  setTimeout(hardBindButtons, 200);
+  setTimeout(hardBindButtons, 800);
+  setTimeout(hardBindButtons, 1600);
+  setTimeout(hardBindButtons, 3000);
 })();
 </script>
-  
 </body>
 </html>
