@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>نظام كاشير احترافي</title>
@@ -8302,6 +8301,26 @@ function bindEvents() {
         }
       });
     }
+    
+    
+    Object.assign(window, {
+  state,
+  cleanNumber,
+  money,
+  toast,
+  renderAll,
+  renderCart,
+  renderInventory,
+  calculateCartTotals,
+  getProductByBarcode,
+  normalizeProduct,
+  getDefaultSaleUnit,
+  getUnitFactor,
+  getUnitText,
+  saveLocal,
+  ensureCustomer,
+  addToCart
+});
 
     boot().catch((e) => {
       console.error(e);
@@ -8315,33 +8334,13 @@ function bindEvents() {
       });
     });
     
-    Object.assign(window, {
-  state,
-  cleanNumber,
-  escapeHtml,
-  money,
-  unitLabel,
-  normalizeProduct,
-  getProductById,
-  getProductByBarcode,
-  addToCart,
-  renderAll,
-  renderReports,
-  renderInventory,
-  toast,
-  confirmAction,
-  renderCart,
-  updateCartLine,
-  calculateCartTotals,
-  openScanner,
-  openFloatingProductBarcodeScanner
-});
+    
+    
+    
+    
     
     
   </script>
-  
-  
- <script src="./cashier-patch.js"></script>
-  
+  <script src="./cashier-barcode-patch.js"></script>
 </body>
 </html>
