@@ -4737,46 +4737,63 @@
     }
 
     async function changeAdminPassword() {
-      if (!isAdminUser()) {
-        toast("هذا الخيار للمدير فقط");
-        return;
-      }
+  if (!isAdminUser()) {
+    toast("تغيير كلمة مرور المدير للمدير فقط");
+    return;
+  }
 
-      const p1 = $("settingAdminPassword").value.trim();
-      const p2 = $("settingAdminPassword2").value.trim();
+  const p1Input = $("settingAdminPassword");
+  const p2Input = $("settingAdminPassword2");
 
-      if (!p1 || p1.length < 4) {
-        toast("كلمة المرور يجب أن تكون 4 خانات على الأقل");
-        return;
-      }
+  const p1 = String(p1Input?.value || "").trim();
+  const p2 = String(p2Input?.value || "").trim();
 
-      if (p1 !== p2) {
-        toast("كلمتا المرور غير متطابقتين");
-        return;
-      }
+  if (!p1) {
+    toast("أدخل كلمة مرور المدير الجديدة");
+    p1Input?.focus();
+    return;
+  }
 
-      state.settings = {
-        ...defaultSettings,
-        ...state.settings,
-        id: "main",
-        adminPasswordHash: simpleHash(p1),
-        updatedAt: Date.now()
-      };
+  if (!p2) {
+    toast("أعد كتابة كلمة مرور المدير للتأكيد");
+    p2Input?.focus();
+    return;
+  }
 
-      await idbPut("settings", state.settings);
+  if (p1.length < 4) {
+    toast("كلمة مرور المدير يجب أن تكون 4 خانات على الأقل");
+    p1Input?.focus();
+    return;
+  }
 
-      await enqueueSync({
-        type: "set",
-        store: "settings",
-        itemId: "main",
-        data: stripLocalOnlySettings(state.settings)
-      });
+  if (p1 !== p2) {
+    toast("كلمتا المرور غير متطابقتين");
+    p2Input?.focus();
+    return;
+  }
 
-      $("settingAdminPassword").value = "";
-      $("settingAdminPassword2").value = "";
+  state.settings = {
+    ...defaultSettings,
+    ...state.settings,
+    id: "main",
+    adminPasswordHash: simpleHash(p1),
+    updatedAt: Date.now()
+  };
 
-      toast("تم تغيير كلمة مرور المدير");
-    }
+  await idbPut("settings", state.settings);
+
+  await enqueueSync({
+    type: "set",
+    store: "settings",
+    itemId: "main",
+    data: stripLocalOnlySettings(state.settings)
+  });
+
+  p1Input.value = "";
+  p2Input.value = "";
+
+  toast("تم تغيير كلمة مرور المدير بنجاح");
+}
 
     function addToCart(product, selectedUnit = "") {
       if (!product) return;
@@ -9334,9 +9351,9 @@
             </div>
           </div>
 
-          <button id="changeAdminPasswordBtn" class="primary-btn" style="margin-top:14px">
-            <i class="fa-solid fa-key"></i> تغيير كلمة مرور المدير
-          </button>
+          <button id="changeAdminPasswordBtn" type="button" class="primary-btn" style="margin-top:14px">
+  <i class="fa-solid fa-key"></i> تغيير كلمة مرور المدير
+</button>
         </div>
 
         <div id="employeesSettingsBox" class="card" style="margin-bottom:14px;display:none">
@@ -9361,7 +9378,10 @@
       const firstCard = settingsPage.querySelector(".card");
       firstCard.insertAdjacentHTML("beforebegin", html);
 
-      $("changeAdminPasswordBtn").onclick = changeAdminPassword;
+      $("changeAdminPasswordBtn").onclick = async (e) => {
+  e.preventDefault();
+  await changeAdminPassword();
+};
       $("addEmployeeBtn").onclick = () => openEmployeeForm();
     }
 
@@ -10524,313 +10544,6 @@
 })();
 </script>
   
-  <script>
-/* final-force-auth-actions-fix.js */
-(function () {
-  "use strict";
-
-  const DEFAULT_ADMIN_PIN = "0000";
-  const ADMIN_PERMISSION = "__admin__";
-  const SESSION_KEYS = [
-    "cashier_auth_session_v1",
-    "cashier_auth_session",
-    "cashier_user_session",
-    "auth_session",
-    "user_session"
-  ];
-
-  function $(id) {
-    return document.getElementById(id);
-  }
-
-  function toast(msg) {
-    if (typeof window.toast === "function") return window.toast(msg);
-    alert(msg);
-  }
-
-  function simpleHash(str) {
-    const text = String(str || "");
-    let h = 2166136261;
-
-    for (let i = 0; i < text.length; i++) {
-      h ^= text.charCodeAt(i);
-      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
-    }
-
-    return String(h >>> 0);
-  }
-
-  function ensureState() {
-    window.state = window.state || {};
-    window.state.auth = window.state.auth || {};
-    window.state.settings = window.state.settings || {};
-
-    if (!window.state.settings.adminPasswordHash) {
-      window.state.settings.adminPasswordHash = simpleHash(DEFAULT_ADMIN_PIN);
-    }
-  }
-
-  function getCurrentUser() {
-    ensureState();
-    return window.state.auth?.user || null;
-  }
-
-  function isAdmin() {
-    const u = getCurrentUser();
-
-    if (!u) return false;
-
-    return (
-      u.role === "admin" ||
-      u.type === "admin" ||
-      u.id === "admin" ||
-      u.name === "المدير" ||
-      (Array.isArray(u.permissions) && u.permissions.includes(ADMIN_PERMISSION))
-    );
-  }
-
-  function showFieldError(input, msg) {
-    if (!input) {
-      toast(msg);
-      return;
-    }
-
-    input.focus();
-    input.style.borderColor = "#dc2626";
-    input.style.boxShadow = "0 0 0 4px rgba(220,38,38,.12)";
-
-    setTimeout(function () {
-      input.style.borderColor = "";
-      input.style.boxShadow = "";
-    }, 1600);
-
-    toast(msg);
-  }
-
-  function clearSessions() {
-    try {
-      SESSION_KEYS.forEach(function (key) {
-        localStorage.removeItem(key);
-        sessionStorage.removeItem(key);
-      });
-    } catch {}
-  }
-
-  function closeAnythingOpen() {
-    try {
-      $("modalBackdrop")?.classList.remove("show");
-      $("modalBox")?.classList.remove("large");
-      $("floatingScanner")?.classList.remove("show");
-      $("syncPopover")?.classList.remove("show");
-      $("sidebar")?.classList.remove("open");
-    } catch {}
-  }
-
-  function showLogin() {
-    const lock = $("authLock");
-
-    if (lock) {
-      lock.classList.remove("hide");
-      lock.style.display = "flex";
-      lock.style.visibility = "visible";
-      lock.style.opacity = "1";
-      lock.style.pointerEvents = "auto";
-      lock.style.zIndex = "99999";
-    }
-
-    setTimeout(function () {
-      $("adminPasswordInput")?.focus();
-    }, 100);
-  }
-
-  function setUserPillLoggedOut() {
-    const pill = $("authUserPill");
-    if (pill) pill.innerHTML = `<i class="fa-solid fa-lock"></i> غير مسجل`;
-  }
-
-  function forceLogoutNow() {
-    ensureState();
-
-    clearSessions();
-
-    window.state.auth.user = null;
-    window.state.auth.session = null;
-    window.state.auth.currentUser = null;
-
-    closeAnythingOpen();
-    setUserPillLoggedOut();
-    showLogin();
-
-    if (typeof window.renderAll === "function") {
-      try {
-        window.renderAll();
-      } catch (e) {
-        console.warn("renderAll after logout failed", e);
-      }
-    }
-
-    toast("تم تسجيل الخروج بنجاح");
-  }
-
-  async function saveSettingsOnly() {
-    ensureState();
-
-    const item = {
-      id: "main",
-      ...window.state.settings,
-      updatedAt: Date.now()
-    };
-
-    if (typeof window.idbPut === "function") {
-      await window.idbPut("settings", item);
-    }
-
-    if (typeof window.enqueueSync === "function") {
-      await window.enqueueSync({
-        type: "set",
-        store: "settings",
-        itemId: "main",
-        data: {
-          ...item,
-          localLogo: "",
-          logoMode: item.logo ? "url" : "default"
-        }
-      });
-    }
-
-    if (typeof window.applySettingsToUI === "function") {
-      try {
-        window.applySettingsToUI();
-      } catch {}
-    }
-
-    if (typeof window.renderAll === "function") {
-      try {
-        window.renderAll();
-      } catch {}
-    }
-  }
-
-  async function changeAdminPasswordNow() {
-    ensureState();
-
-    const p1Input = $("settingAdminPassword");
-    const p2Input = $("settingAdminPassword2");
-
-    const p1 = String(p1Input?.value || "").trim();
-    const p2 = String(p2Input?.value || "").trim();
-
-    if (!p1) {
-      showFieldError(p1Input, "أدخل كلمة مرور المدير الجديدة");
-      return;
-    }
-
-    if (!p2) {
-      showFieldError(p2Input, "أعد كتابة كلمة مرور المدير للتأكيد");
-      return;
-    }
-
-    if (p1.length < 4) {
-      showFieldError(p1Input, "كلمة مرور المدير يجب أن تكون 4 خانات على الأقل");
-      return;
-    }
-
-    if (p1 !== p2) {
-      showFieldError(p2Input, "كلمتا المرور غير متطابقتين");
-      return;
-    }
-
-    if (!isAdmin()) {
-      toast("لا يمكن تغيير كلمة مرور المدير إلا من حساب المدير");
-      return;
-    }
-
-    try {
-      window.state.settings.adminPasswordHash = simpleHash(p1);
-      window.state.settings.updatedAt = Date.now();
-
-      await saveSettingsOnly();
-
-      if (p1Input) p1Input.value = "";
-      if (p2Input) p2Input.value = "";
-
-      toast("تم تغيير كلمة مرور المدير بنجاح");
-    } catch (err) {
-      console.error(err);
-      toast("فشل حفظ كلمة مرور المدير");
-    }
-  }
-
-  function ensureLogoutButtonExists() {
-    const topActions = document.querySelector(".topbar > div:last-child");
-    if (!topActions) return;
-
-    if (!$("logoutBtn")) {
-      const btn = document.createElement("button");
-      btn.id = "logoutBtn";
-      btn.type = "button";
-      btn.className = "icon-btn";
-      btn.title = "تسجيل الخروج";
-      btn.innerHTML = `<i class="fa-solid fa-arrow-right-from-bracket"></i>`;
-      topActions.prepend(btn);
-    }
-  }
-
-  function hardBindButtons() {
-    ensureLogoutButtonExists();
-
-    const logoutBtn = $("logoutBtn");
-    if (logoutBtn) {
-      logoutBtn.type = "button";
-      logoutBtn.onclick = function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        forceLogoutNow();
-        return false;
-      };
-    }
-
-    const changeBtn = $("changeAdminPasswordBtn");
-    if (changeBtn) {
-      changeBtn.type = "button";
-      changeBtn.onclick = function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        changeAdminPasswordNow();
-        return false;
-      };
-    }
-  }
-
-  document.addEventListener("click", function (e) {
-    const logoutBtn = e.target.closest("#logoutBtn, [data-logout], .logout-btn");
-    if (logoutBtn) {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      forceLogoutNow();
-      return false;
-    }
-
-    const changeBtn = e.target.closest("#changeAdminPasswordBtn");
-    if (changeBtn) {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      changeAdminPasswordNow();
-      return false;
-    }
-  }, true);
-
-  window.forceLogoutNow = forceLogoutNow;
-  window.logout = forceLogoutNow;
-  window.changeAdminPasswordNow = changeAdminPasswordNow;
-
-  setTimeout(hardBindButtons, 200);
-  setTimeout(hardBindButtons, 800);
-  setTimeout(hardBindButtons, 1600);
-  setTimeout(hardBindButtons, 3000);
-})();
-</script>
+  
 </body>
 </html>
