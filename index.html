@@ -3237,12 +3237,28 @@
     }
 
     function logout() {
-      clearAuthSession();
-      state.auth.user = null;
-      $("authLock")?.classList.remove("hide");
-      toast("تم تسجيل الخروج");
-      applyPermissionsUI();
-    }
+  try {
+    localStorage.removeItem(AUTH_SESSION_KEY);
+    sessionStorage.removeItem(AUTH_SESSION_KEY);
+  } catch {}
+
+  if (!state.auth) state.auth = {};
+  state.auth.user = null;
+
+  const lock = $("authLock");
+  if (lock) {
+    lock.classList.remove("hide");
+    lock.style.display = "flex";
+  }
+
+  const pill = $("authUserPill");
+  if (pill) {
+    pill.innerHTML = `<i class="fa-solid fa-lock"></i> غير مسجل`;
+  }
+
+  closeModal();
+  toast("تم تسجيل الخروج");
+}
 
     function applyPermissionsUI() {
       const user = currentUser();
@@ -10544,6 +10560,301 @@
 })();
 </script>
   
-  
+  <script>
+/* cashier-auth-actions-final-fix.js */
+(function () {
+  "use strict";
+
+  const DEFAULT_ADMIN_PIN = "0000";
+  const ADMIN_PERMISSION = "__admin__";
+  const AUTH_SESSION_KEY = "cashier_auth_session_v1";
+
+  function $(id) {
+    return document.getElementById(id);
+  }
+
+  function toast(msg) {
+    if (typeof window.toast === "function") {
+      window.toast(msg);
+      return;
+    }
+    alert(msg);
+  }
+
+  function simpleHash(str) {
+    const text = String(str || "");
+    let h = 2166136261;
+
+    for (let i = 0; i < text.length; i++) {
+      h ^= text.charCodeAt(i);
+      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
+    }
+
+    return String(h >>> 0);
+  }
+
+  function ensureState() {
+    window.state = window.state || {};
+    window.state.auth = window.state.auth || {};
+    window.state.settings = window.state.settings || {};
+
+    if (!window.state.settings.adminPasswordHash) {
+      window.state.settings.adminPasswordHash = simpleHash(DEFAULT_ADMIN_PIN);
+    }
+  }
+
+  function currentUser() {
+    ensureState();
+    return window.state.auth.user || null;
+  }
+
+  function isAdmin() {
+    const u = currentUser();
+    if (!u) return false;
+
+    return (
+      u.role === "admin" ||
+      u.type === "admin" ||
+      u.id === "admin" ||
+      (Array.isArray(u.permissions) && u.permissions.includes(ADMIN_PERMISSION))
+    );
+  }
+
+  function showInputError(input, msg) {
+    toast(msg);
+
+    if (!input) return;
+
+    input.focus();
+    input.style.borderColor = "#dc2626";
+    input.style.boxShadow = "0 0 0 4px rgba(220,38,38,.12)";
+
+    setTimeout(function () {
+      input.style.borderColor = "";
+      input.style.boxShadow = "";
+    }, 1400);
+  }
+
+  function closeModalSafe() {
+    try {
+      $("modalBackdrop")?.classList.remove("show");
+      $("modalBox")?.classList.remove("large");
+      $("floatingScanner")?.classList.remove("show");
+      $("syncPopover")?.classList.remove("show");
+      $("sidebar")?.classList.remove("open");
+    } catch {}
+  }
+
+  function showLoginScreen() {
+    const lock = $("authLock");
+
+    if (lock) {
+      lock.classList.remove("hide");
+      lock.style.display = "flex";
+      lock.style.visibility = "visible";
+      lock.style.opacity = "1";
+      lock.style.pointerEvents = "auto";
+      lock.style.zIndex = "99999";
+    }
+
+    if ($("adminPasswordInput")) $("adminPasswordInput").value = "";
+    if ($("employeeNameInput")) $("employeeNameInput").value = "";
+    if ($("employeePasswordInput")) $("employeePasswordInput").value = "";
+
+    setTimeout(function () {
+      $("adminPasswordInput")?.focus();
+    }, 120);
+  }
+
+  function updateLoggedOutUi() {
+    const pill = $("authUserPill");
+    if (pill) {
+      pill.innerHTML = `<i class="fa-solid fa-lock"></i> غير مسجل`;
+    }
+  }
+
+  function logoutToLogin() {
+    ensureState();
+
+    try {
+      localStorage.removeItem(AUTH_SESSION_KEY);
+      sessionStorage.removeItem(AUTH_SESSION_KEY);
+
+      localStorage.removeItem("cashier_auth_session");
+      localStorage.removeItem("cashier_user_session");
+      localStorage.removeItem("auth_session");
+      localStorage.removeItem("user_session");
+
+      sessionStorage.removeItem("cashier_auth_session");
+      sessionStorage.removeItem("cashier_user_session");
+      sessionStorage.removeItem("auth_session");
+      sessionStorage.removeItem("user_session");
+    } catch {}
+
+    window.state.auth.user = null;
+    window.state.auth.session = null;
+    window.state.auth.currentUser = null;
+
+    closeModalSafe();
+    updateLoggedOutUi();
+    showLoginScreen();
+
+    toast("تم تسجيل الخروج");
+  }
+
+  async function saveAdminPassword(newPassword) {
+    ensureState();
+
+    window.state.settings = {
+      ...window.state.settings,
+      id: "main",
+      adminPasswordHash: simpleHash(newPassword),
+      updatedAt: Date.now()
+    };
+
+    if (typeof window.idbPut === "function") {
+      await window.idbPut("settings", {
+        id: "main",
+        ...window.state.settings
+      });
+    }
+
+    if (typeof window.enqueueSync === "function") {
+      await window.enqueueSync({
+        type: "set",
+        store: "settings",
+        itemId: "main",
+        data: {
+          id: "main",
+          ...window.state.settings,
+          localLogo: "",
+          logoMode: window.state.settings.logo ? "url" : "default"
+        }
+      });
+    }
+
+    if (typeof window.renderAll === "function") {
+      try {
+        window.renderAll();
+      } catch {}
+    }
+  }
+
+  async function changeAdminPassword() {
+    ensureState();
+
+    const p1Input = $("settingAdminPassword");
+    const p2Input = $("settingAdminPassword2");
+
+    const p1 = String(p1Input?.value || "").trim();
+    const p2 = String(p2Input?.value || "").trim();
+
+    if (!p1) {
+      showInputError(p1Input, "أدخل كلمة مرور المدير الجديدة");
+      return;
+    }
+
+    if (!p2) {
+      showInputError(p2Input, "أعد كتابة كلمة مرور المدير للتأكيد");
+      return;
+    }
+
+    if (p1.length < 4) {
+      showInputError(p1Input, "كلمة مرور المدير يجب أن تكون 4 خانات على الأقل");
+      return;
+    }
+
+    if (p1 !== p2) {
+      showInputError(p2Input, "كلمتا المرور غير متطابقتين");
+      return;
+    }
+
+    if (!isAdmin()) {
+      toast("تغيير كلمة مرور المدير متاح للمدير فقط");
+      return;
+    }
+
+    try {
+      await saveAdminPassword(p1);
+
+      if (p1Input) p1Input.value = "";
+      if (p2Input) p2Input.value = "";
+
+      toast("تم تغيير كلمة مرور المدير بنجاح");
+    } catch (err) {
+      console.error(err);
+      toast("فشل تغيير كلمة مرور المدير");
+    }
+  }
+
+  function ensureLogoutButton() {
+    const topActions = document.querySelector(".topbar > div:last-child");
+    if (!topActions) return;
+
+    let btn = $("logoutBtn");
+
+    if (!btn) {
+      btn = document.createElement("button");
+      btn.id = "logoutBtn";
+      btn.className = "icon-btn";
+      btn.title = "تسجيل الخروج";
+      btn.innerHTML = `<i class="fa-solid fa-arrow-right-from-bracket"></i>`;
+      topActions.prepend(btn);
+    }
+
+    btn.type = "button";
+  }
+
+  function bindButtons() {
+    ensureLogoutButton();
+
+    const logoutBtn = $("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.onclick = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        logoutToLogin();
+        return false;
+      };
+    }
+
+    const passBtn = $("changeAdminPasswordBtn");
+    if (passBtn) {
+      passBtn.type = "button";
+      passBtn.onclick = async function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        await changeAdminPassword();
+        return false;
+      };
+    }
+  }
+
+  document.addEventListener("click", function (e) {
+    const logoutBtn = e.target.closest("#logoutBtn");
+    if (logoutBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      logoutToLogin();
+      return;
+    }
+
+    const passBtn = e.target.closest("#changeAdminPasswordBtn");
+    if (passBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      changeAdminPassword();
+    }
+  }, true);
+
+  window.logoutToLogin = logoutToLogin;
+  window.logout = logoutToLogin;
+  window.changeAdminPasswordFixed = changeAdminPassword;
+
+  setTimeout(bindButtons, 300);
+  setTimeout(bindButtons, 1000);
+  setTimeout(bindButtons, 2200);
+})();
+</script>
 </body>
 </html>
