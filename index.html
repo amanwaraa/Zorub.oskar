@@ -84,6 +84,19 @@
       z-index:50;
       padding:16px;
       transition:.25s ease;
+      overflow-y:auto;
+      overscroll-behavior:contain;
+      -webkit-overflow-scrolling:touch;
+      padding-bottom:100px;
+    }
+
+    .sidebar::-webkit-scrollbar{
+      width:7px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb{
+      background:#cbd5e1;
+      border-radius:999px;
     }
 
     .main{
@@ -151,6 +164,19 @@
       margin-bottom:18px;
       padding-bottom:14px;
       border-bottom:1px solid var(--border);
+    }
+
+    .sidebar-scroll-note{
+      display:none;
+      font-size:11px;
+      color:#64748b;
+      background:#f8fafc;
+      border:1px dashed #cbd5e1;
+      border-radius:14px;
+      padding:7px 9px;
+      margin-bottom:8px;
+      text-align:center;
+      font-weight:800;
     }
 
     .nav-btn{
@@ -750,7 +776,6 @@
       overflow:hidden;
       min-height:138px;
     }
-
     .product-card:hover{
       transform:translateY(-2px);
       border-color:rgba(37,99,235,.35);
@@ -862,15 +887,6 @@
     .debt-card:hover{
       border-color:rgba(217,164,65,.65);
       box-shadow:0 10px 26px rgba(217,164,65,.12);
-    }
-
-    .debt-card.view-only{
-      cursor:default;
-    }
-
-    .debt-card.view-only:hover{
-      border-color:var(--border);
-      box-shadow:0 8px 22px rgba(15,23,42,.05);
     }
 
     .debt-name{
@@ -1250,60 +1266,57 @@
       position:fixed;
       inset:0;
       z-index:9999;
+      background:
+        radial-gradient(circle at top right,rgba(37,99,235,.24),transparent 32%),
+        radial-gradient(circle at bottom left,rgba(217,164,65,.20),transparent 30%),
+        linear-gradient(180deg,#f8fbff,#eaf1fb);
       display:flex;
       align-items:center;
       justify-content:center;
       padding:18px;
       direction:rtl;
-      font-family:Cairo,Arial,sans-serif;
-      background:
-        radial-gradient(circle at top right,rgba(37,99,235,.28),transparent 35%),
-        radial-gradient(circle at bottom left,rgba(217,164,65,.22),transparent 32%),
-        linear-gradient(135deg,#eff6ff,#f8fafc);
     }
 
     .auth-lock.hide{
-      display:none;
+      display:none!important;
     }
 
     .auth-card{
       width:min(470px,100%);
       background:rgba(255,255,255,.94);
-      border:1px solid rgba(226,232,240,.95);
-      border-radius:30px;
-      box-shadow:0 30px 80px rgba(15,23,42,.18);
-      padding:20px;
+      border:1px solid rgba(226,232,240,.9);
+      border-radius:32px;
+      box-shadow:0 30px 80px rgba(15,23,42,.16);
+      padding:22px;
       backdrop-filter:blur(20px);
     }
 
     .auth-logo{
-      width:72px;
-      height:72px;
+      width:64px;
+      height:64px;
       border-radius:24px;
       background:linear-gradient(135deg,#2563eb,#38bdf8);
       color:white;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:30px;
-      box-shadow:0 18px 36px rgba(37,99,235,.26);
-      margin:0 auto 12px;
+      font-size:28px;
+      box-shadow:0 16px 34px rgba(37,99,235,.28);
+      margin-bottom:12px;
     }
 
-    .auth-title{
-      text-align:center;
-      font-size:23px;
+    .auth-card h1{
+      margin:0 0 6px;
+      font-size:24px;
       font-weight:900;
-      color:#0f172a;
-      margin:0;
     }
 
-    .auth-sub{
-      text-align:center;
+    .auth-card p{
+      margin:0 0 16px;
       color:#64748b;
       font-size:13px;
-      margin:7px 0 18px;
       line-height:1.8;
+      font-weight:700;
     }
 
     .auth-tabs{
@@ -1311,72 +1324,43 @@
       grid-template-columns:1fr 1fr;
       gap:8px;
       margin-bottom:14px;
+      background:#f8fafc;
+      border-radius:18px;
+      padding:6px;
+      border:1px solid #e2e8f0;
     }
 
     .auth-tab{
-      border:1px solid #e2e8f0;
-      background:#fff;
-      border-radius:16px;
+      border:0;
+      background:transparent;
+      border-radius:14px;
       padding:11px;
       font-weight:900;
+      color:#475569;
     }
 
     .auth-tab.active{
       background:linear-gradient(135deg,#2563eb,#1d4ed8);
-      color:#fff;
-      border-color:transparent;
-    }
-
-    .auth-field{
-      margin-bottom:10px;
-    }
-
-    .auth-field label{
-      display:block;
-      font-size:13px;
-      font-weight:900;
-      color:#334155;
-      margin-bottom:6px;
-    }
-
-    .auth-input{
-      width:100%;
-      border:1px solid transparent;
-      background:#f8fafc;
-      border-radius:17px;
-      padding:13px 14px;
-      outline:none;
-      font-size:14px;
-      font-family:inherit;
-    }
-
-    .auth-input:focus{
-      background:#fff;
-      border-color:rgba(37,99,235,.45);
-      box-shadow:0 0 0 4px rgba(37,99,235,.08);
-    }
-
-    .auth-main-btn{
-      width:100%;
-      border:0;
-      border-radius:18px;
-      padding:13px;
-      background:linear-gradient(135deg,#2563eb,#1d4ed8);
       color:white;
-      font-weight:900;
-      font-family:inherit;
-      margin-top:6px;
+      box-shadow:0 10px 22px rgba(37,99,235,.18);
     }
 
-    .auth-note{
-      margin-top:12px;
-      font-size:12px;
-      color:#64748b;
-      line-height:1.8;
+    .auth-user-pill{
+      height:44px;
+      border-radius:16px;
       background:#f8fafc;
       border:1px solid #e2e8f0;
-      border-radius:16px;
-      padding:10px;
+      padding:0 12px;
+      display:flex;
+      align-items:center;
+      gap:7px;
+      color:#334155;
+      font-size:12px;
+      font-weight:900;
+      max-width:180px;
+      overflow:hidden;
+      white-space:nowrap;
+      text-overflow:ellipsis;
     }
 
     .employee-grid{
@@ -1389,41 +1373,20 @@
       border:1px solid #e2e8f0;
       background:#fff;
       border-radius:16px;
-      padding:10px;
+      padding:11px;
       display:flex;
-      gap:8px;
       align-items:center;
-      font-weight:900;
+      gap:8px;
+      cursor:pointer;
       font-size:13px;
+      font-weight:900;
+      color:#334155;
     }
 
     .perm-card input{
       width:18px;
       height:18px;
       accent-color:#2563eb;
-    }
-
-    .auth-user-pill{
-      display:inline-flex;
-      align-items:center;
-      gap:7px;
-      padding:9px 11px;
-      background:#eff6ff;
-      color:#1d4ed8;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:900;
-      border:1px solid #bfdbfe;
-    }
-
-    .blocked-page{
-      background:#fff;
-      border:1px solid #fee2e2;
-      color:#991b1b;
-      border-radius:24px;
-      padding:28px;
-      text-align:center;
-      font-weight:900;
     }
 
     @media print{
@@ -1437,21 +1400,10 @@
       }
 
       #printArea{
-        display:block!important;
-        position:fixed!important;
-        inset:0!important;
-        width:100%!important;
-        min-height:100vh!important;
-        background:white!important;
-        z-index:999999!important;
-        padding:0!important;
-        margin:0!important;
-        overflow:visible!important;
-      }
-
-      #printArea table{
-        min-width:0!important;
-        width:100%!important;
+        position:absolute;
+        inset:0;
+        width:100%;
+        background:white;
       }
 
       .no-print{
@@ -1463,15 +1415,22 @@
       .sidebar{
         transform:translateX(105%);
         width:285px;
+        max-height:100vh;
+        overflow-y:auto;
+        padding-bottom:120px;
       }
 
       .sidebar.open{
         transform:translateX(0);
       }
 
+      .sidebar-scroll-note{
+        display:block;
+      }
+
       .main{
         margin-right:0;
-        padding:10px 10px 88px;
+        padding:10px 10px 104px;
       }
 
       .topbar{
@@ -1547,16 +1506,31 @@
         border-radius:24px;
         padding:8px;
         z-index:60;
-        display:grid;
-        grid-template-columns:repeat(5,1fr);
+        display:flex;
         gap:5px;
+        overflow-x:auto;
+        overscroll-behavior-x:contain;
+        -webkit-overflow-scrolling:touch;
+        scroll-snap-type:x proximity;
+      }
+
+      .bottom-nav::-webkit-scrollbar{
+        height:4px;
+      }
+
+      .bottom-nav::-webkit-scrollbar-thumb{
+        background:#cbd5e1;
+        border-radius:999px;
       }
 
       .bottom-btn{
         border:0;
         background:transparent;
         border-radius:18px;
-        padding:8px 4px;
+        padding:8px 10px;
+        min-width:74px;
+        flex:0 0 auto;
+        scroll-snap-align:center;
         display:flex;
         flex-direction:column;
         align-items:center;
@@ -1582,10 +1556,14 @@
       }
 
       .toast{
-        bottom:96px;
+        bottom:106px;
         right:10px;
         left:10px;
         max-width:none;
+      }
+
+      .auth-user-pill{
+        display:none;
       }
     }
 
@@ -1682,54 +1660,46 @@
   <div id="authLock" class="auth-lock">
     <div class="auth-card">
       <div class="auth-logo">
-        <i class="fa-solid fa-user-shield"></i>
+        <i class="fa-solid fa-shield-halved"></i>
       </div>
 
-      <h1 class="auth-title">تسجيل الدخول</h1>
-      <div class="auth-sub">
-        أول دخول للمدير يكون بكلمة المرور المؤقتة <b>0000</b><br>
-        بعدها غيّر كلمة مرور المدير من الإعدادات.
-      </div>
+      <h1>تسجيل الدخول</h1>
+      <p>
+        دخول المدير بكلمة المرور. أول كلمة مرور مؤقتة هي 0000، وبعدها يمكن تغييرها من الإعدادات.
+      </p>
 
       <div class="auth-tabs">
         <button id="authAdminTab" class="auth-tab active" type="button">
-          <i class="fa-solid fa-user-tie"></i> مدير
+          <i class="fa-solid fa-user-shield"></i> مدير
         </button>
+
         <button id="authEmployeeTab" class="auth-tab" type="button">
           <i class="fa-solid fa-user"></i> موظف
         </button>
       </div>
 
-      <form id="adminLoginForm">
-        <div class="auth-field">
-          <label>كلمة مرور المدير</label>
-          <input id="adminPasswordInput" class="auth-input" type="password" placeholder="0000">
-        </div>
+      <form id="adminLoginForm" class="auth-form">
+        <label class="field-label">كلمة مرور المدير</label>
+        <input id="adminPasswordInput" type="password" class="input" placeholder="مثال: 0000" autocomplete="current-password">
 
-        <button class="auth-main-btn" type="submit">
-          <i class="fa-solid fa-right-to-bracket"></i> دخول المدير
+        <button class="primary-btn" type="submit" style="width:100%;margin-top:12px">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          دخول المدير
         </button>
       </form>
 
-      <form id="employeeLoginForm" style="display:none">
-        <div class="auth-field">
-          <label>اسم الموظف</label>
-          <input id="employeeNameInput" class="auth-input" placeholder="اسم الموظف">
-        </div>
+      <form id="employeeLoginForm" class="auth-form" style="display:none">
+        <label class="field-label">اسم الموظف</label>
+        <input id="employeeNameInput" class="input" placeholder="اسم الموظف" autocomplete="username">
 
-        <div class="auth-field">
-          <label>كلمة مرور الموظف</label>
-          <input id="employeePasswordInput" class="auth-input" type="password" placeholder="كلمة المرور">
-        </div>
+        <label class="field-label" style="margin-top:10px">كلمة المرور</label>
+        <input id="employeePasswordInput" type="password" class="input" placeholder="كلمة المرور" autocomplete="current-password">
 
-        <button class="auth-main-btn" type="submit">
-          <i class="fa-solid fa-right-to-bracket"></i> دخول الموظف
+        <button class="gold-btn" type="submit" style="width:100%;margin-top:12px">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          دخول الموظف
         </button>
       </form>
-
-      <div class="auth-note">
-        لا يستطيع الموظف تحويل نفسه إلى مدير. صلاحيات الموظفين تُدار فقط من حساب المدير.
-      </div>
     </div>
   </div>
 
@@ -1743,34 +1713,75 @@
         </div>
       </div>
 
-      <div id="authUserBox" style="display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <span id="authUserPill" class="auth-user-pill">
-          <i class="fa-solid fa-user-shield"></i>
-          غير مسجل
-        </span>
-        <button id="logoutBtn" class="danger-btn" style="padding:8px 10px;border-radius:14px">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i>
-        </button>
+      <div class="sidebar-scroll-note">
+        اسحب القائمة للأعلى أو للأسفل لعرض كل التبويبات
       </div>
 
-      <button class="nav-btn active" data-page="home"><span class="nav-icon"><i class="fa-solid fa-house"></i></span> الرئيسية</button>
-      <button class="nav-btn" data-page="cashier"><span class="nav-icon"><i class="fa-solid fa-cart-shopping"></i></span> الكاشير</button>
-      <button class="nav-btn" data-page="freeInvoice"><span class="nav-icon"><i class="fa-solid fa-file-circle-plus"></i></span> فاتورة بدون مخزون</button>
-      <button class="nav-btn" data-page="inventory"><span class="nav-icon"><i class="fa-solid fa-boxes-stacked"></i></span> المخزون</button>
-      <button class="nav-btn" data-page="invoices"><span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span> الفواتير</button>
-      <button class="nav-btn" data-page="debts"><span class="nav-icon"><i class="fa-solid fa-address-book"></i></span> الديون</button>
-      <button class="nav-btn" data-page="purchases"><span class="nav-icon"><i class="fa-solid fa-truck-ramp-box"></i></span> المشتريات</button>
-      <button class="nav-btn" data-page="supplierPayments"><span class="nav-icon"><i class="fa-solid fa-hand-holding-dollar"></i></span> دفعات التجار</button>
-      <button class="nav-btn" data-page="expenses"><span class="nav-icon"><i class="fa-solid fa-money-bill-wave"></i></span> المصروفات</button>
-      <button class="nav-btn" data-page="reports"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span> التقارير</button>
-      <button class="nav-btn" data-page="settings"><span class="nav-icon"><i class="fa-solid fa-gear"></i></span> الإعدادات</button>
+      <button class="nav-btn active" data-page="home" data-permission="home">
+        <span class="nav-icon"><i class="fa-solid fa-house"></i></span>
+        الرئيسية
+      </button>
+
+      <button class="nav-btn" data-page="cashier" data-permission="cashier">
+        <span class="nav-icon"><i class="fa-solid fa-cart-shopping"></i></span>
+        الكاشير
+      </button>
+
+      <button class="nav-btn" data-page="freeInvoice" data-permission="freeInvoice">
+        <span class="nav-icon"><i class="fa-solid fa-file-circle-plus"></i></span>
+        فاتورة بدون مخزون
+      </button>
+
+      <button class="nav-btn" data-page="inventory" data-permission="inventory">
+        <span class="nav-icon"><i class="fa-solid fa-boxes-stacked"></i></span>
+        المخزون
+      </button>
+
+      <button class="nav-btn" data-page="invoices" data-permission="invoices">
+        <span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+        الفواتير
+      </button>
+
+      <button class="nav-btn" data-page="debts" data-permission="debts">
+        <span class="nav-icon"><i class="fa-solid fa-address-book"></i></span>
+        الديون
+      </button>
+
+      <button class="nav-btn" data-page="purchases" data-permission="purchases">
+        <span class="nav-icon"><i class="fa-solid fa-truck-ramp-box"></i></span>
+        المشتريات
+      </button>
+
+      <button class="nav-btn" data-page="supplierPayments" data-permission="supplierPayments">
+        <span class="nav-icon"><i class="fa-solid fa-hand-holding-dollar"></i></span>
+        دفعات التجار
+      </button>
+
+      <button class="nav-btn" data-page="expenses" data-permission="expenses">
+        <span class="nav-icon"><i class="fa-solid fa-money-bill-wave"></i></span>
+        المصروفات
+      </button>
+
+      <button class="nav-btn" data-page="reports" data-permission="reports">
+        <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+        التقارير
+      </button>
+
+      <button class="nav-btn" data-page="settings" data-permission="settings">
+        <span class="nav-icon"><i class="fa-solid fa-gear"></i></span>
+        الإعدادات
+      </button>
     </aside>
 
     <main class="main">
       <header class="topbar">
         <div class="brand">
-          <button id="openMenuBtn" class="icon-btn hamburger"><i class="fa-solid fa-bars"></i></button>
+          <button id="openMenuBtn" class="icon-btn hamburger" type="button">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+
           <img id="topShopLogo" class="shop-logo" alt="logo">
+
           <div>
             <div id="topShopName" class="brand-title">المحل الرئيسي</div>
             <div id="connectionText" class="brand-sub">جاري فحص الاتصال...</div>
@@ -1778,29 +1789,36 @@
         </div>
 
         <div style="display:flex;align-items:center;gap:8px;position:relative">
-          <button id="topLogoutBtn" class="icon-btn" title="تسجيل الخروج">
+          <div id="authUserPill" class="auth-user-pill">
+            <i class="fa-solid fa-lock"></i>
+            غير مسجل
+          </div>
+
+          <button id="logoutBtn" class="icon-btn" type="button" title="تسجيل الخروج">
             <i class="fa-solid fa-arrow-right-from-bracket"></i>
           </button>
 
-          <button id="syncNowBtn" class="icon-btn" title="المزامنة">
+          <button id="syncNowBtn" class="icon-btn" type="button" title="المزامنة">
             <i class="fa-solid fa-rotate"></i>
             <span id="syncCountBadge" class="sync-badge" style="display:none">0</span>
             <span class="sync-dot"></span>
           </button>
 
-          <button id="notificationsBtn" class="icon-btn" title="التنبيهات">
+          <button id="notificationsBtn" class="icon-btn" type="button" title="التنبيهات">
             <i class="fa-solid fa-bell"></i>
             <span id="notifBadge" class="sync-badge" style="display:none">0</span>
           </button>
         </div>
       </header>
+
       <div id="syncPopover" class="sync-popover">
         <div class="sync-popover-head">
           <div class="sync-popover-title">
             <i class="fa-solid fa-cloud-arrow-up"></i>
             <span id="syncPopoverTitle">المزامنة</span>
           </div>
-          <button id="closeSyncPopoverBtn" class="close-btn" style="width:34px;height:34px;border-radius:12px">
+
+          <button id="closeSyncPopoverBtn" class="close-btn" type="button" style="width:34px;height:34px;border-radius:12px">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
@@ -1816,26 +1834,38 @@
         <div id="syncOperationList" class="sync-operation-list"></div>
       </div>
 
-      <section id="page-home" class="section active">
+      <section id="page-home" class="section active" data-permission="home">
         <div class="clean-stats-card">
           <div class="clean-stats-grid">
             <div class="clean-stat">
-              <div class="clean-stat-title"><span>مبيعات اليوم</span><i class="fa-solid fa-cash-register"></i></div>
+              <div class="clean-stat-title">
+                <span>مبيعات اليوم</span>
+                <i class="fa-solid fa-cash-register"></i>
+              </div>
               <div id="homeTodaySales" class="clean-stat-value blue">₪ 0.00</div>
             </div>
 
             <div class="clean-stat">
-              <div class="clean-stat-title"><span>ربح اليوم</span><i class="fa-solid fa-arrow-trend-up"></i></div>
+              <div class="clean-stat-title">
+                <span>ربح اليوم</span>
+                <i class="fa-solid fa-arrow-trend-up"></i>
+              </div>
               <div id="homeTodayProfit" class="clean-stat-value green">₪ 0.00</div>
             </div>
 
             <div class="clean-stat">
-              <div class="clean-stat-title"><span>عليه من الزبائن</span><i class="fa-solid fa-user-clock"></i></div>
+              <div class="clean-stat-title">
+                <span>عليه من الزبائن</span>
+                <i class="fa-solid fa-user-clock"></i>
+              </div>
               <div id="homeDebtOwed" class="clean-stat-value red">₪ 0.00</div>
             </div>
 
             <div class="clean-stat">
-              <div class="clean-stat-title"><span>للزبائن</span><i class="fa-solid fa-hand-holding-dollar"></i></div>
+              <div class="clean-stat-title">
+                <span>للزبائن</span>
+                <i class="fa-solid fa-hand-holding-dollar"></i>
+              </div>
               <div id="homeDebtCredit" class="clean-stat-value gold">₪ 0.00</div>
             </div>
           </div>
@@ -1843,38 +1873,61 @@
 
         <div class="card">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-            <h2 style="margin:0;font-size:20px;font-weight:900"><i class="fa-solid fa-bolt"></i> الأصناف السريعة</h2>
+            <h2 style="margin:0;font-size:20px;font-weight:900">
+              <i class="fa-solid fa-bolt"></i>
+              الأصناف السريعة
+            </h2>
+
             <input id="homeProductSearch" class="input" style="max-width:330px" placeholder="بحث سريع عن صنف أو باركود...">
           </div>
+
           <div id="homeProductsGrid" class="grid-products"></div>
         </div>
       </section>
 
-      <section id="page-cashier" class="section">
+      <section id="page-cashier" class="section" data-permission="cashier">
         <div class="cart-layout">
           <div class="card">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
-              <h1 style="font-size:22px;font-weight:900;margin:0"><i class="fa-solid fa-cart-shopping"></i> الكاشير</h1>
-              <button id="goFreeInvoiceBtn" class="gold-btn"><i class="fa-solid fa-file-circle-plus"></i> فاتورة بدون مخزون</button>
+              <h1 style="font-size:22px;font-weight:900;margin:0">
+                <i class="fa-solid fa-cart-shopping"></i>
+                الكاشير
+              </h1>
+
+              <button id="goFreeInvoiceBtn" class="gold-btn" type="button">
+                <i class="fa-solid fa-file-circle-plus"></i>
+                فاتورة بدون مخزون
+              </button>
             </div>
 
             <div class="search-row">
               <input id="cashierSearch" class="input" placeholder="اكتب اسم المنتج أو امسح الباركود..." autocomplete="off">
-              <button id="openScannerBtn" class="icon-btn" title="كاميرا الباركود"><i class="fa-solid fa-camera"></i></button>
-              <button id="manualBarcodeBtn" class="icon-btn" title="إدخال باركود"><i class="fa-solid fa-barcode"></i></button>
+
+              <button id="openScannerBtn" class="icon-btn" type="button" title="كاميرا الباركود">
+                <i class="fa-solid fa-camera"></i>
+              </button>
+
+              <button id="manualBarcodeBtn" class="icon-btn" type="button" title="إدخال باركود">
+                <i class="fa-solid fa-barcode"></i>
+              </button>
             </div>
 
             <div id="suggestionsBox" class="card" style="display:none;position:absolute;z-index:30;max-width:520px;width:calc(100% - 60px);padding:8px"></div>
 
             <div class="table-wrap">
               <div id="cartLines" style="padding:10px">
-                <div class="muted" style="text-align:center;padding:40px 10px">ابدأ بإضافة المنتجات للفاتورة</div>
+                <div class="muted" style="text-align:center;padding:40px 10px">
+                  ابدأ بإضافة المنتجات للفاتورة
+                </div>
               </div>
             </div>
           </div>
 
           <div class="card cart-summary">
-            <h2 style="font-size:20px;font-weight:900;margin:0 0 14px"><i class="fa-solid fa-receipt"></i> إجمالي الطلب</h2>
+            <h2 style="font-size:20px;font-weight:900;margin:0 0 14px">
+              <i class="fa-solid fa-receipt"></i>
+              إجمالي الطلب
+            </h2>
 
             <div style="border-top:1px solid var(--border);padding-top:14px">
               <div style="display:flex;justify-content:space-between;margin-bottom:8px">
@@ -1895,34 +1948,40 @@
 
             <div style="margin-top:12px">
               <label class="field-label">الخصم</label>
+
               <div class="form-grid">
                 <select id="discountType" class="select">
                   <option value="fixed">مبلغ ثابت</option>
                   <option value="percent">نسبة مئوية</option>
                 </select>
+
                 <input id="discountValue" type="number" inputmode="decimal" class="input" value="0" min="0" step="0.001">
               </div>
             </div>
 
-            <button id="completeSaleBtn" class="primary-btn" style="width:100%;margin-top:16px">
-              <i class="fa-solid fa-check"></i> إتمام البيع
+            <button id="completeSaleBtn" class="primary-btn" type="button" style="width:100%;margin-top:16px">
+              <i class="fa-solid fa-check"></i>
+              إتمام البيع
             </button>
 
-            <button id="clearCartBtn" class="danger-btn" style="width:100%;margin-top:10px">
-              <i class="fa-solid fa-trash"></i> تفريغ السلة
+            <button id="clearCartBtn" class="danger-btn" type="button" style="width:100%;margin-top:10px">
+              <i class="fa-solid fa-trash"></i>
+              تفريغ السلة
             </button>
           </div>
         </div>
       </section>
 
-      <section id="page-freeInvoice" class="section">
+      <section id="page-freeInvoice" class="section" data-permission="freeInvoice">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-file-circle-plus"></i> فاتورة بدون مخزون
+            <i class="fa-solid fa-file-circle-plus"></i>
+            فاتورة بدون مخزون
           </h1>
 
-          <button id="addFreeLineBtn" class="primary-btn">
-            <i class="fa-solid fa-plus"></i> إضافة صنف
+          <button id="addFreeLineBtn" class="primary-btn" type="button">
+            <i class="fa-solid fa-plus"></i>
+            إضافة صنف
           </button>
         </div>
 
@@ -1934,25 +1993,28 @@
             <b id="freeInvoiceTotal" style="font-size:24px;color:#1d4ed8">₪ 0.00</b>
           </div>
 
-          <button id="completeFreeInvoiceBtn" class="gold-btn" style="width:100%;margin-top:14px">
-            <i class="fa-solid fa-check"></i> إتمام الفاتورة الحرة
+          <button id="completeFreeInvoiceBtn" class="gold-btn" type="button" style="width:100%;margin-top:14px">
+            <i class="fa-solid fa-check"></i>
+            إتمام الفاتورة الحرة
           </button>
         </div>
       </section>
-
-      <section id="page-inventory" class="section">
+      <section id="page-inventory" class="section" data-permission="inventory">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-boxes-stacked"></i> المخزون والمنتجات
+            <i class="fa-solid fa-boxes-stacked"></i>
+            المخزون والمنتجات
           </h1>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button id="excelInventoryBtn" class="success-btn">
-              <i class="fa-solid fa-file-excel"></i> Excel
+            <button id="excelInventoryBtn" class="success-btn" type="button">
+              <i class="fa-solid fa-file-excel"></i>
+              Excel
             </button>
 
-            <button id="addProductBtn" class="primary-btn">
-              <i class="fa-solid fa-plus"></i> إضافة منتج
+            <button id="addProductBtn" class="primary-btn" type="button">
+              <i class="fa-solid fa-plus"></i>
+              إضافة منتج
             </button>
           </div>
         </div>
@@ -1984,20 +2046,22 @@
         </div>
       </section>
 
-      <section id="page-invoices" class="section">
+      <section id="page-invoices" class="section" data-permission="invoices">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-file-invoice-dollar"></i> الفواتير
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+            الفواتير
           </h1>
 
-          <button class="primary-btn" data-page-jump="cashier">
-            <i class="fa-solid fa-plus"></i> فاتورة مباشرة
+          <button class="primary-btn" type="button" data-page-jump="cashier">
+            <i class="fa-solid fa-plus"></i>
+            فاتورة مباشرة
           </button>
         </div>
 
         <div class="card" style="margin-bottom:14px">
           <div class="folder-tabs" id="invoiceFolders">
-            <button class="folder-tab active" data-invoice-folder="all">
+            <button class="folder-tab active" type="button" data-invoice-folder="all">
               <i class="fa-solid fa-folder-open"></i>
               الكل
               <small id="folderCount_all">0</small>
@@ -2028,20 +2092,24 @@
           </div>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
-            <button id="printInvoicesBtn" class="ghost-btn">
-              <i class="fa-solid fa-print"></i> طباعة
+            <button id="printInvoicesBtn" class="ghost-btn" type="button">
+              <i class="fa-solid fa-print"></i>
+              طباعة
             </button>
 
-            <button id="imageInvoicesBtn" class="success-btn">
-              <i class="fa-solid fa-image"></i> صورة
+            <button id="imageInvoicesBtn" class="success-btn" type="button">
+              <i class="fa-solid fa-image"></i>
+              صورة
             </button>
 
-            <button id="pdfInvoicesBtn" class="danger-btn">
-              <i class="fa-solid fa-file-pdf"></i> PDF
+            <button id="pdfInvoicesBtn" class="danger-btn" type="button">
+              <i class="fa-solid fa-file-pdf"></i>
+              PDF
             </button>
 
-            <button id="excelInvoicesBtn" class="success-btn">
-              <i class="fa-solid fa-file-excel"></i> Excel
+            <button id="excelInvoicesBtn" class="success-btn" type="button">
+              <i class="fa-solid fa-file-excel"></i>
+              Excel
             </button>
           </div>
         </div>
@@ -2058,6 +2126,7 @@
                   <th>الحالة</th>
                   <th>الدفع</th>
                   <th>مجلد الدفع</th>
+                  <th>الموظف</th>
                   <th>المجموع</th>
                   <th>الخصم</th>
                   <th>المبلغ</th>
@@ -2070,19 +2139,22 @@
         </div>
       </section>
 
-      <section id="page-debts" class="section">
+      <section id="page-debts" class="section" data-permission="debts">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-address-book"></i> حسابات الديون
+            <i class="fa-solid fa-address-book"></i>
+            حسابات الديون
           </h1>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button id="excelDebtsBtn" class="success-btn">
-              <i class="fa-solid fa-file-excel"></i> Excel
+            <button id="excelDebtsBtn" class="success-btn" type="button">
+              <i class="fa-solid fa-file-excel"></i>
+              Excel
             </button>
 
-            <button id="addDebtCustomerBtn" class="gold-btn">
-              <i class="fa-solid fa-user-plus"></i> إضافة حساب
+            <button id="addDebtCustomerBtn" class="gold-btn" type="button">
+              <i class="fa-solid fa-user-plus"></i>
+              إضافة حساب
             </button>
           </div>
         </div>
@@ -2132,19 +2204,23 @@
           </div>
         </div>
       </section>
-      <section id="page-purchases" class="section">
+
+      <section id="page-purchases" class="section" data-permission="purchases">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-truck-ramp-box"></i> المشتريات وإدخال البضاعة
+            <i class="fa-solid fa-truck-ramp-box"></i>
+            المشتريات وإدخال البضاعة
           </h1>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button id="excelPurchasesBtn" class="success-btn">
-              <i class="fa-solid fa-file-excel"></i> Excel
+            <button id="excelPurchasesBtn" class="success-btn" type="button">
+              <i class="fa-solid fa-file-excel"></i>
+              Excel
             </button>
 
-            <button id="addPurchaseBtn" class="primary-btn">
-              <i class="fa-solid fa-plus"></i> فاتورة مشتريات
+            <button id="addPurchaseBtn" class="primary-btn" type="button">
+              <i class="fa-solid fa-plus"></i>
+              فاتورة مشتريات
             </button>
           </div>
         </div>
@@ -2176,19 +2252,22 @@
         </div>
       </section>
 
-      <section id="page-supplierPayments" class="section">
+      <section id="page-supplierPayments" class="section" data-permission="supplierPayments">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-hand-holding-dollar"></i> دفعات التجار
+            <i class="fa-solid fa-hand-holding-dollar"></i>
+            دفعات التجار
           </h1>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button id="excelSupplierPaymentsBtn" class="success-btn">
-              <i class="fa-solid fa-file-excel"></i> Excel
+            <button id="excelSupplierPaymentsBtn" class="success-btn" type="button">
+              <i class="fa-solid fa-file-excel"></i>
+              Excel
             </button>
 
-            <button id="addSupplierPaymentBtn" class="primary-btn">
-              <i class="fa-solid fa-plus"></i> إضافة دفعة تاجر
+            <button id="addSupplierPaymentBtn" class="primary-btn" type="button">
+              <i class="fa-solid fa-plus"></i>
+              إضافة دفعة تاجر
             </button>
           </div>
         </div>
@@ -2213,20 +2292,22 @@
           </div>
         </div>
       </section>
-
-      <section id="page-expenses" class="section">
+      <section id="page-expenses" class="section" data-permission="expenses">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-money-bill-wave"></i> المصروفات
+            <i class="fa-solid fa-money-bill-wave"></i>
+            المصروفات
           </h1>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button id="excelExpensesBtn" class="success-btn">
-              <i class="fa-solid fa-file-excel"></i> Excel
+            <button id="excelExpensesBtn" class="success-btn" type="button">
+              <i class="fa-solid fa-file-excel"></i>
+              Excel
             </button>
 
-            <button id="addExpenseBtn" class="primary-btn">
-              <i class="fa-solid fa-plus"></i> إضافة مصروف
+            <button id="addExpenseBtn" class="primary-btn" type="button">
+              <i class="fa-solid fa-plus"></i>
+              إضافة مصروف
             </button>
           </div>
         </div>
@@ -2251,20 +2332,28 @@
         </div>
       </section>
 
-      <section id="page-reports" class="section">
+      <section id="page-reports" class="section" data-permission="reports">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-chart-line"></i> التقارير المالية
+            <i class="fa-solid fa-chart-line"></i>
+            التقارير المالية
           </h1>
 
-          <select id="reportsPeriod" class="select" style="max-width:180px">
-            <option value="today">اليوم</option>
-            <option value="week">أسبوع</option>
-            <option value="month">شهر</option>
-            <option value="year">سنة</option>
-            <option value="all">كل السجل</option>
-            <option value="custom">تاريخ محدد</option>
-          </select>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button id="excelReportsBtn" class="success-btn" type="button">
+              <i class="fa-solid fa-file-excel"></i>
+              Excel
+            </button>
+
+            <select id="reportsPeriod" class="select" style="max-width:180px">
+              <option value="today">اليوم</option>
+              <option value="week">أسبوع</option>
+              <option value="month">شهر</option>
+              <option value="year">سنة</option>
+              <option value="all">كل السجل</option>
+              <option value="custom">تاريخ محدد</option>
+            </select>
+          </div>
         </div>
 
         <input id="reportsCustomDate" type="date" class="input" style="display:none;max-width:220px;margin-bottom:12px">
@@ -2272,27 +2361,42 @@
         <div id="reportsPrintArea">
           <div class="stat-grid">
             <div class="stat blue">
-              <div class="stat-title"><i class="fa-solid fa-cash-register"></i> إجمالي المبيعات</div>
+              <div class="stat-title">
+                <i class="fa-solid fa-cash-register"></i>
+                إجمالي المبيعات
+              </div>
               <div id="reportSales" class="stat-value">₪ 0.00</div>
             </div>
 
             <div class="stat green">
-              <div class="stat-title"><i class="fa-solid fa-arrow-trend-up"></i> إجمالي الأرباح</div>
+              <div class="stat-title">
+                <i class="fa-solid fa-arrow-trend-up"></i>
+                إجمالي الأرباح
+              </div>
               <div id="reportProfit" class="stat-value">₪ 0.00</div>
             </div>
 
             <div class="stat red">
-              <div class="stat-title"><i class="fa-solid fa-money-bill-wave"></i> إجمالي المصاريف</div>
+              <div class="stat-title">
+                <i class="fa-solid fa-money-bill-wave"></i>
+                إجمالي المصاريف
+              </div>
               <div id="reportExpenses" class="stat-value">₪ 0.00</div>
             </div>
 
             <div class="stat gold">
-              <div class="stat-title"><i class="fa-solid fa-hand-holding-dollar"></i> دفعات التجار</div>
+              <div class="stat-title">
+                <i class="fa-solid fa-hand-holding-dollar"></i>
+                دفعات التجار
+              </div>
               <div id="reportSupplierPayments" class="stat-value">₪ 0.00</div>
             </div>
 
             <div class="stat dark">
-              <div class="stat-title"><i class="fa-solid fa-scale-balanced"></i> الربح الصافي</div>
+              <div class="stat-title">
+                <i class="fa-solid fa-scale-balanced"></i>
+                الربح الصافي
+              </div>
               <div id="reportNet" class="stat-value">₪ 0.00</div>
             </div>
           </div>
@@ -2300,14 +2404,25 @@
           <div class="card" style="margin-bottom:14px">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
               <h2 style="margin:0;font-size:19px;font-weight:900">
-                <i class="fa-solid fa-table"></i> تقارير تفصيلية
+                <i class="fa-solid fa-table"></i>
+                تقارير تفصيلية
               </h2>
 
               <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button id="printReportsBtn" class="ghost-btn"><i class="fa-solid fa-print"></i> طباعة</button>
-                <button id="imageReportsBtn" class="success-btn"><i class="fa-solid fa-image"></i> صورة</button>
-                <button id="pdfReportsBtn" class="danger-btn"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                <button id="excelReportsBtn" class="success-btn"><i class="fa-solid fa-file-excel"></i> Excel</button>
+                <button id="printReportsBtn" class="ghost-btn" type="button">
+                  <i class="fa-solid fa-print"></i>
+                  طباعة
+                </button>
+
+                <button id="imageReportsBtn" class="success-btn" type="button">
+                  <i class="fa-solid fa-image"></i>
+                  صورة
+                </button>
+
+                <button id="pdfReportsBtn" class="danger-btn" type="button">
+                  <i class="fa-solid fa-file-pdf"></i>
+                  PDF
+                </button>
               </div>
             </div>
 
@@ -2335,13 +2450,15 @@
           </div>
 
           <div class="card" style="margin-bottom:14px">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
               <h2 style="margin:0;font-size:19px;font-weight:900">
-                <i class="fa-solid fa-triangle-exclamation"></i> البضاعة الناقصة
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                البضاعة الناقصة
               </h2>
 
-              <button id="excelLowStockBtn" class="success-btn">
-                <i class="fa-solid fa-file-excel"></i> Excel
+              <button id="excelLowStockBtn" class="success-btn" type="button">
+                <i class="fa-solid fa-file-excel"></i>
+                Excel
               </button>
             </div>
 
@@ -2363,7 +2480,8 @@
 
           <div class="card">
             <h2 style="margin:0 0 12px;font-size:19px;font-weight:900">
-              <i class="fa-solid fa-wallet"></i> أرصدة حسابات الدفع
+              <i class="fa-solid fa-wallet"></i>
+              أرصدة حسابات الدفع
             </h2>
 
             <div class="table-wrap">
@@ -2382,14 +2500,60 @@
         </div>
       </section>
 
-      <section id="page-settings" class="section">
+      <section id="page-settings" class="section" data-permission="settings">
         <h1 style="font-size:24px;font-weight:900;margin:0 0 14px">
-          <i class="fa-solid fa-gear"></i> الإعدادات
+          <i class="fa-solid fa-gear"></i>
+          الإعدادات
         </h1>
 
         <div class="card" style="margin-bottom:14px">
           <h2 style="margin:0 0 12px;font-size:19px;font-weight:900">
-            <i class="fa-solid fa-store"></i> بيانات المحل
+            <i class="fa-solid fa-shield-halved"></i>
+            أمان المدير
+          </h2>
+
+          <div class="form-grid">
+            <div>
+              <label class="field-label">كلمة مرور المدير الجديدة</label>
+              <input id="settingAdminPassword" type="password" class="input" placeholder="اتركها فارغة إن لم ترد التغيير">
+            </div>
+
+            <div>
+              <label class="field-label">تأكيد كلمة المرور</label>
+              <input id="settingAdminPassword2" type="password" class="input" placeholder="أعد كتابة كلمة المرور">
+            </div>
+          </div>
+
+          <button id="changeAdminPasswordBtn" type="button" class="primary-btn" style="margin-top:14px">
+            <i class="fa-solid fa-key"></i>
+            تغيير كلمة مرور المدير
+          </button>
+        </div>
+
+        <div class="card" style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+            <h2 style="margin:0;font-size:19px;font-weight:900">
+              <i class="fa-solid fa-users-gear"></i>
+              الموظفون والصلاحيات
+            </h2>
+
+            <button id="addEmployeeBtn" class="primary-btn" type="button">
+              <i class="fa-solid fa-user-plus"></i>
+              إضافة موظف
+            </button>
+          </div>
+
+          <div class="muted" style="font-size:12px;margin-bottom:10px;line-height:1.8">
+            يمكن للمدير إضافة موظف وتحديد التبويبات المسموحة له. إذا تم حذف الموظف أو إيقافه، سيتم إخراجه تلقائياً عند المزامنة.
+          </div>
+
+          <div id="employeesList"></div>
+        </div>
+
+        <div class="card" style="margin-bottom:14px">
+          <h2 style="margin:0 0 12px;font-size:19px;font-weight:900">
+            <i class="fa-solid fa-store"></i>
+            بيانات المحل
           </h2>
 
           <div class="form-grid">
@@ -2428,59 +2592,22 @@
             رابط الشعار يتزامن مع Firebase ويظهر على كل الأجهزة. أما شعار الجهاز فيبقى محليًا فقط ولا يتم رفعه.
           </div>
 
-          <button id="saveSettingsBtn" class="primary-btn" style="margin-top:14px">
-            <i class="fa-solid fa-floppy-disk"></i> حفظ الإعدادات
+          <button id="saveSettingsBtn" class="primary-btn" type="button" style="margin-top:14px">
+            <i class="fa-solid fa-floppy-disk"></i>
+            حفظ الإعدادات
           </button>
-        </div>
-
-        <div id="adminSecurityBox" class="card" style="margin-bottom:14px">
-          <h2 style="margin:0 0 12px;font-size:19px;font-weight:900">
-            <i class="fa-solid fa-shield-halved"></i> أمان المدير
-          </h2>
-
-          <div class="form-grid">
-            <div>
-              <label class="field-label">كلمة مرور المدير الجديدة</label>
-              <input id="settingAdminPassword" type="password" class="input" placeholder="اكتب كلمة مرور جديدة">
-            </div>
-
-            <div>
-              <label class="field-label">تأكيد كلمة المرور</label>
-              <input id="settingAdminPassword2" type="password" class="input" placeholder="أعد كتابة كلمة المرور">
-            </div>
-          </div>
-
-          <button id="saveAdminPasswordBtn" class="primary-btn" style="margin-top:14px">
-            <i class="fa-solid fa-key"></i> تغيير كلمة مرور المدير
-          </button>
-        </div>
-
-        <div id="employeesSettingsBox" class="card" style="margin-bottom:14px">
-          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
-            <h2 style="margin:0;font-size:19px;font-weight:900">
-              <i class="fa-solid fa-users-gear"></i> الموظفون والصلاحيات
-            </h2>
-
-            <button id="addEmployeeBtn" class="primary-btn">
-              <i class="fa-solid fa-user-plus"></i> إضافة موظف
-            </button>
-          </div>
-
-          <div class="muted" style="font-size:12px;margin-bottom:10px;line-height:1.8">
-            المدير فقط يستطيع إضافة أو حذف الموظفين وتحديد الصلاحيات. إذا تم حذف الموظف أو تغيير صلاحياته سيتم إخراجه تلقائيًا عند المزامنة أو التحديث.
-          </div>
-
-          <div id="employeesList"></div>
         </div>
 
         <div class="card" style="margin-bottom:14px">
           <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
             <h2 style="margin:0;font-size:19px;font-weight:900">
-              <i class="fa-solid fa-credit-card"></i> حسابات الدفع والتحويل
+              <i class="fa-solid fa-credit-card"></i>
+              حسابات الدفع والتحويل
             </h2>
 
-            <button id="addPaymentAccountBtn" class="primary-btn">
-              <i class="fa-solid fa-plus"></i> حساب
+            <button id="addPaymentAccountBtn" class="primary-btn" type="button">
+              <i class="fa-solid fa-plus"></i>
+              حساب
             </button>
           </div>
 
@@ -2493,56 +2620,75 @@
 
         <div class="card">
           <h2 style="margin:0 0 12px;font-size:19px;font-weight:900">
-            <i class="fa-solid fa-database"></i> النسخ الاحتياطي
+            <i class="fa-solid fa-database"></i>
+            النسخ الاحتياطي
           </h2>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button id="exportBackupBtn" class="success-btn">
-              <i class="fa-solid fa-download"></i> تحميل نسخة احتياطية
+            <button id="exportBackupBtn" class="success-btn" type="button">
+              <i class="fa-solid fa-download"></i>
+              تحميل نسخة احتياطية
             </button>
 
             <label class="ghost-btn" style="cursor:pointer">
-              <i class="fa-solid fa-upload"></i> استيراد نسخة
+              <i class="fa-solid fa-upload"></i>
+              استيراد نسخة
               <input id="importBackupInput" type="file" accept="application/json" style="display:none">
             </label>
 
-            <button id="clearLocalBtn" class="danger-btn">
-              <i class="fa-solid fa-trash"></i> مسح البيانات المحلية
+            <button id="clearLocalBtn" class="danger-btn" type="button">
+              <i class="fa-solid fa-trash"></i>
+              مسح البيانات المحلية
             </button>
           </div>
         </div>
       </section>
-    </main>
+      </main>
   </div>
 
-  <button id="quickAddBtn" class="fab-add" title="إضافة">
+  <button id="quickAddBtn" class="fab-add" type="button" title="إضافة">
     <i class="fa-solid fa-plus"></i>
   </button>
 
   <nav class="bottom-nav">
-    <button class="bottom-btn active" data-page="home">
+    <button class="bottom-btn active" type="button" data-page="home" data-permission="home">
       <span><i class="fa-solid fa-house"></i></span>
       <span>الرئيسية</span>
     </button>
 
-    <button class="bottom-btn" data-page="cashier">
+    <button class="bottom-btn" type="button" data-page="cashier" data-permission="cashier">
       <span><i class="fa-solid fa-cart-shopping"></i></span>
       <span>كاشير</span>
     </button>
 
-    <button class="bottom-btn" data-page="inventory">
+    <button class="bottom-btn" type="button" data-page="inventory" data-permission="inventory">
       <span><i class="fa-solid fa-boxes-stacked"></i></span>
       <span>مخزون</span>
     </button>
 
-    <button class="bottom-btn" data-page="debts">
+    <button class="bottom-btn" type="button" data-page="debts" data-permission="debts">
       <span><i class="fa-solid fa-address-book"></i></span>
       <span>ديون</span>
     </button>
 
-    <button class="bottom-btn" data-page="invoices">
+    <button class="bottom-btn" type="button" data-page="invoices" data-permission="invoices">
       <span><i class="fa-solid fa-file-invoice-dollar"></i></span>
       <span>فواتير</span>
+    </button>
+
+    <button class="bottom-btn" type="button" data-page="purchases" data-permission="purchases">
+      <span><i class="fa-solid fa-truck-ramp-box"></i></span>
+      <span>مشتريات</span>
+    </button>
+
+    <button class="bottom-btn" type="button" data-page="reports" data-permission="reports">
+      <span><i class="fa-solid fa-chart-line"></i></span>
+      <span>تقارير</span>
+    </button>
+
+    <button class="bottom-btn" type="button" data-page="settings" data-permission="settings">
+      <span><i class="fa-solid fa-gear"></i></span>
+      <span>إعدادات</span>
     </button>
   </nav>
 
@@ -2552,7 +2698,7 @@
     <div id="modalBox" class="modal">
       <div class="modal-head">
         <div id="modalTitle" class="modal-title">نافذة</div>
-        <button id="modalCloseBtn" class="close-btn">
+        <button id="modalCloseBtn" class="close-btn" type="button">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -2568,9 +2714,11 @@
     <div class="floating-scanner-card">
       <div class="modal-head">
         <div class="modal-title">
-          <i class="fa-solid fa-barcode"></i> قراءة باركود المنتج
+          <i class="fa-solid fa-barcode"></i>
+          قراءة باركود المنتج
         </div>
-        <button id="floatingScannerCloseBtn" class="close-btn">
+
+        <button id="floatingScannerCloseBtn" class="close-btn" type="button">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -2581,12 +2729,14 @@
       </div>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
-        <button id="floatingManualCodeBtn" class="ghost-btn">
-          <i class="fa-solid fa-keyboard"></i> إدخال يدوي
+        <button id="floatingManualCodeBtn" class="ghost-btn" type="button">
+          <i class="fa-solid fa-keyboard"></i>
+          إدخال يدوي
         </button>
       </div>
     </div>
   </div>
+
   <template id="productFormTemplate">
     <form id="productForm">
       <input type="hidden" id="productId">
@@ -2669,11 +2819,13 @@
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
         <button class="primary-btn" type="submit">
-          <i class="fa-solid fa-floppy-disk"></i> حفظ المنتج
+          <i class="fa-solid fa-floppy-disk"></i>
+          حفظ المنتج
         </button>
 
         <button class="ghost-btn" type="button" id="generateBarcodeBtn">
-          <i class="fa-solid fa-barcode"></i> إصدار باركود
+          <i class="fa-solid fa-barcode"></i>
+          إصدار باركود
         </button>
       </div>
     </form>
@@ -2731,7 +2883,8 @@
       </div>
 
       <button class="primary-btn" type="submit" style="margin-top:14px;width:100%">
-        <i class="fa-solid fa-floppy-disk"></i> حفظ المشتريات وتحديث المخزون
+        <i class="fa-solid fa-floppy-disk"></i>
+        حفظ المشتريات وتحديث المخزون
       </button>
     </form>
   </template>
@@ -2761,11 +2914,11 @@
       </div>
 
       <button class="primary-btn" type="submit" style="margin-top:14px;width:100%">
-        <i class="fa-solid fa-floppy-disk"></i> حفظ دفعة التاجر
+        <i class="fa-solid fa-floppy-disk"></i>
+        حفظ دفعة التاجر
       </button>
     </form>
   </template>
-
   <template id="debtCustomerFormTemplate">
     <form id="debtCustomerForm">
       <input type="hidden" id="debtCustomerId">
@@ -2783,7 +2936,8 @@
       </div>
 
       <button class="gold-btn" type="submit" style="width:100%;margin-top:14px">
-        <i class="fa-solid fa-floppy-disk"></i> حفظ الحساب
+        <i class="fa-solid fa-floppy-disk"></i>
+        حفظ الحساب
       </button>
     </form>
   </template>
@@ -2810,7 +2964,8 @@
       </div>
 
       <button class="primary-btn" type="submit" style="margin-top:14px;width:100%">
-        <i class="fa-solid fa-floppy-disk"></i> حفظ المصروف
+        <i class="fa-solid fa-floppy-disk"></i>
+        حفظ المصروف
       </button>
     </form>
   </template>
@@ -2832,7 +2987,8 @@
       </div>
 
       <button class="primary-btn" type="submit" style="margin-top:14px;width:100%">
-        <i class="fa-solid fa-floppy-disk"></i> حفظ الحساب
+        <i class="fa-solid fa-floppy-disk"></i>
+        حفظ الحساب
       </button>
     </form>
   </template>
@@ -2844,30 +3000,39 @@
       <div class="form-grid-compact">
         <div>
           <label class="field-label">اسم الموظف</label>
-          <input id="employeeFormName" class="input" required placeholder="مثال: أحمد">
+          <input id="employeeName" class="input" required placeholder="مثال: أحمد">
         </div>
 
         <div>
           <label class="field-label">كلمة المرور</label>
-          <input id="employeeFormPassword" type="password" class="input" placeholder="اتركها فارغة عند التعديل إذا لا تريد تغييرها">
+          <input id="employeePassword" type="password" class="input" placeholder="كلمة المرور">
         </div>
 
-        <div class="full-row">
-          <label class="field-label">نوع الصلاحية</label>
-          <select id="employeeRoleSelect" class="select">
-            <option value="employee">موظف بصلاحيات محددة</option>
-            <option value="admin">صلاحيات مدير كاملة</option>
+        <div>
+          <label class="field-label">حالة الموظف</label>
+          <select id="employeeActive" class="select">
+            <option value="true">فعال</option>
+            <option value="false">موقوف</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="field-label">صلاحية مدير كاملة</label>
+          <select id="employeeIsAdmin" class="select">
+            <option value="false">لا</option>
+            <option value="true">نعم</option>
           </select>
         </div>
       </div>
 
-      <div id="employeePermissionsBox" style="margin-top:14px">
+      <div class="full-row" style="margin-top:12px">
         <label class="field-label">صلاحيات التبويبات</label>
         <div id="employeePermissionsGrid" class="employee-grid"></div>
       </div>
 
       <button class="primary-btn" type="submit" style="width:100%;margin-top:14px">
-        <i class="fa-solid fa-floppy-disk"></i> حفظ الموظف
+        <i class="fa-solid fa-floppy-disk"></i>
+        حفظ الموظف
       </button>
     </form>
   </template>
@@ -2880,12 +3045,14 @@
       </div>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
-        <button id="stopScannerBtn" class="danger-btn">
-          <i class="fa-solid fa-camera-slash"></i> إيقاف الكاميرا
+        <button id="stopScannerBtn" class="danger-btn" type="button">
+          <i class="fa-solid fa-camera-slash"></i>
+          إيقاف الكاميرا
         </button>
 
-        <button id="manualCodeFromScannerBtn" class="ghost-btn">
-          <i class="fa-solid fa-keyboard"></i> إدخال يدوي
+        <button id="manualCodeFromScannerBtn" class="ghost-btn" type="button">
+          <i class="fa-solid fa-keyboard"></i>
+          إدخال يدوي
         </button>
       </div>
 
@@ -2905,7 +3072,7 @@
   <script src="./firebase-config.js"></script>
 
   <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import {
       getDatabase,
       ref,
@@ -2943,6 +3110,10 @@
     const DB_NAME = `cashier_units_pro_${DB_NAMESPACE}_db_v15`;
     const DB_VERSION = 15;
 
+    const AUTH_SESSION_KEY = `cashier_auth_session_${DB_NAMESPACE}_v1`;
+    const ADMIN_PERMISSION = "__admin__";
+    const DEFAULT_ADMIN_PIN = "0000";
+
     const STORE_NAMES = [
       "products",
       "invoices",
@@ -2951,18 +3122,13 @@
       "purchases",
       "supplierPayments",
       "paymentAccounts",
-      "settings",
       "employees",
+      "settings",
       "syncQueue",
       "localMeta"
     ];
 
-    const AUTH_SESSION_KEY = `cashier_auth_session_${DB_NAMESPACE}_v1`;
-    const ADMIN_PROFILE_ID = "admin";
-    const DEFAULT_ADMIN_PIN = "0000";
-    const ADMIN_PERMISSION = "__admin__";
-
-    const AUTH_PAGES = [
+    const PAGES = [
       { id: "home", label: "الرئيسية", icon: "fa-house" },
       { id: "cashier", label: "الكاشير", icon: "fa-cart-shopping" },
       { id: "freeInvoice", label: "فاتورة بدون مخزون", icon: "fa-file-circle-plus" },
@@ -2989,7 +3155,6 @@
       employees: [],
       settings: null,
       auth: {
-        ready: false,
         user: null
       },
       cart: [],
@@ -3026,7 +3191,6 @@
       adminPasswordHash: "",
       updatedAt: Date.now()
     };
-
     const defaultAccounts = [
       {
         id: "cash",
@@ -3071,6 +3235,18 @@
       if (s === "." || s === "" || s === "-") return fallback;
       const n = Number(s);
       return Number.isFinite(n) ? n : fallback;
+    }
+
+    function simpleHash(str) {
+      const text = String(str || "");
+      let h = 2166136261;
+
+      for (let i = 0; i < text.length; i++) {
+        h ^= text.charCodeAt(i);
+        h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
+      }
+
+      return String(h >>> 0);
     }
 
     function todayKey(date = new Date()) {
@@ -3156,270 +3332,6 @@
       stopScanner();
     }
 
-    function simpleHash(str) {
-      const text = String(str || "");
-      let h = 2166136261;
-
-      for (let i = 0; i < text.length; i++) {
-        h ^= text.charCodeAt(i);
-        h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
-      }
-
-      return String(h >>> 0);
-    }
-
-    function currentUser() {
-      return state.auth.user;
-    }
-
-    function isAdminUser(user = currentUser()) {
-      return !!user && (user.role === "admin" || (user.permissions || []).includes(ADMIN_PERMISSION));
-    }
-
-    function hasPermission(pageId) {
-      const user = currentUser();
-      if (!user) return false;
-      if (isAdminUser(user)) return true;
-      return Array.isArray(user.permissions) && user.permissions.includes(pageId);
-    }
-
-    function saveAuthSession(user) {
-      localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({
-        id: user.id,
-        name: user.name,
-        role: user.role,
-        permissions: user.permissions || [],
-        loginAt: Date.now()
-      }));
-    }
-
-    function readAuthSession() {
-      try {
-        return JSON.parse(localStorage.getItem(AUTH_SESSION_KEY) || "null");
-      } catch {
-        return null;
-      }
-    }
-
-    function clearAuthSession() {
-      localStorage.removeItem(AUTH_SESSION_KEY);
-    }
-
-    function normalizeEmployee(emp = {}) {
-      return {
-        id: emp.id || uid("emp"),
-        name: emp.name || "موظف",
-        passwordHash: emp.passwordHash || simpleHash(emp.password || ""),
-        permissions: Array.isArray(emp.permissions) ? emp.permissions : [],
-        active: emp.active !== false,
-        createdAt: emp.createdAt || Date.now(),
-        updatedAt: emp.updatedAt || Date.now()
-      };
-    }
-
-    function getAdminPasswordHash() {
-      return state.settings?.adminPasswordHash || simpleHash(DEFAULT_ADMIN_PIN);
-    }
-
-    function setAuthUser(user) {
-      state.auth.user = user;
-      state.auth.ready = true;
-
-      if (user) {
-        saveAuthSession(user);
-        $("authLock")?.classList.add("hide");
-      } else {
-        clearAuthSession();
-        $("authLock")?.classList.remove("hide");
-      }
-
-      applyPermissionsUI();
-    }
-
-    function logout() {
-  try {
-    localStorage.removeItem(AUTH_SESSION_KEY);
-    sessionStorage.removeItem(AUTH_SESSION_KEY);
-  } catch {}
-
-  if (!state.auth) state.auth = {};
-  state.auth.user = null;
-
-  const lock = $("authLock");
-  if (lock) {
-    lock.classList.remove("hide");
-    lock.style.display = "flex";
-  }
-
-  const pill = $("authUserPill");
-  if (pill) {
-    pill.innerHTML = `<i class="fa-solid fa-lock"></i> غير مسجل`;
-  }
-
-  closeModal();
-  toast("تم تسجيل الخروج");
-}
-
-    function applyPermissionsUI() {
-      const user = currentUser();
-
-      if ($("authUserPill")) {
-        if (user) {
-          $("authUserPill").innerHTML = `
-            <i class="fa-solid ${isAdminUser(user) ? "fa-user-shield" : "fa-user"}"></i>
-            ${escapeHtml(user.name || "مستخدم")}
-          `;
-        } else {
-          $("authUserPill").innerHTML = `<i class="fa-solid fa-lock"></i> غير مسجل`;
-        }
-      }
-
-      document.querySelectorAll(".nav-btn[data-page], .bottom-btn[data-page]").forEach(btn => {
-        const page = btn.dataset.page;
-        btn.classList.toggle("auth-hidden", !!user && !hasPermission(page));
-      });
-
-      if ($("adminSecurityBox")) $("adminSecurityBox").style.display = isAdminUser(user) ? "block" : "none";
-      if ($("employeesSettingsBox")) $("employeesSettingsBox").style.display = isAdminUser(user) ? "block" : "none";
-
-      if (user && !hasPermission(getActivePage())) {
-        const first = AUTH_PAGES.find(p => hasPermission(p.id));
-        if (first) switchPage(first.id);
-      }
-    }
-
-    function getActivePage() {
-      const active = document.querySelector(".section.active");
-      if (!active) return "home";
-      return active.id.replace("page-", "");
-    }
-
-    async function validateCurrentEmployeeSession() {
-      const user = currentUser();
-      if (!user || isAdminUser(user)) return true;
-
-      const fresh = state.employees.find(e => e.id === user.id);
-
-      if (!fresh || fresh.active === false) {
-        logout();
-        toast("تم إيقاف أو حذف حساب الموظف من المدير");
-        return false;
-      }
-
-      const oldPerm = JSON.stringify(user.permissions || []);
-      const newPerm = JSON.stringify(fresh.permissions || []);
-
-      if (oldPerm !== newPerm || user.name !== fresh.name) {
-        const updatedUser = {
-          id: fresh.id,
-          name: fresh.name,
-          role: fresh.permissions.includes(ADMIN_PERMISSION) ? "admin" : "employee",
-          permissions: fresh.permissions || []
-        };
-
-        setAuthUser(updatedUser);
-        toast("تم تحديث صلاحيات الموظف");
-      }
-
-      return true;
-    }
-
-    async function tryRestoreAuthSession() {
-      const saved = readAuthSession();
-
-      if (!saved) {
-        setAuthUser(null);
-        return;
-      }
-
-      if (saved.role === "admin") {
-        setAuthUser({
-          id: "admin",
-          name: "المدير",
-          role: "admin",
-          permissions: [ADMIN_PERMISSION]
-        });
-        return;
-      }
-
-      const emp = state.employees.find(e => e.id === saved.id && e.active !== false);
-
-      if (!emp) {
-        clearAuthSession();
-        setAuthUser(null);
-        return;
-      }
-
-      setAuthUser({
-        id: emp.id,
-        name: emp.name,
-        role: emp.permissions.includes(ADMIN_PERMISSION) ? "admin" : "employee",
-        permissions: emp.permissions || []
-      });
-    }
-
-    function bindAuthLoginEvents() {
-      $("authAdminTab").onclick = () => {
-        $("authAdminTab").classList.add("active");
-        $("authEmployeeTab").classList.remove("active");
-        $("adminLoginForm").style.display = "block";
-        $("employeeLoginForm").style.display = "none";
-      };
-
-      $("authEmployeeTab").onclick = () => {
-        $("authEmployeeTab").classList.add("active");
-        $("authAdminTab").classList.remove("active");
-        $("adminLoginForm").style.display = "none";
-        $("employeeLoginForm").style.display = "block";
-      };
-
-      $("adminLoginForm").onsubmit = (e) => {
-        e.preventDefault();
-
-        const pass = $("adminPasswordInput").value.trim();
-
-        if (simpleHash(pass) !== getAdminPasswordHash()) {
-          toast("كلمة مرور المدير غير صحيحة");
-          return;
-        }
-
-        setAuthUser({
-          id: "admin",
-          name: "المدير",
-          role: "admin",
-          permissions: [ADMIN_PERMISSION]
-        });
-
-        toast("تم دخول المدير");
-      };
-
-      $("employeeLoginForm").onsubmit = (e) => {
-        e.preventDefault();
-
-        const name = $("employeeNameInput").value.trim();
-        const pass = $("employeePasswordInput").value.trim();
-
-        const emp = state.employees.find(x =>
-          x.active !== false &&
-          String(x.name || "").trim() === name &&
-          x.passwordHash === simpleHash(pass)
-        );
-
-        if (!emp) {
-          toast("بيانات الموظف غير صحيحة أو الحساب موقوف");
-          return;
-        }
-
-        setAuthUser({
-          id: emp.id,
-          name: emp.name,
-          role: emp.permissions.includes(ADMIN_PERMISSION) ? "admin" : "employee",
-          permissions: emp.permissions || []
-        });
-
-        toast(`أهلاً ${emp.name}`);
-      };
-    }
     function unitLabel(unit, custom = "") {
       const map = {
         piece: "قطعة",
@@ -3505,6 +3417,18 @@
         type: a.type || (a.id === "cash" ? "cash" : "app"),
         createdAt: a.createdAt || Date.now(),
         updatedAt: a.updatedAt || Date.now()
+      };
+    }
+
+    function normalizeEmployee(emp = {}) {
+      return {
+        id: emp.id || uid("emp"),
+        name: emp.name || "موظف",
+        passwordHash: emp.passwordHash || simpleHash(emp.password || ""),
+        permissions: Array.isArray(emp.permissions) ? emp.permissions : [],
+        active: emp.active !== false,
+        createdAt: emp.createdAt || Date.now(),
+        updatedAt: emp.updatedAt || Date.now()
       };
     }
 
@@ -3600,7 +3524,6 @@
         costTotal: unitCost * qty
       };
     }
-
     function makeLogoDataUrl(text) {
       const letter = String(text || "م").trim().charAt(0) || "م";
       const svg = `
@@ -3726,11 +3649,24 @@
         purchases: "المشتريات",
         supplierPayments: "دفعات التجار",
         paymentAccounts: "حسابات الدفع",
-        settings: "الإعدادات",
-        employees: "الموظفين"
+        employees: "الموظفين",
+        settings: "الإعدادات"
       };
 
       return map[store] || store;
+    }
+
+    function stripLocalOnlySettings(settings) {
+      const s = {
+        ...defaultSettings,
+        ...(settings || {})
+      };
+
+      return {
+        ...s,
+        localLogo: "",
+        logoMode: s.logo ? "url" : "default"
+      };
     }
 
     function updateSyncUi({
@@ -3871,10 +3807,6 @@
         rebuildCustomerBalances(false);
       }
 
-      if (store === "employees") {
-        await validateCurrentEmployeeSession();
-      }
-
       renderAll();
       await refreshPendingCount();
 
@@ -3882,12 +3814,12 @@
         setTimeout(() => syncNow(false), 250);
       }
     }
-
     function mapFirebaseObjectToArray(obj) {
       if (!obj) return [];
       if (Array.isArray(obj)) return obj.filter(Boolean);
       return Object.values(obj).filter(Boolean);
     }
+
     async function mergeStore(store, remoteItems, rootName = FIREBASE_ROOT) {
       if (!remoteItems || !remoteItems.length) return 0;
 
@@ -3908,6 +3840,7 @@
           remote = {
             ...defaultSettings,
             ...remote,
+            adminPasswordHash: remote.adminPasswordHash || current?.adminPasswordHash || simpleHash(DEFAULT_ADMIN_PIN),
             localLogo: current?.localLogo || "",
             logoMode: current?.localLogo ? "local" : (remote.logo ? "url" : "default")
           };
@@ -3974,7 +3907,7 @@
         }
 
         if (data.settings?.main) {
-          totalLoaded += await mergeStore("settings", [{ ...defaultSettings, ...data.settings.main }], rootName);
+          totalLoaded += await mergeStore("settings", [{ ...defaultSettings, ...data.settings.main, id: "main" }], rootName);
         }
 
         if (totalLoaded > 0) {
@@ -4095,19 +4028,6 @@
       });
     }
 
-    function stripLocalOnlySettings(settings) {
-      const s = {
-        ...defaultSettings,
-        ...(settings || {})
-      };
-
-      return {
-        ...s,
-        localLogo: "",
-        logoMode: s.logo ? "url" : "default"
-      };
-    }
-
     function startRealtimeListeners() {
       if (state.realtimeStarted) return;
       state.realtimeStarted = true;
@@ -4164,6 +4084,10 @@
             if (store === "products") {
               state.cart = state.cart.filter(line => line.productId !== local.id);
             }
+
+            if (store === "employees") {
+              await validateCurrentEmployeeSession();
+            }
           }
         }
 
@@ -4209,7 +4133,6 @@
             });
 
             const remoteObj = snap.exists() ? (snap.val() || {}) : {};
-
             await applyRemoteSnapshot(store, remoteObj);
 
             if (typeof rebuildCustomerBalances === "function") {
@@ -4255,6 +4178,8 @@
           const remoteSettings = {
             ...defaultSettings,
             ...snap.val(),
+            id: "main",
+            adminPasswordHash: snap.val()?.adminPasswordHash || current.adminPasswordHash || simpleHash(DEFAULT_ADMIN_PIN),
             localLogo: current.localLogo || "",
             logoMode: current.localLogo ? "local" : (snap.val()?.logo ? "url" : "default")
           };
@@ -4410,7 +4335,6 @@
         setTimeout(() => syncNow(false), 6000);
       }
     }
-
     function applySettingsToUI() {
       const s = state.settings || defaultSettings;
       const logo = s.localLogo || s.logo || makeLogoDataUrl(s.shopName || "المحل");
@@ -4438,15 +4362,24 @@
       state.employees = (await idbGetAll("employees")).map(normalizeEmployee);
 
       const settingsRows = await idbGetAll("settings");
+      const savedSettings = settingsRows.find(x => x.id === "main") || settingsRows[0] || null;
+
       state.settings = {
         ...defaultSettings,
-        ...(settingsRows[0] || {})
+        ...(savedSettings || {}),
+        id: "main"
       };
 
       if (!state.settings.adminPasswordHash) {
         state.settings.adminPasswordHash = simpleHash(DEFAULT_ADMIN_PIN);
         state.settings.updatedAt = Date.now();
         await idbPut("settings", state.settings);
+        await enqueueSync({
+          type: "set",
+          store: "settings",
+          itemId: "main",
+          data: stripLocalOnlySettings(state.settings)
+        });
       }
 
       if (!settingsRows.length) {
@@ -4473,6 +4406,488 @@
       if (!skipRender) renderAll();
 
       await refreshPendingCount();
+    }
+
+    function isAdminUser() {
+      const u = state.auth?.user;
+      if (!u) return false;
+      return u.role === "admin" || (Array.isArray(u.permissions) && u.permissions.includes(ADMIN_PERMISSION));
+    }
+
+    function hasPermission(page) {
+      const u = state.auth?.user;
+      if (!u) return false;
+      if (u.role === "admin") return true;
+      if (Array.isArray(u.permissions) && u.permissions.includes(ADMIN_PERMISSION)) return true;
+      return Array.isArray(u.permissions) && u.permissions.includes(page);
+    }
+
+    function firstAllowedPage() {
+      const found = PAGES.find(p => hasPermission(p.id));
+      return found?.id || "home";
+    }
+
+    function updateAuthUi() {
+      const u = state.auth?.user;
+      const locked = !u;
+
+      $("authLock").classList.toggle("hide", !locked);
+
+      const pill = $("authUserPill");
+      if (pill) {
+        if (u) {
+          pill.innerHTML = `
+            <i class="fa-solid ${isAdminUser() ? "fa-user-shield" : "fa-user"}"></i>
+            ${escapeHtml(u.name || "مستخدم")}
+          `;
+        } else {
+          pill.innerHTML = `<i class="fa-solid fa-lock"></i> غير مسجل`;
+        }
+      }
+
+      document.querySelectorAll("[data-permission]").forEach(el => {
+        const page = el.dataset.permission;
+        const allowed = !u ? false : hasPermission(page);
+        el.classList.toggle("auth-hidden", !allowed);
+      });
+
+      const settingsSecurityCards = [
+        $("changeAdminPasswordBtn")?.closest(".card"),
+        $("addEmployeeBtn")?.closest(".card")
+      ];
+
+      settingsSecurityCards.forEach(card => {
+        if (card) card.style.display = isAdminUser() ? "" : "none";
+      });
+
+      $("quickAddBtn").style.display = locked ? "none" : "flex";
+      $("logoutBtn").style.display = locked ? "none" : "inline-flex";
+    }
+
+    async function saveAuthSession(user) {
+      const session = {
+        user,
+        savedAt: Date.now()
+      };
+
+      localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(session));
+    }
+
+    async function tryRestoreAuthSession() {
+      try {
+        const raw = localStorage.getItem(AUTH_SESSION_KEY);
+        if (!raw) {
+          state.auth.user = null;
+          updateAuthUi();
+          return false;
+        }
+
+        const session = JSON.parse(raw);
+        const user = session?.user;
+
+        if (!user) {
+          state.auth.user = null;
+          updateAuthUi();
+          return false;
+        }
+
+        if (user.role === "admin") {
+          state.auth.user = {
+            role: "admin",
+            id: "admin",
+            name: "المدير",
+            permissions: [ADMIN_PERMISSION]
+          };
+          updateAuthUi();
+          return true;
+        }
+
+        const fresh = state.employees.find(e => e.id === user.id);
+
+        if (!fresh || fresh.active === false) {
+          logout(false);
+          toast("تم إخراج الموظف لأن الحساب محذوف أو موقوف");
+          return false;
+        }
+
+        state.auth.user = {
+          role: "employee",
+          id: fresh.id,
+          name: fresh.name,
+          permissions: fresh.permissions || []
+        };
+
+        updateAuthUi();
+
+        if (!hasPermission(document.querySelector(".section.active")?.dataset.permission || "home")) {
+          switchPage(firstAllowedPage());
+        }
+
+        return true;
+      } catch {
+        state.auth.user = null;
+        updateAuthUi();
+        return false;
+      }
+    }
+
+    async function validateCurrentEmployeeSession() {
+      const u = state.auth?.user;
+      if (!u || u.role !== "employee") return true;
+
+      const fresh = state.employees.find(e => e.id === u.id);
+
+      if (!fresh || fresh.active === false) {
+        logout(false);
+        toast("تم تسجيل الخروج لأن المدير حذف الموظف أو أوقفه");
+        return false;
+      }
+
+      const oldPerms = JSON.stringify(u.permissions || []);
+      const newPerms = JSON.stringify(fresh.permissions || []);
+
+      if (oldPerms !== newPerms || u.name !== fresh.name) {
+        state.auth.user = {
+          role: "employee",
+          id: fresh.id,
+          name: fresh.name,
+          permissions: fresh.permissions || []
+        };
+
+        await saveAuthSession(state.auth.user);
+        updateAuthUi();
+
+        if (!hasPermission(document.querySelector(".section.active")?.dataset.permission || "home")) {
+          switchPage(firstAllowedPage());
+        }
+
+        toast("تم تحديث صلاحيات الموظف");
+      }
+
+      return true;
+    }
+
+    async function loginAdmin(password) {
+      const pass = String(password || "").trim();
+
+      if (!pass) {
+        toast("أدخل كلمة مرور المدير");
+        $("adminPasswordInput")?.focus();
+        return;
+      }
+
+      const currentHash = state.settings?.adminPasswordHash || simpleHash(DEFAULT_ADMIN_PIN);
+
+      if (simpleHash(pass) !== currentHash) {
+        toast("كلمة مرور المدير غير صحيحة");
+        $("adminPasswordInput")?.focus();
+        return;
+      }
+
+      state.auth.user = {
+        role: "admin",
+        id: "admin",
+        name: "المدير",
+        permissions: [ADMIN_PERMISSION]
+      };
+
+      await saveAuthSession(state.auth.user);
+      updateAuthUi();
+      switchPage("home");
+      toast("تم دخول المدير");
+    }
+
+    async function loginEmployee(name, password) {
+      const n = String(name || "").trim();
+      const p = String(password || "").trim();
+
+      if (!n) {
+        toast("أدخل اسم الموظف");
+        $("employeeNameInput")?.focus();
+        return;
+      }
+
+      if (!p) {
+        toast("أدخل كلمة مرور الموظف");
+        $("employeePasswordInput")?.focus();
+        return;
+      }
+
+      const emp = state.employees.find(e =>
+        String(e.name || "").trim().toLowerCase() === n.toLowerCase()
+      );
+
+      if (!emp) {
+        toast("لا يوجد موظف بهذا الاسم");
+        return;
+      }
+
+      if (emp.active === false) {
+        toast("هذا الموظف موقوف من المدير");
+        return;
+      }
+
+      if (emp.passwordHash !== simpleHash(p)) {
+        toast("كلمة مرور الموظف غير صحيحة");
+        return;
+      }
+
+      state.auth.user = {
+        role: "employee",
+        id: emp.id,
+        name: emp.name,
+        permissions: emp.permissions || []
+      };
+
+      await saveAuthSession(state.auth.user);
+      updateAuthUi();
+      switchPage(firstAllowedPage());
+      toast(`أهلاً ${emp.name}`);
+    }
+
+    function logout(showToast = true) {
+      localStorage.removeItem(AUTH_SESSION_KEY);
+
+      state.auth.user = null;
+
+      closeModal();
+      updateAuthUi();
+
+      $("authLock").classList.remove("hide");
+      $("authLock").style.display = "flex";
+
+      $("adminPasswordInput").value = "";
+      $("employeeNameInput").value = "";
+      $("employeePasswordInput").value = "";
+
+      setTimeout(() => $("adminPasswordInput")?.focus(), 100);
+
+      if (showToast) toast("تم تسجيل الخروج");
+    }
+
+    async function changeAdminPassword() {
+      if (!isAdminUser()) {
+        toast("تغيير كلمة مرور المدير للمدير فقط");
+        return;
+      }
+
+      const p1Input = $("settingAdminPassword");
+      const p2Input = $("settingAdminPassword2");
+
+      const p1 = String(p1Input?.value || "").trim();
+      const p2 = String(p2Input?.value || "").trim();
+
+      if (!p1) {
+        toast("أدخل كلمة مرور المدير الجديدة");
+        p1Input?.focus();
+        return;
+      }
+
+      if (!p2) {
+        toast("أعد كتابة كلمة مرور المدير للتأكيد");
+        p2Input?.focus();
+        return;
+      }
+
+      if (p1.length < 4) {
+        toast("كلمة مرور المدير يجب أن تكون 4 خانات على الأقل");
+        p1Input?.focus();
+        return;
+      }
+
+      if (p1 !== p2) {
+        toast("كلمتا المرور غير متطابقتين");
+        p2Input?.focus();
+        return;
+      }
+
+      state.settings = {
+        ...defaultSettings,
+        ...state.settings,
+        id: "main",
+        adminPasswordHash: simpleHash(p1),
+        updatedAt: Date.now()
+      };
+
+      await idbPut("settings", state.settings);
+
+      await enqueueSync({
+        type: "set",
+        store: "settings",
+        itemId: "main",
+        data: stripLocalOnlySettings(state.settings)
+      });
+
+      if (navigator.onLine) {
+        await set(ref(db, `${FIREBASE_ROOT}/settings/main`), stripLocalOnlySettings(state.settings));
+      }
+
+      p1Input.value = "";
+      p2Input.value = "";
+
+      toast("تم تغيير كلمة مرور المدير بنجاح");
+    }
+
+    function renderEmployees() {
+      const box = $("employeesList");
+      if (!box) return;
+
+      if (!isAdminUser()) {
+        box.innerHTML = `<div class="muted">إدارة الموظفين للمدير فقط</div>`;
+        return;
+      }
+
+      box.innerHTML = state.employees.map(emp => {
+        const admin = (emp.permissions || []).includes(ADMIN_PERMISSION);
+        const labels = admin
+          ? "صلاحيات مدير كاملة"
+          : PAGES
+            .filter(p => (emp.permissions || []).includes(p.id))
+            .map(p => p.label)
+            .join("، ") || "بدون صلاحيات";
+
+        return `
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid #e5e7eb;border-radius:18px;margin-bottom:8px;background:#fff">
+            <div>
+              <b>${escapeHtml(emp.name)}</b>
+              <div class="muted" style="font-size:12px;line-height:1.8">${escapeHtml(labels)}</div>
+              <span class="badge ${emp.active === false ? "red" : "green"}">
+                ${emp.active === false ? "موقوف" : "فعال"}
+              </span>
+            </div>
+
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="ghost-btn" type="button" data-edit-employee="${emp.id}">
+                <i class="fa-solid fa-pen"></i>
+                تعديل
+              </button>
+
+              <button class="danger-btn" type="button" data-delete-employee="${emp.id}">
+                <i class="fa-solid fa-trash"></i>
+                حذف
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("") || `<div class="muted">لا يوجد موظفون بعد</div>`;
+    }
+
+    function openEmployeeForm(employeeId = "") {
+      if (!isAdminUser()) {
+        toast("إدارة الموظفين للمدير فقط");
+        return;
+      }
+
+      const node = cloneTemplate("employeeFormTemplate");
+      openModal(employeeId ? "تعديل موظف" : "إضافة موظف", node, true);
+
+      const old = employeeId ? state.employees.find(e => e.id === employeeId) : null;
+
+      const grid = $("employeePermissionsGrid");
+      grid.innerHTML = PAGES.map(p => `
+        <label class="perm-card">
+          <input type="checkbox" class="employee-perm-check" value="${p.id}">
+          <span><i class="fa-solid ${p.icon}"></i> ${escapeHtml(p.label)}</span>
+        </label>
+      `).join("");
+
+      if (old) {
+        $("employeeId").value = old.id;
+        $("employeeName").value = old.name || "";
+        $("employeeActive").value = old.active === false ? "false" : "true";
+        $("employeeIsAdmin").value = (old.permissions || []).includes(ADMIN_PERMISSION) ? "true" : "false";
+
+        document.querySelectorAll(".employee-perm-check").forEach(ch => {
+          ch.checked = (old.permissions || []).includes(ch.value);
+        });
+      }
+
+      function refreshPermDisabled() {
+        const isAdmin = $("employeeIsAdmin").value === "true";
+        document.querySelectorAll(".employee-perm-check").forEach(ch => {
+          ch.disabled = isAdmin;
+        });
+      }
+
+      $("employeeIsAdmin").onchange = refreshPermDisabled;
+      refreshPermDisabled();
+
+      $("employeeForm").onsubmit = async (e) => {
+        e.preventDefault();
+
+        const name = $("employeeName").value.trim();
+        const pass = $("employeePassword").value.trim();
+        const isAdmin = $("employeeIsAdmin").value === "true";
+
+        if (!name) {
+          toast("أدخل اسم الموظف");
+          return;
+        }
+
+        if (!old && !pass) {
+          toast("أدخل كلمة مرور الموظف");
+          return;
+        }
+
+        let permissions = [];
+
+        if (isAdmin) {
+          permissions = [ADMIN_PERMISSION];
+        } else {
+          permissions = Array.from(document.querySelectorAll(".employee-perm-check:checked")).map(x => x.value);
+
+          if (!permissions.length) {
+            toast("اختر صلاحية واحدة على الأقل للموظف");
+            return;
+          }
+        }
+
+        const duplicate = state.employees.find(e =>
+          e.id !== old?.id &&
+          String(e.name || "").trim().toLowerCase() === name.toLowerCase()
+        );
+
+        if (duplicate) {
+          toast("يوجد موظف بنفس الاسم");
+          return;
+        }
+
+        const emp = normalizeEmployee({
+          ...(old || {}),
+          id: old?.id || uid("emp"),
+          name,
+          passwordHash: pass ? simpleHash(pass) : old?.passwordHash,
+          permissions,
+          active: $("employeeActive").value === "true",
+          createdAt: old?.createdAt || Date.now(),
+          updatedAt: Date.now()
+        });
+
+        await saveLocal("employees", emp, true);
+
+        const i = state.employees.findIndex(e => e.id === emp.id);
+        if (i >= 0) state.employees[i] = emp;
+        else state.employees.push(emp);
+
+        closeModal();
+        renderAll();
+        toast(old ? "تم تعديل الموظف والصلاحيات" : "تم إضافة الموظف");
+      };
+    }
+
+    async function deleteEmployee(employeeId) {
+      if (!isAdminUser()) return toast("إدارة الموظفين للمدير فقط");
+
+      const emp = state.employees.find(e => e.id === employeeId);
+      if (!emp) return;
+
+      if (!confirm(`حذف الموظف ${emp.name}؟ سيتم إخراجه تلقائياً من الأجهزة عند المزامنة.`)) return;
+
+      state.employees = state.employees.filter(e => e.id !== employeeId);
+      await removeLocal("employees", employeeId, true);
+
+      renderAll();
+      toast("تم حذف الموظف");
     }
     function periodFilter(items, period, dateField = "createdAt", customDate = "") {
       if (period === "all") return items;
@@ -4536,7 +4951,7 @@
       renderEmployees();
       renderNotifications();
       applySettingsToUI();
-      applyPermissionsUI();
+      updateAuthUi();
     }
 
     function renderHome() {
@@ -4587,229 +5002,6 @@
         products.map(productCardHtml).join("") ||
         `<div class="muted">لا توجد منتجات بعد</div>`;
     }
-
-    function renderEmployees() {
-      const box = $("employeesList");
-      if (!box) return;
-
-      if (!isAdminUser()) {
-        box.innerHTML = `<div class="muted">إدارة الموظفين للمدير فقط</div>`;
-        return;
-      }
-
-      box.innerHTML = state.employees.map(emp => {
-        const isEmpAdmin = (emp.permissions || []).includes(ADMIN_PERMISSION);
-        const permLabels = isEmpAdmin
-          ? "صلاحيات مدير كاملة"
-          : AUTH_PAGES
-              .filter(p => (emp.permissions || []).includes(p.id))
-              .map(p => p.label)
-              .join("، ") || "بدون صلاحيات";
-
-        return `
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid #e5e7eb;border-radius:18px;margin-bottom:8px;background:#fff">
-            <div>
-              <b>${escapeHtml(emp.name)}</b>
-              <div class="muted" style="font-size:12px;line-height:1.8">
-                ${escapeHtml(permLabels)}
-              </div>
-              <span class="badge ${emp.active === false ? "red" : "green"}">
-                ${emp.active === false ? "موقوف" : "فعال"}
-              </span>
-            </div>
-
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="ghost-btn" data-edit-employee="${emp.id}">
-                <i class="fa-solid fa-pen"></i> تعديل
-              </button>
-
-              <button class="danger-btn" data-delete-employee="${emp.id}">
-                <i class="fa-solid fa-trash"></i> حذف
-              </button>
-            </div>
-          </div>
-        `;
-      }).join("") || `<div class="muted">لا يوجد موظفون بعد</div>`;
-    }
-
-    function openEmployeeForm(employeeId = "") {
-      if (!isAdminUser()) {
-        toast("إدارة الموظفين للمدير فقط");
-        return;
-      }
-
-      const node = cloneTemplate("employeeFormTemplate");
-      openModal(employeeId ? "تعديل موظف" : "إضافة موظف", node, true);
-
-      const old = employeeId ? state.employees.find(e => e.id === employeeId) : null;
-
-      $("employeePermissionsGrid").innerHTML = AUTH_PAGES.map(p => `
-        <label class="perm-card">
-          <input type="checkbox" value="${p.id}" class="employee-permission-check">
-          <span><i class="fa-solid ${p.icon}"></i> ${escapeHtml(p.label)}</span>
-        </label>
-      `).join("");
-
-      if (old) {
-        $("employeeId").value = old.id;
-        $("employeeFormName").value = old.name || "";
-        $("employeeRoleSelect").value = (old.permissions || []).includes(ADMIN_PERMISSION) ? "admin" : "employee";
-
-        document.querySelectorAll(".employee-permission-check").forEach(ch => {
-          ch.checked = (old.permissions || []).includes(ch.value);
-        });
-      }
-
-      function refreshRoleUI() {
-        const isFullAdmin = $("employeeRoleSelect").value === "admin";
-        $("employeePermissionsBox").style.display = isFullAdmin ? "none" : "block";
-      }
-
-      $("employeeRoleSelect").onchange = refreshRoleUI;
-      refreshRoleUI();
-
-      $("employeeForm").onsubmit = async (e) => {
-        e.preventDefault();
-
-        if (!isAdminUser()) {
-          toast("إدارة الموظفين للمدير فقط");
-          return;
-        }
-
-        const name = $("employeeFormName").value.trim();
-        const pass = $("employeeFormPassword").value.trim();
-
-        if (!name) return toast("أدخل اسم الموظف");
-
-        if (!old && !pass) {
-          toast("أدخل كلمة مرور للموظف الجديد");
-          return;
-        }
-
-        const duplicate = state.employees.find(e =>
-          e.id !== old?.id &&
-          String(e.name || "").trim() === name
-        );
-
-        if (duplicate) {
-          toast("يوجد موظف بنفس الاسم");
-          return;
-        }
-
-        const role = $("employeeRoleSelect").value;
-        let permissions = [];
-
-        if (role === "admin") {
-          permissions = [ADMIN_PERMISSION];
-        } else {
-          permissions = Array.from(document.querySelectorAll(".employee-permission-check:checked"))
-            .map(ch => ch.value);
-
-          if (!permissions.length) {
-            toast("اختر صلاحية واحدة على الأقل");
-            return;
-          }
-        }
-
-        const employee = normalizeEmployee({
-          ...(old || {}),
-          id: old?.id || uid("emp"),
-          name,
-          passwordHash: pass ? simpleHash(pass) : old?.passwordHash,
-          permissions,
-          active: true,
-          createdAt: old?.createdAt || Date.now(),
-          updatedAt: Date.now()
-        });
-
-        await saveLocal("employees", employee, true);
-
-        const i = state.employees.findIndex(e => e.id === employee.id);
-        if (i >= 0) state.employees[i] = employee;
-        else state.employees.push(employee);
-
-        closeModal();
-        renderAll();
-        toast(old ? "تم تعديل الموظف والصلاحيات" : "تم إضافة الموظف");
-      };
-    }
-
-    async function deleteEmployee(employeeId) {
-      if (!isAdminUser()) {
-        toast("إدارة الموظفين للمدير فقط");
-        return;
-      }
-
-      const emp = state.employees.find(e => e.id === employeeId);
-      if (!emp) return;
-
-      if (!confirm(`حذف الموظف ${emp.name}؟ سيتم إخراجه تلقائياً من جهازه عند المزامنة.`)) return;
-
-      state.employees = state.employees.filter(e => e.id !== employeeId);
-      await removeLocal("employees", employeeId, true);
-
-      renderAll();
-      toast("تم حذف الموظف");
-    }
-
-    async function changeAdminPassword() {
-  if (!isAdminUser()) {
-    toast("تغيير كلمة مرور المدير للمدير فقط");
-    return;
-  }
-
-  const p1Input = $("settingAdminPassword");
-  const p2Input = $("settingAdminPassword2");
-
-  const p1 = String(p1Input?.value || "").trim();
-  const p2 = String(p2Input?.value || "").trim();
-
-  if (!p1) {
-    toast("أدخل كلمة مرور المدير الجديدة");
-    p1Input?.focus();
-    return;
-  }
-
-  if (!p2) {
-    toast("أعد كتابة كلمة مرور المدير للتأكيد");
-    p2Input?.focus();
-    return;
-  }
-
-  if (p1.length < 4) {
-    toast("كلمة مرور المدير يجب أن تكون 4 خانات على الأقل");
-    p1Input?.focus();
-    return;
-  }
-
-  if (p1 !== p2) {
-    toast("كلمتا المرور غير متطابقتين");
-    p2Input?.focus();
-    return;
-  }
-
-  state.settings = {
-    ...defaultSettings,
-    ...state.settings,
-    id: "main",
-    adminPasswordHash: simpleHash(p1),
-    updatedAt: Date.now()
-  };
-
-  await idbPut("settings", state.settings);
-
-  await enqueueSync({
-    type: "set",
-    store: "settings",
-    itemId: "main",
-    data: stripLocalOnlySettings(state.settings)
-  });
-
-  p1Input.value = "";
-  p2Input.value = "";
-
-  toast("تم تغيير كلمة مرور المدير بنجاح");
-}
 
     function addToCart(product, selectedUnit = "") {
       if (!product) return;
@@ -4884,7 +5076,7 @@
 
               <div class="money line-total">${money(line.total)}</div>
 
-              <button class="danger-btn" data-remove-cart="${line.id}" style="padding:8px">
+              <button class="danger-btn" data-remove-cart="${line.id}" type="button" style="padding:8px">
                 <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
@@ -4983,7 +5175,6 @@
 
       box.style.display = "block";
     }
-
     function addFreeLine(data = {}) {
       state.freeLines.push({
         id: uid("free"),
@@ -4995,6 +5186,7 @@
 
       renderFreeInvoice();
     }
+
     function renderFreeInvoice() {
       const box = $("freeInvoiceLines");
       if (!box) return;
@@ -5036,7 +5228,8 @@
           </div>
 
           <button type="button" class="danger-btn remove-free-line" data-remove-free="${line.id}" style="width:100%;margin-top:10px">
-            <i class="fa-solid fa-trash"></i> حذف الصنف
+            <i class="fa-solid fa-trash"></i>
+            حذف الصنف
           </button>
         </div>
       `).join("");
@@ -5135,16 +5328,19 @@
                 <div class="muted" style="font-size:11px">${escapeHtml(unitLabel(p.unitType, p.customUnit))}</div>
               </td>
               <td>
-                <button class="ghost-btn" data-show-barcode="${p.id}">
-                  <i class="fa-solid fa-barcode"></i> باركود
+                <button class="ghost-btn" type="button" data-show-barcode="${p.id}">
+                  <i class="fa-solid fa-barcode"></i>
+                  باركود
                 </button>
               </td>
               <td>
-                <button class="ghost-btn" data-edit-product="${p.id}">
-                  <i class="fa-solid fa-pen"></i> تعديل
+                <button class="ghost-btn" type="button" data-edit-product="${p.id}">
+                  <i class="fa-solid fa-pen"></i>
+                  تعديل
                 </button>
-                <button class="danger-btn" data-delete-product="${p.id}">
-                  <i class="fa-solid fa-trash"></i> حذف
+                <button class="danger-btn" type="button" data-delete-product="${p.id}">
+                  <i class="fa-solid fa-trash"></i>
+                  حذف
                 </button>
               </td>
             </tr>
@@ -5222,7 +5418,7 @@
       counts.later_app = state.invoices.filter(inv => inv.paymentMethod === "later_app").length;
 
       const accountTabs = state.paymentAccounts.map(acc => `
-        <button class="folder-tab ${state.activeInvoiceFolder === acc.id ? "active" : ""}" data-invoice-folder="${acc.id}">
+        <button class="folder-tab ${state.activeInvoiceFolder === acc.id ? "active" : ""}" type="button" data-invoice-folder="${acc.id}">
           <i class="fa-solid ${acc.id === "cash" ? "fa-money-bill-wave" : "fa-mobile-screen-button"}"></i>
           ${escapeHtml(acc.name)}
           <small>${counts[acc.id] || 0}</small>
@@ -5230,7 +5426,7 @@
       `).join("");
 
       box.innerHTML = `
-        <button class="folder-tab ${state.activeInvoiceFolder === "all" ? "active" : ""}" data-invoice-folder="all">
+        <button class="folder-tab ${state.activeInvoiceFolder === "all" ? "active" : ""}" type="button" data-invoice-folder="all">
           <i class="fa-solid fa-folder-open"></i>
           الكل
           <small>${counts.all || 0}</small>
@@ -5238,13 +5434,13 @@
 
         ${accountTabs}
 
-        <button class="folder-tab ${state.activeInvoiceFolder === "debt" ? "active" : ""}" data-invoice-folder="debt">
+        <button class="folder-tab ${state.activeInvoiceFolder === "debt" ? "active" : ""}" type="button" data-invoice-folder="debt">
           <i class="fa-solid fa-user-clock"></i>
           دين
           <small>${counts.debt || 0}</small>
         </button>
 
-        <button class="folder-tab ${state.activeInvoiceFolder === "later_app" ? "active" : ""}" data-invoice-folder="later_app">
+        <button class="folder-tab ${state.activeInvoiceFolder === "later_app" ? "active" : ""}" type="button" data-invoice-folder="later_app">
           <i class="fa-solid fa-clock"></i>
           تطبيق لاحق
           <small>${counts.later_app || 0}</small>
@@ -5252,7 +5448,7 @@
       `;
     }
 
-    function getFilteredInvoices() {
+    function renderInvoices() {
       const q = ($("invoiceSearch")?.value || "").trim().toLowerCase();
       const period = $("invoicePeriod")?.value || "today";
       const custom = $("invoiceCustomDate")?.value || "";
@@ -5262,7 +5458,7 @@
         $("invoiceCustomDate").style.display = period === "custom" ? "block" : "none";
       }
 
-      return periodFilter(state.invoices, period, "createdAt", custom)
+      const rows = periodFilter(state.invoices, period, "createdAt", custom)
         .filter(inv => {
           const itemsText = (inv.items || [])
             .map(item => `${item.name || ""} ${item.qtyText || ""} ${item.unitLabel || ""}`)
@@ -5286,11 +5482,7 @@
 
           return searchOk && statusOk && folderOk;
         })
-        .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
-    }
-
-    function renderInvoices() {
-      const rows = getFilteredInvoices()
+        .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
         .map(inv => {
           return `
             <tr>
@@ -5301,18 +5493,22 @@
               <td>${statusBadge(inv.status, inv.paymentMethod, inv.id)}</td>
               <td>${escapeHtml(paymentMethodLabel(inv.paymentMethod))}</td>
               <td>${escapeHtml(paymentFolderName(inv))}</td>
+              <td>${escapeHtml(inv.employeeName || inv.createdByName || "-")}</td>
               <td>${money(inv.subtotal)}</td>
               <td>${money(inv.discount)}</td>
               <td class="money">${money(inv.total)}</td>
               <td>
-                <button class="ghost-btn" data-view-invoice="${inv.id}">
-                  <i class="fa-solid fa-eye"></i> عرض
+                <button class="ghost-btn" type="button" data-view-invoice="${inv.id}">
+                  <i class="fa-solid fa-eye"></i>
+                  عرض
                 </button>
-                <button class="ghost-btn" data-edit-invoice="${inv.id}">
-                  <i class="fa-solid fa-pen"></i> تعديل
+                <button class="ghost-btn" type="button" data-edit-invoice="${inv.id}">
+                  <i class="fa-solid fa-pen"></i>
+                  تعديل
                 </button>
-                <button class="danger-btn" data-delete-invoice="${inv.id}">
-                  <i class="fa-solid fa-trash"></i> حذف
+                <button class="danger-btn" type="button" data-delete-invoice="${inv.id}">
+                  <i class="fa-solid fa-trash"></i>
+                  حذف
                 </button>
               </td>
             </tr>
@@ -5321,9 +5517,8 @@
 
       $("invoicesTable").innerHTML =
         rows ||
-        `<tr><td colspan="11" class="muted" style="text-align:center">لا توجد فواتير</td></tr>`;
+        `<tr><td colspan="12" class="muted" style="text-align:center">لا توجد فواتير</td></tr>`;
     }
-
     function getCustomerInvoices(customer) {
       return state.invoices
         .filter(inv =>
@@ -5408,6 +5603,7 @@
         state.customers.forEach(c => saveLocal("customers", c, true));
       }
     }
+
     function renderDebts() {
       rebuildCustomerBalances(false);
 
@@ -5494,10 +5690,10 @@
             <td class="money">${money(p.total)}</td>
             <td>${escapeHtml(p.notes || "-")}</td>
             <td>
-              <button class="ghost-btn" data-edit-purchase="${p.id}">
+              <button class="ghost-btn" type="button" data-edit-purchase="${p.id}">
                 <i class="fa-solid fa-pen"></i> تعديل
               </button>
-              <button class="danger-btn" data-delete-purchase="${p.id}">
+              <button class="danger-btn" type="button" data-delete-purchase="${p.id}">
                 <i class="fa-solid fa-trash"></i> حذف
               </button>
             </td>
@@ -5532,10 +5728,10 @@
               <td>${escapeHtml(acc?.name || "-")}</td>
               <td>${escapeHtml(p.notes || "-")}</td>
               <td>
-                <button class="ghost-btn" data-edit-supplier-payment="${p.id}">
+                <button class="ghost-btn" type="button" data-edit-supplier-payment="${p.id}">
                   <i class="fa-solid fa-pen"></i> تعديل
                 </button>
-                <button class="danger-btn" data-delete-supplier-payment="${p.id}">
+                <button class="danger-btn" type="button" data-delete-supplier-payment="${p.id}">
                   <i class="fa-solid fa-trash"></i> حذف
                 </button>
               </td>
@@ -5565,10 +5761,10 @@
             <td class="money">${money(e.amount)}</td>
             <td>${escapeHtml(e.notes || "-")}</td>
             <td>
-              <button class="ghost-btn" data-edit-expense="${e.id}">
+              <button class="ghost-btn" type="button" data-edit-expense="${e.id}">
                 <i class="fa-solid fa-pen"></i> تعديل
               </button>
-              <button class="danger-btn" data-delete-expense="${e.id}">
+              <button class="danger-btn" type="button" data-delete-expense="${e.id}">
                 <i class="fa-solid fa-trash"></i> حذف
               </button>
             </td>
@@ -5579,8 +5775,7 @@
         rows ||
         `<tr><td colspan="5" class="muted" style="text-align:center">لا توجد مصروفات</td></tr>`;
     }
-
-    function getFilteredReportData() {
+function renderReports() {
       const period = $("reportsPeriod")?.value || "today";
       const custom = $("reportsCustomDate")?.value || "";
 
@@ -5588,21 +5783,9 @@
         $("reportsCustomDate").style.display = period === "custom" ? "block" : "none";
       }
 
-      return {
-        period,
-        custom,
-        invoices: periodFilter(state.invoices, period, "createdAt", custom),
-        expenses: periodFilter(state.expenses, period, "createdAt", custom),
-        purchases: periodFilter(state.purchases, period, "createdAt", custom),
-        supplierPayments: periodFilter(state.supplierPayments, period, "createdAt", custom)
-      };
-    }
-
-    function renderReports() {
-      const data = getFilteredReportData();
-      const invoices = data.invoices;
-      const expenses = data.expenses;
-      const supplierPayments = data.supplierPayments;
+      const invoices = periodFilter(state.invoices, period, "createdAt", custom);
+      const expenses = periodFilter(state.expenses, period, "createdAt", custom);
+      const supplierPayments = periodFilter(state.supplierPayments, period, "createdAt", custom);
 
       const salesTotal = invoices.reduce((s, x) => s + cleanNumber(x.total), 0);
       const profitTotal = invoices.reduce((s, x) => s + cleanNumber(x.profit), 0);
@@ -5696,12 +5879,14 @@
             </div>
 
             <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="ghost-btn" data-edit-account="${a.id}">
-                <i class="fa-solid fa-pen"></i> تعديل
+              <button class="ghost-btn" type="button" data-edit-account="${a.id}">
+                <i class="fa-solid fa-pen"></i>
+                تعديل
               </button>
 
-              <button class="danger-btn" data-delete-account="${a.id}">
-                <i class="fa-solid fa-trash"></i> حذف
+              <button class="danger-btn" type="button" data-delete-account="${a.id}">
+                <i class="fa-solid fa-trash"></i>
+                حذف
               </button>
             </div>
           </div>
@@ -5729,9 +5914,14 @@
     }
 
     function switchPage(page) {
-      if (!hasPermission(page)) {
-        toast("ليس لديك صلاحية للدخول إلى هذه الصفحة");
+      if (!state.auth?.user) {
+        updateAuthUi();
         return;
+      }
+
+      if (!hasPermission(page)) {
+        toast("لا تملك صلاحية فتح هذا القسم");
+        page = firstAllowedPage();
       }
 
       document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
@@ -5744,6 +5934,7 @@
       $("sidebar").classList.remove("open");
       renderAll();
     }
+
     function refreshProductUnitUI() {
       const unitType = $("productUnitType").value;
       const isCarton = unitType === "carton";
@@ -5896,8 +6087,9 @@
           <svg id="productBarcodeSvg"></svg>
           <div style="font-weight:900;margin-top:8px">${escapeHtml(p.barcode || p.code)}</div>
 
-          <button id="printBarcodeBtn" class="primary-btn" style="margin-top:14px">
-            <i class="fa-solid fa-print"></i> طباعة الباركود
+          <button id="printBarcodeBtn" class="primary-btn" type="button" style="margin-top:14px">
+            <i class="fa-solid fa-print"></i>
+            طباعة الباركود
           </button>
         </div>
       `);
@@ -5922,8 +6114,7 @@
         };
       }, 50);
     }
-
-    function showSmartProductSuggestions(inputEl, onSelect) {
+function showSmartProductSuggestions(inputEl, onSelect) {
       const q = String(inputEl.value || "").trim().toLowerCase();
       const box = $("smartSuggestBox");
 
@@ -6150,6 +6341,7 @@
         toast(oldPurchase ? "تم تعديل المشتريات وإعادة حساب المخزون" : "تم حفظ المشتريات وتحديث المخزون");
       };
     }
+
     function openSupplierPaymentForm(paymentId = "") {
       const node = cloneTemplate("supplierPaymentFormTemplate");
       openModal(paymentId ? "تعديل دفعة تاجر" : "إضافة دفعة تاجر", node);
@@ -6318,7 +6510,6 @@
         toast(old ? "تم تعديل حساب الدفع" : "تم حفظ حساب الدفع");
       };
     }
-
     function showCustomerSuggestions(inputEl, phoneEl = null, onSelect = null) {
       const q = String(inputEl.value || "").trim().toLowerCase();
       const box = $("customerSuggestBox");
@@ -6513,7 +6704,7 @@
               <b class="money">${money(totals.total)}</b>
             </div>
 
-            <button id="confirmPaymentBtn" class="primary-btn" style="width:100%;margin-top:16px">
+            <button id="confirmPaymentBtn" class="primary-btn" type="button" style="width:100%;margin-top:16px">
               <i class="fa-solid fa-check"></i> حفظ الفاتورة
             </button>
           </div>
@@ -6653,6 +6844,7 @@
         openDebtCustomerPicker(source, totals);
       }
     }
+
     function openDebtCustomerPicker(source, totals) {
       const list = state.customers
         .sort((a,b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0))
@@ -6753,7 +6945,6 @@
         confirmDebtCustomerSale(source, totals, customer);
       };
     }
-
     function confirmDebtCustomerSale(source, totals, customer) {
       openModal("تأكيد البيع دين", `
         <div class="card" style="box-shadow:none">
@@ -6768,8 +6959,9 @@
           <label class="field-label">تاريخ السداد اختياري</label>
           <input id="debtDueDate" type="date" class="input">
 
-          <button id="confirmDebtSaleBtn" class="gold-btn" style="width:100%;margin-top:16px">
-            <i class="fa-solid fa-check"></i> حفظ على حساب الزبون
+          <button id="confirmDebtSaleBtn" class="gold-btn" type="button" style="width:100%;margin-top:16px">
+            <i class="fa-solid fa-check"></i>
+            حفظ على حساب الزبون
           </button>
         </div>
       `);
@@ -6849,6 +7041,8 @@
 
       const items = buildSaleItems(source);
 
+      const currentUser = state.auth?.user || null;
+
       const invoice = {
         id: uid("inv"),
         number: invoiceNumber,
@@ -6856,8 +7050,10 @@
         source,
         createdAt: Date.now(),
         updatedAt: Date.now(),
-        employeeId: currentUser()?.id || "",
-        employeeName: currentUser()?.name || "",
+        createdById: currentUser?.id || "",
+        createdByRole: currentUser?.role || "",
+        createdByName: currentUser?.name || "",
+        employeeName: currentUser?.role === "employee" ? currentUser.name : "المدير",
         customerId: payment.customerId || "",
         customerName: payment.customerName || "",
         customerPhone: payment.customerPhone || "",
@@ -7156,7 +7352,8 @@
           </div>
 
           <button class="success-btn" style="width:100%;margin-top:14px" type="submit">
-            <i class="fa-solid fa-floppy-disk"></i> حفظ الدفعة
+            <i class="fa-solid fa-floppy-disk"></i>
+            حفظ الدفعة
           </button>
         </form>
       `);
@@ -7222,7 +7419,8 @@
           </div>
 
           <button class="gold-btn" style="width:100%;margin-top:14px" type="submit">
-            <i class="fa-solid fa-plus"></i> إضافة الدين
+            <i class="fa-solid fa-plus"></i>
+            إضافة الدين
           </button>
         </form>
       `);
@@ -7301,7 +7499,8 @@
           </div>
 
           <button class="primary-btn" style="width:100%;margin-top:14px" type="submit">
-            <i class="fa-solid fa-floppy-disk"></i> حفظ التعديل
+            <i class="fa-solid fa-floppy-disk"></i>
+            حفظ التعديل
           </button>
         </form>
       `);
@@ -7390,48 +7589,6 @@
       toast("تم تحويل الدين اليدوي إلى مكتمل وإعادة الحساب");
     }
 
-    function openManualDebtViewOnly(customerId, debtId) {
-      const customer = state.customers.find(c => c.id === customerId);
-      if (!customer) return;
-
-      const debt = (customer.manualDebts || []).find(d => d.id === debtId);
-      if (!debt) return;
-
-      openModal("عرض تنبيه الدين", `
-        <div class="card" style="box-shadow:none">
-          <h3 style="font-size:20px;font-weight:900;margin:0 0 10px">${escapeHtml(customer.name)}</h3>
-
-          <div style="display:grid;gap:10px">
-            <div style="background:#f8fafc;border-radius:14px;padding:12px">
-              <b>المبلغ:</b>
-              <span class="money">${money(debt.amount)}</span>
-            </div>
-
-            <div style="background:#f8fafc;border-radius:14px;padding:12px">
-              <b>الحالة:</b>
-              ${debt.status === "paid" ? "مكتمل" : "غير مكتمل"}
-            </div>
-
-            <div style="background:#f8fafc;border-radius:14px;padding:12px">
-              <b>تاريخ السداد:</b>
-              ${escapeHtml(debt.dueDate || "-")}
-            </div>
-
-            <div style="background:#f8fafc;border-radius:14px;padding:12px">
-              <b>ملاحظة:</b>
-              ${escapeHtml(debt.note || "-")}
-            </div>
-          </div>
-
-          <button id="closeManualDebtViewBtn" class="ghost-btn" style="width:100%;margin-top:14px">
-            إغلاق
-          </button>
-        </div>
-      `);
-
-      $("closeManualDebtViewBtn").onclick = closeModal;
-    }
-
     function openEditCustomerPaymentForm(customerId, paymentId) {
       const customer = state.customers.find(c => c.id === customerId);
       if (!customer) return;
@@ -7459,7 +7616,8 @@
           </div>
 
           <button class="success-btn" style="width:100%;margin-top:14px" type="submit">
-            <i class="fa-solid fa-floppy-disk"></i> حفظ التعديل
+            <i class="fa-solid fa-floppy-disk"></i>
+            حفظ التعديل
           </button>
         </form>
       `);
@@ -7561,11 +7719,12 @@
             <b class="money">${money(invoice.total)}</b>
           </div>
 
-          <button id="markLaterPaidBtn" class="success-btn" style="width:100%;margin-bottom:10px">
-            <i class="fa-solid fa-circle-check"></i> تحويل إلى مكتملة وإعادة الحساب
+          <button id="markLaterPaidBtn" class="success-btn" type="button" style="width:100%;margin-bottom:10px">
+            <i class="fa-solid fa-circle-check"></i>
+            تحويل إلى مكتملة وإعادة الحساب
           </button>
 
-          <button id="closeLaterStatusBtn" class="ghost-btn" style="width:100%">
+          <button id="closeLaterStatusBtn" class="ghost-btn" type="button" style="width:100%">
             إغلاق
           </button>
         </div>
@@ -7595,9 +7754,9 @@
             ? `<span class="badge ${inv.status === "paid" ? "green" : "yellow"} clickable" data-open-later-status="${inv.id}">${inv.status === "paid" ? "مكتملة" : "غير مكتملة"}</span>`
             : "",
           _rowActions: `
-            <button class="ghost-btn" data-view-invoice="${inv.id}" style="padding:7px 9px"><i class="fa-solid fa-eye"></i></button>
-            <button class="ghost-btn" data-edit-invoice="${inv.id}" style="padding:7px 9px"><i class="fa-solid fa-pen"></i></button>
-            <button class="danger-btn" data-delete-invoice="${inv.id}" style="padding:7px 9px"><i class="fa-solid fa-trash"></i></button>
+            <button class="ghost-btn" type="button" data-view-invoice="${inv.id}" style="padding:7px 9px"><i class="fa-solid fa-eye"></i></button>
+            <button class="ghost-btn" type="button" data-edit-invoice="${inv.id}" style="padding:7px 9px"><i class="fa-solid fa-pen"></i></button>
+            <button class="danger-btn" type="button" data-delete-invoice="${inv.id}" style="padding:7px 9px"><i class="fa-solid fa-trash"></i></button>
           `
         });
       });
@@ -7617,8 +7776,8 @@
           _createdAt: pay.createdAt,
           _htmlActions: "",
           _rowActions: `
-            <button class="ghost-btn" data-edit-customer-payment="${customer.id}|${pay.id}" style="padding:7px 9px"><i class="fa-solid fa-pen"></i></button>
-            <button class="danger-btn" data-delete-customer-payment="${customer.id}|${pay.id}" style="padding:7px 9px"><i class="fa-solid fa-trash"></i></button>
+            <button class="ghost-btn" type="button" data-edit-customer-payment="${customer.id}|${pay.id}" style="padding:7px 9px"><i class="fa-solid fa-pen"></i></button>
+            <button class="danger-btn" type="button" data-delete-customer-payment="${customer.id}|${pay.id}" style="padding:7px 9px"><i class="fa-solid fa-trash"></i></button>
           `
         });
       });
@@ -7640,10 +7799,9 @@
             ? `<span class="badge green">مكتملة</span>`
             : `<span class="badge yellow">غير مكتملة</span>`,
           _rowActions: `
-            <button class="ghost-btn" data-view-manual-debt="${customer.id}|${d.id}" style="padding:7px 9px"><i class="fa-solid fa-eye"></i></button>
-            <button class="ghost-btn" data-edit-manual-debt="${customer.id}|${d.id}" style="padding:7px 9px"><i class="fa-solid fa-pen"></i></button>
-            <button class="success-btn" data-mark-manual-debt-paid="${customer.id}|${d.id}" style="padding:7px 9px"><i class="fa-solid fa-check"></i></button>
-            <button class="danger-btn" data-delete-manual-debt="${customer.id}|${d.id}" style="padding:7px 9px"><i class="fa-solid fa-trash"></i></button>
+            <button class="ghost-btn" type="button" data-edit-manual-debt="${customer.id}|${d.id}" style="padding:7px 9px"><i class="fa-solid fa-pen"></i></button>
+            <button class="danger-btn" type="button" data-delete-manual-debt="${customer.id}|${d.id}" style="padding:7px 9px"><i class="fa-solid fa-trash"></i></button>
+            <button class="success-btn" type="button" data-mark-manual-debt-paid="${customer.id}|${d.id}" style="padding:7px 9px"><i class="fa-solid fa-check"></i></button>
           `
         });
       });
@@ -7685,44 +7843,44 @@
         </div>
 
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-          <button class="success-btn" data-pay-customer="${freshCustomer.id}">
+          <button class="success-btn" type="button" data-pay-customer="${freshCustomer.id}">
             <i class="fa-solid fa-hand-holding-dollar"></i> إضافة دفعة
           </button>
 
-          <button class="gold-btn" data-add-manual-debt="${freshCustomer.id}">
+          <button class="gold-btn" type="button" data-add-manual-debt="${freshCustomer.id}">
             <i class="fa-solid fa-plus"></i> إضافة دين
           </button>
 
-          <button class="ghost-btn" data-edit-debt-customer="${freshCustomer.id}">
+          <button class="ghost-btn" type="button" data-edit-debt-customer="${freshCustomer.id}">
             <i class="fa-solid fa-pen"></i> تعديل العميل
           </button>
 
-          <button class="danger-btn" data-delete-customer="${freshCustomer.id}">
+          <button class="danger-btn" type="button" data-delete-customer="${freshCustomer.id}">
             <i class="fa-solid fa-trash"></i> حذف العميل
           </button>
 
-          <button class="ghost-btn" data-print-customer="${freshCustomer.id}">
+          <button class="ghost-btn" type="button" data-print-customer="${freshCustomer.id}">
             <i class="fa-solid fa-print"></i> طباعة
           </button>
 
-          <button class="success-btn" data-image-customer="${freshCustomer.id}">
+          <button class="success-btn" type="button" data-image-customer="${freshCustomer.id}">
             <i class="fa-solid fa-image"></i> صورة
           </button>
 
-          <button class="danger-btn" data-pdf-customer="${freshCustomer.id}">
+          <button class="danger-btn" type="button" data-pdf-customer="${freshCustomer.id}">
             <i class="fa-solid fa-file-pdf"></i> PDF
           </button>
 
-          <button class="success-btn" data-excel-customer="${freshCustomer.id}">
+          <button class="success-btn" type="button" data-excel-customer="${freshCustomer.id}">
             <i class="fa-solid fa-file-excel"></i> Excel
           </button>
         </div>
 
         <div class="tabs-row">
-          <button class="tab-btn ${tab === "all" ? "active" : ""}" data-customer-tab="${freshCustomer.id}|all">الكل</button>
-          <button class="tab-btn ${tab === "invoices" ? "active" : ""}" data-customer-tab="${freshCustomer.id}|invoices">الفواتير</button>
-          <button class="tab-btn ${tab === "payments" ? "active" : ""}" data-customer-tab="${freshCustomer.id}|payments">الدفعات</button>
-          <button class="tab-btn ${tab === "manual" ? "active" : ""}" data-customer-tab="${freshCustomer.id}|manual">ديون يدوية</button>
+          <button class="tab-btn ${tab === "all" ? "active" : ""}" type="button" data-customer-tab="${freshCustomer.id}|all">الكل</button>
+          <button class="tab-btn ${tab === "invoices" ? "active" : ""}" type="button" data-customer-tab="${freshCustomer.id}|invoices">الفواتير</button>
+          <button class="tab-btn ${tab === "payments" ? "active" : ""}" type="button" data-customer-tab="${freshCustomer.id}|payments">الدفعات</button>
+          <button class="tab-btn ${tab === "manual" ? "active" : ""}" type="button" data-customer-tab="${freshCustomer.id}|manual">ديون يدوية</button>
         </div>
 
         <div class="table-wrap">
@@ -7808,7 +7966,7 @@
                 <h2 class="invoice-shop-title">${escapeHtml(s.shopName || "المحل الرئيسي")}</h2>
                 <div style="color:#64748b;font-size:11px">${escapeHtml(s.shopPhone || "")}</div>
                 <div style="color:#64748b;font-size:11px">فاتورة مبيعات</div>
-                ${invoice.employeeName ? `<div style="color:#64748b;font-size:11px">الموظف: ${escapeHtml(invoice.employeeName)}</div>` : ""}
+                <div style="color:#64748b;font-size:11px">الموظف: ${escapeHtml(invoice.employeeName || invoice.createdByName || "-")}</div>
               </div>
             </div>
 
@@ -7891,24 +8049,29 @@
         <div id="invoiceViewBox">${buildInvoiceHtml(invoice)}</div>
 
         <div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
-          <button id="printInvoiceBtn" class="ghost-btn">
-            <i class="fa-solid fa-print"></i> طباعة
+          <button id="printInvoiceBtn" class="ghost-btn" type="button">
+            <i class="fa-solid fa-print"></i>
+            طباعة
           </button>
 
-          <button id="imageInvoiceBtn" class="success-btn">
-            <i class="fa-solid fa-image"></i> تحميل صورة
+          <button id="imageInvoiceBtn" class="success-btn" type="button">
+            <i class="fa-solid fa-image"></i>
+            تحميل صورة
           </button>
 
-          <button id="pdfInvoiceBtn" class="danger-btn">
-            <i class="fa-solid fa-file-pdf"></i> PDF
+          <button id="pdfInvoiceBtn" class="danger-btn" type="button">
+            <i class="fa-solid fa-file-pdf"></i>
+            PDF
           </button>
 
-          <button id="excelInvoiceBtn" class="success-btn">
-            <i class="fa-solid fa-file-excel"></i> Excel
+          <button id="excelSingleInvoiceBtn" class="success-btn" type="button">
+            <i class="fa-solid fa-file-excel"></i>
+            Excel
           </button>
 
-          <button id="editInvoiceInsideBtn" class="primary-btn">
-            <i class="fa-solid fa-pen"></i> تعديل
+          <button id="editInvoiceInsideBtn" class="primary-btn" type="button">
+            <i class="fa-solid fa-pen"></i>
+            تعديل
           </button>
         </div>
       `, true);
@@ -7926,137 +8089,38 @@
         $("printInvoiceBtn").onclick = () => printHtml($("invoiceViewBox").innerHTML);
         $("imageInvoiceBtn").onclick = () => downloadElementImage($("invoiceViewBox"), `invoice-${invoice.number}.png`);
         $("pdfInvoiceBtn").onclick = () => downloadElementPdf($("invoiceViewBox"), `invoice-${invoice.number}.pdf`);
-        $("excelInvoiceBtn").onclick = () => excelSingleInvoice(invoice.id);
+        $("excelSingleInvoiceBtn").onclick = () => excelSingleInvoice(invoice.id);
         $("editInvoiceInsideBtn").onclick = () => openEditInvoiceForm(invoice.id);
-      }, 120);
+      }, 80);
     }
 
     function printHtml(html) {
-      const frame = document.createElement("iframe");
-      frame.style.position = "fixed";
-      frame.style.left = "0";
-      frame.style.top = "0";
-      frame.style.width = "0";
-      frame.style.height = "0";
-      frame.style.border = "0";
-      frame.style.opacity = "0";
-      frame.setAttribute("aria-hidden", "true");
+      const area = $("printArea");
+      if (!area) return;
 
-      const styles = `
-        <style>
-          @page{
-            size:auto;
-            margin:8mm;
-          }
-
-          *{
-            box-sizing:border-box;
-          }
-
-          html,body{
-            margin:0;
-            padding:0;
-            direction:rtl;
-            font-family:Arial,Tahoma,sans-serif;
-            background:#fff;
-            color:#0f172a;
-            -webkit-print-color-adjust:exact!important;
-            print-color-adjust:exact!important;
-          }
-
-          table{
-            width:100%;
-            border-collapse:collapse;
-          }
-
-          th,td{
-            border:1px solid #e5e7eb;
-            padding:7px;
-            font-size:11px;
-            text-align:right;
-          }
-
-          th{
-            background:#eff6ff!important;
-          }
-
-          img{
-            max-width:100%;
-          }
-
-          .invoice-paper{
-            box-shadow:none!important;
-            border:0!important;
-            border-radius:0!important;
-            padding:0!important;
-            width:100%!important;
-          }
-
-          .invoice-header{
-            background:#eff6ff!important;
-            border-radius:14px!important;
-            padding:12px!important;
-            margin-bottom:12px!important;
-          }
-
-          .no-print{
-            display:none!important;
-          }
-        </style>
+      area.style.display = "block";
+      area.innerHTML = `
+        <div class="print-shell">
+          ${html}
+        </div>
       `;
 
-      const docHtml = `
-        <!DOCTYPE html>
-        <html lang="ar" dir="rtl">
-          <head>
-            <meta charset="UTF-8">
-            <title>طباعة</title>
-            ${styles}
-          </head>
-          <body>
-            ${html}
-          </body>
-        </html>
-      `;
-
-      document.body.appendChild(frame);
-
-      const doc = frame.contentWindow.document;
-      doc.open();
-      doc.write(docHtml);
-      doc.close();
-
-      const doPrint = () => {
-        try {
-          frame.contentWindow.focus();
-          frame.contentWindow.print();
-        } finally {
-          setTimeout(() => frame.remove(), 1200);
-        }
+      const afterPrint = () => {
+        area.innerHTML = "";
+        area.style.display = "none";
+        window.removeEventListener("afterprint", afterPrint);
       };
 
-      const imgs = Array.from(doc.images || []);
+      window.addEventListener("afterprint", afterPrint);
 
-      if (!imgs.length) {
-        setTimeout(doPrint, 250);
-        return;
-      }
+      setTimeout(() => {
+        window.focus();
+        window.print();
+      }, 250);
 
-      let loaded = 0;
-      const done = () => {
-        loaded++;
-        if (loaded >= imgs.length) setTimeout(doPrint, 250);
-      };
-
-      imgs.forEach(img => {
-        if (img.complete) done();
-        else {
-          img.onload = done;
-          img.onerror = done;
-        }
-      });
-
-      setTimeout(doPrint, 1800);
+      setTimeout(() => {
+        if (area.innerHTML) afterPrint();
+      }, 2500);
     }
 
     async function downloadElementImage(element, filename) {
@@ -8223,284 +8287,43 @@
         ملاحظات: r.ملاحظات
       }));
 
-      exportExcel(`كشف-${customer.name}-${todayKey()}.xlsx`, "كشف الحساب", rows);
+      exportExcel(`customer-${customer.name}-${todayKey()}.xlsx`, "كشف الحساب", rows);
     }
+    function getFilteredInvoicesForExport() {
+      const q = ($("invoiceSearch")?.value || "").trim().toLowerCase();
+      const period = $("invoicePeriod")?.value || "today";
+      const custom = $("invoiceCustomDate")?.value || "";
+      const status = $("invoiceStatusFilter")?.value || "all";
 
-    function exportExcel(filename, sheetName, rows) {
-      if (!window.XLSX) {
-        toast("مكتبة Excel لم تعمل. تأكد من الاتصال بالإنترنت أول مرة");
-        return;
-      }
+      return periodFilter(state.invoices, period, "createdAt", custom)
+        .filter(inv => {
+          const itemsText = (inv.items || [])
+            .map(item => `${item.name || ""} ${item.qtyText || ""} ${item.unitLabel || ""}`)
+            .join(" ")
+            .toLowerCase();
 
-      const safeRows = Array.isArray(rows) ? rows : [];
+          const searchOk =
+            !q ||
+            String(inv.number).includes(q) ||
+            String(inv.customerName || "").toLowerCase().includes(q) ||
+            String(inv.customerPhone || "").includes(q) ||
+            itemsText.includes(q);
 
-      if (!safeRows.length) {
-        toast("لا توجد بيانات لتصدير Excel");
-        return;
-      }
+          const statusOk = status === "all" || inv.paymentMethod === status || inv.status === status;
 
-      const ws = XLSX.utils.json_to_sheet(safeRows);
-      const wb = XLSX.utils.book_new();
+          const folder = state.activeInvoiceFolder || "all";
+          const folderOk =
+            folder === "all" ||
+            inv.paymentAccountId === folder ||
+            inv.paymentMethod === folder;
 
-      XLSX.utils.book_append_sheet(wb, ws, String(sheetName || "Sheet1").slice(0, 31));
-      XLSX.writeFile(wb, filename);
-    }
-
-    function excelSingleInvoice(invoiceId) {
-      const inv = state.invoices.find(i => i.id === invoiceId);
-      if (!inv) return;
-
-      const rows = (inv.items || []).map(item => ({
-        رقم_الفاتورة: inv.number,
-        التاريخ: formatDate(inv.createdAt),
-        العميل: inv.customerName || "زبون نقدي",
-        الهاتف: inv.customerPhone || "",
-        الدفع: paymentMethodLabel(inv.paymentMethod),
-        المجلد: paymentFolderName(inv),
-        الموظف: inv.employeeName || "",
-        الصنف: item.name || "",
-        الكمية: item.qtyText || item.qty || "",
-        الوحدة: item.unitLabel || "",
-        السعر: cleanNumber(item.price),
-        الإجمالي: cleanNumber(item.total)
-      }));
-
-      rows.push({
-        رقم_الفاتورة: inv.number,
-        التاريخ: "",
-        العميل: "",
-        الهاتف: "",
-        الدفع: "",
-        المجلد: "",
-        الموظف: "",
-        الصنف: "الإجمالي",
-        الكمية: "",
-        الوحدة: "",
-        السعر: "",
-        الإجمالي: cleanNumber(inv.total)
-      });
-
-      exportExcel(`invoice-${inv.number}.xlsx`, "فاتورة", rows);
-    }
-
-    function excelInventory() {
-      const rows = state.products.map(p => {
-        p = normalizeProduct(p);
-
-        return {
-          الكود: p.barcode || p.code || "",
-          المنتج: p.name || "",
-          التصنيف: p.category || "",
-          نوع_الوحدة: unitLabel(p.unitType, p.customUnit),
-          الوحدة_الأساسية: unitLabel(p.baseUnit, p.customUnit),
-          المخزون_الأساسي: cleanNumber(p.stock),
-          سعر_الجملة_الأساسي: cleanNumber(p.costPrice),
-          سعر_البيع_الأساسي: cleanNumber(p.salePrice),
-          حد_التنبيه: cleanNumber(p.lowStock)
-        };
-      });
-
-      exportExcel(`inventory-${todayKey()}.xlsx`, "المخزون", rows);
-    }
-
-    function excelDebts() {
-      rebuildCustomerBalances(false);
-
-      const rows = state.customers.map(c => ({
-        الاسم: c.name || "",
-        الهاتف: c.phone || "",
-        الرصيد: cleanNumber(c.balance),
-        عليه: Math.max(0, cleanNumber(c.balance)),
-        له: Math.max(0, -cleanNumber(c.balance)),
-        إجمالي_المبيعات: cleanNumber(c.totalSales),
-        إجمالي_الدفعات: cleanNumber(c.totalPaid),
-        عدد_الفواتير: cleanNumber(c.invoicesCount),
-        آخر_حركة: formatDate(getCustomerLastActivity(c.id))
-      }));
-
-      exportExcel(`debts-${todayKey()}.xlsx`, "الديون", rows);
-    }
-
-    function excelPurchases() {
-      const rows = state.purchases.map(p => ({
-        التاريخ: formatDate(p.createdAt),
-        المورد: p.supplier || "",
-        الصنف: p.productName || "",
-        الكمية: cleanNumber(p.qty),
-        وحدة_الإدخال: p.inputUnitLabel || "",
-        التحويل: p.conversionText || "",
-        المضاف_للمخزون: cleanNumber(p.qtyBase),
-        الجملة: cleanNumber(p.cost),
-        البيع: cleanNumber(p.salePrice),
-        الإجمالي: cleanNumber(p.total),
-        ملاحظات: p.notes || ""
-      }));
-
-      exportExcel(`purchases-${todayKey()}.xlsx`, "المشتريات", rows);
-    }
-
-    function excelSupplierPayments() {
-      const rows = state.supplierPayments.map(p => {
-        const acc = state.paymentAccounts.find(a => a.id === p.accountId);
-
-        return {
-          التاريخ: formatDate(p.createdAt),
-          التاجر: p.supplierName || "",
-          المبلغ: cleanNumber(p.amount),
-          الحساب: acc?.name || "",
-          ملاحظات: p.notes || ""
-        };
-      });
-
-      exportExcel(`supplier-payments-${todayKey()}.xlsx`, "دفعات التجار", rows);
-    }
-
-    function excelExpenses() {
-      const rows = state.expenses.map(e => ({
-        التاريخ: formatDate(e.createdAt),
-        النوع: e.type || "",
-        المبلغ: cleanNumber(e.amount),
-        ملاحظات: e.notes || ""
-      }));
-
-      exportExcel(`expenses-${todayKey()}.xlsx`, "المصروفات", rows);
-    }
-
-    function excelLowStock() {
-      const rows = state.products
-        .filter(p => cleanNumber(p.stock) <= cleanNumber(p.lowStock || state.settings?.lowStock || 5))
-        .map(p => {
-          p = normalizeProduct(p);
-
-          return {
-            الصنف: p.name || "",
-            الكود: p.barcode || p.code || "",
-            الكمية_الأساسية: cleanNumber(p.stock),
-            الوحدة_الأساسية: unitLabel(p.baseUnit, p.customUnit),
-            سعر_البيع_الأساسي: cleanNumber(p.salePrice),
-            حد_التنبيه: cleanNumber(p.lowStock)
-          };
-        });
-
-      exportExcel(`low-stock-${todayKey()}.xlsx`, "البضاعة الناقصة", rows);
-    }
-    function excelInvoices() {
-      const invoices = getFilteredInvoices();
-      const rows = [];
-
-      invoices.forEach(inv => {
-        const base = {
-          رقم_الفاتورة: inv.number,
-          التاريخ: formatDate(inv.createdAt),
-          العميل: inv.customerName || "زبون نقدي",
-          الهاتف: inv.customerPhone || "",
-          الحالة: inv.status === "paid" ? "مكتملة" : "غير مكتملة",
-          الدفع: paymentMethodLabel(inv.paymentMethod),
-          المجلد: paymentFolderName(inv),
-          الموظف: inv.employeeName || "",
-          المجموع: cleanNumber(inv.subtotal),
-          الخصم: cleanNumber(inv.discount),
-          المبلغ: cleanNumber(inv.total),
-          الربح: cleanNumber(inv.profit)
-        };
-
-        if (!inv.items || !inv.items.length) {
-          rows.push({
-            ...base,
-            الصنف: "",
-            الكمية: "",
-            الوحدة: "",
-            سعر_الصنف: "",
-            إجمالي_الصنف: ""
-          });
-        } else {
-          inv.items.forEach(item => {
-            rows.push({
-              ...base,
-              الصنف: item.name || "",
-              الكمية: item.qtyText || item.qty || "",
-              الوحدة: item.unitLabel || "",
-              سعر_الصنف: cleanNumber(item.price),
-              إجمالي_الصنف: cleanNumber(item.total)
-            });
-          });
-        }
-      });
-
-      exportExcel(`invoices-${todayKey()}.xlsx`, "الفواتير", rows);
-    }
-
-    function excelReports() {
-      const data = getFilteredReportData();
-      const rows = [];
-
-      data.invoices.forEach(inv => {
-        rows.push({
-          القسم: "فاتورة",
-          التاريخ: formatDate(inv.createdAt),
-          البيان: `فاتورة #${inv.number}`,
-          الاسم: inv.customerName || "زبون نقدي",
-          الدفع: paymentMethodLabel(inv.paymentMethod),
-          الحساب: paymentFolderName(inv),
-          مدخل: cleanNumber(inv.total),
-          خارج: 0,
-          ربح: cleanNumber(inv.profit),
-          ملاحظات: inv.employeeName ? `الموظف: ${inv.employeeName}` : ""
-        });
-      });
-
-      data.expenses.forEach(e => {
-        rows.push({
-          القسم: "مصروف",
-          التاريخ: formatDate(e.createdAt),
-          البيان: e.type || "",
-          الاسم: "",
-          الدفع: "",
-          الحساب: "",
-          مدخل: 0,
-          خارج: cleanNumber(e.amount),
-          ربح: -cleanNumber(e.amount),
-          ملاحظات: e.notes || ""
-        });
-      });
-
-      data.purchases.forEach(p => {
-        rows.push({
-          القسم: "مشتريات",
-          التاريخ: formatDate(p.createdAt),
-          البيان: p.productName || "",
-          الاسم: p.supplier || "",
-          الدفع: "",
-          الحساب: "",
-          مدخل: 0,
-          خارج: cleanNumber(p.total),
-          ربح: 0,
-          ملاحظات: p.notes || ""
-        });
-      });
-
-      data.supplierPayments.forEach(p => {
-        const acc = state.paymentAccounts.find(a => a.id === p.accountId);
-
-        rows.push({
-          القسم: "دفعة تاجر",
-          التاريخ: formatDate(p.createdAt),
-          البيان: p.supplierName || "",
-          الاسم: p.supplierName || "",
-          الدفع: "",
-          الحساب: acc?.name || "",
-          مدخل: 0,
-          خارج: cleanNumber(p.amount),
-          ربح: 0,
-          ملاحظات: p.notes || ""
-        });
-      });
-
-      exportExcel(`reports-${todayKey()}.xlsx`, "تقرير شامل", rows);
+          return searchOk && statusOk && folderOk;
+        })
+        .sort((a,b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
     }
 
     function buildFullInvoicesReportHtml() {
-      const invoices = getFilteredInvoices();
+      const invoices = getFilteredInvoicesForExport();
       const rows = [];
 
       invoices.forEach(inv => {
@@ -8515,7 +8338,7 @@
               <td>${escapeHtml(inv.customerPhone || "-")}</td>
               <td>${escapeHtml(paymentMethodLabel(inv.paymentMethod))}</td>
               <td>${escapeHtml(acc?.name || paymentFolderName(inv))}</td>
-              <td>${escapeHtml(inv.employeeName || "-")}</td>
+              <td>${escapeHtml(inv.employeeName || inv.createdByName || "-")}</td>
               <td>-</td>
               <td>-</td>
               <td>-</td>
@@ -8533,7 +8356,7 @@
                 <td>${escapeHtml(inv.customerPhone || "-")}</td>
                 <td>${escapeHtml(paymentMethodLabel(inv.paymentMethod))}</td>
                 <td>${escapeHtml(acc?.name || paymentFolderName(inv))}</td>
-                <td>${escapeHtml(inv.employeeName || "-")}</td>
+                <td>${escapeHtml(inv.employeeName || inv.createdByName || "-")}</td>
                 <td>${escapeHtml(item.name || "-")}</td>
                 <td>${escapeHtml(item.qtyText || item.qty || "1")}</td>
                 <td>${escapeHtml(item.unitLabel || "-")}</td>
@@ -8571,17 +8394,13 @@
     }
 
     function buildFullReportsHtml() {
-      const data = getFilteredReportData();
-      const invoices = data.invoices;
-      const expenses = data.expenses;
-      const purchases = data.purchases;
-      const supplierPayments = data.supplierPayments;
+      const period = $("reportsPeriod")?.value || "today";
+      const custom = $("reportsCustomDate")?.value || "";
 
-      const salesTotal = invoices.reduce((s, x) => s + cleanNumber(x.total), 0);
-      const profitTotal = invoices.reduce((s, x) => s + cleanNumber(x.profit), 0);
-      const expensesTotal = expenses.reduce((s, x) => s + cleanNumber(x.amount), 0);
-      const supplierPaymentsTotal = supplierPayments.reduce((s, x) => s + cleanNumber(x.amount), 0);
-      const purchasesTotal = purchases.reduce((s, x) => s + cleanNumber(x.total), 0);
+      const invoices = periodFilter(state.invoices, period, "createdAt", custom);
+      const expenses = periodFilter(state.expenses, period, "createdAt", custom);
+      const purchases = periodFilter(state.purchases, period, "createdAt", custom);
+      const supplierPayments = periodFilter(state.supplierPayments, period, "createdAt", custom);
 
       const invoiceRows = invoices.map(inv => `
         <tr>
@@ -8590,7 +8409,7 @@
           <td>${escapeHtml(inv.customerName || "زبون نقدي")}</td>
           <td>${escapeHtml(paymentMethodLabel(inv.paymentMethod))}</td>
           <td>${escapeHtml(paymentFolderName(inv))}</td>
-          <td>${escapeHtml(inv.employeeName || "-")}</td>
+          <td>${escapeHtml(inv.employeeName || inv.createdByName || "-")}</td>
           <td>${money(inv.total)}</td>
           <td>${money(inv.profit)}</td>
         </tr>
@@ -8632,15 +8451,6 @@
       }).join("");
 
       return reportShell("تقرير مالي شامل", `
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
-          <div style="background:#eff6ff;border-radius:14px;padding:10px;font-size:12px"><b>المبيعات:</b> ${money(salesTotal)}</div>
-          <div style="background:#ecfdf5;border-radius:14px;padding:10px;font-size:12px"><b>الأرباح:</b> ${money(profitTotal)}</div>
-          <div style="background:#fef2f2;border-radius:14px;padding:10px;font-size:12px"><b>المصاريف:</b> ${money(expensesTotal)}</div>
-          <div style="background:#fffbeb;border-radius:14px;padding:10px;font-size:12px"><b>دفعات التجار:</b> ${money(supplierPaymentsTotal)}</div>
-          <div style="background:#f8fafc;border-radius:14px;padding:10px;font-size:12px"><b>المشتريات:</b> ${money(purchasesTotal)}</div>
-          <div style="background:#f8fafc;border-radius:14px;padding:10px;font-size:12px"><b>الصافي:</b> ${money(profitTotal - expensesTotal)}</div>
-        </div>
-
         <h3 style="font-size:14px;margin:10px 0">الفواتير</h3>
         <table style="width:100%;border-collapse:collapse;min-width:0">
           <thead>
@@ -8758,6 +8568,272 @@
 
       downloadElementPdf(wrap, `reports-full-${todayKey()}.pdf`).finally(() => wrap.remove());
     }
+    function exportExcel(filename, sheetName, rows) {
+      if (!window.XLSX) {
+        toast("مكتبة Excel لم تعمل. تأكد من الاتصال بالإنترنت أول مرة");
+        return;
+      }
+
+      const safeRows = Array.isArray(rows) && rows.length ? rows : [{ ملاحظة: "لا توجد بيانات" }];
+      const ws = XLSX.utils.json_to_sheet(safeRows);
+      const wb = XLSX.utils.book_new();
+
+      XLSX.utils.book_append_sheet(wb, ws, sheetName || "Sheet1");
+      XLSX.writeFile(wb, filename);
+    }
+
+    function excelSingleInvoice(invoiceId) {
+      const inv = state.invoices.find(i => i.id === invoiceId);
+      if (!inv) return;
+
+      const rows = (inv.items || []).map(item => ({
+        رقم_الفاتورة: inv.number,
+        التاريخ: formatDate(inv.createdAt),
+        العميل: inv.customerName || "زبون نقدي",
+        الهاتف: inv.customerPhone || "-",
+        طريقة_الدفع: paymentMethodLabel(inv.paymentMethod),
+        مجلد_الدفع: paymentFolderName(inv),
+        الموظف: inv.employeeName || inv.createdByName || "-",
+        الصنف: item.name || "-",
+        الكمية: item.qtyText || item.qty || 1,
+        الوحدة: item.unitLabel || "-",
+        السعر: cleanNumber(item.price),
+        الإجمالي: cleanNumber(item.total),
+        الخصم: cleanNumber(inv.discount),
+        إجمالي_الفاتورة: cleanNumber(inv.total)
+      }));
+
+      exportExcel(`invoice-${inv.number}-${todayKey()}.xlsx`, "الفاتورة", rows);
+    }
+
+    function excelCurrentInvoices() {
+      const invoices = getFilteredInvoicesForExport();
+      const rows = [];
+
+      invoices.forEach(inv => {
+        if (Array.isArray(inv.items) && inv.items.length) {
+          inv.items.forEach(item => {
+            rows.push({
+              رقم_الفاتورة: inv.number,
+              التاريخ: formatDate(inv.createdAt),
+              العميل: inv.customerName || "زبون نقدي",
+              الهاتف: inv.customerPhone || "-",
+              طريقة_الدفع: paymentMethodLabel(inv.paymentMethod),
+              الحالة: inv.status === "paid" ? "مكتملة" : "غير مكتملة",
+              مجلد_الدفع: paymentFolderName(inv),
+              الموظف: inv.employeeName || inv.createdByName || "-",
+              الصنف: item.name || "-",
+              الكمية: item.qtyText || item.qty || 1,
+              الوحدة: item.unitLabel || "-",
+              السعر: cleanNumber(item.price),
+              إجمالي_الصنف: cleanNumber(item.total),
+              المجموع: cleanNumber(inv.subtotal),
+              الخصم: cleanNumber(inv.discount),
+              إجمالي_الفاتورة: cleanNumber(inv.total),
+              الربح: cleanNumber(inv.profit)
+            });
+          });
+        } else {
+          rows.push({
+            رقم_الفاتورة: inv.number,
+            التاريخ: formatDate(inv.createdAt),
+            العميل: inv.customerName || "زبون نقدي",
+            الهاتف: inv.customerPhone || "-",
+            طريقة_الدفع: paymentMethodLabel(inv.paymentMethod),
+            الحالة: inv.status === "paid" ? "مكتملة" : "غير مكتملة",
+            مجلد_الدفع: paymentFolderName(inv),
+            الموظف: inv.employeeName || inv.createdByName || "-",
+            الصنف: "-",
+            الكمية: "-",
+            الوحدة: "-",
+            السعر: 0,
+            إجمالي_الصنف: 0,
+            المجموع: cleanNumber(inv.subtotal),
+            الخصم: cleanNumber(inv.discount),
+            إجمالي_الفاتورة: cleanNumber(inv.total),
+            الربح: cleanNumber(inv.profit)
+          });
+        }
+      });
+
+      exportExcel(`invoices-${todayKey()}.xlsx`, "الفواتير", rows);
+    }
+
+    function excelInventory() {
+      const rows = state.products.map(p => {
+        p = normalizeProduct(p);
+
+        return {
+          الكود: p.barcode || p.code || "-",
+          المنتج: p.name || "-",
+          التصنيف: p.category || "-",
+          نوع_الوحدة: unitLabel(p.unitType, p.customUnit),
+          الوحدة_الأساسية: unitLabel(p.baseUnit, p.customUnit),
+          المخزون_الأساسي: cleanNumber(p.stock),
+          حد_التنبيه: cleanNumber(p.lowStock),
+          سعر_الجملة_الأساسي: cleanNumber(p.costPrice),
+          سعر_البيع_الأساسي: cleanNumber(p.salePrice),
+          سعر_الوحدة_المختارة: cleanNumber(p.displaySalePrice)
+        };
+      });
+
+      exportExcel(`inventory-${todayKey()}.xlsx`, "المخزون", rows);
+    }
+
+    function excelDebts() {
+      rebuildCustomerBalances(false);
+
+      const rows = state.customers.map(c => ({
+        الاسم: c.name || "-",
+        الهاتف: c.phone || "-",
+        الرصيد: cleanNumber(c.balance),
+        الحالة: customerBalanceText(c.balance).text,
+        إجمالي_المبيعات: cleanNumber(c.totalSales),
+        إجمالي_الدفعات: cleanNumber(c.totalPaid),
+        عدد_الفواتير: getCustomerInvoices(c).length,
+        آخر_حركة: getCustomerLastActivity(c.id) ? formatDate(getCustomerLastActivity(c.id)) : "-"
+      }));
+
+      exportExcel(`debts-${todayKey()}.xlsx`, "الديون", rows);
+    }
+
+    function excelPurchases() {
+      const rows = state.purchases.map(p => ({
+        التاريخ: formatDate(p.createdAt),
+        المورد: p.supplier || "-",
+        الصنف: p.productName || "-",
+        الكمية: cleanNumber(p.qty),
+        وحدة_الإدخال: p.inputUnitLabel || "-",
+        التحويل: p.conversionText || "-",
+        المضاف_للمخزون: cleanNumber(p.qtyBase),
+        الجملة: cleanNumber(p.cost),
+        البيع: cleanNumber(p.salePrice),
+        الإجمالي: cleanNumber(p.total),
+        ملاحظات: p.notes || "-"
+      }));
+
+      exportExcel(`purchases-${todayKey()}.xlsx`, "المشتريات", rows);
+    }
+
+    function excelSupplierPayments() {
+      const rows = state.supplierPayments.map(p => {
+        const acc = state.paymentAccounts.find(a => a.id === p.accountId);
+
+        return {
+          التاريخ: formatDate(p.createdAt),
+          التاجر: p.supplierName || "-",
+          المبلغ: cleanNumber(p.amount),
+          الحساب: acc?.name || "-",
+          ملاحظات: p.notes || "-"
+        };
+      });
+
+      exportExcel(`supplier-payments-${todayKey()}.xlsx`, "دفعات التجار", rows);
+    }
+
+    function excelExpenses() {
+      const rows = state.expenses.map(e => ({
+        التاريخ: formatDate(e.createdAt),
+        النوع: e.type || "-",
+        المبلغ: cleanNumber(e.amount),
+        ملاحظات: e.notes || "-"
+      }));
+
+      exportExcel(`expenses-${todayKey()}.xlsx`, "المصروفات", rows);
+    }
+
+    function excelLowStock() {
+      const rows = state.products
+        .map(normalizeProduct)
+        .filter(p => cleanNumber(p.stock) <= cleanNumber(p.lowStock || state.settings?.lowStock || 5))
+        .map(p => ({
+          الصنف: p.name || "-",
+          الكود: p.barcode || p.code || "-",
+          الكمية_الأساسية: cleanNumber(p.stock),
+          الوحدة_الأساسية: unitLabel(p.baseUnit, p.customUnit),
+          حد_التنبيه: cleanNumber(p.lowStock),
+          سعر_البيع_الأساسي: cleanNumber(p.salePrice)
+        }));
+
+      exportExcel(`low-stock-${todayKey()}.xlsx`, "البضاعة الناقصة", rows);
+    }
+
+    function excelReports() {
+      const period = $("reportsPeriod")?.value || "today";
+      const custom = $("reportsCustomDate")?.value || "";
+
+      const invoices = periodFilter(state.invoices, period, "createdAt", custom);
+      const expenses = periodFilter(state.expenses, period, "createdAt", custom);
+      const purchases = periodFilter(state.purchases, period, "createdAt", custom);
+      const supplierPayments = periodFilter(state.supplierPayments, period, "createdAt", custom);
+
+      const rows = [];
+
+      invoices.forEach(inv => {
+        rows.push({
+          القسم: "فاتورة",
+          التاريخ: formatDate(inv.createdAt),
+          البيان: `فاتورة #${inv.number}`,
+          الاسم: inv.customerName || "زبون نقدي",
+          الدفع: paymentMethodLabel(inv.paymentMethod),
+          الموظف: inv.employeeName || inv.createdByName || "-",
+          مدخل: cleanNumber(inv.total),
+          مخرج: 0,
+          ربح: cleanNumber(inv.profit),
+          ملاحظات: paymentFolderName(inv)
+        });
+      });
+
+      expenses.forEach(e => {
+        rows.push({
+          القسم: "مصروف",
+          التاريخ: formatDate(e.createdAt),
+          البيان: e.type || "-",
+          الاسم: "-",
+          الدفع: "-",
+          الموظف: "-",
+          مدخل: 0,
+          مخرج: cleanNumber(e.amount),
+          ربح: -cleanNumber(e.amount),
+          ملاحظات: e.notes || "-"
+        });
+      });
+
+      purchases.forEach(p => {
+        rows.push({
+          القسم: "مشتريات",
+          التاريخ: formatDate(p.createdAt),
+          البيان: p.productName || "-",
+          الاسم: p.supplier || "-",
+          الدفع: "-",
+          الموظف: "-",
+          مدخل: 0,
+          مخرج: cleanNumber(p.total),
+          ربح: 0,
+          ملاحظات: p.notes || "-"
+        });
+      });
+
+      supplierPayments.forEach(p => {
+        const acc = state.paymentAccounts.find(a => a.id === p.accountId);
+
+        rows.push({
+          القسم: "دفعة تاجر",
+          التاريخ: formatDate(p.createdAt),
+          البيان: p.supplierName || "-",
+          الاسم: p.supplierName || "-",
+          الدفع: acc?.name || "-",
+          الموظف: "-",
+          مدخل: 0,
+          مخرج: cleanNumber(p.amount),
+          ربح: 0,
+          ملاحظات: p.notes || "-"
+        });
+      });
+
+      exportExcel(`reports-${todayKey()}.xlsx`, "التقارير", rows);
+    }
+
     async function saveSettings() {
       const logoUrl = $("settingLogoUrl")?.value.trim() || "";
       const file = $("settingLogoFile")?.files?.[0] || null;
@@ -8779,7 +8855,6 @@
         logo: logoUrl,
         localLogo,
         logoMode: localLogo ? "local" : (logoUrl ? "url" : "default"),
-        adminPasswordHash: state.settings?.adminPasswordHash || simpleHash(DEFAULT_ADMIN_PIN),
         updatedAt: Date.now()
       };
 
@@ -8794,9 +8869,8 @@
 
       applySettingsToUI();
       renderAll();
-      toast("تم حفظ الإعدادات، الشعار المحلي لا يرفع ورابط الشعار يتزامن");
+      toast("تم حفظ الإعدادات");
     }
-
     function exportBackup() {
       const data = {
         version: DB_VERSION,
@@ -8853,7 +8927,16 @@
 
         await loadLocalData(true);
 
-        for (const store of ["products", "invoices", "customers", "expenses", "purchases", "supplierPayments", "paymentAccounts", "employees"]) {
+        for (const store of [
+          "products",
+          "invoices",
+          "customers",
+          "expenses",
+          "purchases",
+          "supplierPayments",
+          "paymentAccounts",
+          "employees"
+        ]) {
           for (const item of state[store]) {
             await enqueueSync({
               type: "set",
@@ -8886,7 +8969,7 @@
         await idbClear(store);
       }
 
-      clearAuthSession();
+      localStorage.removeItem(AUTH_SESSION_KEY);
 
       state.products = [];
       state.invoices = [];
@@ -8894,11 +8977,15 @@
       state.expenses = [];
       state.purchases = [];
       state.supplierPayments = [];
-      state.paymentAccounts = defaultAccounts.map(normalizePaymentAccount);
       state.employees = [];
+      state.paymentAccounts = defaultAccounts.map(normalizePaymentAccount);
       state.cart = [];
       state.freeLines = [{ id: uid("free"), name: "", qty: 1, cost: 0, price: 0 }];
-      state.settings = { ...defaultSettings, adminPasswordHash: simpleHash(DEFAULT_ADMIN_PIN) };
+      state.settings = {
+        ...defaultSettings,
+        adminPasswordHash: simpleHash(DEFAULT_ADMIN_PIN),
+        updatedAt: Date.now()
+      };
       state.auth.user = null;
 
       await idbPut("settings", state.settings);
@@ -8906,8 +8993,8 @@
 
       renderAll();
       await refreshPendingCount();
-      $("authLock")?.classList.remove("hide");
-      toast("تم مسح بيانات هذا المشروع محليًا");
+      logout(false);
+      toast("تم مسح بيانات هذا المشروع محليًا، كلمة مرور المدير رجعت 0000");
     }
 
     async function deleteProduct(productId) {
@@ -8939,6 +9026,7 @@
       if (product) {
         product.stock = cleanNumber(product.stock) - cleanNumber(purchase.qtyBase);
         product.updatedAt = Date.now();
+
         await saveLocal("products", normalizeProduct(product), true);
 
         state.products = state.products.map(p =>
@@ -9043,7 +9131,7 @@
         <div class="card" style="box-shadow:none">
           <h3 style="margin:0 0 10px;font-weight:900">ديون يدوية غير مكتملة</h3>
           ${
-            manualUnpaid.map(d => `<div class="debt-card" data-view-manual-debt="${d.customerId}|${d.id}">
+            manualUnpaid.map(d => `<div class="debt-card" data-open-customer="${d.customerId}">
               <div>
                 <div class="debt-name">${escapeHtml(d.customerName)}</div>
                 <div class="debt-sub">${escapeHtml(d.note || "دين يدوي")} · ${formatAge(d.createdAt)}</div>
@@ -9055,7 +9143,6 @@
         </div>
       `, true);
     }
-
     function stopScanner() {
       if (state.scanner.reader) {
         try {
@@ -9197,6 +9284,7 @@
         toast("لم يتم العثور على منتج بهذا الكود");
       }
     }
+
     function openQuickAddMenu() {
       openModal("إضافة سريعة", `
         <div class="payment-choice-grid">
@@ -9274,139 +9362,7 @@
 
       sidebar.classList.remove("open");
     }
-
-    function ensureAuthLockHtml() {
-      if ($("authLock")) return;
-
-      const lock = document.createElement("div");
-      lock.id = "authLock";
-      lock.className = "auth-lock";
-      lock.innerHTML = `
-        <div class="auth-card">
-          <div class="auth-logo">
-            <i class="fa-solid fa-shield-halved"></i>
-          </div>
-
-          <h1>تسجيل الدخول</h1>
-          <p>أول دخول للمدير بكلمة المرور المؤقتة 0000، وبعدها غيّرها من الإعدادات.</p>
-
-          <div class="auth-tabs">
-            <button id="authAdminTab" class="auth-tab active" type="button">
-              <i class="fa-solid fa-user-shield"></i> مدير
-            </button>
-            <button id="authEmployeeTab" class="auth-tab" type="button">
-              <i class="fa-solid fa-user"></i> موظف
-            </button>
-          </div>
-
-          <form id="adminLoginForm" class="auth-form">
-            <label class="field-label">كلمة مرور المدير</label>
-            <input id="adminPasswordInput" type="password" class="input" placeholder="0000" autocomplete="current-password">
-            <button class="primary-btn" type="submit" style="width:100%;margin-top:12px">
-              <i class="fa-solid fa-right-to-bracket"></i> دخول المدير
-            </button>
-          </form>
-
-          <form id="employeeLoginForm" class="auth-form" style="display:none">
-            <label class="field-label">اسم الموظف</label>
-            <input id="employeeNameInput" class="input" placeholder="اسم الموظف" autocomplete="username">
-
-            <label class="field-label" style="margin-top:10px">كلمة المرور</label>
-            <input id="employeePasswordInput" type="password" class="input" placeholder="كلمة المرور" autocomplete="current-password">
-
-            <button class="gold-btn" type="submit" style="width:100%;margin-top:12px">
-              <i class="fa-solid fa-right-to-bracket"></i> دخول الموظف
-            </button>
-          </form>
-        </div>
-      `;
-
-      document.body.appendChild(lock);
-    }
-
-    function ensureAuthTopButtons() {
-      const bar = document.querySelector(".topbar > div:last-child");
-      if (!bar || $("logoutBtn")) return;
-
-      const pill = document.createElement("div");
-      pill.id = "authUserPill";
-      pill.className = "auth-user-pill";
-      pill.innerHTML = `<i class="fa-solid fa-lock"></i> غير مسجل`;
-
-      const btn = document.createElement("button");
-      btn.id = "logoutBtn";
-      btn.className = "icon-btn";
-      btn.title = "تسجيل الخروج";
-      btn.innerHTML = `<i class="fa-solid fa-arrow-right-from-bracket"></i>`;
-
-      bar.prepend(btn);
-      bar.prepend(pill);
-
-      btn.onclick = logout;
-    }
-
-    function ensureSettingsAuthBoxes() {
-      const settingsPage = $("page-settings");
-      if (!settingsPage || $("adminSecurityBox")) return;
-
-      const html = `
-        <div id="adminSecurityBox" class="card" style="margin-bottom:14px;display:none">
-          <h2 style="margin:0 0 12px;font-size:19px;font-weight:900">
-            <i class="fa-solid fa-shield-halved"></i> أمان المدير
-          </h2>
-
-          <div class="form-grid">
-            <div>
-              <label class="field-label">كلمة مرور المدير الجديدة</label>
-              <input id="settingAdminPassword" type="password" class="input" placeholder="كلمة جديدة">
-            </div>
-
-            <div>
-              <label class="field-label">تأكيد كلمة المرور</label>
-              <input id="settingAdminPassword2" type="password" class="input" placeholder="أعد كلمة المرور">
-            </div>
-          </div>
-
-          <button id="changeAdminPasswordBtn" type="button" class="primary-btn" style="margin-top:14px">
-  <i class="fa-solid fa-key"></i> تغيير كلمة مرور المدير
-</button>
-        </div>
-
-        <div id="employeesSettingsBox" class="card" style="margin-bottom:14px;display:none">
-          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
-            <h2 style="margin:0;font-size:19px;font-weight:900">
-              <i class="fa-solid fa-users-gear"></i> المدير والموظفين
-            </h2>
-
-            <button id="addEmployeeBtn" class="primary-btn">
-              <i class="fa-solid fa-user-plus"></i> إضافة موظف
-            </button>
-          </div>
-
-          <div class="muted" style="font-size:12px;margin-bottom:10px;line-height:1.8">
-            الموظف يدخل مرة واحدة فقط ويتم حفظ الجلسة. إذا غيّر المدير صلاحياته أو حذف حسابه، يخرج الموظف تلقائياً عند المزامنة.
-          </div>
-
-          <div id="employeesList"></div>
-        </div>
-      `;
-
-      const firstCard = settingsPage.querySelector(".card");
-      firstCard.insertAdjacentHTML("beforebegin", html);
-
-      $("changeAdminPasswordBtn").onclick = async (e) => {
-  e.preventDefault();
-  await changeAdminPassword();
-};
-      $("addEmployeeBtn").onclick = () => openEmployeeForm();
-    }
-
     function bindEvents() {
-      ensureAuthLockHtml();
-      ensureAuthTopButtons();
-      ensureSettingsAuthBoxes();
-      bindAuthLoginEvents();
-
       document.addEventListener("click", async (e) => {
         closeSidebarIfOutside(e);
 
@@ -9539,13 +9495,6 @@
           return;
         }
 
-        const viewManualDebt = e.target.closest("[data-view-manual-debt]");
-        if (viewManualDebt) {
-          const [customerId, debtId] = viewManualDebt.dataset.viewManualDebt.split("|");
-          openManualDebtViewOnly(customerId, debtId);
-          return;
-        }
-
         const editManualDebtBtn = e.target.closest("[data-edit-manual-debt]");
         if (editManualDebtBtn) {
           const [customerId, debtId] = editManualDebtBtn.dataset.editManualDebt.split("|");
@@ -9557,6 +9506,13 @@
         if (deleteManualDebtBtn) {
           const [customerId, debtId] = deleteManualDebtBtn.dataset.deleteManualDebt.split("|");
           await deleteManualDebt(customerId, debtId);
+          return;
+        }
+
+        const markManualPaid = e.target.closest("[data-mark-manual-debt-paid]");
+        if (markManualPaid) {
+          const [customerId, debtId] = markManualPaid.dataset.markManualDebtPaid.split("|");
+          await markManualDebtPaid(customerId, debtId);
           return;
         }
 
@@ -9577,13 +9533,6 @@
         const editDebtCustomer = e.target.closest("[data-edit-debt-customer]");
         if (editDebtCustomer) {
           openDebtCustomerForm(editDebtCustomer.dataset.editDebtCustomer);
-          return;
-        }
-
-        const markManualPaid = e.target.closest("[data-mark-manual-debt-paid]");
-        if (markManualPaid) {
-          const [customerId, debtId] = markManualPaid.dataset.markManualDebtPaid.split("|");
-          await markManualDebtPaid(customerId, debtId);
           return;
         }
 
@@ -9699,6 +9648,7 @@
           return;
         }
       });
+
       document.addEventListener("input", (e) => {
         const cartQty = e.target.closest("[data-change-cart-qty]");
         if (cartQty) {
@@ -9729,6 +9679,19 @@
       };
 
       $("quickAddBtn").onclick = openQuickAddMenu;
+
+      $("logoutBtn").onclick = () => logout(true);
+
+      $("adminLoginBtn").onclick = () => loginAdmin($("adminPasswordInput").value);
+      $("employeeLoginBtn").onclick = () => loginEmployee($("employeeNameInput").value, $("employeePasswordInput").value);
+
+      $("adminPasswordInput").addEventListener("keydown", e => {
+        if (e.key === "Enter") loginAdmin($("adminPasswordInput").value);
+      });
+
+      $("employeePasswordInput").addEventListener("keydown", e => {
+        if (e.key === "Enter") loginEmployee($("employeeNameInput").value, $("employeePasswordInput").value);
+      });
 
       $("syncNowBtn").onclick = async (e) => {
         e.stopPropagation();
@@ -9778,6 +9741,10 @@
       };
 
       $("addPaymentAccountBtn").onclick = openPaymentAccountForm;
+
+      $("addEmployeeBtn").onclick = () => openEmployeeForm();
+
+      $("changeAdminPasswordBtn").onclick = changeAdminPassword;
 
       $("addFreeLineBtn").onclick = () => addFreeLine();
 
@@ -9833,12 +9800,7 @@
       $("printInvoicesBtn").onclick = printCurrentInvoices;
       $("imageInvoicesBtn").onclick = imageCurrentInvoices;
       $("pdfInvoicesBtn").onclick = pdfCurrentInvoices;
-      $("excelInvoicesBtn").onclick = excelInvoices;
-
-      $("printReportsBtn").onclick = printCurrentReports;
-      $("imageReportsBtn").onclick = imageCurrentReports;
-      $("pdfReportsBtn").onclick = pdfCurrentReports;
-      $("excelReportsBtn").onclick = excelReports;
+      $("excelInvoicesBtn").onclick = excelCurrentInvoices;
 
       $("excelInventoryBtn").onclick = excelInventory;
       $("excelDebtsBtn").onclick = excelDebts;
@@ -9846,6 +9808,11 @@
       $("excelSupplierPaymentsBtn").onclick = excelSupplierPayments;
       $("excelExpensesBtn").onclick = excelExpenses;
       $("excelLowStockBtn").onclick = excelLowStock;
+
+      $("printReportsBtn").onclick = printCurrentReports;
+      $("imageReportsBtn").onclick = imageCurrentReports;
+      $("pdfReportsBtn").onclick = pdfCurrentReports;
+      $("excelReportsBtn").onclick = excelReports;
 
       window.addEventListener("online", async () => {
         await refreshPendingCount();
@@ -9888,87 +9855,8 @@
         updateSyncUi({ visible: false });
       });
     }
-
-    function ensureExcelButtons() {
-      if (!$("excelInvoicesBtn") && $("pdfInvoicesBtn")) {
-        $("pdfInvoicesBtn").insertAdjacentHTML("afterend", `
-          <button id="excelInvoicesBtn" class="success-btn">
-            <i class="fa-solid fa-file-excel"></i> Excel
-          </button>
-        `);
-      }
-
-      if (!$("excelReportsBtn") && $("pdfReportsBtn")) {
-        $("pdfReportsBtn").insertAdjacentHTML("afterend", `
-          <button id="excelReportsBtn" class="success-btn">
-            <i class="fa-solid fa-file-excel"></i> Excel
-          </button>
-        `);
-      }
-
-      const invHead = $("page-inventory")?.querySelector("div[style*='justify-content:space-between']");
-      if (invHead && !$("excelInventoryBtn")) {
-        invHead.insertAdjacentHTML("beforeend", `
-          <button id="excelInventoryBtn" class="success-btn">
-            <i class="fa-solid fa-file-excel"></i> Excel
-          </button>
-        `);
-      }
-
-      const debtsHead = $("page-debts")?.querySelector("div[style*='justify-content:space-between']");
-      if (debtsHead && !$("excelDebtsBtn")) {
-        debtsHead.insertAdjacentHTML("beforeend", `
-          <button id="excelDebtsBtn" class="success-btn">
-            <i class="fa-solid fa-file-excel"></i> Excel
-          </button>
-        `);
-      }
-
-      const purchasesHead = $("page-purchases")?.querySelector("div[style*='justify-content:space-between']");
-      if (purchasesHead && !$("excelPurchasesBtn")) {
-        purchasesHead.insertAdjacentHTML("beforeend", `
-          <button id="excelPurchasesBtn" class="success-btn">
-            <i class="fa-solid fa-file-excel"></i> Excel
-          </button>
-        `);
-      }
-
-      const supplierHead = $("page-supplierPayments")?.querySelector("div[style*='justify-content:space-between']");
-      if (supplierHead && !$("excelSupplierPaymentsBtn")) {
-        supplierHead.insertAdjacentHTML("beforeend", `
-          <button id="excelSupplierPaymentsBtn" class="success-btn">
-            <i class="fa-solid fa-file-excel"></i> Excel
-          </button>
-        `);
-      }
-
-      const expensesHead = $("page-expenses")?.querySelector("div[style*='justify-content:space-between']");
-      if (expensesHead && !$("excelExpensesBtn")) {
-        expensesHead.insertAdjacentHTML("beforeend", `
-          <button id="excelExpensesBtn" class="success-btn">
-            <i class="fa-solid fa-file-excel"></i> Excel
-          </button>
-        `);
-      }
-
-      const lowStockTitle = $("lowStockTable")?.closest(".card")?.querySelector("h2");
-      if (lowStockTitle && !$("excelLowStockBtn")) {
-        lowStockTitle.insertAdjacentHTML("afterend", `
-          <button id="excelLowStockBtn" class="success-btn" style="margin-bottom:10px">
-            <i class="fa-solid fa-file-excel"></i> Excel البضاعة الناقصة
-          </button>
-        `);
-      }
-    }
-
     async function boot() {
       await openDB();
-
-      ensureAuthLockHtml();
-      ensureAuthTopButtons();
-      ensureSettingsAuthBoxes();
-      ensureExcelButtons();
-
       bindEvents();
 
       updateSyncUi({
@@ -9985,9 +9873,22 @@
         state.freeLines = [{ id: uid("free"), name: "", qty: 1, cost: 0, price: 0 }];
       }
 
+      renderAll();
+
       await tryRestoreAuthSession();
 
-      renderAll();
+      if (!state.auth.user) {
+        logout(false);
+      } else {
+        updateAuthUi();
+
+        const activeSection = document.querySelector(".section.active");
+        const activePage = activeSection?.id?.replace("page-", "") || "home";
+
+        if (!hasPermission(activePage)) {
+          switchPage(firstAllowedPage());
+        }
+      }
 
       if (navigator.onLine) {
         updateSyncUi({
@@ -10009,9 +9910,6 @@
         });
 
         await loadFirebaseOnce();
-
-        await loadLocalData(true);
-        await validateCurrentEmployeeSession();
 
         updateSyncUi({
           spin: true,
@@ -10049,8 +9947,9 @@
 
         if (navigator.onLine) {
           await syncNow(false);
-          await validateCurrentEmployeeSession();
         }
+
+        await validateCurrentEmployeeSession();
       }, 12000);
     }
 
@@ -10092,7 +9991,11 @@
       syncNow,
       startRealtimeListeners,
       rebuildCustomerBalances,
-      logout
+      logout,
+      changeAdminPassword,
+      openEmployeeForm,
+      deleteEmployee,
+      exportExcel
     });
 
     boot().catch((e) => {
@@ -10107,887 +10010,8 @@
       });
     });
   </script>
+
   <script src="./cashier-barcode-patch.js"></script>
-  
-  
-<script>
-/* fix-auth-buttons-index-inline.js */
-(function () {
-  "use strict";
-
-  const DEFAULT_ADMIN_PIN = "0000";
-  const ADMIN_PERMISSION = "__admin__";
-
-  function $(id) {
-    return document.getElementById(id);
-  }
-
-  function toast(msg) {
-    if (typeof window.toast === "function") return window.toast(msg);
-    alert(msg);
-  }
-
-  function simpleHash(str) {
-    const text = String(str || "");
-    let h = 2166136261;
-
-    for (let i = 0; i < text.length; i++) {
-      h ^= text.charCodeAt(i);
-      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
-    }
-
-    return String(h >>> 0);
-  }
-
-  function uid(prefix = "id") {
-    return `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`;
-  }
-
-  function escapeHtml(str) {
-    return String(str ?? "").replace(/[&<>"']/g, function (m) {
-      return {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      }[m];
-    });
-  }
-
-  function isAdmin() {
-    const u = window.state?.auth?.user;
-    if (!u) return false;
-    return u.role === "admin" || (u.permissions || []).includes(ADMIN_PERMISSION);
-  }
-
-  function getPages() {
-    return [
-      { id: "home", label: "الرئيسية", icon: "fa-house" },
-      { id: "cashier", label: "الكاشير", icon: "fa-cart-shopping" },
-      { id: "freeInvoice", label: "فاتورة بدون مخزون", icon: "fa-file-circle-plus" },
-      { id: "inventory", label: "المخزون", icon: "fa-boxes-stacked" },
-      { id: "invoices", label: "الفواتير", icon: "fa-file-invoice-dollar" },
-      { id: "debts", label: "الديون", icon: "fa-address-book" },
-      { id: "purchases", label: "المشتريات", icon: "fa-truck-ramp-box" },
-      { id: "supplierPayments", label: "دفعات التجار", icon: "fa-hand-holding-dollar" },
-      { id: "expenses", label: "المصروفات", icon: "fa-money-bill-wave" },
-      { id: "reports", label: "التقارير", icon: "fa-chart-line" },
-      { id: "settings", label: "الإعدادات", icon: "fa-gear" }
-    ];
-  }
-
-  function normalizeEmployee(emp) {
-    emp = emp || {};
-
-    return {
-      id: emp.id || uid("emp"),
-      name: emp.name || "موظف",
-      passwordHash: emp.passwordHash || simpleHash(emp.password || ""),
-      permissions: Array.isArray(emp.permissions) ? emp.permissions : [],
-      active: emp.active !== false,
-      createdAt: emp.createdAt || Date.now(),
-      updatedAt: Date.now()
-    };
-  }
-
-  function ensureState() {
-    window.state = window.state || {};
-    window.state.employees = Array.isArray(window.state.employees) ? window.state.employees : [];
-    window.state.settings = window.state.settings || {};
-
-    if (!window.state.settings.adminPasswordHash) {
-      window.state.settings.adminPasswordHash = simpleHash(DEFAULT_ADMIN_PIN);
-    }
-  }
-
-  async function saveSettingsSafe() {
-    ensureState();
-
-    if (typeof window.idbPut === "function") {
-      await window.idbPut("settings", {
-        id: "main",
-        ...window.state.settings,
-        updatedAt: Date.now()
-      });
-    }
-
-    if (typeof window.enqueueSync === "function") {
-      await window.enqueueSync({
-        type: "set",
-        store: "settings",
-        itemId: "main",
-        data: {
-          id: "main",
-          ...window.state.settings,
-          localLogo: "",
-          logoMode: window.state.settings.logo ? "url" : "default",
-          updatedAt: Date.now()
-        }
-      });
-    }
-  }
-
-  async function saveEmployeeSafe(employee) {
-    ensureState();
-
-    employee = normalizeEmployee(employee);
-
-    if (typeof window.saveLocal === "function") {
-      await window.saveLocal("employees", employee, true);
-    } else if (typeof window.idbPut === "function") {
-      await window.idbPut("employees", employee);
-    }
-
-    const i = window.state.employees.findIndex(function (e) {
-      return e.id === employee.id;
-    });
-
-    if (i >= 0) window.state.employees[i] = employee;
-    else window.state.employees.push(employee);
-
-    if (typeof window.renderAll === "function") window.renderAll();
-
-    return employee;
-  }
-
-  async function deleteEmployeeSafe(employeeId) {
-    ensureState();
-
-    const emp = window.state.employees.find(function (e) {
-      return e.id === employeeId;
-    });
-
-    if (!emp) return;
-
-    if (!confirm(`حذف الموظف ${emp.name}؟`)) return;
-
-    window.state.employees = window.state.employees.filter(function (e) {
-      return e.id !== employeeId;
-    });
-
-    if (typeof window.removeLocal === "function") {
-      await window.removeLocal("employees", employeeId, true);
-    } else if (typeof window.idbDelete === "function") {
-      await window.idbDelete("employees", employeeId);
-    }
-
-    if (typeof window.renderAll === "function") window.renderAll();
-    renderEmployeesSafe();
-    toast("تم حذف الموظف");
-  }
-
-  function openModalSafe(title, html, large) {
-    const modalTitle = $("modalTitle");
-    const modalBody = $("modalBody");
-    const modalBox = $("modalBox");
-    const modalBackdrop = $("modalBackdrop");
-
-    if (!modalTitle || !modalBody || !modalBackdrop) {
-      alert("نافذة النظام غير موجودة");
-      return;
-    }
-
-    modalTitle.textContent = title;
-    modalBody.innerHTML = html;
-
-    if (modalBox) modalBox.classList.toggle("large", !!large);
-    modalBackdrop.classList.add("show");
-  }
-
-  function closeModalSafe() {
-    $("modalBackdrop")?.classList.remove("show");
-    $("modalBox")?.classList.remove("large");
-  }
-
-  function renderEmployeesSafe() {
-    ensureState();
-
-    const box = $("employeesList");
-    if (!box) return;
-
-    if (!isAdmin()) {
-      box.innerHTML = `<div class="muted">إدارة الموظفين للمدير فقط</div>`;
-      return;
-    }
-
-    const pages = getPages();
-
-    box.innerHTML = window.state.employees.map(function (emp) {
-      const isFullAdmin = (emp.permissions || []).includes(ADMIN_PERMISSION);
-      const labels = isFullAdmin
-        ? "صلاحيات مدير كاملة"
-        : pages
-            .filter(function (p) {
-              return (emp.permissions || []).includes(p.id);
-            })
-            .map(function (p) {
-              return p.label;
-            })
-            .join("، ") || "بدون صلاحيات";
-
-      return `
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid #e5e7eb;border-radius:18px;margin-bottom:8px;background:#fff">
-          <div>
-            <b>${escapeHtml(emp.name)}</b>
-            <div class="muted" style="font-size:12px;line-height:1.8">${escapeHtml(labels)}</div>
-            <span class="badge ${emp.active === false ? "red" : "green"}">
-              ${emp.active === false ? "موقوف" : "فعال"}
-            </span>
-          </div>
-
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button class="ghost-btn js-fix-edit-employee" data-id="${emp.id}" type="button">
-              <i class="fa-solid fa-pen"></i> تعديل
-            </button>
-
-            <button class="danger-btn js-fix-delete-employee" data-id="${emp.id}" type="button">
-              <i class="fa-solid fa-trash"></i> حذف
-            </button>
-          </div>
-        </div>
-      `;
-    }).join("") || `<div class="muted">لا يوجد موظفين بعد</div>`;
-
-    box.querySelectorAll(".js-fix-edit-employee").forEach(function (btn) {
-      btn.onclick = function () {
-        openEmployeeFormSafe(btn.dataset.id);
-      };
-    });
-
-    box.querySelectorAll(".js-fix-delete-employee").forEach(function (btn) {
-      btn.onclick = function () {
-        deleteEmployeeSafe(btn.dataset.id);
-      };
-    });
-  }
-
-  function openEmployeeFormSafe(employeeId) {
-    ensureState();
-
-    if (!isAdmin()) {
-      toast("إضافة وتعديل الموظفين للمدير فقط");
-      return;
-    }
-
-    const old = employeeId
-      ? window.state.employees.find(function (e) { return e.id === employeeId; })
-      : null;
-
-    const pages = getPages();
-
-    openModalSafe(old ? "تعديل موظف" : "إضافة موظف", `
-      <form id="fixEmployeeForm">
-        <input id="fixEmployeeId" type="hidden" value="${escapeHtml(old?.id || "")}">
-
-        <div class="form-grid-compact">
-          <div>
-            <label class="field-label">اسم الموظف</label>
-            <input id="fixEmployeeName" class="input" required value="${escapeHtml(old?.name || "")}" placeholder="مثال: أحمد">
-          </div>
-
-          <div>
-            <label class="field-label">كلمة المرور</label>
-            <input id="fixEmployeePassword" class="input" type="password" ${old ? "" : "required"} placeholder="${old ? "اتركها فارغة إذا لا تريد تغييرها" : "كلمة المرور"}">
-          </div>
-
-          <div>
-            <label class="field-label">الحالة</label>
-            <select id="fixEmployeeActive" class="select">
-              <option value="true" ${old?.active === false ? "" : "selected"}>فعال</option>
-              <option value="false" ${old?.active === false ? "selected" : ""}>موقوف</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="field-label">صلاحية مدير كاملة</label>
-            <select id="fixEmployeeAdmin" class="select">
-              <option value="no" ${(old?.permissions || []).includes(ADMIN_PERMISSION) ? "" : "selected"}>لا</option>
-              <option value="yes" ${(old?.permissions || []).includes(ADMIN_PERMISSION) ? "selected" : ""}>نعم</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="full-row" style="margin-top:12px">
-          <label class="field-label">صلاحيات التبويبات</label>
-          <div class="employee-grid">
-            ${pages.map(function (p) {
-              const checked = (old?.permissions || []).includes(p.id) ? "checked" : "";
-              return `
-                <label class="perm-card">
-                  <input type="checkbox" class="fix-perm-check" value="${p.id}" ${checked}>
-                  <span><i class="fa-solid ${p.icon}"></i> ${escapeHtml(p.label)}</span>
-                </label>
-              `;
-            }).join("")}
-          </div>
-        </div>
-
-        <button class="primary-btn" type="submit" style="width:100%;margin-top:14px">
-          <i class="fa-solid fa-floppy-disk"></i> حفظ الموظف
-        </button>
-      </form>
-    `, true);
-
-    $("fixEmployeeAdmin").onchange = function () {
-      const disabled = $("fixEmployeeAdmin").value === "yes";
-      document.querySelectorAll(".fix-perm-check").forEach(function (ch) {
-        ch.disabled = disabled;
-      });
-    };
-
-    $("fixEmployeeAdmin").dispatchEvent(new Event("change"));
-
-    $("fixEmployeeForm").onsubmit = async function (e) {
-      e.preventDefault();
-
-      const name = $("fixEmployeeName").value.trim();
-      const pass = $("fixEmployeePassword").value;
-      const fullAdmin = $("fixEmployeeAdmin").value === "yes";
-
-      if (!name) return toast("أدخل اسم الموظف");
-      if (!old && !pass) return toast("أدخل كلمة مرور الموظف");
-
-      let permissions = [];
-
-      if (fullAdmin) {
-        permissions = [ADMIN_PERMISSION];
-      } else {
-        permissions = Array.from(document.querySelectorAll(".fix-perm-check:checked")).map(function (x) {
-          return x.value;
-        });
-      }
-
-      const emp = normalizeEmployee({
-        ...(old || {}),
-        id: old?.id || uid("emp"),
-        name,
-        passwordHash: pass ? simpleHash(pass) : old?.passwordHash,
-        permissions,
-        active: $("fixEmployeeActive").value === "true",
-        createdAt: old?.createdAt || Date.now(),
-        updatedAt: Date.now()
-      });
-
-      await saveEmployeeSafe(emp);
-
-      closeModalSafe();
-      renderEmployeesSafe();
-      toast(old ? "تم تعديل الموظف" : "تم إضافة الموظف");
-    };
-  }
-
-  async function changeAdminPasswordSafe() {
-    ensureState();
-
-    if (!isAdmin()) {
-      toast("تغيير كلمة مرور المدير للمدير فقط");
-      return;
-    }
-
-    const p1 = $("settingAdminPassword")?.value || "";
-    const p2 = $("settingAdminPassword2")?.value || "";
-
-    if (p1.length < 4) {
-      toast("كلمة المرور يجب أن تكون 4 خانات على الأقل");
-      return;
-    }
-
-    if (p1 !== p2) {
-      toast("كلمتا المرور غير متطابقتين");
-      return;
-    }
-
-    window.state.settings.adminPasswordHash = simpleHash(p1);
-    window.state.settings.updatedAt = Date.now();
-
-    await saveSettingsSafe();
-
-    $("settingAdminPassword").value = "";
-    $("settingAdminPassword2").value = "";
-
-    toast("تم تغيير كلمة مرور المدير بنجاح");
-  }
-
-  function installFixEvents() {
-    const addBtn = $("addEmployeeBtn");
-    if (addBtn) {
-      addBtn.onclick = function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        openEmployeeFormSafe("");
-      };
-    }
-
-    const changeBtn = $("changeAdminPasswordBtn");
-    if (changeBtn) {
-      changeBtn.onclick = function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        changeAdminPasswordSafe();
-      };
-    }
-
-    document.addEventListener("click", function (e) {
-      const add = e.target.closest("#addEmployeeBtn");
-      if (add) {
-        e.preventDefault();
-        e.stopPropagation();
-        openEmployeeFormSafe("");
-        return;
-      }
-
-      const change = e.target.closest("#changeAdminPasswordBtn");
-      if (change) {
-        e.preventDefault();
-        e.stopPropagation();
-        changeAdminPasswordSafe();
-      }
-    }, true);
-
-    renderEmployeesSafe();
-  }
-
-  
-
-  setTimeout(window.fixCashierAuthButtons, 800);
-  setTimeout(window.fixCashierAuthButtons, 1800);
-})();
-</script>
-  
-  <script type="module">
-/* admin-password-and-logout-settings-buttons.js */
-import {
-  getDatabase,
-  ref,
-  set
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-
-(function () {
-  "use strict";
-
-  const DEFAULT_ADMIN_PIN = "0000";
-  const ADMIN_PERMISSION = "__admin__";
-
-  const SESSION_KEYS = [
-    "cashier_auth_session_v1",
-    "cashier_auth_session",
-    "cashier_user_session",
-    "auth_session",
-    "user_session"
-  ];
-
-  const $ = (id) => document.getElementById(id);
-
-  function toast(msg) {
-    if (typeof window.toast === "function") return window.toast(msg);
-    alert(msg);
-  }
-
-  function simpleHash(str) {
-    const text = String(str || "");
-    let h = 2166136261;
-
-    for (let i = 0; i < text.length; i++) {
-      h ^= text.charCodeAt(i);
-      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
-    }
-
-    return String(h >>> 0);
-  }
-
-  function escapeHtml(str) {
-    return String(str ?? "").replace(/[&<>"']/g, function (m) {
-      return {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      }[m];
-    });
-  }
-
-  function getFirebaseRoot() {
-    return window.FIREBASE_ROOT || "cashier_units_pro_default";
-  }
-
-  function getFirebaseDb() {
-    if (window.db) return window.db;
-    try {
-      return getDatabase();
-    } catch {
-      return null;
-    }
-  }
-
-  function ensureState() {
-    window.state = window.state || {};
-    window.state.auth = window.state.auth || {};
-    window.state.settings = window.state.settings || {};
-
-    if (!window.state.settings.id) window.state.settings.id = "main";
-
-    if (!window.state.settings.adminPasswordHash) {
-      window.state.settings.adminPasswordHash = simpleHash(DEFAULT_ADMIN_PIN);
-    }
-  }
-
-  function currentUser() {
-    ensureState();
-    return window.state.auth?.user || null;
-  }
-
-  function isAdmin() {
-    const u = currentUser();
-
-    if (!u) return false;
-
-    return (
-      u.role === "admin" ||
-      u.type === "admin" ||
-      u.id === "admin" ||
-      u.name === "المدير" ||
-      (Array.isArray(u.permissions) && u.permissions.includes(ADMIN_PERMISSION))
-    );
-  }
-
-  async function saveAdminPasswordToLocalAndFirebase(newPassword) {
-    ensureState();
-
-    window.state.settings = {
-      ...window.state.settings,
-      id: "main",
-      adminPasswordHash: simpleHash(newPassword),
-      updatedAt: Date.now()
-    };
-
-    if (typeof window.idbPut === "function") {
-      await window.idbPut("settings", {
-        id: "main",
-        ...window.state.settings
-      });
-    }
-
-    const dataForFirebase = {
-      ...window.state.settings,
-      id: "main",
-      localLogo: "",
-      logoMode: window.state.settings.logo ? "url" : "default",
-      updatedAt: Date.now()
-    };
-
-    if (typeof window.enqueueSync === "function") {
-      await window.enqueueSync({
-        type: "set",
-        store: "settings",
-        itemId: "main",
-        data: dataForFirebase
-      });
-    }
-
-    const db = getFirebaseDb();
-    const root = getFirebaseRoot();
-
-    if (db && navigator.onLine) {
-      await set(ref(db, `${root}/settings/main`), dataForFirebase);
-    }
-
-    if (typeof window.renderAll === "function") {
-      try {
-        window.renderAll();
-      } catch {}
-    }
-  }
-
-  function closeNativeModal() {
-    $("modalBackdrop")?.classList.remove("show");
-    $("modalBox")?.classList.remove("large");
-  }
-
-  function openPasswordPopup() {
-    ensureState();
-
-    if (!isAdmin()) {
-      toast("تغيير كلمة مرور المدير متاح للمدير فقط");
-      return;
-    }
-
-    let backdrop = $("adminPasswordPatchBackdrop");
-
-    if (!backdrop) {
-      backdrop = document.createElement("div");
-      backdrop.id = "adminPasswordPatchBackdrop";
-      backdrop.style.cssText = `
-        position:fixed;
-        inset:0;
-        z-index:999999;
-        background:rgba(15,23,42,.55);
-        backdrop-filter:blur(7px);
-        display:none;
-        align-items:center;
-        justify-content:center;
-        padding:16px;
-        direction:rtl;
-        font-family:Cairo,Arial,sans-serif;
-      `;
-
-      backdrop.innerHTML = `
-        <div style="
-          width:min(460px,100%);
-          background:#fff;
-          border-radius:28px;
-          box-shadow:0 30px 70px rgba(15,23,42,.28);
-          padding:18px;
-        ">
-          <div style="
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:12px;
-            padding-bottom:12px;
-            border-bottom:1px solid #e2e8f0;
-            margin-bottom:14px;
-          ">
-            <div style="font-size:18px;font-weight:900;color:#0f172a">
-              <i class="fa-solid fa-key"></i>
-              تغيير كلمة مرور المدير
-            </div>
-
-            <button id="closeAdminPasswordPatchBtn" type="button" style="
-              width:40px;
-              height:40px;
-              border:0;
-              border-radius:14px;
-              background:#f1f5f9;
-              font-weight:900;
-              cursor:pointer;
-            ">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          </div>
-
-          <div style="line-height:1.8;color:#64748b;font-size:13px;margin-bottom:12px">
-            أدخل كلمة مرور جديدة للمدير. سيتم حفظها محليًا ورفعها إلى Firebase عند توفر الإنترنت.
-          </div>
-
-          <label style="display:block;font-size:13px;font-weight:900;color:#334155;margin-bottom:7px">
-            كلمة المرور الجديدة
-          </label>
-
-          <input id="adminPasswordPatchInput" type="password" placeholder="اكتب كلمة المرور الجديدة" style="
-            width:100%;
-            border:1px solid transparent;
-            background:#f8fafc;
-            border-radius:17px;
-            padding:13px 14px;
-            outline:none;
-            font-size:14px;
-            font-family:Cairo,Arial,sans-serif;
-          ">
-
-          <button id="saveAdminPasswordPatchBtn" type="button" style="
-            width:100%;
-            border:0;
-            border-radius:17px;
-            padding:12px 16px;
-            margin-top:14px;
-            font-weight:900;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            gap:8px;
-            background:linear-gradient(135deg,#2563eb,#1d4ed8);
-            color:white;
-            box-shadow:0 12px 26px rgba(37,99,235,.25);
-            cursor:pointer;
-            font-family:Cairo,Arial,sans-serif;
-          ">
-            <i class="fa-solid fa-floppy-disk"></i>
-            حفظ كلمة المرور
-          </button>
-        </div>
-      `;
-
-      document.body.appendChild(backdrop);
-
-      $("closeAdminPasswordPatchBtn").onclick = closePasswordPopup;
-      backdrop.onclick = function (e) {
-        if (e.target.id === "adminPasswordPatchBackdrop") closePasswordPopup();
-      };
-
-      $("saveAdminPasswordPatchBtn").onclick = savePasswordFromPopup;
-
-      $("adminPasswordPatchInput").addEventListener("keydown", function (e) {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          savePasswordFromPopup();
-        }
-      });
-    }
-
-    $("adminPasswordPatchInput").value = "";
-    backdrop.style.display = "flex";
-
-    setTimeout(function () {
-      $("adminPasswordPatchInput")?.focus();
-    }, 120);
-  }
-
-  function closePasswordPopup() {
-    const backdrop = $("adminPasswordPatchBackdrop");
-    if (backdrop) backdrop.style.display = "none";
-  }
-
-  async function savePasswordFromPopup() {
-    const input = $("adminPasswordPatchInput");
-    const password = String(input?.value || "").trim();
-
-    if (!password) {
-      toast("أدخل كلمة المرور الجديدة");
-      input?.focus();
-      return;
-    }
-
-    if (password.length < 4) {
-      toast("كلمة المرور يجب أن تكون 4 خانات على الأقل");
-      input?.focus();
-      return;
-    }
-
-    try {
-      await saveAdminPasswordToLocalAndFirebase(password);
-      closePasswordPopup();
-      toast("تم تغيير كلمة مرور المدير بنجاح");
-    } catch (err) {
-      console.error(err);
-      toast("فشل تغيير كلمة مرور المدير");
-    }
-  }
-
-  function logoutToLogin() {
-    ensureState();
-
-    try {
-      SESSION_KEYS.forEach(function (key) {
-        localStorage.removeItem(key);
-        sessionStorage.removeItem(key);
-      });
-    } catch {}
-
-    window.state.auth.user = null;
-    window.state.auth.session = null;
-    window.state.auth.currentUser = null;
-
-    closeNativeModal();
-    closePasswordPopup();
-
-    const pill = $("authUserPill");
-    if (pill) {
-      pill.innerHTML = `<i class="fa-solid fa-lock"></i> غير مسجل`;
-    }
-
-    const lock = $("authLock");
-    if (lock) {
-      lock.classList.remove("hide");
-      lock.style.display = "flex";
-      lock.style.visibility = "visible";
-      lock.style.opacity = "1";
-      lock.style.pointerEvents = "auto";
-      lock.style.zIndex = "99999";
-    } else {
-      toast("تم تسجيل الخروج، لكن شاشة تسجيل الدخول غير موجودة في الصفحة");
-    }
-
-    if ($("adminPasswordInput")) $("adminPasswordInput").value = "";
-    if ($("employeeNameInput")) $("employeeNameInput").value = "";
-    if ($("employeePasswordInput")) $("employeePasswordInput").value = "";
-
-    setTimeout(function () {
-      $("adminPasswordInput")?.focus();
-    }, 150);
-
-    toast("تم تسجيل الخروج");
-  }
-
-  function addSettingsButtons() {
-    const settingsPage = $("page-settings");
-    if (!settingsPage) return;
-
-    let box = $("adminPasswordPatchBox");
-
-    if (!box) {
-      box = document.createElement("div");
-      box.id = "adminPasswordPatchBox";
-      box.className = "card";
-      box.style.marginBottom = "14px";
-
-      box.innerHTML = `
-        <h2 style="margin:0 0 12px;font-size:19px;font-weight:900">
-          <i class="fa-solid fa-user-shield"></i>
-          أدوات المدير
-        </h2>
-
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button id="openAdminPasswordPatchBtn" type="button" class="primary-btn">
-            <i class="fa-solid fa-key"></i>
-            تغيير كلمة مرور المدير
-          </button>
-
-          <button id="settingsLogoutPatchBtn" type="button" class="danger-btn">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-            تسجيل الخروج
-          </button>
-        </div>
-      `;
-
-      const title = settingsPage.querySelector("h1");
-      if (title) title.insertAdjacentElement("afterend", box);
-      else settingsPage.prepend(box);
-    }
-
-    $("openAdminPasswordPatchBtn").onclick = function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      openPasswordPopup();
-    };
-
-    $("settingsLogoutPatchBtn").onclick = function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      logoutToLogin();
-    };
-  }
-
-  function bootPatch() {
-    ensureState();
-    addSettingsButtons();
-
-    window.openAdminPasswordPatch = openPasswordPopup;
-    window.logoutToLoginPatch = logoutToLogin;
-  }
-
-  setTimeout(bootPatch, 300);
-  setTimeout(bootPatch, 1200);
-  setTimeout(bootPatch, 2500);
-
-  document.addEventListener("click", function (e) {
-    const passBtn = e.target.closest("#openAdminPasswordPatchBtn");
-    if (passBtn) {
-      e.preventDefault();
-      e.stopPropagation();
-      openPasswordPopup();
-      return;
-    }
-
-    const logoutBtn = e.target.closest("#settingsLogoutPatchBtn");
-    if (logoutBtn) {
-      e.preventDefault();
-      e.stopPropagation();
-      logoutToLogin();
-    }
-  }, true);
-})();
-</script>
+  <script src="./cashier-storage-stock-patch.js"></script>
 </body>
 </html>
