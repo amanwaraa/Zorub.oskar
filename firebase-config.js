@@ -1,18 +1,18 @@
 window.CASHIER_FIREBASE_CONFIG = {
   firebaseConfig: {
-    apiKey: "AIzaSyBEzyPkdTa2_LfRo0i-XjFYC3IEq-k6uak",
-    authDomain: "pppp-f75ad.firebaseapp.com",
-    databaseURL: "https://pppp-f75ad-default-rtdb.firebaseio.com",
-    projectId: "pppp-f75ad",
-    storageBucket: "pppp-f75ad.firebasestorage.app",
-    messagingSenderId: "5059631301",
-    appId: "1:5059631301:web:10f3217f56ff8df5efb8ac",
-    measurementId: "G-GZM0CZ8J5L"
+    apiKey: "AIzaSyB_i6ijETJoYdvKHuu8y_sbzDMcBUnPeac",
+    authDomain: "karem-611ef.firebaseapp.com",
+    databaseURL: "https://karem-611ef-default-rtdb.firebaseio.com",
+    projectId: "karem-611ef",
+    storageBucket: "karem-611ef.firebasestorage.app",
+    messagingSenderId: "594439938004",
+    appId: "1:594439938004:web:a3fcd11b6045b08f628041",
+    measurementId: "G-V0ML8SCBE4"
   },
 
-  firebaseRoot: "cashier_units_pro_pppp_885766842",
+  firebaseRoot: "cashier_units_pro_karem_885766842",
 
   fallbackRoots: [
-    "cashier_units_pro_pppp_885766842"
+    "cashier_units_pro_karem_885766842"
   ]
 };
