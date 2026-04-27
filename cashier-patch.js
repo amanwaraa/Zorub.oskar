@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const PATCH_VERSION = "2026-04-27-fast-camera-v2";
+  const PATCH_VERSION = "2026-04-27-fast-camera-v3-override";
 
   const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -24,12 +24,12 @@
   }
 
   async function waitForApp() {
-    for (let i = 0; i < 120; i++) {
+    for (let i = 0; i < 160; i++) {
       if (hasAppReady()) return true;
       await wait(100);
     }
 
-    console.warn("cashier-patch: لم يتم العثور على كائنات التطبيق. تأكد أنك أضفت Object.assign(window, {...}) داخل الكود الأصلي قبل boot().");
+    console.warn("cashier-patch: لم يتم العثور على كائنات التطبيق. تأكد أنك أضفت Object.assign(window,{...}) قبل boot().");
     return false;
   }
 
@@ -95,12 +95,9 @@
     const c = String(code || "").trim();
     if (!c) return null;
 
-    if (typeof window.getProductByBarcode === "function") {
-      const found = window.getProductByBarcode(c);
-      if (found) return found;
-    }
+    const list = window.state?.products || [];
 
-    return window.state?.products?.find(p =>
+    return list.find(p =>
       String(p.barcode || "").trim() === c ||
       String(p.code || "").trim() === c
     ) || null;
@@ -183,6 +180,11 @@
     return opt?.label || unitLabel(selectedUnit, p.customUnit);
   }
 
+  /*
+    المهم هنا:
+    في الكيلو/اللتر، نستخدم displaySalePrice/displayCostPrice كسعر الكيلو أو اللتر.
+    يعني لتر كولا سعره 10، إذا اختار لتر يبقى 10، وإذا اختار مل يصبح 0.01 لكل مل.
+  */
   function getDisplaySalePrice(product) {
     const p = normalizeProduct(product);
 
@@ -217,16 +219,12 @@
     const qty = Math.max(0, cleanNumber(qtyValue, 0));
     const factor = getUnitFactorFixed(p, unit);
 
-    let baseQty = qty * factor;
     let unitPrice = 0;
     let unitCost = 0;
 
     if (p.unitType === "carton") {
       unitPrice = cleanNumber(p.salePrice) * factor;
       unitCost = cleanNumber(p.costPrice) * factor;
-    } else if (p.unitType === "kg" || p.unitType === "liter") {
-      unitPrice = getDisplaySalePrice(p) * factor;
-      unitCost = getDisplayCostPrice(p) * factor;
     } else {
       unitPrice = getDisplaySalePrice(p) * factor;
       unitCost = getDisplayCostPrice(p) * factor;
@@ -236,7 +234,7 @@
       qty,
       qtyText: String(qty),
       selectedUnit: unit,
-      baseQty,
+      baseQty: qty * factor,
       unitLabel: getUnitTextFixed(p, unit),
       price: unitPrice,
       costPrice: unitCost,
@@ -246,7 +244,8 @@
   }
 
   function calculateCartTotalsFixed() {
-    const subtotal = window.state.cart.reduce((s, x) => s + cleanNumber(x.total), 0);
+    const cart = window.state?.cart || [];
+    const subtotal = cart.reduce((s, x) => s + cleanNumber(x.total), 0);
     const discountType = $("discountType")?.value || "fixed";
     const discountValue = cleanNumber($("discountValue")?.value || 0);
 
@@ -254,7 +253,7 @@
     discount = Math.min(Math.max(discount, 0), subtotal);
 
     const total = subtotal - discount;
-    const cost = window.state.cart.reduce((s, x) => s + cleanNumber(x.costTotal), 0);
+    const cost = cart.reduce((s, x) => s + cleanNumber(x.costTotal), 0);
     const profit = total - cost;
 
     return { subtotal, discount, total, cost, profit };
@@ -336,6 +335,7 @@
 
     const unit = line.selectedUnit || getDefaultSaleUnitFixed(product);
     const qty = cleanNumber(line.qty, 0);
+
     Object.assign(line, priceForLineFixed(product, qty, unit));
 
     if (rerender) {
@@ -454,7 +454,7 @@
         position:fixed;
         inset:0;
         background:#000;
-        z-index:99999;
+        z-index:999999;
         display:none;
         overflow:hidden;
       }
@@ -492,7 +492,7 @@
         transform:translate(-50%,-50%);
         border:3px solid rgba(255,255,255,.58);
         border-radius:26px;
-        z-index:100002;
+        z-index:1000002;
         transition:.15s ease;
         box-shadow:
           0 0 0 9999px rgba(0,0,0,.18),
@@ -532,7 +532,7 @@
         width:min(72vw,360px);
         height:3px;
         transform:translate(-50%,-50%);
-        z-index:100003;
+        z-index:1000003;
         border-radius:999px;
         background:linear-gradient(90deg,transparent,#22c55e,transparent);
         box-shadow:0 0 22px #22c55e;
@@ -570,7 +570,7 @@
         top:14px;
         right:14px;
         left:14px;
-        z-index:100005;
+        z-index:1000005;
         display:flex;
         justify-content:space-between;
         align-items:center;
@@ -607,7 +607,7 @@
         right:14px;
         left:14px;
         bottom:22px;
-        z-index:100005;
+        z-index:1000005;
         display:flex;
         justify-content:center;
         gap:10px;
@@ -619,7 +619,7 @@
         right:16px;
         left:16px;
         bottom:86px;
-        z-index:100006;
+        z-index:1000006;
         padding:14px 16px;
         border-radius:18px;
         background:rgba(15,23,42,.96);
@@ -644,7 +644,7 @@
       .fast-scanner-loading{
         position:fixed;
         inset:0;
-        z-index:100001;
+        z-index:1000001;
         display:flex;
         align-items:center;
         justify-content:center;
@@ -721,7 +721,7 @@
 
   function loadHtml5Qrcode() {
     return new Promise((resolve, reject) => {
-      if (window.Html5Qrcode) {
+      if (window.Html5Qrcode && window.Html5QrcodeSupportedFormats) {
         resolve(true);
         return;
       }
@@ -843,6 +843,9 @@
     if (box) {
       box.classList.remove("show", "detected");
     }
+
+    const reader = $("fastScannerReader");
+    if (reader) reader.innerHTML = "";
   }
 
   function handleFastScannedCode(code) {
@@ -860,6 +863,9 @@
     vibratePhone();
     scannerToast(clean);
 
+    /*
+      إذا كان المسح داخل نموذج إضافة منتج، فقط ضع الكود بالخانة.
+    */
     if (fastScanner.targetInputId) {
       const input = $(fastScanner.targetInputId);
       if (input) {
@@ -872,6 +878,10 @@
       return;
     }
 
+    /*
+      الكاشير:
+      ابحث عن المنتج. إذا موجود أضفه للسلة. إذا لا، لا تضيف شيء واطلع رسالة غير موجود.
+    */
     const product = getProductByBarcode(clean);
 
     if (product) {
@@ -933,13 +943,14 @@
           Html5QrcodeSupportedFormats.ITF,
           Html5QrcodeSupportedFormats.CODABAR,
           Html5QrcodeSupportedFormats.DATA_MATRIX,
+          Html5QrcodeSupportedFormats.AZTEC,
           Html5QrcodeSupportedFormats.PDF_417
         ],
         verbose: false
       });
 
       const config = {
-        fps: 18,
+        fps: 30,
         qrbox: function (viewfinderWidth, viewfinderHeight) {
           return {
             width: Math.floor(viewfinderWidth * 0.82),
@@ -952,7 +963,14 @@
           useBarCodeDetectorIfSupported: true
         },
         videoConstraints: {
-          facingMode: { ideal: "environment" }
+          facingMode: { ideal: "environment" },
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+          advanced: [
+            { focusMode: "continuous" },
+            { exposureMode: "continuous" },
+            { whiteBalanceMode: "continuous" }
+          ]
         }
       };
 
@@ -977,7 +995,7 @@
       if (loading) {
         setTimeout(() => {
           if (fastScanner.running) loading.style.display = "none";
-        }, 180);
+        }, 120);
       }
     } catch (err) {
       console.error(err);
@@ -1003,11 +1021,15 @@
     if ("requestIdleCallback" in window) {
       requestIdleCallback(() => loadHtml5Qrcode().catch(() => {}), { timeout: 2500 });
     } else {
-      setTimeout(() => loadHtml5Qrcode().catch(() => {}), 800);
+      setTimeout(() => loadHtml5Qrcode().catch(() => {}), 500);
     }
   }
 
   function patchScannerButtons() {
+    /*
+      هذا capture=true + stopImmediatePropagation
+      حتى يمنع الكود القديم نهائيًا من فتح ZXing القديم.
+    */
     document.addEventListener("click", function (e) {
       const saleBtn = e.target.closest("#openScannerBtn");
       if (saleBtn) {
@@ -1043,6 +1065,90 @@
     window.openFloatingProductBarcodeScanner = (targetInputId = "productBarcode") => {
       openFastScanner("product", targetInputId);
     };
+    window.handleScannedCode = handleFastScannedCode;
+  }
+
+  function getInventoryTotalsFixed() {
+    const products = (window.state?.products || []).map(normalizeProduct);
+
+    let count = products.length;
+    let costValue = 0;
+    let saleValue = 0;
+
+    products.forEach(p => {
+      const stock = cleanNumber(p.stock, 0);
+
+      let cost = cleanNumber(p.costPrice, 0);
+      let sale = cleanNumber(p.salePrice, 0);
+
+      if (p.unitType === "kg" || p.unitType === "liter") {
+        cost = cleanNumber(p.displayCostPrice || p.costPrice, 0);
+        sale = cleanNumber(p.displaySalePrice || p.salePrice, 0);
+      }
+
+      costValue += stock * cost;
+      saleValue += stock * sale;
+    });
+
+    return {
+      count,
+      costValue,
+      saleValue,
+      expectedProfit: saleValue - costValue
+    };
+  }
+
+  function ensureInventorySummaryCards() {
+    const page = $("page-inventory");
+    if (!page) return;
+
+    let grid = $("inventoryPatchSummaryGrid");
+    if (grid) return;
+
+    const wrap = document.createElement("div");
+    wrap.id = "inventoryPatchSummaryGrid";
+    wrap.className = "inventory-summary-grid";
+    wrap.style.marginBottom = "14px";
+    wrap.innerHTML = `
+      <div class="inventory-summary-card">
+        <div class="inventory-summary-title">
+          <span>عدد الأصناف</span>
+          <i class="fa-solid fa-box"></i>
+        </div>
+        <div id="patchInventoryTotalProducts" class="inventory-summary-value">0</div>
+      </div>
+
+      <div class="inventory-summary-card">
+        <div class="inventory-summary-title">
+          <span>إجمالي الجملة</span>
+          <i class="fa-solid fa-coins"></i>
+        </div>
+        <div id="patchInventoryCostValue" class="inventory-summary-value gold">₪ 0.00</div>
+      </div>
+
+      <div class="inventory-summary-card">
+        <div class="inventory-summary-title">
+          <span>إجمالي البيع</span>
+          <i class="fa-solid fa-sack-dollar"></i>
+        </div>
+        <div id="patchInventorySaleValue" class="inventory-summary-value green">₪ 0.00</div>
+      </div>
+
+      <div class="inventory-summary-card">
+        <div class="inventory-summary-title">
+          <span>الأرباح المتوقعة</span>
+          <i class="fa-solid fa-chart-line"></i>
+        </div>
+        <div id="patchInventoryExpectedProfit" class="inventory-summary-value dark">₪ 0.00</div>
+      </div>
+    `;
+
+    const titleRow = page.querySelector("div[style*='justify-content:space-between']");
+    if (titleRow && titleRow.nextSibling) {
+      page.insertBefore(wrap, titleRow.nextSibling);
+    } else {
+      page.prepend(wrap);
+    }
   }
 
   function ensureHomeInventoryCards() {
@@ -1105,40 +1211,21 @@
     }
   }
 
-  function getInventoryTotalsFixed() {
-    const products = (window.state?.products || []).map(normalizeProduct);
-
-    let count = products.length;
-    let costValue = 0;
-    let saleValue = 0;
-
-    products.forEach(p => {
-      const stock = cleanNumber(p.stock, 0);
-
-      let cost = cleanNumber(p.costPrice, 0);
-      let sale = cleanNumber(p.salePrice, 0);
-
-      if (p.unitType === "kg" || p.unitType === "liter") {
-        cost = cleanNumber(p.displayCostPrice || p.costPrice, 0);
-        sale = cleanNumber(p.displaySalePrice || p.salePrice, 0);
-      }
-
-      costValue += stock * cost;
-      saleValue += stock * sale;
-    });
-
-    return {
-      count,
-      costValue,
-      saleValue,
-      expectedProfit: saleValue - costValue
-    };
-  }
-
-  function renderHomeInventoryCards() {
+  function renderInventorySummaryCards() {
+    ensureInventorySummaryCards();
     ensureHomeInventoryCards();
 
     const t = getInventoryTotalsFixed();
+
+    if ($("patchInventoryTotalProducts")) $("patchInventoryTotalProducts").textContent = String(t.count);
+    if ($("patchInventoryCostValue")) $("patchInventoryCostValue").textContent = money(t.costValue);
+    if ($("patchInventorySaleValue")) $("patchInventorySaleValue").textContent = money(t.saleValue);
+    if ($("patchInventoryExpectedProfit")) $("patchInventoryExpectedProfit").textContent = money(t.expectedProfit);
+
+    if ($("inventoryTotalProducts")) $("inventoryTotalProducts").textContent = String(t.count);
+    if ($("inventoryCostValue")) $("inventoryCostValue").textContent = money(t.costValue);
+    if ($("inventorySaleValue")) $("inventorySaleValue").textContent = money(t.saleValue);
+    if ($("inventoryExpectedProfit")) $("inventoryExpectedProfit").textContent = money(t.expectedProfit);
 
     if ($("homeInventoryProductsCount")) $("homeInventoryProductsCount").textContent = String(t.count);
     if ($("homeInventoryCostValue")) $("homeInventoryCostValue").textContent = money(t.costValue);
@@ -1158,14 +1245,7 @@
         }
       }
 
-      const totals = getInventoryTotalsFixed();
-
-      if ($("inventoryTotalProducts")) $("inventoryTotalProducts").textContent = String(totals.count);
-      if ($("inventoryCostValue")) $("inventoryCostValue").textContent = money(totals.costValue);
-      if ($("inventorySaleValue")) $("inventorySaleValue").textContent = money(totals.saleValue);
-      if ($("inventoryExpectedProfit")) $("inventoryExpectedProfit").textContent = money(totals.expectedProfit);
-
-      renderHomeInventoryCards();
+      renderInventorySummaryCards();
     };
   }
 
@@ -1181,7 +1261,7 @@
         }
       }
 
-      renderHomeInventoryCards();
+      renderInventorySummaryCards();
     };
   }
 
@@ -1214,7 +1294,7 @@
           .patch-confirm-backdrop{
             position:fixed;
             inset:0;
-            z-index:100000;
+            z-index:1000000;
             background:rgba(15,23,42,.58);
             backdrop-filter:blur(8px);
             display:none;
@@ -1506,13 +1586,7 @@
       }
 
       renderCartFixed();
-      renderHomeInventoryCards();
-
-      if (typeof window.renderInventory === "function") {
-        try {
-          window.renderInventory();
-        } catch {}
-      }
+      renderInventorySummaryCards();
     };
   }
 
@@ -1569,19 +1643,15 @@
     patchProductAddDefaults();
 
     preloadFastCameraLibrary();
+    ensureInventorySummaryCards();
     ensureHomeInventoryCards();
-    renderHomeInventoryCards();
+    renderInventorySummaryCards();
     renderCartFixed();
 
     setTimeout(() => {
-      if (typeof window.renderAll === "function") {
-        try {
-          window.renderAll();
-        } catch {}
-      }
+      renderInventorySummaryCards();
+      renderCartFixed();
     }, 400);
-
-    safeToast("تم تفعيل باتش الإصلاحات والكاميرا السريعة", 1800);
   }
 
   main();
