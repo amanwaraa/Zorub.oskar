@@ -3221,6 +3221,120 @@
       return state.settings?.adminPasswordHash || simpleHash(DEFAULT_ADMIN_PIN);
     }
 
+
+    function setButtonLoading(btn, loading, text = "جاري التنفيذ...") {
+      if (!btn) return;
+      if (loading) {
+        if (!btn.dataset.oldHtml) btn.dataset.oldHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${text}`;
+      } else {
+        btn.disabled = false;
+        if (btn.dataset.oldHtml) btn.innerHTML = btn.dataset.oldHtml;
+        delete btn.dataset.oldHtml;
+      }
+    }
+
+    function isDefaultAdminPassword() {
+      return getAdminPasswordHash() === simpleHash(DEFAULT_ADMIN_PIN);
+    }
+
+    async function fetchFreshSettingsFromFirebase() {
+      if (!navigator.onLine) return state.settings || defaultSettings;
+      try {
+        const snap = await get(ref(db, `${FIREBASE_ROOT}/settings/main`));
+        if (snap.exists()) {
+          const current = state.settings || defaultSettings;
+          const remote = snap.val() || {};
+          const remoteSettings = {
+            ...defaultSettings,
+            ...remote,
+            id: "main",
+            localLogo: current.localLogo || "",
+            logoMode: current.localLogo ? "local" : (remote.logo ? "url" : "default")
+          };
+          await idbPut("settings", remoteSettings);
+          state.settings = remoteSettings;
+          applySettingsToUI();
+          return remoteSettings;
+        }
+      } catch (e) {
+        console.warn("fetchFreshSettingsFromFirebase failed", e);
+      }
+      return state.settings || defaultSettings;
+    }
+
+    async function saveSettingsToFirebaseNow(settings) {
+      const cleanSettings = stripLocalOnlySettings(settings);
+      await idbPut("settings", settings);
+      if (navigator.onLine) {
+        await set(ref(db, `${FIREBASE_ROOT}/settings/main`), cleanSettings);
+      } else {
+        await enqueueSync({ type: "set", store: "settings", itemId: "main", data: cleanSettings });
+      }
+    }
+
+    function openForceAdminPasswordModal() {
+      if (!isAdminUser() || !isDefaultAdminPassword()) return;
+      openModal("تغيير كلمة مرور المدير إجباري", `
+        <div class="card" style="box-shadow:none">
+          <div style="background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:18px;padding:12px;margin-bottom:14px;font-weight:900;line-height:1.8">
+            لا يمكن استخدام النظام بكلمة المرور الافتراضية 0000. يجب تغيير كلمة مرور المدير الآن، وسيتم حفظها في Firebase.
+          </div>
+          <form id="forceAdminPasswordForm">
+            <div class="form-grid-compact">
+              <div>
+                <label class="field-label">كلمة المرور الجديدة</label>
+                <input id="forceAdminPassword1" type="password" class="input" required placeholder="اكتب كلمة مرور جديدة">
+              </div>
+              <div>
+                <label class="field-label">تأكيد كلمة المرور</label>
+                <input id="forceAdminPassword2" type="password" class="input" required placeholder="أعد كتابة كلمة المرور">
+              </div>
+            </div>
+            <button id="forceAdminPasswordBtn" class="primary-btn" type="submit" style="width:100%;margin-top:14px">
+              <i class="fa-solid fa-floppy-disk"></i> حفظ كلمة المرور والمتابعة
+            </button>
+          </form>
+        </div>
+      `);
+      if ($("modalCloseBtn")) $("modalCloseBtn").style.display = "none";
+      const backdrop = $("modalBackdrop");
+      if (backdrop) backdrop.onclick = null;
+      $("forceAdminPasswordForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = $("forceAdminPasswordBtn");
+        const p1 = $("forceAdminPassword1").value.trim();
+        const p2 = $("forceAdminPassword2").value.trim();
+        if (p1.length < 4) return toast("كلمة المرور يجب أن تكون 4 خانات على الأقل");
+        if (p1 === DEFAULT_ADMIN_PIN) return toast("لا يمكن استخدام كلمة المرور الافتراضية 0000");
+        if (p1 !== p2) return toast("كلمتا المرور غير متطابقتين");
+        setButtonLoading(btn, true, "جاري الحفظ في Firebase...");
+        try {
+          state.settings = { ...defaultSettings, ...state.settings, id: "main", adminPasswordHash: simpleHash(p1), updatedAt: Date.now() };
+          await saveSettingsToFirebaseNow(state.settings);
+          if ($("modalCloseBtn")) $("modalCloseBtn").style.display = "";
+          closeModal();
+          bindModalCloseAgain();
+          toast("تم حفظ كلمة مرور المدير في Firebase بنجاح");
+        } catch (err) {
+          console.error(err);
+          toast("فشل حفظ كلمة المرور في Firebase، تأكد من الاتصال");
+        } finally {
+          setButtonLoading(btn, false);
+        }
+      };
+    }
+
+    function bindModalCloseAgain() {
+      if ($("modalCloseBtn")) $("modalCloseBtn").onclick = closeModal;
+      if ($("modalBackdrop")) {
+        $("modalBackdrop").onclick = (e) => {
+          if (e.target.id === "modalBackdrop") closeModal();
+        };
+      }
+    }
+
     function setAuthUser(user) {
       state.auth.user = user;
       state.auth.ready = true;
@@ -3228,9 +3342,11 @@
       if (user) {
         saveAuthSession(user);
         $("authLock")?.classList.add("hide");
+        if ($("authLock")) $("authLock").style.display = "none";
       } else {
         clearAuthSession();
         $("authLock")?.classList.remove("hide");
+        if ($("authLock")) $("authLock").style.display = "flex";
       }
 
       applyPermissionsUI();
@@ -3333,12 +3449,14 @@
       }
 
       if (saved.role === "admin") {
+        await fetchFreshSettingsFromFirebase();
         setAuthUser({
           id: "admin",
           name: "المدير",
           role: "admin",
           permissions: [ADMIN_PERMISSION]
         });
+        if (isDefaultAdminPassword()) setTimeout(() => openForceAdminPasswordModal(), 250);
         return;
       }
 
@@ -3373,53 +3491,57 @@
         $("employeeLoginForm").style.display = "block";
       };
 
-      $("adminLoginForm").onsubmit = (e) => {
+      $("adminLoginForm").onsubmit = async (e) => {
         e.preventDefault();
-
+        const btn = e.submitter || $("adminLoginForm").querySelector("button[type='submit']");
         const pass = $("adminPasswordInput").value.trim();
-
-        if (simpleHash(pass) !== getAdminPasswordHash()) {
-          toast("كلمة مرور المدير غير صحيحة");
-          return;
+        setButtonLoading(btn, true, "جاري فحص كلمة المرور...");
+        try {
+          await fetchFreshSettingsFromFirebase();
+          if (simpleHash(pass) !== getAdminPasswordHash()) {
+            toast("كلمة مرور المدير غير صحيحة");
+            return;
+          }
+          $("adminPasswordInput").value = "";
+          setAuthUser({ id: "admin", name: "المدير", role: "admin", permissions: [ADMIN_PERMISSION] });
+          toast("تم دخول المدير");
+          if (isDefaultAdminPassword()) setTimeout(() => openForceAdminPasswordModal(), 250);
+        } catch (err) {
+          console.error(err);
+          toast("تعذر فحص كلمة المرور من Firebase");
+        } finally {
+          setButtonLoading(btn, false);
         }
-
-        setAuthUser({
-          id: "admin",
-          name: "المدير",
-          role: "admin",
-          permissions: [ADMIN_PERMISSION]
-        });
-
-        toast("تم دخول المدير");
       };
 
-      $("employeeLoginForm").onsubmit = (e) => {
+      $("employeeLoginForm").onsubmit = async (e) => {
         e.preventDefault();
-
+        const btn = e.submitter || $("employeeLoginForm").querySelector("button[type='submit']");
         const name = $("employeeNameInput").value.trim();
         const pass = $("employeePasswordInput").value.trim();
-
-        const emp = state.employees.find(x =>
-          x.active !== false &&
-          String(x.name || "").trim() === name &&
-          x.passwordHash === simpleHash(pass)
-        );
-
-        if (!emp) {
-          toast("بيانات الموظف غير صحيحة أو الحساب موقوف");
-          return;
+        setButtonLoading(btn, true, "جاري تسجيل الدخول...");
+        try {
+          if (navigator.onLine) {
+            await loadFirebaseRoot(FIREBASE_ROOT);
+            await loadLocalData(true);
+          }
+          const emp = state.employees.find(x => x.active !== false && String(x.name || "").trim() === name && x.passwordHash === simpleHash(pass));
+          if (!emp) {
+            toast("بيانات الموظف غير صحيحة أو الحساب موقوف");
+            return;
+          }
+          $("employeePasswordInput").value = "";
+          setAuthUser({ id: emp.id, name: emp.name, role: emp.permissions.includes(ADMIN_PERMISSION) ? "admin" : "employee", permissions: emp.permissions || [] });
+          toast(`أهلاً ${emp.name}`);
+        } catch (err) {
+          console.error(err);
+          toast("حدث خطأ أثناء تسجيل دخول الموظف");
+        } finally {
+          setButtonLoading(btn, false);
         }
-
-        setAuthUser({
-          id: emp.id,
-          name: emp.name,
-          role: emp.permissions.includes(ADMIN_PERMISSION) ? "admin" : "employee",
-          permissions: emp.permissions || []
-        });
-
-        toast(`أهلاً ${emp.name}`);
       };
     }
+
     function unitLabel(unit, custom = "") {
       const map = {
         piece: "قطعة",
@@ -4753,63 +4875,57 @@
     }
 
     async function changeAdminPassword() {
-  if (!isAdminUser()) {
-    toast("تغيير كلمة مرور المدير للمدير فقط");
-    return;
-  }
+      if (!isAdminUser()) {
+        toast("تغيير كلمة مرور المدير للمدير فقط");
+        return;
+      }
 
-  const p1Input = $("settingAdminPassword");
-  const p2Input = $("settingAdminPassword2");
+      const btn = $("saveAdminPasswordBtn");
+      const p1Input = $("settingAdminPassword");
+      const p2Input = $("settingAdminPassword2");
+      const p1 = String(p1Input?.value || "").trim();
+      const p2 = String(p2Input?.value || "").trim();
 
-  const p1 = String(p1Input?.value || "").trim();
-  const p2 = String(p2Input?.value || "").trim();
+      if (!p1) {
+        toast("أدخل كلمة مرور المدير الجديدة");
+        p1Input?.focus();
+        return;
+      }
+      if (!p2) {
+        toast("أعد كتابة كلمة مرور المدير للتأكيد");
+        p2Input?.focus();
+        return;
+      }
+      if (p1.length < 4) {
+        toast("كلمة مرور المدير يجب أن تكون 4 خانات على الأقل");
+        p1Input?.focus();
+        return;
+      }
+      if (p1 === DEFAULT_ADMIN_PIN) {
+        toast("لا يمكن استخدام كلمة المرور الافتراضية 0000");
+        p1Input?.focus();
+        return;
+      }
+      if (p1 !== p2) {
+        toast("كلمتا المرور غير متطابقتين");
+        p2Input?.focus();
+        return;
+      }
 
-  if (!p1) {
-    toast("أدخل كلمة مرور المدير الجديدة");
-    p1Input?.focus();
-    return;
-  }
-
-  if (!p2) {
-    toast("أعد كتابة كلمة مرور المدير للتأكيد");
-    p2Input?.focus();
-    return;
-  }
-
-  if (p1.length < 4) {
-    toast("كلمة مرور المدير يجب أن تكون 4 خانات على الأقل");
-    p1Input?.focus();
-    return;
-  }
-
-  if (p1 !== p2) {
-    toast("كلمتا المرور غير متطابقتين");
-    p2Input?.focus();
-    return;
-  }
-
-  state.settings = {
-    ...defaultSettings,
-    ...state.settings,
-    id: "main",
-    adminPasswordHash: simpleHash(p1),
-    updatedAt: Date.now()
-  };
-
-  await idbPut("settings", state.settings);
-
-  await enqueueSync({
-    type: "set",
-    store: "settings",
-    itemId: "main",
-    data: stripLocalOnlySettings(state.settings)
-  });
-
-  p1Input.value = "";
-  p2Input.value = "";
-
-  toast("تم تغيير كلمة مرور المدير بنجاح");
-}
+      setButtonLoading(btn, true, "جاري الحفظ في Firebase...");
+      try {
+        state.settings = { ...defaultSettings, ...state.settings, id: "main", adminPasswordHash: simpleHash(p1), updatedAt: Date.now() };
+        await saveSettingsToFirebaseNow(state.settings);
+        p1Input.value = "";
+        p2Input.value = "";
+        toast("تم تغيير كلمة مرور المدير وحفظها في Firebase");
+      } catch (err) {
+        console.error(err);
+        toast("فشل حفظ كلمة المرور في Firebase");
+      } finally {
+        setButtonLoading(btn, false);
+      }
+    }
 
     function addToCart(product, selectedUnit = "") {
       if (!product) return;
@@ -9824,6 +9940,8 @@
 
       $("saveSettingsBtn").onclick = saveSettings;
 
+      if ($("saveAdminPasswordBtn")) $("saveAdminPasswordBtn").onclick = changeAdminPassword;
+
       $("exportBackupBtn").onclick = exportBackup;
 
       $("importBackupInput").onchange = (e) => importBackup(e.target.files[0]);
@@ -9981,6 +10099,10 @@
 
       await loadLocalData(true);
 
+      if (navigator.onLine) {
+        await fetchFreshSettingsFromFirebase();
+      }
+
       if (!state.freeLines.length) {
         state.freeLines = [{ id: uid("free"), name: "", qty: 1, cost: 0, price: 0 }];
       }
@@ -10110,455 +10232,7 @@
   <script src="./cashier-barcode-patch.js"></script>
   
   
-<script>
-/* fix-auth-buttons-index-inline.js */
-(function () {
-  "use strict";
 
-  const DEFAULT_ADMIN_PIN = "0000";
-  const ADMIN_PERMISSION = "__admin__";
-
-  function $(id) {
-    return document.getElementById(id);
-  }
-
-  function toast(msg) {
-    if (typeof window.toast === "function") return window.toast(msg);
-    alert(msg);
-  }
-
-  function simpleHash(str) {
-    const text = String(str || "");
-    let h = 2166136261;
-
-    for (let i = 0; i < text.length; i++) {
-      h ^= text.charCodeAt(i);
-      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
-    }
-
-    return String(h >>> 0);
-  }
-
-  function uid(prefix = "id") {
-    return `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`;
-  }
-
-  function escapeHtml(str) {
-    return String(str ?? "").replace(/[&<>"']/g, function (m) {
-      return {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      }[m];
-    });
-  }
-
-  function isAdmin() {
-    const u = window.state?.auth?.user;
-    if (!u) return false;
-    return u.role === "admin" || (u.permissions || []).includes(ADMIN_PERMISSION);
-  }
-
-  function getPages() {
-    return [
-      { id: "home", label: "الرئيسية", icon: "fa-house" },
-      { id: "cashier", label: "الكاشير", icon: "fa-cart-shopping" },
-      { id: "freeInvoice", label: "فاتورة بدون مخزون", icon: "fa-file-circle-plus" },
-      { id: "inventory", label: "المخزون", icon: "fa-boxes-stacked" },
-      { id: "invoices", label: "الفواتير", icon: "fa-file-invoice-dollar" },
-      { id: "debts", label: "الديون", icon: "fa-address-book" },
-      { id: "purchases", label: "المشتريات", icon: "fa-truck-ramp-box" },
-      { id: "supplierPayments", label: "دفعات التجار", icon: "fa-hand-holding-dollar" },
-      { id: "expenses", label: "المصروفات", icon: "fa-money-bill-wave" },
-      { id: "reports", label: "التقارير", icon: "fa-chart-line" },
-      { id: "settings", label: "الإعدادات", icon: "fa-gear" }
-    ];
-  }
-
-  function normalizeEmployee(emp) {
-    emp = emp || {};
-
-    return {
-      id: emp.id || uid("emp"),
-      name: emp.name || "موظف",
-      passwordHash: emp.passwordHash || simpleHash(emp.password || ""),
-      permissions: Array.isArray(emp.permissions) ? emp.permissions : [],
-      active: emp.active !== false,
-      createdAt: emp.createdAt || Date.now(),
-      updatedAt: Date.now()
-    };
-  }
-
-  function ensureState() {
-    window.state = window.state || {};
-    window.state.employees = Array.isArray(window.state.employees) ? window.state.employees : [];
-    window.state.settings = window.state.settings || {};
-
-    if (!window.state.settings.adminPasswordHash) {
-      window.state.settings.adminPasswordHash = simpleHash(DEFAULT_ADMIN_PIN);
-    }
-  }
-
-  async function saveSettingsSafe() {
-    ensureState();
-
-    if (typeof window.idbPut === "function") {
-      await window.idbPut("settings", {
-        id: "main",
-        ...window.state.settings,
-        updatedAt: Date.now()
-      });
-    }
-
-    if (typeof window.enqueueSync === "function") {
-      await window.enqueueSync({
-        type: "set",
-        store: "settings",
-        itemId: "main",
-        data: {
-          id: "main",
-          ...window.state.settings,
-          localLogo: "",
-          logoMode: window.state.settings.logo ? "url" : "default",
-          updatedAt: Date.now()
-        }
-      });
-    }
-  }
-
-  async function saveEmployeeSafe(employee) {
-    ensureState();
-
-    employee = normalizeEmployee(employee);
-
-    if (typeof window.saveLocal === "function") {
-      await window.saveLocal("employees", employee, true);
-    } else if (typeof window.idbPut === "function") {
-      await window.idbPut("employees", employee);
-    }
-
-    const i = window.state.employees.findIndex(function (e) {
-      return e.id === employee.id;
-    });
-
-    if (i >= 0) window.state.employees[i] = employee;
-    else window.state.employees.push(employee);
-
-    if (typeof window.renderAll === "function") window.renderAll();
-
-    return employee;
-  }
-
-  async function deleteEmployeeSafe(employeeId) {
-    ensureState();
-
-    const emp = window.state.employees.find(function (e) {
-      return e.id === employeeId;
-    });
-
-    if (!emp) return;
-
-    if (!confirm(`حذف الموظف ${emp.name}؟`)) return;
-
-    window.state.employees = window.state.employees.filter(function (e) {
-      return e.id !== employeeId;
-    });
-
-    if (typeof window.removeLocal === "function") {
-      await window.removeLocal("employees", employeeId, true);
-    } else if (typeof window.idbDelete === "function") {
-      await window.idbDelete("employees", employeeId);
-    }
-
-    if (typeof window.renderAll === "function") window.renderAll();
-    renderEmployeesSafe();
-    toast("تم حذف الموظف");
-  }
-
-  function openModalSafe(title, html, large) {
-    const modalTitle = $("modalTitle");
-    const modalBody = $("modalBody");
-    const modalBox = $("modalBox");
-    const modalBackdrop = $("modalBackdrop");
-
-    if (!modalTitle || !modalBody || !modalBackdrop) {
-      alert("نافذة النظام غير موجودة");
-      return;
-    }
-
-    modalTitle.textContent = title;
-    modalBody.innerHTML = html;
-
-    if (modalBox) modalBox.classList.toggle("large", !!large);
-    modalBackdrop.classList.add("show");
-  }
-
-  function closeModalSafe() {
-    $("modalBackdrop")?.classList.remove("show");
-    $("modalBox")?.classList.remove("large");
-  }
-
-  function renderEmployeesSafe() {
-    ensureState();
-
-    const box = $("employeesList");
-    if (!box) return;
-
-    if (!isAdmin()) {
-      box.innerHTML = `<div class="muted">إدارة الموظفين للمدير فقط</div>`;
-      return;
-    }
-
-    const pages = getPages();
-
-    box.innerHTML = window.state.employees.map(function (emp) {
-      const isFullAdmin = (emp.permissions || []).includes(ADMIN_PERMISSION);
-      const labels = isFullAdmin
-        ? "صلاحيات مدير كاملة"
-        : pages
-            .filter(function (p) {
-              return (emp.permissions || []).includes(p.id);
-            })
-            .map(function (p) {
-              return p.label;
-            })
-            .join("، ") || "بدون صلاحيات";
-
-      return `
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid #e5e7eb;border-radius:18px;margin-bottom:8px;background:#fff">
-          <div>
-            <b>${escapeHtml(emp.name)}</b>
-            <div class="muted" style="font-size:12px;line-height:1.8">${escapeHtml(labels)}</div>
-            <span class="badge ${emp.active === false ? "red" : "green"}">
-              ${emp.active === false ? "موقوف" : "فعال"}
-            </span>
-          </div>
-
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button class="ghost-btn js-fix-edit-employee" data-id="${emp.id}" type="button">
-              <i class="fa-solid fa-pen"></i> تعديل
-            </button>
-
-            <button class="danger-btn js-fix-delete-employee" data-id="${emp.id}" type="button">
-              <i class="fa-solid fa-trash"></i> حذف
-            </button>
-          </div>
-        </div>
-      `;
-    }).join("") || `<div class="muted">لا يوجد موظفين بعد</div>`;
-
-    box.querySelectorAll(".js-fix-edit-employee").forEach(function (btn) {
-      btn.onclick = function () {
-        openEmployeeFormSafe(btn.dataset.id);
-      };
-    });
-
-    box.querySelectorAll(".js-fix-delete-employee").forEach(function (btn) {
-      btn.onclick = function () {
-        deleteEmployeeSafe(btn.dataset.id);
-      };
-    });
-  }
-
-  function openEmployeeFormSafe(employeeId) {
-    ensureState();
-
-    if (!isAdmin()) {
-      toast("إضافة وتعديل الموظفين للمدير فقط");
-      return;
-    }
-
-    const old = employeeId
-      ? window.state.employees.find(function (e) { return e.id === employeeId; })
-      : null;
-
-    const pages = getPages();
-
-    openModalSafe(old ? "تعديل موظف" : "إضافة موظف", `
-      <form id="fixEmployeeForm">
-        <input id="fixEmployeeId" type="hidden" value="${escapeHtml(old?.id || "")}">
-
-        <div class="form-grid-compact">
-          <div>
-            <label class="field-label">اسم الموظف</label>
-            <input id="fixEmployeeName" class="input" required value="${escapeHtml(old?.name || "")}" placeholder="مثال: أحمد">
-          </div>
-
-          <div>
-            <label class="field-label">كلمة المرور</label>
-            <input id="fixEmployeePassword" class="input" type="password" ${old ? "" : "required"} placeholder="${old ? "اتركها فارغة إذا لا تريد تغييرها" : "كلمة المرور"}">
-          </div>
-
-          <div>
-            <label class="field-label">الحالة</label>
-            <select id="fixEmployeeActive" class="select">
-              <option value="true" ${old?.active === false ? "" : "selected"}>فعال</option>
-              <option value="false" ${old?.active === false ? "selected" : ""}>موقوف</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="field-label">صلاحية مدير كاملة</label>
-            <select id="fixEmployeeAdmin" class="select">
-              <option value="no" ${(old?.permissions || []).includes(ADMIN_PERMISSION) ? "" : "selected"}>لا</option>
-              <option value="yes" ${(old?.permissions || []).includes(ADMIN_PERMISSION) ? "selected" : ""}>نعم</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="full-row" style="margin-top:12px">
-          <label class="field-label">صلاحيات التبويبات</label>
-          <div class="employee-grid">
-            ${pages.map(function (p) {
-              const checked = (old?.permissions || []).includes(p.id) ? "checked" : "";
-              return `
-                <label class="perm-card">
-                  <input type="checkbox" class="fix-perm-check" value="${p.id}" ${checked}>
-                  <span><i class="fa-solid ${p.icon}"></i> ${escapeHtml(p.label)}</span>
-                </label>
-              `;
-            }).join("")}
-          </div>
-        </div>
-
-        <button class="primary-btn" type="submit" style="width:100%;margin-top:14px">
-          <i class="fa-solid fa-floppy-disk"></i> حفظ الموظف
-        </button>
-      </form>
-    `, true);
-
-    $("fixEmployeeAdmin").onchange = function () {
-      const disabled = $("fixEmployeeAdmin").value === "yes";
-      document.querySelectorAll(".fix-perm-check").forEach(function (ch) {
-        ch.disabled = disabled;
-      });
-    };
-
-    $("fixEmployeeAdmin").dispatchEvent(new Event("change"));
-
-    $("fixEmployeeForm").onsubmit = async function (e) {
-      e.preventDefault();
-
-      const name = $("fixEmployeeName").value.trim();
-      const pass = $("fixEmployeePassword").value;
-      const fullAdmin = $("fixEmployeeAdmin").value === "yes";
-
-      if (!name) return toast("أدخل اسم الموظف");
-      if (!old && !pass) return toast("أدخل كلمة مرور الموظف");
-
-      let permissions = [];
-
-      if (fullAdmin) {
-        permissions = [ADMIN_PERMISSION];
-      } else {
-        permissions = Array.from(document.querySelectorAll(".fix-perm-check:checked")).map(function (x) {
-          return x.value;
-        });
-      }
-
-      const emp = normalizeEmployee({
-        ...(old || {}),
-        id: old?.id || uid("emp"),
-        name,
-        passwordHash: pass ? simpleHash(pass) : old?.passwordHash,
-        permissions,
-        active: $("fixEmployeeActive").value === "true",
-        createdAt: old?.createdAt || Date.now(),
-        updatedAt: Date.now()
-      });
-
-      await saveEmployeeSafe(emp);
-
-      closeModalSafe();
-      renderEmployeesSafe();
-      toast(old ? "تم تعديل الموظف" : "تم إضافة الموظف");
-    };
-  }
-
-  async function changeAdminPasswordSafe() {
-    ensureState();
-
-    if (!isAdmin()) {
-      toast("تغيير كلمة مرور المدير للمدير فقط");
-      return;
-    }
-
-    const p1 = $("settingAdminPassword")?.value || "";
-    const p2 = $("settingAdminPassword2")?.value || "";
-
-    if (p1.length < 4) {
-      toast("كلمة المرور يجب أن تكون 4 خانات على الأقل");
-      return;
-    }
-
-    if (p1 !== p2) {
-      toast("كلمتا المرور غير متطابقتين");
-      return;
-    }
-
-    window.state.settings.adminPasswordHash = simpleHash(p1);
-    window.state.settings.updatedAt = Date.now();
-
-    await saveSettingsSafe();
-
-    $("settingAdminPassword").value = "";
-    $("settingAdminPassword2").value = "";
-
-    toast("تم تغيير كلمة مرور المدير بنجاح");
-  }
-
-  function installFixEvents() {
-    const addBtn = $("addEmployeeBtn");
-    if (addBtn) {
-      addBtn.onclick = function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        openEmployeeFormSafe("");
-      };
-    }
-
-    const changeBtn = $("changeAdminPasswordBtn");
-    if (changeBtn) {
-      changeBtn.onclick = function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        changeAdminPasswordSafe();
-      };
-    }
-
-    document.addEventListener("click", function (e) {
-      const add = e.target.closest("#addEmployeeBtn");
-      if (add) {
-        e.preventDefault();
-        e.stopPropagation();
-        openEmployeeFormSafe("");
-        return;
-      }
-
-      const change = e.target.closest("#changeAdminPasswordBtn");
-      if (change) {
-        e.preventDefault();
-        e.stopPropagation();
-        changeAdminPasswordSafe();
-      }
-    }, true);
-
-    renderEmployeesSafe();
-  }
-
-  window.fixCashierAuthButtons = function () {
-    ensureState();
-    installFixEvents();
-    renderEmployeesSafe();
-    toast("تم تفعيل إصلاح أزرار المدير والموظفين");
-  };
-
-  setTimeout(window.fixCashierAuthButtons, 800);
-  setTimeout(window.fixCashierAuthButtons, 1800);
-})();
-</script>
   
   
 </body>
