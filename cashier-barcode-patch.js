@@ -2,9 +2,13 @@
 (function () {
   "use strict";
 
-  const PATCH_VERSION = "2026-04-27-html5-qrcode-inventory-units-debts-v1";
+  const PATCH_VERSION = "2026-04-27-html5-qrcode-inventory-units-debts-auth-v2";
   const QR_SOUND_SRC = "./qr.mp3";
   const HTML5_QRCODE_SRC = "https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js";
+
+  const DEFAULT_ADMIN_PIN = "0000";
+  const ADMIN_PERMISSION = "__admin__";
+  const ADMIN_PROFILE_ID = "admin";
 
   const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
   const $ = (id) => document.getElementById(id);
@@ -33,17 +37,46 @@
 
   function cleanNumber(v, fallback = 0) {
     if (typeof window.cleanNumber === "function") return window.cleanNumber(v, fallback);
+
     const s = String(v ?? "").trim().replace(",", ".");
     if (!s || s === "." || s === "-") return fallback;
+
     const n = Number(s);
     return Number.isFinite(n) ? n : fallback;
   }
 
   function money(value) {
     if (typeof window.money === "function") return window.money(value);
+
     const n = cleanNumber(value);
     const currency = window.state?.settings?.currency || "₪";
     return `${currency} ${n.toFixed(2)}`;
+  }
+
+  function uid(prefix = "id") {
+    return `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+  }
+
+  function simpleHash(str) {
+    const text = String(str || "");
+    let h = 2166136261;
+
+    for (let i = 0; i < text.length; i++) {
+      h ^= text.charCodeAt(i);
+      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
+    }
+
+    return String(h >>> 0);
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? "").replace(/[&<>"']/g, (m) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[m]));
   }
 
   function getState() {
@@ -51,8 +84,9 @@
   }
 
   async function waitForApp() {
-    for (let i = 0; i < 160; i++) {
+    for (let i = 0; i < 180; i++) {
       const st = getState();
+
       if (
         st &&
         Array.isArray(st.products) &&
@@ -60,20 +94,25 @@
       ) {
         return true;
       }
+
       await wait(100);
     }
+
     return false;
   }
 
   function loadScriptOnce(src) {
     return new Promise((resolve, reject) => {
       const existing = [...document.scripts].find(s => s.src === src || s.src.includes(src));
+
       if (existing) {
-        if (window.Html5Qrcode) resolve(true);
-        else {
+        if (window.Html5Qrcode) {
+          resolve(true);
+        } else {
           existing.addEventListener("load", () => resolve(true), { once: true });
           existing.addEventListener("error", reject, { once: true });
         }
+
         return;
       }
 
@@ -114,6 +153,800 @@
 
   function vibratePhone() {
     if (navigator.vibrate) navigator.vibrate([55, 25, 55]);
+  }
+
+  function getNamespaceFromKnownKey() {
+    const keys = Object.keys(localStorage);
+    const found = keys.find(k => k.startsWith("cashier_auth_session_") && k.endsWith("_v1"));
+
+    if (found) {
+      return found.replace("cashier_auth_session_", "").replace("_v1", "");
+    }
+
+    return "";
+  }
+
+  function getAuthSessionKey() {
+    if (window.AUTH_SESSION_KEY) return window.AUTH_SESSION_KEY;
+
+    const ns = getNamespaceFromKnownKey();
+    if (ns) return `cashier_auth_session_${ns}_v1`;
+
+    const projectId = window.CASHIER_FIREBASE_CONFIG?.firebaseConfig?.projectId || "default_project";
+    const dbUrl = window.CASHIER_FIREBASE_CONFIG?.firebaseConfig?.databaseURL || "default_database";
+
+    try {
+      const encoded = btoa(unescape(encodeURIComponent(`${projectId}_${dbUrl}`)))
+        .replace(/[^a-zA-Z0-9]/g, "")
+        .slice(0, 42) || "default";
+
+      return `cashier_auth_session_${encoded}_v1`;
+    } catch {
+      return "cashier_auth_session_default_v1";
+    }
+  }
+
+  function clearAuthSessionPatch() {
+    const key = getAuthSessionKey();
+
+    try {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+
+      Object.keys(localStorage).forEach(k => {
+        if (k.startsWith("cashier_auth_session_")) {
+          localStorage.removeItem(k);
+        }
+      });
+
+      Object.keys(sessionStorage).forEach(k => {
+        if (k.startsWith("cashier_auth_session_")) {
+          sessionStorage.removeItem(k);
+        }
+      });
+
+      localStorage.setItem(`${key}_logged_out`, String(Date.now()));
+    } catch {}
+  }
+
+  function saveAuthSessionPatch(user) {
+    const key = getAuthSessionKey();
+
+    try {
+      localStorage.removeItem(`${key}_logged_out`);
+      localStorage.setItem(key, JSON.stringify({
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        permissions: user.permissions || [],
+        loginAt: Date.now()
+      }));
+    } catch {}
+  }
+
+  function readAuthSessionPatch() {
+    const key = getAuthSessionKey();
+
+    try {
+      return JSON.parse(localStorage.getItem(key) || "null");
+    } catch {
+      return null;
+    }
+  }
+
+  function isAdminUser(user = window.state?.auth?.user) {
+    return !!user && (user.role === "admin" || (user.permissions || []).includes(ADMIN_PERMISSION));
+  }
+
+  function authPages() {
+    return [
+      { id: "home", label: "الرئيسية", icon: "fa-house" },
+      { id: "cashier", label: "الكاشير", icon: "fa-cart-shopping" },
+      { id: "freeInvoice", label: "فاتورة بدون مخزون", icon: "fa-file-circle-plus" },
+      { id: "inventory", label: "المخزون", icon: "fa-boxes-stacked" },
+      { id: "invoices", label: "الفواتير", icon: "fa-file-invoice-dollar" },
+      { id: "debts", label: "الديون", icon: "fa-address-book" },
+      { id: "purchases", label: "المشتريات", icon: "fa-truck-ramp-box" },
+      { id: "supplierPayments", label: "دفعات التجار", icon: "fa-hand-holding-dollar" },
+      { id: "expenses", label: "المصروفات", icon: "fa-money-bill-wave" },
+      { id: "reports", label: "التقارير", icon: "fa-chart-line" },
+      { id: "settings", label: "الإعدادات", icon: "fa-gear" }
+    ];
+  }
+
+  function hasPermission(pageId) {
+    const user = window.state?.auth?.user;
+
+    if (!user) return false;
+    if (isAdminUser(user)) return true;
+
+    return Array.isArray(user.permissions) && user.permissions.includes(pageId);
+  }
+
+  function activePageId() {
+    const active = document.querySelector(".section.active");
+    return active?.id?.replace("page-", "") || "home";
+  }
+
+  function switchPagePatch(page) {
+    if (!hasPermission(page)) {
+      toast("ليس لديك صلاحية للدخول إلى هذه الصفحة");
+      return;
+    }
+
+    if (typeof window.__originalSwitchPage === "function") {
+      window.__originalSwitchPage(page);
+      return;
+    }
+
+    document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+    $(`page-${page}`)?.classList.add("active");
+
+    document.querySelectorAll(".nav-btn,.bottom-btn").forEach(b => {
+      b.classList.toggle("active", b.dataset.page === page);
+    });
+
+    $("sidebar")?.classList.remove("open");
+
+    if (typeof window.renderAll === "function") window.renderAll();
+  }
+
+  function applyPermissionsUiPatch() {
+    const user = window.state?.auth?.user || null;
+
+    const pill = $("authUserPill");
+    if (pill) {
+      if (user) {
+        pill.innerHTML = `
+          <i class="fa-solid ${isAdminUser(user) ? "fa-user-shield" : "fa-user"}"></i>
+          ${escapeHtml(user.name || "مستخدم")}
+        `;
+      } else {
+        pill.innerHTML = `<i class="fa-solid fa-lock"></i> غير مسجل`;
+      }
+    }
+
+    document.querySelectorAll(".nav-btn[data-page], .bottom-btn[data-page]").forEach(btn => {
+      const page = btn.dataset.page;
+      btn.classList.toggle("auth-hidden", !user || !hasPermission(page));
+    });
+
+    if ($("adminSecurityBox")) $("adminSecurityBox").style.display = isAdminUser(user) ? "block" : "none";
+    if ($("employeesSettingsBox")) $("employeesSettingsBox").style.display = isAdminUser(user) ? "block" : "none";
+
+    if (user && !hasPermission(activePageId())) {
+      const first = authPages().find(p => hasPermission(p.id));
+      if (first) switchPagePatch(first.id);
+    }
+  }
+
+  function setAuthUserPatch(user) {
+    const st = getState();
+    if (!st) return;
+
+    st.auth = st.auth || {};
+    st.auth.user = user || null;
+    st.auth.ready = true;
+
+    const lock = $("authLock");
+
+    if (user) {
+      saveAuthSessionPatch(user);
+
+      if (lock) {
+        lock.classList.add("hide");
+        lock.style.display = "none";
+      }
+    } else {
+      clearAuthSessionPatch();
+
+      if (lock) {
+        lock.classList.remove("hide");
+        lock.style.display = "flex";
+      }
+    }
+
+    applyPermissionsUiPatch();
+  }
+
+  function logoutPatch() {
+    const st = getState();
+
+    clearAuthSessionPatch();
+
+    if (st) {
+      st.auth = st.auth || {};
+      st.auth.user = null;
+      st.auth.ready = true;
+    }
+
+    const lock = $("authLock");
+    if (lock) {
+      lock.classList.remove("hide");
+      lock.style.display = "flex";
+    }
+
+    const pill = $("authUserPill");
+    if (pill) {
+      pill.innerHTML = `<i class="fa-solid fa-lock"></i> غير مسجل`;
+    }
+
+    document.querySelectorAll(".nav-btn[data-page], .bottom-btn[data-page]").forEach(btn => {
+      btn.classList.add("auth-hidden");
+    });
+
+    $("modalBackdrop")?.classList.remove("show");
+    $("modalBox")?.classList.remove("large");
+
+    toast("تم تسجيل الخروج");
+  }
+
+  function getAdminPasswordHashPatch() {
+    const st = getState();
+    return st?.settings?.adminPasswordHash || simpleHash(DEFAULT_ADMIN_PIN);
+  }
+
+  function normalizeEmployeeAuth(emp = {}) {
+    return {
+      id: emp.id || uid("emp"),
+      name: emp.name || "موظف",
+      passwordHash: emp.passwordHash || simpleHash(emp.password || ""),
+      permissions: Array.isArray(emp.permissions) ? emp.permissions : [],
+      active: emp.active !== false,
+      createdAt: emp.createdAt || Date.now(),
+      updatedAt: emp.updatedAt || Date.now()
+    };
+  }
+
+  async function saveEmployeeAuthPatch(employee) {
+    const st = getState();
+    if (!st) return null;
+
+    employee = normalizeEmployeeAuth(employee);
+
+    if (typeof window.saveLocal === "function") {
+      await window.saveLocal("employees", employee, true);
+    } else if (typeof window.idbPut === "function") {
+      await window.idbPut("employees", employee);
+    }
+
+    st.employees = Array.isArray(st.employees) ? st.employees : [];
+
+    const i = st.employees.findIndex(e => e.id === employee.id);
+    if (i >= 0) st.employees[i] = employee;
+    else st.employees.push(employee);
+
+    if (typeof window.renderAll === "function") window.renderAll();
+    renderEmployeesAuthPatch();
+
+    return employee;
+  }
+
+  async function deleteEmployeeAuthPatch(employeeId) {
+    const st = getState();
+
+    if (!st || !isAdminUser()) {
+      toast("إدارة الموظفين للمدير فقط");
+      return;
+    }
+
+    const emp = (st.employees || []).find(e => e.id === employeeId);
+    if (!emp) return;
+
+    if (!confirm(`حذف الموظف ${emp.name}؟ سيتم إخراجه من جهازه عند التحديث أو المزامنة.`)) return;
+
+    st.employees = (st.employees || []).filter(e => e.id !== employeeId);
+
+    if (typeof window.removeLocal === "function") {
+      await window.removeLocal("employees", employeeId, true);
+    } else if (typeof window.idbDelete === "function") {
+      await window.idbDelete("employees", employeeId);
+    }
+
+    if (st.auth?.user?.id === employeeId) logoutPatch();
+
+    if (typeof window.renderAll === "function") window.renderAll();
+    renderEmployeesAuthPatch();
+
+    toast("تم حذف الموظف");
+  }
+
+  function renderEmployeesAuthPatch() {
+    const st = getState();
+    const box = $("employeesList");
+
+    if (!box || !st) return;
+
+    if (!isAdminUser()) {
+      box.innerHTML = `<div class="muted">إدارة الموظفين للمدير فقط</div>`;
+      return;
+    }
+
+    const pages = authPages();
+
+    box.innerHTML = (st.employees || []).map(emp => {
+      const fullAdmin = (emp.permissions || []).includes(ADMIN_PERMISSION);
+      const permLabels = fullAdmin
+        ? "صلاحيات مدير كاملة"
+        : pages
+            .filter(p => (emp.permissions || []).includes(p.id))
+            .map(p => p.label)
+            .join("، ") || "بدون صلاحيات";
+
+      return `
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid #e5e7eb;border-radius:18px;margin-bottom:8px;background:#fff">
+          <div>
+            <b>${escapeHtml(emp.name)}</b>
+            <div class="muted" style="font-size:12px;line-height:1.8">
+              ${escapeHtml(permLabels)}
+            </div>
+            <span class="badge ${emp.active === false ? "red" : "green"}">
+              ${emp.active === false ? "موقوف" : "فعال"}
+            </span>
+          </div>
+
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="ghost-btn" data-auth-edit-employee="${escapeHtml(emp.id)}" type="button">
+              <i class="fa-solid fa-pen"></i> تعديل
+            </button>
+
+            <button class="danger-btn" data-auth-delete-employee="${escapeHtml(emp.id)}" type="button">
+              <i class="fa-solid fa-trash"></i> حذف
+            </button>
+          </div>
+        </div>
+      `;
+    }).join("") || `<div class="muted">لا يوجد موظفون بعد</div>`;
+  }
+
+  function openEmployeeFormAuthPatch(employeeId = "") {
+    const st = getState();
+
+    if (!st || !isAdminUser()) {
+      toast("إضافة وتعديل الموظفين للمدير فقط");
+      return;
+    }
+
+    const old = employeeId ? (st.employees || []).find(e => e.id === employeeId) : null;
+    const pages = authPages();
+
+    const modalTitle = $("modalTitle");
+    const modalBody = $("modalBody");
+    const modalBox = $("modalBox");
+    const modalBackdrop = $("modalBackdrop");
+
+    if (!modalTitle || !modalBody || !modalBackdrop) {
+      toast("نافذة النظام غير موجودة");
+      return;
+    }
+
+    modalTitle.textContent = old ? "تعديل موظف" : "إضافة موظف";
+    if (modalBox) modalBox.classList.add("large");
+
+    modalBody.innerHTML = `
+      <form id="authPatchEmployeeForm">
+        <input id="authPatchEmployeeId" type="hidden" value="${escapeHtml(old?.id || "")}">
+
+        <div class="form-grid-compact">
+          <div>
+            <label class="field-label">اسم الموظف</label>
+            <input id="authPatchEmployeeName" class="input" required value="${escapeHtml(old?.name || "")}" placeholder="مثال: أحمد">
+          </div>
+
+          <div>
+            <label class="field-label">كلمة المرور</label>
+            <input id="authPatchEmployeePassword" class="input" type="password" ${old ? "" : "required"} placeholder="${old ? "اتركها فارغة إذا لا تريد تغييرها" : "كلمة المرور"}">
+          </div>
+
+          <div>
+            <label class="field-label">الحالة</label>
+            <select id="authPatchEmployeeActive" class="select">
+              <option value="true" ${old?.active === false ? "" : "selected"}>فعال</option>
+              <option value="false" ${old?.active === false ? "selected" : ""}>موقوف</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="field-label">نوع الصلاحية</label>
+            <select id="authPatchEmployeeRole" class="select">
+              <option value="employee" ${(old?.permissions || []).includes(ADMIN_PERMISSION) ? "" : "selected"}>موظف بصلاحيات محددة</option>
+              <option value="admin" ${(old?.permissions || []).includes(ADMIN_PERMISSION) ? "selected" : ""}>صلاحيات مدير كاملة</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="authPatchPermissionsBox" style="margin-top:14px">
+          <label class="field-label">صلاحيات التبويبات</label>
+          <div class="employee-grid">
+            ${pages.map(p => `
+              <label class="perm-card">
+                <input type="checkbox" class="auth-patch-perm-check" value="${escapeHtml(p.id)}" ${(old?.permissions || []).includes(p.id) ? "checked" : ""}>
+                <span><i class="fa-solid ${escapeHtml(p.icon)}"></i> ${escapeHtml(p.label)}</span>
+              </label>
+            `).join("")}
+          </div>
+        </div>
+
+        <button class="primary-btn" type="submit" style="width:100%;margin-top:14px">
+          <i class="fa-solid fa-floppy-disk"></i> حفظ الموظف
+        </button>
+      </form>
+    `;
+
+    modalBackdrop.classList.add("show");
+
+    const refreshRole = () => {
+      const isAdmin = $("authPatchEmployeeRole")?.value === "admin";
+      if ($("authPatchPermissionsBox")) {
+        $("authPatchPermissionsBox").style.display = isAdmin ? "none" : "block";
+      }
+    };
+
+    $("authPatchEmployeeRole").onchange = refreshRole;
+    refreshRole();
+
+    $("authPatchEmployeeForm").onsubmit = async (e) => {
+      e.preventDefault();
+
+      const name = $("authPatchEmployeeName").value.trim();
+      const pass = $("authPatchEmployeePassword").value.trim();
+      const active = $("authPatchEmployeeActive").value === "true";
+      const role = $("authPatchEmployeeRole").value;
+
+      if (!name) {
+        toast("أدخل اسم الموظف");
+        return;
+      }
+
+      if (!old && !pass) {
+        toast("أدخل كلمة مرور للموظف الجديد");
+        return;
+      }
+
+      const duplicate = (st.employees || []).find(emp =>
+        emp.id !== old?.id &&
+        String(emp.name || "").trim() === name
+      );
+
+      if (duplicate) {
+        toast("يوجد موظف بنفس الاسم");
+        return;
+      }
+
+      let permissions = [];
+
+      if (role === "admin") {
+        permissions = [ADMIN_PERMISSION];
+      } else {
+        permissions = Array.from(document.querySelectorAll(".auth-patch-perm-check:checked")).map(ch => ch.value);
+
+        if (!permissions.length) {
+          toast("اختر صلاحية واحدة على الأقل");
+          return;
+        }
+      }
+
+      const employee = normalizeEmployeeAuth({
+        ...(old || {}),
+        id: old?.id || uid("emp"),
+        name,
+        passwordHash: pass ? simpleHash(pass) : old?.passwordHash,
+        permissions,
+        active,
+        createdAt: old?.createdAt || Date.now(),
+        updatedAt: Date.now()
+      });
+
+      await saveEmployeeAuthPatch(employee);
+
+      modalBackdrop.classList.remove("show");
+      if (modalBox) modalBox.classList.remove("large");
+
+      toast(old ? "تم تعديل الموظف والصلاحيات" : "تم إضافة الموظف");
+    };
+  }
+
+  async function changeAdminPasswordAuthPatch() {
+    const st = getState();
+
+    if (!st || !isAdminUser()) {
+      toast("تغيير كلمة مرور المدير للمدير فقط");
+      return;
+    }
+
+    const p1Input = $("settingAdminPassword");
+    const p2Input = $("settingAdminPassword2");
+
+    const p1 = String(p1Input?.value || "").trim();
+    const p2 = String(p2Input?.value || "").trim();
+
+    if (!p1) {
+      toast("أدخل كلمة مرور المدير الجديدة");
+      p1Input?.focus();
+      return;
+    }
+
+    if (p1.length < 4) {
+      toast("كلمة مرور المدير يجب أن تكون 4 خانات على الأقل");
+      p1Input?.focus();
+      return;
+    }
+
+    if (p1 !== p2) {
+      toast("كلمتا المرور غير متطابقتين");
+      p2Input?.focus();
+      return;
+    }
+
+    st.settings = {
+      ...(st.settings || {}),
+      id: "main",
+      adminPasswordHash: simpleHash(p1),
+      updatedAt: Date.now()
+    };
+
+    if (typeof window.idbPut === "function") {
+      await window.idbPut("settings", st.settings);
+    }
+
+    if (typeof window.enqueueSync === "function") {
+      await window.enqueueSync({
+        type: "set",
+        store: "settings",
+        itemId: "main",
+        data: {
+          ...st.settings,
+          localLogo: "",
+          logoMode: st.settings.logo ? "url" : "default"
+        }
+      });
+    } else if (typeof window.saveLocal === "function") {
+      await window.saveLocal("settings", st.settings, true);
+    }
+
+    if (p1Input) p1Input.value = "";
+    if (p2Input) p2Input.value = "";
+
+    toast("تم تغيير كلمة مرور المدير. سجّل الدخول بالكلمة الجديدة.");
+    logoutPatch();
+  }
+
+  function bindAuthLoginPatch() {
+    const adminTab = $("authAdminTab");
+    const empTab = $("authEmployeeTab");
+    const adminForm = $("adminLoginForm");
+    const empForm = $("employeeLoginForm");
+
+    if (!adminTab || !empTab || !adminForm || !empForm) return;
+
+    adminTab.onclick = () => {
+      adminTab.classList.add("active");
+      empTab.classList.remove("active");
+      adminForm.style.display = "block";
+      empForm.style.display = "none";
+    };
+
+    empTab.onclick = () => {
+      empTab.classList.add("active");
+      adminTab.classList.remove("active");
+      adminForm.style.display = "none";
+      empForm.style.display = "block";
+    };
+
+    adminForm.onsubmit = (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      const pass = $("adminPasswordInput")?.value.trim() || "";
+
+      if (simpleHash(pass) !== getAdminPasswordHashPatch()) {
+        toast("كلمة مرور المدير غير صحيحة");
+        return;
+      }
+
+      if ($("adminPasswordInput")) $("adminPasswordInput").value = "";
+
+      setAuthUserPatch({
+        id: ADMIN_PROFILE_ID,
+        name: "المدير",
+        role: "admin",
+        permissions: [ADMIN_PERMISSION]
+      });
+
+      toast("تم دخول المدير");
+    };
+
+    empForm.onsubmit = (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      const name = $("employeeNameInput")?.value.trim() || "";
+      const pass = $("employeePasswordInput")?.value.trim() || "";
+
+      const st = getState();
+      const emp = (st?.employees || []).find(x =>
+        x.active !== false &&
+        String(x.name || "").trim() === name &&
+        x.passwordHash === simpleHash(pass)
+      );
+
+      if (!emp) {
+        toast("بيانات الموظف غير صحيحة أو الحساب موقوف");
+        return;
+      }
+
+      if ($("employeePasswordInput")) $("employeePasswordInput").value = "";
+
+      setAuthUserPatch({
+        id: emp.id,
+        name: emp.name,
+        role: (emp.permissions || []).includes(ADMIN_PERMISSION) ? "admin" : "employee",
+        permissions: emp.permissions || []
+      });
+
+      toast(`أهلاً ${emp.name}`);
+    };
+  }
+
+  async function restoreAuthSessionPatch() {
+    const st = getState();
+    if (!st) return;
+
+    const saved = readAuthSessionPatch();
+
+    if (!saved || !saved.id || !saved.loginAt) {
+      setAuthUserPatch(null);
+      return;
+    }
+
+    if (saved.role === "admin" || saved.id === ADMIN_PROFILE_ID) {
+      setAuthUserPatch({
+        id: ADMIN_PROFILE_ID,
+        name: "المدير",
+        role: "admin",
+        permissions: [ADMIN_PERMISSION]
+      });
+      return;
+    }
+
+    const emp = (st.employees || []).find(e => e.id === saved.id && e.active !== false);
+
+    if (!emp) {
+      setAuthUserPatch(null);
+      return;
+    }
+
+    setAuthUserPatch({
+      id: emp.id,
+      name: emp.name,
+      role: (emp.permissions || []).includes(ADMIN_PERMISSION) ? "admin" : "employee",
+      permissions: emp.permissions || []
+    });
+  }
+
+  async function validateEmployeeSessionPatch() {
+    const st = getState();
+    const user = st?.auth?.user;
+
+    if (!st || !user || isAdminUser(user)) return true;
+
+    const emp = (st.employees || []).find(e => e.id === user.id);
+
+    if (!emp || emp.active === false) {
+      logoutPatch();
+      toast("تم إيقاف أو حذف حساب الموظف من المدير");
+      return false;
+    }
+
+    const oldPerm = JSON.stringify(user.permissions || []);
+    const newPerm = JSON.stringify(emp.permissions || []);
+
+    if (oldPerm !== newPerm || user.name !== emp.name) {
+      setAuthUserPatch({
+        id: emp.id,
+        name: emp.name,
+        role: (emp.permissions || []).includes(ADMIN_PERMISSION) ? "admin" : "employee",
+        permissions: emp.permissions || []
+      });
+
+      toast("تم تحديث صلاحيات الموظف");
+    }
+
+    return true;
+  }
+
+  function patchAuthSystem() {
+    window.logout = logoutPatch;
+    window.setAuthUser = setAuthUserPatch;
+    window.applyPermissionsUI = applyPermissionsUiPatch;
+    window.tryRestoreAuthSession = restoreAuthSessionPatch;
+    window.validateCurrentEmployeeSession = validateEmployeeSessionPatch;
+    window.changeAdminPassword = changeAdminPasswordAuthPatch;
+    window.openEmployeeForm = openEmployeeFormAuthPatch;
+    window.deleteEmployee = deleteEmployeeAuthPatch;
+    window.renderEmployees = renderEmployeesAuthPatch;
+
+    if (typeof window.switchPage === "function" && !window.__originalSwitchPage) {
+      window.__originalSwitchPage = window.switchPage;
+    }
+
+    window.switchPage = switchPagePatch;
+
+    bindAuthLoginPatch();
+
+    const logoutBtn = $("logoutBtn");
+    const topLogoutBtn = $("topLogoutBtn");
+
+    if (logoutBtn) logoutBtn.onclick = logoutPatch;
+    if (topLogoutBtn) topLogoutBtn.onclick = logoutPatch;
+
+    const addEmployeeBtn = $("addEmployeeBtn");
+    if (addEmployeeBtn) {
+      addEmployeeBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openEmployeeFormAuthPatch();
+      };
+    }
+
+    const saveAdminPasswordBtn = $("saveAdminPasswordBtn");
+    if (saveAdminPasswordBtn) {
+      saveAdminPasswordBtn.onclick = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        await changeAdminPasswordAuthPatch();
+      };
+    }
+
+    document.addEventListener("click", async (e) => {
+      const logoutClick = e.target.closest("#logoutBtn,#topLogoutBtn");
+      if (logoutClick) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        logoutPatch();
+        return;
+      }
+
+      const addEmpClick = e.target.closest("#addEmployeeBtn");
+      if (addEmpClick) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        openEmployeeFormAuthPatch();
+        return;
+      }
+
+      const savePassClick = e.target.closest("#saveAdminPasswordBtn");
+      if (savePassClick) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        await changeAdminPasswordAuthPatch();
+        return;
+      }
+
+      const editEmp = e.target.closest("[data-auth-edit-employee],[data-edit-employee]");
+      if (editEmp) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        openEmployeeFormAuthPatch(editEmp.dataset.authEditEmployee || editEmp.dataset.editEmployee);
+        return;
+      }
+
+      const deleteEmp = e.target.closest("[data-auth-delete-employee],[data-delete-employee]");
+      if (deleteEmp) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        await deleteEmployeeAuthPatch(deleteEmp.dataset.authDeleteEmployee || deleteEmp.dataset.deleteEmployee);
+      }
+    }, true);
+
+    restoreAuthSessionPatch();
+    applyPermissionsUiPatch();
+    renderEmployeesAuthPatch();
+
+    setInterval(() => {
+      applyPermissionsUiPatch();
+      validateEmployeeSessionPatch();
+    }, 4000);
   }
 
   function ensureScannerStyles() {
@@ -276,7 +1109,7 @@
         z-index:10005;
         padding:13px 16px;
         border-radius:18px;
-        background:rgba(15,23,42,.88);
+background:rgba(15,23,42,.88);
         color:#fff;
         font-weight:900;
         text-align:center;
@@ -326,6 +1159,7 @@
         }
       }
     `;
+
     document.head.appendChild(style);
   }
 
@@ -346,6 +1180,7 @@
       <div id="patchCameraTitle" class="patch-camera-title">قراءة باركود المنتج</div>
       <div id="patchScanHint" class="patch-scan-hint">وجّه الكاميرا نحو الباركود</div>
     `;
+
     document.body.appendChild(page);
 
     $("patchCameraCloseBtn").addEventListener("click", stopPatchScanner);
@@ -366,6 +1201,7 @@
 
     page.classList.add("detected");
     clearTimeout(page.__detectedTimer);
+
     page.__detectedTimer = setTimeout(() => {
       page.classList.remove("detected");
     }, 550);
@@ -378,6 +1214,7 @@
       try {
         await patchScanner.stop();
       } catch {}
+
       try {
         await patchScanner.clear();
       } catch {}
@@ -409,6 +1246,7 @@
   function getProductByBarcodeLocal(code) {
     const st = getState();
     const c = String(code || "").trim();
+
     if (!st || !c) return null;
 
     if (typeof window.getProductByBarcode === "function") {
@@ -434,16 +1272,20 @@
     if (p.unitType === "carton") return "piece";
     if (p.unitType === "kg") return "g";
     if (p.unitType === "liter") return "ml";
+
     return p.unitType || "piece";
   }
 
   function getUnitFactorLocal(product, selectedUnit) {
-    if (typeof window.getUnitFactor === "function") return cleanNumber(window.getUnitFactor(product, selectedUnit), 1);
+    if (typeof window.getUnitFactor === "function") {
+      return cleanNumber(window.getUnitFactor(product, selectedUnit), 1);
+    }
 
     const p = product || {};
     if (selectedUnit === "carton") return cleanNumber(p.cartonUnits || 1, 1);
     if (selectedUnit === "kg") return 1000;
     if (selectedUnit === "liter") return 1000;
+
     return 1;
   }
 
@@ -460,6 +1302,7 @@
       minutes: "دقائق",
       custom: product?.customUnit || "مخصص"
     };
+
     return map[selectedUnit] || selectedUnit || "-";
   }
 
@@ -486,6 +1329,7 @@
 
   function addToCartFixed(product, selectedUnit = "") {
     const st = getState();
+
     if (!st || !product) return false;
 
     const p = normalizeProductLocal(product);
@@ -499,7 +1343,7 @@
       Object.assign(existing, priceForLineFixed(p, nextQty, unit));
     } else {
       st.cart.push({
-        id: `cart_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+        id: uid("cart"),
         productId: p.id,
         name: p.name,
         selectedUnit: unit,
@@ -507,8 +1351,9 @@
       });
     }
 
-    if (typeof window.renderCart === "function") window.renderCart();
-    else {
+    if (typeof window.renderCart === "function") {
+      window.renderCart();
+    } else {
       const inputEvent = new Event("input", { bubbles: true });
       $("discountValue")?.dispatchEvent(inputEvent);
     }
@@ -519,17 +1364,18 @@
 
   function handlePatchScannedCode(code) {
     code = String(code || "").trim();
+
     if (!code) return;
 
     markDetected();
     playScanSound();
     vibratePhone();
 
-    const st = getState();
     const activePage = getActivePage();
 
     if (patchMode === "product" || patchTargetInputId) {
       const input = $(patchTargetInputId || "productBarcode");
+
       if (input) {
         input.value = code;
         input.dispatchEvent(new Event("input", { bubbles: true }));
@@ -565,6 +1411,7 @@
       }
 
       const search = $("cashierSearch");
+
       if (search) {
         search.value = "";
         search.dispatchEvent(new Event("input", { bubbles: true }));
@@ -594,8 +1441,15 @@
     const title = $("patchCameraTitle");
     const hint = $("patchScanHint");
 
-    if (title) title.textContent = patchMode === "product" ? "قراءة باركود المنتج" : "قراءة باركود للبيع";
-    if (hint) hint.textContent = patchMode === "product" ? "سيتم وضع الرقم في خانة كود المنتج" : "سيتم البحث عن المنتج وإضافته للسلة";
+    if (title) {
+      title.textContent = patchMode === "product" ? "قراءة باركود المنتج" : "قراءة باركود للبيع";
+    }
+
+    if (hint) {
+      hint.textContent = patchMode === "product"
+        ? "سيتم وضع الرقم في خانة كود المنتج"
+        : "سيتم البحث عن المنتج وإضافته للسلة";
+    }
 
     page.classList.add("show");
 
@@ -720,11 +1574,16 @@
   function patchManualBarcode() {
     window.openManualBarcode = function () {
       const code = prompt("أدخل الباركود أو كود المنتج");
+
       if (!code) return;
 
       const product = getProductByBarcodeLocal(code);
-      if (product) addToCartFixed(product);
-      else toast("لم يتم العثور على منتج بهذا الكود");
+
+      if (product) {
+        addToCartFixed(product);
+      } else {
+        toast("لم يتم العثور على منتج بهذا الكود");
+      }
     };
   }
 
@@ -737,6 +1596,7 @@
 
     window.updateCartLine = function (lineId, patch = {}, rerender = true) {
       const st = getState();
+
       if (!st) return;
 
       const line = st.cart.find(x => x.id === lineId);
@@ -745,6 +1605,7 @@
       Object.assign(line, patch);
 
       const product = (st.products || []).find(p => p.id === line.productId);
+
       if (!product) {
         if (rerender && typeof window.renderCart === "function") window.renderCart();
         return;
@@ -752,12 +1613,14 @@
 
       const selectedUnit = line.selectedUnit || getDefaultSaleUnitLocal(product);
       const qty = cleanNumber(line.qty, 0);
+
       Object.assign(line, priceForLineFixed(product, qty, selectedUnit));
 
       if (rerender && typeof window.renderCart === "function") {
         window.renderCart();
       } else if (typeof window.calculateCartTotals === "function") {
         const totals = window.calculateCartTotals();
+
         if ($("cartSubtotal")) $("cartSubtotal").textContent = money(totals.subtotal);
         if ($("cartDiscount")) $("cartDiscount").textContent = money(totals.discount);
         if ($("cartTotal")) $("cartTotal").textContent = money(totals.total);
@@ -798,8 +1661,7 @@
       window.updateCartLine(line.id, { selectedUnit: unitInput.value }, true);
     }, true);
   }
-
-  function calculateInventorySummary() {
+function calculateInventorySummary() {
     const st = getState();
     const products = st?.products || [];
 
@@ -869,16 +1731,24 @@
 
   function patchRenderAllAndInventory() {
     const oldRenderAll = window.renderAll;
-    if (typeof oldRenderAll === "function") {
+
+    if (typeof oldRenderAll === "function" && !window.__barcodePatchRenderAllWrapped) {
+      window.__barcodePatchRenderAllWrapped = true;
+
       window.renderAll = function (...args) {
         const r = oldRenderAll.apply(this, args);
         setTimeout(renderInventorySummary, 0);
+        setTimeout(applyPermissionsUiPatch, 0);
+        setTimeout(renderEmployeesAuthPatch, 0);
         return r;
       };
     }
 
     const oldRenderInventory = window.renderInventory;
-    if (typeof oldRenderInventory === "function") {
+
+    if (typeof oldRenderInventory === "function" && !window.__barcodePatchInventoryWrapped) {
+      window.__barcodePatchInventoryWrapped = true;
+
       window.renderInventory = function (...args) {
         const r = oldRenderInventory.apply(this, args);
         setTimeout(renderInventorySummary, 0);
@@ -900,6 +1770,7 @@
   function isDuplicateCustomerName(name, exceptId = "") {
     const st = getState();
     const n = normalizeName(name);
+
     if (!n || !st) return false;
 
     return (st.customers || []).some(c =>
@@ -911,6 +1782,7 @@
   function patchDebtDuplicateProtection() {
     document.addEventListener("submit", (e) => {
       const form = e.target;
+
       if (!form) return;
 
       if (form.id === "debtCustomerForm") {
@@ -937,6 +1809,7 @@
         if (existing) {
           e.preventDefault();
           e.stopImmediatePropagation();
+
           toast("الزبون موجود مسبقًا، اختره من القائمة بدل إضافته مرة ثانية");
 
           const listItem = document.querySelector(`[data-select-debt-customer="${CSS.escape(existing.id)}"]`);
@@ -946,6 +1819,7 @@
     }, true);
 
     const oldEnsureCustomer = window.ensureCustomer;
+
     window.ensureCustomer = function (name, phone) {
       const st = getState();
       const n = normalizeName(name);
@@ -966,7 +1840,7 @@
       if (typeof oldEnsureCustomer === "function") return oldEnsureCustomer(name, phone);
 
       const customer = {
-        id: `cus_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+        id: uid("cus"),
         name: name || "زبون",
         phone,
         balance: 0,
@@ -980,32 +1854,20 @@
         updatedAt: Date.now()
       };
 
-      st.customers.push(customer);
-      if (typeof window.saveLocal === "function") window.saveLocal("customers", customer, true);
+      if (st) {
+        st.customers = Array.isArray(st.customers) ? st.customers : [];
+        st.customers.push(customer);
+      }
+
+      if (typeof window.saveLocal === "function") {
+        window.saveLocal("customers", customer, true);
+      }
+
       return customer;
     };
   }
 
   function exposeModuleFunctionsIfHidden() {
-    const names = [
-      "state",
-      "cleanNumber",
-      "money",
-      "toast",
-      "renderAll",
-      "renderCart",
-      "renderInventory",
-      "calculateCartTotals",
-      "getProductByBarcode",
-      "normalizeProduct",
-      "getDefaultSaleUnit",
-      "getUnitFactor",
-      "getUnitText",
-      "saveLocal",
-      "ensureCustomer",
-      "addToCart"
-    ];
-
     const scriptText = [...document.scripts]
       .filter(s => s.type === "module")
       .map(s => s.textContent || "")
@@ -1031,22 +1893,39 @@
         if (typeof getUnitFactor !== "undefined") window.getUnitFactor = getUnitFactor;
         if (typeof getUnitText !== "undefined") window.getUnitText = getUnitText;
         if (typeof saveLocal !== "undefined") window.saveLocal = saveLocal;
+        if (typeof removeLocal !== "undefined") window.removeLocal = removeLocal;
+        if (typeof idbPut !== "undefined") window.idbPut = idbPut;
+        if (typeof idbDelete !== "undefined") window.idbDelete = idbDelete;
+        if (typeof enqueueSync !== "undefined") window.enqueueSync = enqueueSync;
         if (typeof ensureCustomer !== "undefined") window.ensureCustomer = ensureCustomer;
         if (typeof addToCart !== "undefined") window.addToCart = addToCart;
+        if (typeof switchPage !== "undefined") window.switchPage = switchPage;
         window.dispatchEvent(new CustomEvent("cashier:module-exported"));
       } catch (e) {
         console.warn("cashier module export failed", e);
       }
     `;
+
     document.body.appendChild(patch);
+  }
+
+  function removeOldBrokenAuthPatchIfFound() {
+    document.querySelectorAll("script").forEach(s => {
+      const txt = s.textContent || "";
+      if (txt.includes("fix-auth-buttons-index-inline.js")) {
+        console.warn("تم العثور على باتش مصادقة قديم داخل الصفحة. يفضّل حذفه من HTML لمنع التضارب.");
+      }
+    });
   }
 
   async function init() {
     log("loading");
 
+    removeOldBrokenAuthPatchIfFound();
     exposeModuleFunctionsIfHidden();
 
     const ok = await waitForApp();
+
     if (!ok) {
       console.warn("cashier-barcode-patch: لم أجد state الخاصة بالتطبيق. تأكد أن الباتش بعد كود التطبيق.");
       toast("ملف الباتش لازم يكون بعد كود التطبيق الأصلي");
@@ -1055,6 +1934,7 @@
 
     await loadScriptOnce(HTML5_QRCODE_SRC);
 
+    patchAuthSystem();
     patchScannerButtons();
     patchManualBarcode();
     patchCartCalculations();
@@ -1065,7 +1945,11 @@
       version: PATCH_VERSION,
       openScanner: openPatchScanner,
       stopScanner: stopPatchScanner,
-      renderInventorySummary
+      renderInventorySummary,
+      logout: logoutPatch,
+      setAuthUser: setAuthUserPatch,
+      changeAdminPassword: changeAdminPasswordAuthPatch,
+      openEmployeeForm: openEmployeeFormAuthPatch
     };
 
     log("ready");
