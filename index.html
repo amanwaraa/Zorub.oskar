@@ -66,6 +66,96 @@
       user-select:none;
     }
 
+    .auth-lock{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      background:
+        radial-gradient(circle at top right,rgba(37,99,235,.22),transparent 34%),
+        radial-gradient(circle at bottom left,rgba(217,164,65,.22),transparent 34%),
+        linear-gradient(180deg,#f8fbff,#eef3f9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+    }
+
+    .auth-lock.hide{
+      display:none!important;
+    }
+
+    .auth-card{
+      width:min(520px,100%);
+      background:rgba(255,255,255,.94);
+      border:1px solid rgba(226,232,240,.9);
+      border-radius:32px;
+      box-shadow:0 30px 80px rgba(15,23,42,.18);
+      padding:20px;
+      backdrop-filter:blur(22px);
+    }
+
+    .auth-logo{
+      width:72px;
+      height:72px;
+      border-radius:26px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:0 auto 12px;
+      background:linear-gradient(135deg,var(--primary),#38bdf8);
+      color:white;
+      font-size:34px;
+      box-shadow:0 18px 42px rgba(37,99,235,.28);
+    }
+
+    .auth-title{
+      text-align:center;
+      font-size:24px;
+      font-weight:900;
+      margin:0;
+    }
+
+    .auth-sub{
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.8;
+      margin:6px 0 16px;
+    }
+
+    .auth-tabs{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      background:#f1f5f9;
+      padding:6px;
+      border-radius:20px;
+      margin-bottom:14px;
+    }
+
+    .auth-tab{
+      border:0;
+      border-radius:16px;
+      background:transparent;
+      padding:12px;
+      font-weight:900;
+      color:#475569;
+    }
+
+    .auth-tab.active{
+      background:#fff;
+      color:#1d4ed8;
+      box-shadow:0 8px 20px rgba(15,23,42,.08);
+    }
+
+    .auth-panel{
+      display:none;
+    }
+
+    .auth-panel.active{
+      display:block;
+    }
+
     .app-shell{
       min-height:100vh;
       display:flex;
@@ -86,8 +176,6 @@
       transition:.25s ease;
       overflow-y:auto;
       overscroll-behavior:contain;
-      -webkit-overflow-scrolling:touch;
-      padding-bottom:100px;
     }
 
     .sidebar::-webkit-scrollbar{
@@ -164,19 +252,6 @@
       margin-bottom:18px;
       padding-bottom:14px;
       border-bottom:1px solid var(--border);
-    }
-
-    .sidebar-scroll-note{
-      display:none;
-      font-size:11px;
-      color:#64748b;
-      background:#f8fafc;
-      border:1px dashed #cbd5e1;
-      border-radius:14px;
-      padding:7px 9px;
-      margin-bottom:8px;
-      text-align:center;
-      font-weight:800;
     }
 
     .nav-btn{
@@ -776,6 +851,7 @@
       overflow:hidden;
       min-height:138px;
     }
+
     .product-card:hover{
       transform:translateY(-2px);
       border-color:rgba(37,99,235,.35);
@@ -869,837 +945,63 @@
       font-weight:900;
       font-size:18px;
     }
-
-    .debt-card{
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:18px;
-      box-shadow:0 8px 22px rgba(15,23,42,.05);
-      padding:12px;
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:12px;
-      align-items:center;
-      margin-bottom:10px;
-      cursor:pointer;
-    }
-
-    .debt-card:hover{
-      border-color:rgba(217,164,65,.65);
-      box-shadow:0 10px 26px rgba(217,164,65,.12);
-    }
-
-    .debt-name{
-      font-size:16px;
-      font-weight:900;
-      color:#111827;
-    }
-
-    .debt-sub{
-      font-size:12px;
-      color:var(--muted);
-      margin-top:3px;
-    }
-
-    .debt-amount{
-      font-size:18px;
-      font-weight:900;
-      text-align:left;
-    }
-
-    .debt-amount.owed{
-      color:#dc2626;
-    }
-
-    .debt-amount.credit{
-      color:#16a34a;
-    }
-
-    .debt-footer{
-      position:sticky;
-      bottom:0;
-      background:rgba(255,255,255,.95);
-      border:1px solid #e0b453;
-      border-radius:18px;
-      padding:12px;
-      box-shadow:0 -10px 26px rgba(15,23,42,.08);
-      display:flex;
-      justify-content:space-around;
-      gap:12px;
-      font-weight:900;
-      margin-top:12px;
-    }
-
-    .tabs-row{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin:12px 0;
-    }
-
-    .tab-btn{
-      border:1px solid var(--border);
-      background:#fff;
-      border-radius:16px;
-      padding:10px 12px;
-      font-weight:900;
-      display:inline-flex;
-      align-items:center;
-      gap:7px;
-    }
-
-    .tab-btn.active{
-      background:#dbeafe;
-      color:#1d4ed8;
-      border-color:#bfdbfe;
-    }
-
-    .folder-tabs{
-      display:flex;
-      gap:8px;
-      overflow-x:auto;
-      padding:4px 0 12px;
-      margin-bottom:10px;
-    }
-
-    .folder-tab{
-      border:1px solid var(--border);
-      background:#fff;
-      color:#334155;
-      border-radius:18px;
-      padding:10px 13px;
-      font-weight:900;
-      white-space:nowrap;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      flex-shrink:0;
-    }
-
-    .folder-tab.active{
-      background:linear-gradient(135deg,#2563eb,#1d4ed8);
-      color:#fff;
-      border-color:transparent;
-      box-shadow:0 10px 22px rgba(37,99,235,.18);
-    }
-
-    .folder-tab small{
-      background:rgba(15,23,42,.08);
-      padding:2px 7px;
-      border-radius:999px;
-      font-size:11px;
-    }
-
-    .folder-tab.active small{
-      background:rgba(255,255,255,.2);
-      color:#fff;
-    }
-
-    .payment-choice-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:12px;
-    }
-
-    .payment-choice{
-      border:1px solid var(--border);
-      background:linear-gradient(180deg,#fff,#f8fbff);
-      border-radius:22px;
-      padding:18px;
-      min-height:118px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      justify-content:center;
-      align-items:center;
-      text-align:center;
-      font-weight:900;
-      transition:.18s;
-    }
-
-    .payment-choice i{
-      font-size:28px;
-      color:var(--primary);
-    }
-
-    .payment-choice:hover{
-      transform:translateY(-2px);
-      border-color:rgba(37,99,235,.35);
-      box-shadow:0 14px 30px rgba(37,99,235,.12);
-    }
-
-    .customer-suggest-list,
-    .smart-suggest-list{
-      position:absolute;
-      z-index:250;
-      background:#fff;
-      border:1px solid var(--border);
-      box-shadow:0 18px 44px rgba(15,23,42,.14);
-      border-radius:18px;
-      padding:6px;
-      display:none;
-      width:min(420px,calc(100vw - 40px));
-      max-height:260px;
-      overflow:auto;
-    }
-
-    .customer-suggest-item,
-    .smart-suggest-item{
-      padding:10px;
-      border-radius:14px;
-      cursor:pointer;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      font-size:13px;
-    }
-
-    .customer-suggest-item:hover,
-    .smart-suggest-item:hover{
-      background:#eff6ff;
-    }
-
-    .modal-backdrop{
-      position:fixed;
-      inset:0;
-      background:rgba(15,23,42,.54);
-      backdrop-filter:blur(7px);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:16px;
-      z-index:100;
-    }
-
-    .modal-backdrop.show{
-      display:flex;
-    }
-
-    .modal{
-      width:min(900px,100%);
-      max-height:92vh;
-      overflow-y:auto;
-      background:#fff;
-      border-radius:30px;
-      box-shadow:0 30px 70px rgba(15,23,42,.28);
-      padding:18px;
-      animation:modalIn .18s ease;
-    }
-
-    .modal.large{
-      width:min(1120px,100%);
-    }
-
-    @keyframes modalIn{
-      from{
-        opacity:0;
-        transform:translateY(18px) scale(.98);
-      }
-      to{
-        opacity:1;
-        transform:translateY(0) scale(1);
-      }
-    }
-
-    .modal-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding-bottom:12px;
-      border-bottom:1px solid var(--border);
-      margin-bottom:14px;
-    }
-
-    .modal-title{
-      font-size:18px;
-      font-weight:900;
-    }
-
-    .close-btn{
-      width:40px;
-      height:40px;
-      border:0;
-      border-radius:14px;
-      background:#f1f5f9;
-      font-weight:900;
-    }
-
-    .toast{
-      position:fixed;
-      right:16px;
-      bottom:20px;
-      background:#020617;
-      color:white;
-      padding:12px 14px;
-      border-radius:17px;
-      box-shadow:0 16px 38px rgba(15,23,42,.35);
-      z-index:200;
-      display:none;
-      font-weight:800;
-      font-size:13px;
-      max-width:340px;
-    }
-
-    .toast.show{
-      display:block;
-      animation:fadeIn .2s ease;
-    }
-
-    .scanner-box{
-      background:#020617;
-      border-radius:24px;
-      overflow:hidden;
-      min-height:280px;
-      position:relative;
-    }
-
-    video{
-      width:100%;
-      min-height:280px;
-      object-fit:cover;
-      display:block;
-    }
-
-    .scan-line{
-      position:absolute;
-      left:8%;
-      right:8%;
-      top:50%;
-      height:2px;
-      background:#22c55e;
-      box-shadow:0 0 18px #22c55e;
-      animation:scan 1.2s ease-in-out infinite;
-    }
-
-    @keyframes scan{
-      0%,100%{
-        transform:translateY(-80px);
-      }
-      50%{
-        transform:translateY(80px);
-      }
-    }
-
-    .floating-scanner{
-      position:fixed;
-      inset:0;
-      z-index:260;
-      background:rgba(15,23,42,.55);
-      backdrop-filter:blur(8px);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:16px;
-    }
-
-    .floating-scanner.show{
-      display:flex;
-    }
-
-    .floating-scanner-card{
-      width:min(520px,100%);
-      background:#fff;
-      border-radius:28px;
-      padding:16px;
-      box-shadow:0 30px 70px rgba(15,23,42,.28);
-    }
-
-    .invoice-paper{
-      background:#fff;
-      border-radius:22px;
-      padding:22px;
-      box-shadow:0 12px 40px rgba(15,23,42,.08);
-      border:1px solid var(--border);
-      color:#0f172a;
-    }
-
-    .invoice-header{
-      display:flex;
-      justify-content:space-between;
-      gap:16px;
-      align-items:center;
-      border-bottom:2px solid #e5e7eb;
-      margin-bottom:16px;
-      background:linear-gradient(135deg,#eff6ff,#fff);
-      border-radius:18px;
-      padding:16px;
-    }
-
-    .invoice-logo{
-      width:58px;
-      height:58px;
-      border-radius:16px;
-      object-fit:cover;
-      background:#dbeafe;
-    }
-
-    .invoice-shop-title{
-      margin:0;
-      font-size:16px;
-      font-weight:900;
-      line-height:1.25;
-    }
-
-    .invoice-date-small{
-      font-size:10px;
-      color:#64748b;
-      margin-top:2px;
-      text-align:center;
-    }
-
-    .barcode-svg{
-      max-width:150px;
-      height:46px;
-    }
-
-    .bottom-nav{
-      display:none;
-    }
-
-    .hamburger{
-      display:none;
-    }
-
-    .auth-lock{
-      position:fixed;
-      inset:0;
-      z-index:9999;
-      background:
-        radial-gradient(circle at top right,rgba(37,99,235,.24),transparent 32%),
-        radial-gradient(circle at bottom left,rgba(217,164,65,.20),transparent 30%),
-        linear-gradient(180deg,#f8fbff,#eaf1fb);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      direction:rtl;
-    }
-
-    .auth-lock.hide{
-      display:none!important;
-    }
-
-    .auth-card{
-      width:min(470px,100%);
-      background:rgba(255,255,255,.94);
-      border:1px solid rgba(226,232,240,.9);
-      border-radius:32px;
-      box-shadow:0 30px 80px rgba(15,23,42,.16);
-      padding:22px;
-      backdrop-filter:blur(20px);
-    }
-
-    .auth-logo{
-      width:64px;
-      height:64px;
-      border-radius:24px;
-      background:linear-gradient(135deg,#2563eb,#38bdf8);
-      color:white;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:28px;
-      box-shadow:0 16px 34px rgba(37,99,235,.28);
-      margin-bottom:12px;
-    }
-
-    .auth-card h1{
-      margin:0 0 6px;
-      font-size:24px;
-      font-weight:900;
-    }
-
-    .auth-card p{
-      margin:0 0 16px;
-      color:#64748b;
-      font-size:13px;
-      line-height:1.8;
-      font-weight:700;
-    }
-
-    .auth-tabs{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:8px;
-      margin-bottom:14px;
-      background:#f8fafc;
-      border-radius:18px;
-      padding:6px;
-      border:1px solid #e2e8f0;
-    }
-
-    .auth-tab{
-      border:0;
-      background:transparent;
-      border-radius:14px;
-      padding:11px;
-      font-weight:900;
-      color:#475569;
-    }
-
-    .auth-tab.active{
-      background:linear-gradient(135deg,#2563eb,#1d4ed8);
-      color:white;
-      box-shadow:0 10px 22px rgba(37,99,235,.18);
-    }
-
-    .auth-user-pill{
-      height:44px;
-      border-radius:16px;
-      background:#f8fafc;
-      border:1px solid #e2e8f0;
-      padding:0 12px;
-      display:flex;
-      align-items:center;
-      gap:7px;
-      color:#334155;
-      font-size:12px;
-      font-weight:900;
-      max-width:180px;
-      overflow:hidden;
-      white-space:nowrap;
-      text-overflow:ellipsis;
-    }
-
-    .employee-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:8px;
-    }
-
-    .perm-card{
-      border:1px solid #e2e8f0;
-      background:#fff;
-      border-radius:16px;
-      padding:11px;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      cursor:pointer;
-      font-size:13px;
-      font-weight:900;
-      color:#334155;
-    }
-
-    .perm-card input{
-      width:18px;
-      height:18px;
-      accent-color:#2563eb;
-    }
-
-    @media print{
-      body *{
-        visibility:hidden!important;
-      }
-
-      #printArea,
-      #printArea *{
-        visibility:visible!important;
-      }
-
-      #printArea{
-        position:absolute;
-        inset:0;
-        width:100%;
-        background:white;
-      }
-
-      .no-print{
-        display:none!important;
-      }
-    }
-
-    @media(max-width:900px){
-      .sidebar{
-        transform:translateX(105%);
-        width:285px;
-        max-height:100vh;
-        overflow-y:auto;
-        padding-bottom:120px;
-      }
-
-      .sidebar.open{
-        transform:translateX(0);
-      }
-
-      .sidebar-scroll-note{
-        display:block;
-      }
-
-      .main{
-        margin-right:0;
-        padding:10px 10px 104px;
-      }
-
-      .topbar{
-        min-height:66px;
-        border-radius:22px;
-        top:8px;
-        padding:10px 12px;
-      }
-
-      .hamburger{
-        display:inline-flex;
-      }
-
-      .brand-title{
-        max-width:130px;
-        font-size:15px;
-      }
-
-      .brand-sub{
-        display:none;
-      }
-
-      .shop-logo{
-        width:42px;
-        height:42px;
-      }
-
-      .cart-layout{
-        grid-template-columns:1fr;
-      }
-
-      .cart-summary{
-        position:static;
-      }
-
-      .stat-grid,
-      .clean-stats-grid{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-      }
-
-      .debt-summary-strip{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-      }
-
-      .grid-products{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-      }
-
-      .cart-line{
-        grid-template-columns:1fr;
-        border:1px solid #f1f5f9;
-        border-radius:18px;
-        padding:12px;
-        margin-bottom:10px;
-      }
-
-      .sync-popover{
-        top:78px;
-        left:10px;
-        right:10px;
-        width:auto;
-      }
-
-      .bottom-nav{
-        position:fixed;
-        right:10px;
-        left:10px;
-        bottom:10px;
-        background:rgba(255,255,255,.94);
-        backdrop-filter:blur(18px);
-        border:1px solid var(--border);
-        box-shadow:0 18px 50px rgba(15,23,42,.16);
-        border-radius:24px;
-        padding:8px;
-        z-index:60;
-        display:flex;
-        gap:5px;
-        overflow-x:auto;
-        overscroll-behavior-x:contain;
-        -webkit-overflow-scrolling:touch;
-        scroll-snap-type:x proximity;
-      }
-
-      .bottom-nav::-webkit-scrollbar{
-        height:4px;
-      }
-
-      .bottom-nav::-webkit-scrollbar-thumb{
-        background:#cbd5e1;
-        border-radius:999px;
-      }
-
-      .bottom-btn{
-        border:0;
-        background:transparent;
-        border-radius:18px;
-        padding:8px 10px;
-        min-width:74px;
-        flex:0 0 auto;
-        scroll-snap-align:center;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        gap:3px;
-        font-size:10px;
-        font-weight:900;
-        color:#475569;
-      }
-
-      .bottom-btn.active{
-        background:#dbeafe;
-        color:#1d4ed8;
-      }
-
-      .bottom-btn span:first-child{
-        font-size:17px;
-      }
-
-      .modal{
-        max-height:88vh;
-        border-radius:24px;
-        padding:15px;
-      }
-
-      .toast{
-        bottom:106px;
-        right:10px;
-        left:10px;
-        max-width:none;
-      }
-
-      .auth-user-pill{
-        display:none;
-      }
-    }
-
-    @media(max-width:520px){
-      .form-grid,
-      .form-grid-compact{
-        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-        gap:8px !important;
-        align-items:end;
-      }
-
-      .form-grid > *,
-      .form-grid-compact > *{
-        min-width:0 !important;
-      }
-
-      .field-label{
-        font-size:12px;
-        margin-bottom:5px;
-        white-space:nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
-      }
-
-      .input,
-      .select,
-      .textarea{
-        padding:10px 9px;
-        font-size:13px;
-        min-width:0;
-      }
-
-      .textarea{
-        min-height:76px;
-      }
-
-      .input-with-btn{
-        grid-template-columns:1fr 42px;
-        gap:6px;
-      }
-
-      .icon-btn{
-        width:42px;
-        height:42px;
-        border-radius:14px;
-      }
-
-      .modal{
-        padding:14px;
-      }
-
-      .modal-title{
-        font-size:17px;
-      }
-
-      .primary-btn,
-      .gold-btn,
-      .ghost-btn,
-      .danger-btn,
-      .success-btn{
-        padding:11px 12px;
-        font-size:13px;
-        border-radius:15px;
-      }
-
-      .payment-choice-grid{
-        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-        gap:8px;
-      }
-
-      .payment-choice{
-        min-height:96px;
-        padding:12px 8px;
-        border-radius:18px;
-      }
-
-      .payment-choice i{
-        font-size:22px;
-      }
-
-      .debt-summary-strip,
-      .stat-grid,
-      .clean-stats-grid{
-        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-      }
-
-      .employee-grid{
-        grid-template-columns:1fr;
-      }
-    }
-  </style>
-</head>
-<body>
+    <body>
   <div id="authLock" class="auth-lock">
     <div class="auth-card">
       <div class="auth-logo">
-        <i class="fa-solid fa-shield-halved"></i>
+        <i class="fa-solid fa-cash-register"></i>
       </div>
 
-      <h1>تسجيل الدخول</h1>
-      <p>
-        دخول المدير بكلمة المرور. أول كلمة مرور مؤقتة هي 0000، وبعدها يمكن تغييرها من الإعدادات.
-      </p>
+      <h1 class="auth-title">نظام الكاشير</h1>
+      <div class="auth-sub">
+        تسجيل دخول آمن للمدير والموظفين<br>
+        كلمة مرور المدير الافتراضية أول مرة: 0000
+      </div>
 
       <div class="auth-tabs">
         <button id="authAdminTab" class="auth-tab active" type="button">
-          <i class="fa-solid fa-user-shield"></i> مدير
+          <i class="fa-solid fa-user-shield"></i>
+          المدير
         </button>
 
         <button id="authEmployeeTab" class="auth-tab" type="button">
-          <i class="fa-solid fa-user"></i> موظف
+          <i class="fa-solid fa-user-tie"></i>
+          الموظف
         </button>
       </div>
 
-      <form id="adminLoginForm" class="auth-form">
-        <label class="field-label">كلمة مرور المدير</label>
-        <input id="adminPasswordInput" type="password" class="input" placeholder="مثال: 0000" autocomplete="current-password">
+      <div id="authAdminPanel" class="auth-panel active">
+        <div style="margin-bottom:12px">
+          <label class="field-label">كلمة مرور المدير</label>
+          <input id="adminPasswordInput" class="input" type="password" inputmode="numeric" placeholder="أدخل كلمة مرور المدير">
+        </div>
 
-        <button class="primary-btn" type="submit" style="width:100%;margin-top:12px">
+        <button id="adminLoginBtn" class="primary-btn" type="button" style="width:100%">
           <i class="fa-solid fa-right-to-bracket"></i>
           دخول المدير
         </button>
-      </form>
+      </div>
 
-      <form id="employeeLoginForm" class="auth-form" style="display:none">
-        <label class="field-label">اسم الموظف</label>
-        <input id="employeeNameInput" class="input" placeholder="اسم الموظف" autocomplete="username">
+      <div id="authEmployeePanel" class="auth-panel">
+        <div class="form-grid-compact">
+          <div>
+            <label class="field-label">اسم الموظف</label>
+            <input id="employeeNameInput" class="input" autocomplete="username" placeholder="اسم الموظف">
+          </div>
 
-        <label class="field-label" style="margin-top:10px">كلمة المرور</label>
-        <input id="employeePasswordInput" type="password" class="input" placeholder="كلمة المرور" autocomplete="current-password">
+          <div>
+            <label class="field-label">كلمة المرور</label>
+            <input id="employeePasswordInput" class="input" type="password" autocomplete="current-password" placeholder="كلمة المرور">
+          </div>
+        </div>
 
-        <button class="gold-btn" type="submit" style="width:100%;margin-top:12px">
-          <i class="fa-solid fa-right-to-bracket"></i>
+        <button id="employeeLoginBtn" class="primary-btn" type="button" style="width:100%;margin-top:12px">
+          <i class="fa-solid fa-user-check"></i>
           دخول الموظف
         </button>
-      </form>
+      </div>
+
+      <div id="authStatusText" class="muted" style="font-size:12px;line-height:1.8;text-align:center;margin-top:12px"></div>
     </div>
   </div>
 
@@ -1713,75 +1015,24 @@
         </div>
       </div>
 
-      <div class="sidebar-scroll-note">
-        اسحب القائمة للأعلى أو للأسفل لعرض كل التبويبات
-      </div>
-
-      <button class="nav-btn active" data-page="home" data-permission="home">
-        <span class="nav-icon"><i class="fa-solid fa-house"></i></span>
-        الرئيسية
-      </button>
-
-      <button class="nav-btn" data-page="cashier" data-permission="cashier">
-        <span class="nav-icon"><i class="fa-solid fa-cart-shopping"></i></span>
-        الكاشير
-      </button>
-
-      <button class="nav-btn" data-page="freeInvoice" data-permission="freeInvoice">
-        <span class="nav-icon"><i class="fa-solid fa-file-circle-plus"></i></span>
-        فاتورة بدون مخزون
-      </button>
-
-      <button class="nav-btn" data-page="inventory" data-permission="inventory">
-        <span class="nav-icon"><i class="fa-solid fa-boxes-stacked"></i></span>
-        المخزون
-      </button>
-
-      <button class="nav-btn" data-page="invoices" data-permission="invoices">
-        <span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
-        الفواتير
-      </button>
-
-      <button class="nav-btn" data-page="debts" data-permission="debts">
-        <span class="nav-icon"><i class="fa-solid fa-address-book"></i></span>
-        الديون
-      </button>
-
-      <button class="nav-btn" data-page="purchases" data-permission="purchases">
-        <span class="nav-icon"><i class="fa-solid fa-truck-ramp-box"></i></span>
-        المشتريات
-      </button>
-
-      <button class="nav-btn" data-page="supplierPayments" data-permission="supplierPayments">
-        <span class="nav-icon"><i class="fa-solid fa-hand-holding-dollar"></i></span>
-        دفعات التجار
-      </button>
-
-      <button class="nav-btn" data-page="expenses" data-permission="expenses">
-        <span class="nav-icon"><i class="fa-solid fa-money-bill-wave"></i></span>
-        المصروفات
-      </button>
-
-      <button class="nav-btn" data-page="reports" data-permission="reports">
-        <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
-        التقارير
-      </button>
-
-      <button class="nav-btn" data-page="settings" data-permission="settings">
-        <span class="nav-icon"><i class="fa-solid fa-gear"></i></span>
-        الإعدادات
-      </button>
+      <button class="nav-btn active" type="button" data-page="home"><span class="nav-icon"><i class="fa-solid fa-house"></i></span> الرئيسية</button>
+      <button class="nav-btn" type="button" data-page="cashier"><span class="nav-icon"><i class="fa-solid fa-cart-shopping"></i></span> الكاشير</button>
+      <button class="nav-btn" type="button" data-page="freeInvoice"><span class="nav-icon"><i class="fa-solid fa-file-circle-plus"></i></span> فاتورة بدون مخزون</button>
+      <button class="nav-btn" type="button" data-page="inventory"><span class="nav-icon"><i class="fa-solid fa-boxes-stacked"></i></span> المخزون</button>
+      <button class="nav-btn" type="button" data-page="invoices"><span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span> الفواتير</button>
+      <button class="nav-btn" type="button" data-page="debts"><span class="nav-icon"><i class="fa-solid fa-address-book"></i></span> الديون</button>
+      <button class="nav-btn" type="button" data-page="purchases"><span class="nav-icon"><i class="fa-solid fa-truck-ramp-box"></i></span> المشتريات</button>
+      <button class="nav-btn" type="button" data-page="supplierPayments"><span class="nav-icon"><i class="fa-solid fa-hand-holding-dollar"></i></span> دفعات التجار</button>
+      <button class="nav-btn" type="button" data-page="expenses"><span class="nav-icon"><i class="fa-solid fa-money-bill-wave"></i></span> المصروفات</button>
+      <button class="nav-btn" type="button" data-page="reports"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span> التقارير</button>
+      <button class="nav-btn" type="button" data-page="settings"><span class="nav-icon"><i class="fa-solid fa-gear"></i></span> الإعدادات</button>
     </aside>
 
     <main class="main">
       <header class="topbar">
         <div class="brand">
-          <button id="openMenuBtn" class="icon-btn hamburger" type="button">
-            <i class="fa-solid fa-bars"></i>
-          </button>
-
+          <button id="openMenuBtn" class="icon-btn hamburger" type="button"><i class="fa-solid fa-bars"></i></button>
           <img id="topShopLogo" class="shop-logo" alt="logo">
-
           <div>
             <div id="topShopName" class="brand-title">المحل الرئيسي</div>
             <div id="connectionText" class="brand-sub">جاري فحص الاتصال...</div>
@@ -1789,14 +1040,10 @@
         </div>
 
         <div style="display:flex;align-items:center;gap:8px;position:relative">
-          <div id="authUserPill" class="auth-user-pill">
-            <i class="fa-solid fa-lock"></i>
-            غير مسجل
-          </div>
-
-          <button id="logoutBtn" class="icon-btn" type="button" title="تسجيل الخروج">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-          </button>
+          <span id="currentUserPill" class="user-pill" style="display:none">
+            <i class="fa-solid fa-user"></i>
+            <span id="currentUserName">مستخدم</span>
+          </span>
 
           <button id="syncNowBtn" class="icon-btn" type="button" title="المزامنة">
             <i class="fa-solid fa-rotate"></i>
@@ -1807,6 +1054,11 @@
           <button id="notificationsBtn" class="icon-btn" type="button" title="التنبيهات">
             <i class="fa-solid fa-bell"></i>
             <span id="notifBadge" class="sync-badge" style="display:none">0</span>
+          </button>
+
+          <button id="logoutBtn" class="logout-pill" type="button" title="تسجيل الخروج">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            خروج
           </button>
         </div>
       </header>
@@ -1834,38 +1086,26 @@
         <div id="syncOperationList" class="sync-operation-list"></div>
       </div>
 
-      <section id="page-home" class="section active" data-permission="home">
+      <section id="page-home" class="section active">
         <div class="clean-stats-card">
           <div class="clean-stats-grid">
             <div class="clean-stat">
-              <div class="clean-stat-title">
-                <span>مبيعات اليوم</span>
-                <i class="fa-solid fa-cash-register"></i>
-              </div>
+              <div class="clean-stat-title"><span>مبيعات اليوم</span><i class="fa-solid fa-cash-register"></i></div>
               <div id="homeTodaySales" class="clean-stat-value blue">₪ 0.00</div>
             </div>
 
             <div class="clean-stat">
-              <div class="clean-stat-title">
-                <span>ربح اليوم</span>
-                <i class="fa-solid fa-arrow-trend-up"></i>
-              </div>
+              <div class="clean-stat-title"><span>ربح اليوم</span><i class="fa-solid fa-arrow-trend-up"></i></div>
               <div id="homeTodayProfit" class="clean-stat-value green">₪ 0.00</div>
             </div>
 
             <div class="clean-stat">
-              <div class="clean-stat-title">
-                <span>عليه من الزبائن</span>
-                <i class="fa-solid fa-user-clock"></i>
-              </div>
+              <div class="clean-stat-title"><span>عليه من الزبائن</span><i class="fa-solid fa-user-clock"></i></div>
               <div id="homeDebtOwed" class="clean-stat-value red">₪ 0.00</div>
             </div>
 
             <div class="clean-stat">
-              <div class="clean-stat-title">
-                <span>للزبائن</span>
-                <i class="fa-solid fa-hand-holding-dollar"></i>
-              </div>
+              <div class="clean-stat-title"><span>للزبائن</span><i class="fa-solid fa-hand-holding-dollar"></i></div>
               <div id="homeDebtCredit" class="clean-stat-value gold">₪ 0.00</div>
             </div>
           </div>
@@ -1873,11 +1113,7 @@
 
         <div class="card">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-            <h2 style="margin:0;font-size:20px;font-weight:900">
-              <i class="fa-solid fa-bolt"></i>
-              الأصناف السريعة
-            </h2>
-
+            <h2 style="margin:0;font-size:20px;font-weight:900"><i class="fa-solid fa-bolt"></i> الأصناف السريعة</h2>
             <input id="homeProductSearch" class="input" style="max-width:330px" placeholder="بحث سريع عن صنف أو باركود...">
           </div>
 
@@ -1885,49 +1121,31 @@
         </div>
       </section>
 
-      <section id="page-cashier" class="section" data-permission="cashier">
+      <section id="page-cashier" class="section">
         <div class="cart-layout">
           <div class="card">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
-              <h1 style="font-size:22px;font-weight:900;margin:0">
-                <i class="fa-solid fa-cart-shopping"></i>
-                الكاشير
-              </h1>
-
-              <button id="goFreeInvoiceBtn" class="gold-btn" type="button">
-                <i class="fa-solid fa-file-circle-plus"></i>
-                فاتورة بدون مخزون
-              </button>
+              <h1 style="font-size:22px;font-weight:900;margin:0"><i class="fa-solid fa-cart-shopping"></i> الكاشير</h1>
+              <button id="goFreeInvoiceBtn" class="gold-btn" type="button"><i class="fa-solid fa-file-circle-plus"></i> فاتورة بدون مخزون</button>
             </div>
 
             <div class="search-row">
               <input id="cashierSearch" class="input" placeholder="اكتب اسم المنتج أو امسح الباركود..." autocomplete="off">
-
-              <button id="openScannerBtn" class="icon-btn" type="button" title="كاميرا الباركود">
-                <i class="fa-solid fa-camera"></i>
-              </button>
-
-              <button id="manualBarcodeBtn" class="icon-btn" type="button" title="إدخال باركود">
-                <i class="fa-solid fa-barcode"></i>
-              </button>
+              <button id="openScannerBtn" class="icon-btn" type="button" title="كاميرا الباركود"><i class="fa-solid fa-camera"></i></button>
+              <button id="manualBarcodeBtn" class="icon-btn" type="button" title="إدخال باركود"><i class="fa-solid fa-barcode"></i></button>
             </div>
 
             <div id="suggestionsBox" class="card" style="display:none;position:absolute;z-index:30;max-width:520px;width:calc(100% - 60px);padding:8px"></div>
 
             <div class="table-wrap">
               <div id="cartLines" style="padding:10px">
-                <div class="muted" style="text-align:center;padding:40px 10px">
-                  ابدأ بإضافة المنتجات للفاتورة
-                </div>
+                <div class="muted" style="text-align:center;padding:40px 10px">ابدأ بإضافة المنتجات للفاتورة</div>
               </div>
             </div>
           </div>
 
           <div class="card cart-summary">
-            <h2 style="font-size:20px;font-weight:900;margin:0 0 14px">
-              <i class="fa-solid fa-receipt"></i>
-              إجمالي الطلب
-            </h2>
+            <h2 style="font-size:20px;font-weight:900;margin:0 0 14px"><i class="fa-solid fa-receipt"></i> إجمالي الطلب</h2>
 
             <div style="border-top:1px solid var(--border);padding-top:14px">
               <div style="display:flex;justify-content:space-between;margin-bottom:8px">
@@ -1948,40 +1166,34 @@
 
             <div style="margin-top:12px">
               <label class="field-label">الخصم</label>
-
               <div class="form-grid">
                 <select id="discountType" class="select">
                   <option value="fixed">مبلغ ثابت</option>
                   <option value="percent">نسبة مئوية</option>
                 </select>
-
                 <input id="discountValue" type="number" inputmode="decimal" class="input" value="0" min="0" step="0.001">
               </div>
             </div>
 
             <button id="completeSaleBtn" class="primary-btn" type="button" style="width:100%;margin-top:16px">
-              <i class="fa-solid fa-check"></i>
-              إتمام البيع
+              <i class="fa-solid fa-check"></i> إتمام البيع
             </button>
 
             <button id="clearCartBtn" class="danger-btn" type="button" style="width:100%;margin-top:10px">
-              <i class="fa-solid fa-trash"></i>
-              تفريغ السلة
+              <i class="fa-solid fa-trash"></i> تفريغ السلة
             </button>
           </div>
         </div>
       </section>
 
-      <section id="page-freeInvoice" class="section" data-permission="freeInvoice">
+      <section id="page-freeInvoice" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-file-circle-plus"></i>
-            فاتورة بدون مخزون
+            <i class="fa-solid fa-file-circle-plus"></i> فاتورة بدون مخزون
           </h1>
 
           <button id="addFreeLineBtn" class="primary-btn" type="button">
-            <i class="fa-solid fa-plus"></i>
-            إضافة صنف
+            <i class="fa-solid fa-plus"></i> إضافة صنف
           </button>
         </div>
 
@@ -1994,27 +1206,23 @@
           </div>
 
           <button id="completeFreeInvoiceBtn" class="gold-btn" type="button" style="width:100%;margin-top:14px">
-            <i class="fa-solid fa-check"></i>
-            إتمام الفاتورة الحرة
+            <i class="fa-solid fa-check"></i> إتمام الفاتورة الحرة
           </button>
         </div>
       </section>
-      <section id="page-inventory" class="section" data-permission="inventory">
+      <section id="page-inventory" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-boxes-stacked"></i>
-            المخزون والمنتجات
+            <i class="fa-solid fa-boxes-stacked"></i> المخزون والمنتجات
           </h1>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button id="excelInventoryBtn" class="success-btn" type="button">
-              <i class="fa-solid fa-file-excel"></i>
-              Excel
+              <i class="fa-solid fa-file-excel"></i> Excel
             </button>
 
             <button id="addProductBtn" class="primary-btn" type="button">
-              <i class="fa-solid fa-plus"></i>
-              إضافة منتج
+              <i class="fa-solid fa-plus"></i> إضافة منتج
             </button>
           </div>
         </div>
@@ -2046,16 +1254,14 @@
         </div>
       </section>
 
-      <section id="page-invoices" class="section" data-permission="invoices">
+      <section id="page-invoices" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-file-invoice-dollar"></i>
-            الفواتير
+            <i class="fa-solid fa-file-invoice-dollar"></i> الفواتير
           </h1>
 
           <button class="primary-btn" type="button" data-page-jump="cashier">
-            <i class="fa-solid fa-plus"></i>
-            فاتورة مباشرة
+            <i class="fa-solid fa-plus"></i> فاتورة مباشرة
           </button>
         </div>
 
@@ -2093,23 +1299,19 @@
 
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
             <button id="printInvoicesBtn" class="ghost-btn" type="button">
-              <i class="fa-solid fa-print"></i>
-              طباعة
+              <i class="fa-solid fa-print"></i> طباعة
             </button>
 
             <button id="imageInvoicesBtn" class="success-btn" type="button">
-              <i class="fa-solid fa-image"></i>
-              صورة
+              <i class="fa-solid fa-image"></i> صورة
             </button>
 
             <button id="pdfInvoicesBtn" class="danger-btn" type="button">
-              <i class="fa-solid fa-file-pdf"></i>
-              PDF
+              <i class="fa-solid fa-file-pdf"></i> PDF
             </button>
 
             <button id="excelInvoicesBtn" class="success-btn" type="button">
-              <i class="fa-solid fa-file-excel"></i>
-              Excel
+              <i class="fa-solid fa-file-excel"></i> Excel
             </button>
           </div>
         </div>
@@ -2139,22 +1341,19 @@
         </div>
       </section>
 
-      <section id="page-debts" class="section" data-permission="debts">
+      <section id="page-debts" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-address-book"></i>
-            حسابات الديون
+            <i class="fa-solid fa-address-book"></i> حسابات الديون
           </h1>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button id="excelDebtsBtn" class="success-btn" type="button">
-              <i class="fa-solid fa-file-excel"></i>
-              Excel
+              <i class="fa-solid fa-file-excel"></i> Excel
             </button>
 
             <button id="addDebtCustomerBtn" class="gold-btn" type="button">
-              <i class="fa-solid fa-user-plus"></i>
-              إضافة حساب
+              <i class="fa-solid fa-user-plus"></i> إضافة حساب
             </button>
           </div>
         </div>
@@ -2205,22 +1404,19 @@
         </div>
       </section>
 
-      <section id="page-purchases" class="section" data-permission="purchases">
+      <section id="page-purchases" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-truck-ramp-box"></i>
-            المشتريات وإدخال البضاعة
+            <i class="fa-solid fa-truck-ramp-box"></i> المشتريات وإدخال البضاعة
           </h1>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button id="excelPurchasesBtn" class="success-btn" type="button">
-              <i class="fa-solid fa-file-excel"></i>
-              Excel
+              <i class="fa-solid fa-file-excel"></i> Excel
             </button>
 
             <button id="addPurchaseBtn" class="primary-btn" type="button">
-              <i class="fa-solid fa-plus"></i>
-              فاتورة مشتريات
+              <i class="fa-solid fa-plus"></i> فاتورة مشتريات
             </button>
           </div>
         </div>
@@ -2251,23 +1447,19 @@
           </div>
         </div>
       </section>
-
-      <section id="page-supplierPayments" class="section" data-permission="supplierPayments">
+      <section id="page-supplierPayments" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-hand-holding-dollar"></i>
-            دفعات التجار
+            <i class="fa-solid fa-hand-holding-dollar"></i> دفعات التجار
           </h1>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button id="excelSupplierPaymentsBtn" class="success-btn" type="button">
-              <i class="fa-solid fa-file-excel"></i>
-              Excel
+              <i class="fa-solid fa-file-excel"></i> Excel
             </button>
 
             <button id="addSupplierPaymentBtn" class="primary-btn" type="button">
-              <i class="fa-solid fa-plus"></i>
-              إضافة دفعة تاجر
+              <i class="fa-solid fa-plus"></i> إضافة دفعة تاجر
             </button>
           </div>
         </div>
@@ -2292,22 +1484,20 @@
           </div>
         </div>
       </section>
-      <section id="page-expenses" class="section" data-permission="expenses">
+
+      <section id="page-expenses" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-money-bill-wave"></i>
-            المصروفات
+            <i class="fa-solid fa-money-bill-wave"></i> المصروفات
           </h1>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button id="excelExpensesBtn" class="success-btn" type="button">
-              <i class="fa-solid fa-file-excel"></i>
-              Excel
+              <i class="fa-solid fa-file-excel"></i> Excel
             </button>
 
             <button id="addExpenseBtn" class="primary-btn" type="button">
-              <i class="fa-solid fa-plus"></i>
-              إضافة مصروف
+              <i class="fa-solid fa-plus"></i> إضافة مصروف
             </button>
           </div>
         </div>
@@ -2332,28 +1522,20 @@
         </div>
       </section>
 
-      <section id="page-reports" class="section" data-permission="reports">
+      <section id="page-reports" class="section">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <h1 style="font-size:24px;font-weight:900;margin:0">
-            <i class="fa-solid fa-chart-line"></i>
-            التقارير المالية
+            <i class="fa-solid fa-chart-line"></i> التقارير المالية
           </h1>
 
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button id="excelReportsBtn" class="success-btn" type="button">
-              <i class="fa-solid fa-file-excel"></i>
-              Excel
-            </button>
-
-            <select id="reportsPeriod" class="select" style="max-width:180px">
-              <option value="today">اليوم</option>
-              <option value="week">أسبوع</option>
-              <option value="month">شهر</option>
-              <option value="year">سنة</option>
-              <option value="all">كل السجل</option>
-              <option value="custom">تاريخ محدد</option>
-            </select>
-          </div>
+          <select id="reportsPeriod" class="select" style="max-width:180px">
+            <option value="today">اليوم</option>
+            <option value="week">أسبوع</option>
+            <option value="month">شهر</option>
+            <option value="year">سنة</option>
+            <option value="all">كل السجل</option>
+            <option value="custom">تاريخ محدد</option>
+          </select>
         </div>
 
         <input id="reportsCustomDate" type="date" class="input" style="display:none;max-width:220px;margin-bottom:12px">
@@ -2361,42 +1543,27 @@
         <div id="reportsPrintArea">
           <div class="stat-grid">
             <div class="stat blue">
-              <div class="stat-title">
-                <i class="fa-solid fa-cash-register"></i>
-                إجمالي المبيعات
-              </div>
+              <div class="stat-title"><i class="fa-solid fa-cash-register"></i> إجمالي المبيعات</div>
               <div id="reportSales" class="stat-value">₪ 0.00</div>
             </div>
 
             <div class="stat green">
-              <div class="stat-title">
-                <i class="fa-solid fa-arrow-trend-up"></i>
-                إجمالي الأرباح
-              </div>
+              <div class="stat-title"><i class="fa-solid fa-arrow-trend-up"></i> إجمالي الأرباح</div>
               <div id="reportProfit" class="stat-value">₪ 0.00</div>
             </div>
 
             <div class="stat red">
-              <div class="stat-title">
-                <i class="fa-solid fa-money-bill-wave"></i>
-                إجمالي المصاريف
-              </div>
+              <div class="stat-title"><i class="fa-solid fa-money-bill-wave"></i> إجمالي المصاريف</div>
               <div id="reportExpenses" class="stat-value">₪ 0.00</div>
             </div>
 
             <div class="stat gold">
-              <div class="stat-title">
-                <i class="fa-solid fa-hand-holding-dollar"></i>
-                دفعات التجار
-              </div>
+              <div class="stat-title"><i class="fa-solid fa-hand-holding-dollar"></i> دفعات التجار</div>
               <div id="reportSupplierPayments" class="stat-value">₪ 0.00</div>
             </div>
 
             <div class="stat dark">
-              <div class="stat-title">
-                <i class="fa-solid fa-scale-balanced"></i>
-                الربح الصافي
-              </div>
+              <div class="stat-title"><i class="fa-solid fa-scale-balanced"></i> الربح الصافي</div>
               <div id="reportNet" class="stat-value">₪ 0.00</div>
             </div>
           </div>
@@ -2404,25 +1571,14 @@
           <div class="card" style="margin-bottom:14px">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
               <h2 style="margin:0;font-size:19px;font-weight:900">
-                <i class="fa-solid fa-table"></i>
-                تقارير تفصيلية
+                <i class="fa-solid fa-table"></i> تقارير تفصيلية
               </h2>
 
               <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button id="printReportsBtn" class="ghost-btn" type="button">
-                  <i class="fa-solid fa-print"></i>
-                  طباعة
-                </button>
-
-                <button id="imageReportsBtn" class="success-btn" type="button">
-                  <i class="fa-solid fa-image"></i>
-                  صورة
-                </button>
-
-                <button id="pdfReportsBtn" class="danger-btn" type="button">
-                  <i class="fa-solid fa-file-pdf"></i>
-                  PDF
-                </button>
+                <button id="printReportsBtn" class="ghost-btn" type="button"><i class="fa-solid fa-print"></i> طباعة</button>
+                <button id="imageReportsBtn" class="success-btn" type="button"><i class="fa-solid fa-image"></i> صورة</button>
+                <button id="pdfReportsBtn" class="danger-btn" type="button"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+                <button id="excelReportsBtn" class="success-btn" type="button"><i class="fa-solid fa-file-excel"></i> Excel</button>
               </div>
             </div>
 
@@ -2450,15 +1606,13 @@
           </div>
 
           <div class="card" style="margin-bottom:14px">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
               <h2 style="margin:0;font-size:19px;font-weight:900">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                البضاعة الناقصة
+                <i class="fa-solid fa-triangle-exclamation"></i> البضاعة الناقصة
               </h2>
 
               <button id="excelLowStockBtn" class="success-btn" type="button">
-                <i class="fa-solid fa-file-excel"></i>
-                Excel
+                <i class="fa-solid fa-file-excel"></i> Excel
               </button>
             </div>
 
@@ -2480,8 +1634,7 @@
 
           <div class="card">
             <h2 style="margin:0 0 12px;font-size:19px;font-weight:900">
-              <i class="fa-solid fa-wallet"></i>
-              أرصدة حسابات الدفع
+              <i class="fa-solid fa-wallet"></i> أرصدة حسابات الدفع
             </h2>
 
             <div class="table-wrap">
@@ -2499,61 +1652,14 @@
           </div>
         </div>
       </section>
-
-      <section id="page-settings" class="section" data-permission="settings">
+      <section id="page-settings" class="section">
         <h1 style="font-size:24px;font-weight:900;margin:0 0 14px">
-          <i class="fa-solid fa-gear"></i>
-          الإعدادات
+          <i class="fa-solid fa-gear"></i> الإعدادات
         </h1>
 
         <div class="card" style="margin-bottom:14px">
           <h2 style="margin:0 0 12px;font-size:19px;font-weight:900">
-            <i class="fa-solid fa-shield-halved"></i>
-            أمان المدير
-          </h2>
-
-          <div class="form-grid">
-            <div>
-              <label class="field-label">كلمة مرور المدير الجديدة</label>
-              <input id="settingAdminPassword" type="password" class="input" placeholder="اتركها فارغة إن لم ترد التغيير">
-            </div>
-
-            <div>
-              <label class="field-label">تأكيد كلمة المرور</label>
-              <input id="settingAdminPassword2" type="password" class="input" placeholder="أعد كتابة كلمة المرور">
-            </div>
-          </div>
-
-          <button id="changeAdminPasswordBtn" type="button" class="primary-btn" style="margin-top:14px">
-            <i class="fa-solid fa-key"></i>
-            تغيير كلمة مرور المدير
-          </button>
-        </div>
-
-        <div class="card" style="margin-bottom:14px">
-          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
-            <h2 style="margin:0;font-size:19px;font-weight:900">
-              <i class="fa-solid fa-users-gear"></i>
-              الموظفون والصلاحيات
-            </h2>
-
-            <button id="addEmployeeBtn" class="primary-btn" type="button">
-              <i class="fa-solid fa-user-plus"></i>
-              إضافة موظف
-            </button>
-          </div>
-
-          <div class="muted" style="font-size:12px;margin-bottom:10px;line-height:1.8">
-            يمكن للمدير إضافة موظف وتحديد التبويبات المسموحة له. إذا تم حذف الموظف أو إيقافه، سيتم إخراجه تلقائياً عند المزامنة.
-          </div>
-
-          <div id="employeesList"></div>
-        </div>
-
-        <div class="card" style="margin-bottom:14px">
-          <h2 style="margin:0 0 12px;font-size:19px;font-weight:900">
-            <i class="fa-solid fa-store"></i>
-            بيانات المحل
+            <i class="fa-solid fa-store"></i> بيانات المحل
           </h2>
 
           <div class="form-grid">
@@ -2593,21 +1699,42 @@
           </div>
 
           <button id="saveSettingsBtn" class="primary-btn" type="button" style="margin-top:14px">
-            <i class="fa-solid fa-floppy-disk"></i>
-            حفظ الإعدادات
+            <i class="fa-solid fa-floppy-disk"></i> حفظ الإعدادات
           </button>
         </div>
 
         <div class="card" style="margin-bottom:14px">
           <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
             <h2 style="margin:0;font-size:19px;font-weight:900">
-              <i class="fa-solid fa-credit-card"></i>
-              حسابات الدفع والتحويل
+              <i class="fa-solid fa-users-gear"></i> المدير والموظفين
+            </h2>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button id="changeAdminPasswordBtn" class="gold-btn" type="button">
+                <i class="fa-solid fa-key"></i> تغيير كلمة مرور المدير
+              </button>
+
+              <button id="addEmployeeBtn" class="primary-btn" type="button">
+                <i class="fa-solid fa-user-plus"></i> إضافة موظف
+              </button>
+            </div>
+          </div>
+
+          <div class="muted" style="font-size:12px;margin-bottom:10px;line-height:1.8">
+            المدير يستطيع إضافة موظفين وتحديد صلاحيات كل موظف حسب التبويبات. الموظف لا يستطيع تحويل نفسه إلى مدير.
+          </div>
+
+          <div id="employeesList"></div>
+        </div>
+
+        <div class="card" style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+            <h2 style="margin:0;font-size:19px;font-weight:900">
+              <i class="fa-solid fa-credit-card"></i> حسابات الدفع والتحويل
             </h2>
 
             <button id="addPaymentAccountBtn" class="primary-btn" type="button">
-              <i class="fa-solid fa-plus"></i>
-              حساب
+              <i class="fa-solid fa-plus"></i> حساب
             </button>
           </div>
 
@@ -2620,30 +1747,26 @@
 
         <div class="card">
           <h2 style="margin:0 0 12px;font-size:19px;font-weight:900">
-            <i class="fa-solid fa-database"></i>
-            النسخ الاحتياطي
+            <i class="fa-solid fa-database"></i> النسخ الاحتياطي
           </h2>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button id="exportBackupBtn" class="success-btn" type="button">
-              <i class="fa-solid fa-download"></i>
-              تحميل نسخة احتياطية
+              <i class="fa-solid fa-download"></i> تحميل نسخة احتياطية
             </button>
 
             <label class="ghost-btn" style="cursor:pointer">
-              <i class="fa-solid fa-upload"></i>
-              استيراد نسخة
+              <i class="fa-solid fa-upload"></i> استيراد نسخة
               <input id="importBackupInput" type="file" accept="application/json" style="display:none">
             </label>
 
             <button id="clearLocalBtn" class="danger-btn" type="button">
-              <i class="fa-solid fa-trash"></i>
-              مسح البيانات المحلية
+              <i class="fa-solid fa-trash"></i> مسح البيانات المحلية
             </button>
           </div>
         </div>
       </section>
-      </main>
+    </main>
   </div>
 
   <button id="quickAddBtn" class="fab-add" type="button" title="إضافة">
@@ -2651,44 +1774,29 @@
   </button>
 
   <nav class="bottom-nav">
-    <button class="bottom-btn active" type="button" data-page="home" data-permission="home">
+    <button class="bottom-btn active" type="button" data-page="home">
       <span><i class="fa-solid fa-house"></i></span>
       <span>الرئيسية</span>
     </button>
 
-    <button class="bottom-btn" type="button" data-page="cashier" data-permission="cashier">
+    <button class="bottom-btn" type="button" data-page="cashier">
       <span><i class="fa-solid fa-cart-shopping"></i></span>
       <span>كاشير</span>
     </button>
 
-    <button class="bottom-btn" type="button" data-page="inventory" data-permission="inventory">
+    <button class="bottom-btn" type="button" data-page="inventory">
       <span><i class="fa-solid fa-boxes-stacked"></i></span>
       <span>مخزون</span>
     </button>
 
-    <button class="bottom-btn" type="button" data-page="debts" data-permission="debts">
+    <button class="bottom-btn" type="button" data-page="debts">
       <span><i class="fa-solid fa-address-book"></i></span>
       <span>ديون</span>
     </button>
 
-    <button class="bottom-btn" type="button" data-page="invoices" data-permission="invoices">
+    <button class="bottom-btn" type="button" data-page="invoices">
       <span><i class="fa-solid fa-file-invoice-dollar"></i></span>
       <span>فواتير</span>
-    </button>
-
-    <button class="bottom-btn" type="button" data-page="purchases" data-permission="purchases">
-      <span><i class="fa-solid fa-truck-ramp-box"></i></span>
-      <span>مشتريات</span>
-    </button>
-
-    <button class="bottom-btn" type="button" data-page="reports" data-permission="reports">
-      <span><i class="fa-solid fa-chart-line"></i></span>
-      <span>تقارير</span>
-    </button>
-
-    <button class="bottom-btn" type="button" data-page="settings" data-permission="settings">
-      <span><i class="fa-solid fa-gear"></i></span>
-      <span>إعدادات</span>
     </button>
   </nav>
 
@@ -2714,8 +1822,7 @@
     <div class="floating-scanner-card">
       <div class="modal-head">
         <div class="modal-title">
-          <i class="fa-solid fa-barcode"></i>
-          قراءة باركود المنتج
+          <i class="fa-solid fa-barcode"></i> قراءة باركود المنتج
         </div>
 
         <button id="floatingScannerCloseBtn" class="close-btn" type="button">
@@ -2730,13 +1837,11 @@
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
         <button id="floatingManualCodeBtn" class="ghost-btn" type="button">
-          <i class="fa-solid fa-keyboard"></i>
-          إدخال يدوي
+          <i class="fa-solid fa-keyboard"></i> إدخال يدوي
         </button>
       </div>
     </div>
   </div>
-
   <template id="productFormTemplate">
     <form id="productForm">
       <input type="hidden" id="productId">
@@ -2819,13 +1924,11 @@
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
         <button class="primary-btn" type="submit">
-          <i class="fa-solid fa-floppy-disk"></i>
-          حفظ المنتج
+          <i class="fa-solid fa-floppy-disk"></i> حفظ المنتج
         </button>
 
         <button class="ghost-btn" type="button" id="generateBarcodeBtn">
-          <i class="fa-solid fa-barcode"></i>
-          إصدار باركود
+          <i class="fa-solid fa-barcode"></i> إصدار باركود
         </button>
       </div>
     </form>
@@ -2883,8 +1986,7 @@
       </div>
 
       <button class="primary-btn" type="submit" style="margin-top:14px;width:100%">
-        <i class="fa-solid fa-floppy-disk"></i>
-        حفظ المشتريات وتحديث المخزون
+        <i class="fa-solid fa-floppy-disk"></i> حفظ المشتريات وتحديث المخزون
       </button>
     </form>
   </template>
@@ -2914,11 +2016,11 @@
       </div>
 
       <button class="primary-btn" type="submit" style="margin-top:14px;width:100%">
-        <i class="fa-solid fa-floppy-disk"></i>
-        حفظ دفعة التاجر
+        <i class="fa-solid fa-floppy-disk"></i> حفظ دفعة التاجر
       </button>
     </form>
   </template>
+
   <template id="debtCustomerFormTemplate">
     <form id="debtCustomerForm">
       <input type="hidden" id="debtCustomerId">
@@ -2936,8 +2038,7 @@
       </div>
 
       <button class="gold-btn" type="submit" style="width:100%;margin-top:14px">
-        <i class="fa-solid fa-floppy-disk"></i>
-        حفظ الحساب
+        <i class="fa-solid fa-floppy-disk"></i> حفظ الحساب
       </button>
     </form>
   </template>
@@ -2964,12 +2065,10 @@
       </div>
 
       <button class="primary-btn" type="submit" style="margin-top:14px;width:100%">
-        <i class="fa-solid fa-floppy-disk"></i>
-        حفظ المصروف
+        <i class="fa-solid fa-floppy-disk"></i> حفظ المصروف
       </button>
     </form>
   </template>
-
   <template id="paymentAccountFormTemplate">
     <form id="paymentAccountForm">
       <input type="hidden" id="paymentAccountId">
@@ -2987,8 +2086,7 @@
       </div>
 
       <button class="primary-btn" type="submit" style="margin-top:14px;width:100%">
-        <i class="fa-solid fa-floppy-disk"></i>
-        حفظ الحساب
+        <i class="fa-solid fa-floppy-disk"></i> حفظ الحساب
       </button>
     </form>
   </template>
@@ -3000,39 +2098,36 @@
       <div class="form-grid-compact">
         <div>
           <label class="field-label">اسم الموظف</label>
-          <input id="employeeName" class="input" required placeholder="مثال: أحمد">
+          <input id="employeeFormName" class="input" required placeholder="مثال: أحمد">
         </div>
 
         <div>
           <label class="field-label">كلمة المرور</label>
-          <input id="employeePassword" type="password" class="input" placeholder="كلمة المرور">
+          <input id="employeeFormPassword" class="input" type="password" placeholder="اتركها فارغة عند التعديل بدون تغيير">
         </div>
 
-        <div>
+        <div class="full-row">
           <label class="field-label">حالة الموظف</label>
-          <select id="employeeActive" class="select">
+          <select id="employeeFormActive" class="select">
             <option value="true">فعال</option>
             <option value="false">موقوف</option>
           </select>
         </div>
 
-        <div>
-          <label class="field-label">صلاحية مدير كاملة</label>
-          <select id="employeeIsAdmin" class="select">
-            <option value="false">لا</option>
-            <option value="true">نعم</option>
-          </select>
+        <div class="full-row">
+          <label class="field-label">الصلاحيات</label>
+
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px" id="employeePermissionsBox"></div>
+
+          <label style="display:flex;align-items:center;gap:8px;margin-top:10px;background:#fffbeb;border:1px solid #fde68a;border-radius:16px;padding:10px;font-weight:900;color:#92400e">
+            <input id="employeeAdminPermission" type="checkbox">
+            إعطاء صلاحيات مدير كاملة
+          </label>
         </div>
       </div>
 
-      <div class="full-row" style="margin-top:12px">
-        <label class="field-label">صلاحيات التبويبات</label>
-        <div id="employeePermissionsGrid" class="employee-grid"></div>
-      </div>
-
-      <button class="primary-btn" type="submit" style="width:100%;margin-top:14px">
-        <i class="fa-solid fa-floppy-disk"></i>
-        حفظ الموظف
+      <button class="primary-btn" type="submit" style="margin-top:14px;width:100%">
+        <i class="fa-solid fa-floppy-disk"></i> حفظ الموظف
       </button>
     </form>
   </template>
@@ -3046,13 +2141,11 @@
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
         <button id="stopScannerBtn" class="danger-btn" type="button">
-          <i class="fa-solid fa-camera-slash"></i>
-          إيقاف الكاميرا
+          <i class="fa-solid fa-camera-slash"></i> إيقاف الكاميرا
         </button>
 
         <button id="manualCodeFromScannerBtn" class="ghost-btn" type="button">
-          <i class="fa-solid fa-keyboard"></i>
-          إدخال يدوي
+          <i class="fa-solid fa-keyboard"></i> إدخال يدوي
         </button>
       </div>
 
@@ -3072,7 +2165,7 @@
   <script src="./firebase-config.js"></script>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import {
       getDatabase,
       ref,
@@ -3107,12 +2200,13 @@
 
     const FIREBASE_ROOT = externalFirebase.firebaseRoot || `cashier_units_pro_${DB_NAMESPACE}`;
     const FALLBACK_ROOTS = Array.isArray(externalFirebase.fallbackRoots) ? externalFirebase.fallbackRoots : [];
-    const DB_NAME = `cashier_units_pro_${DB_NAMESPACE}_db_v15`;
-    const DB_VERSION = 15;
 
-    const AUTH_SESSION_KEY = `cashier_auth_session_${DB_NAMESPACE}_v1`;
-    const ADMIN_PERMISSION = "__admin__";
+    const DB_NAME = `cashier_units_pro_${DB_NAMESPACE}_db_v20_clean`;
+    const DB_VERSION = 20;
+
+    const AUTH_SESSION_KEY = `cashier_auth_session_${DB_NAMESPACE}_v20`;
     const DEFAULT_ADMIN_PIN = "0000";
+    const ADMIN_PERMISSION = "__admin__";
 
     const STORE_NAMES = [
       "products",
@@ -3154,14 +2248,14 @@
       paymentAccounts: [],
       employees: [],
       settings: null,
-      auth: {
-        user: null
-      },
       cart: [],
       freeLines: [],
       syncing: false,
       realtimeStarted: false,
       activeInvoiceFolder: "all",
+      auth: {
+        user: null
+      },
       syncUi: {
         visible: false,
         progress: 0,
@@ -3191,6 +2285,7 @@
       adminPasswordHash: "",
       updatedAt: Date.now()
     };
+
     const defaultAccounts = [
       {
         id: "cash",
@@ -3230,13 +2325,6 @@
       return `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`;
     }
 
-    function cleanNumber(v, fallback = 0) {
-      const s = String(v ?? "").trim().replace(",", ".");
-      if (s === "." || s === "" || s === "-") return fallback;
-      const n = Number(s);
-      return Number.isFinite(n) ? n : fallback;
-    }
-
     function simpleHash(str) {
       const text = String(str || "");
       let h = 2166136261;
@@ -3247,6 +2335,13 @@
       }
 
       return String(h >>> 0);
+    }
+
+    function cleanNumber(v, fallback = 0) {
+      const s = String(v ?? "").trim().replace(",", ".");
+      if (s === "." || s === "" || s === "-") return fallback;
+      const n = Number(s);
+      return Number.isFinite(n) ? n : fallback;
     }
 
     function todayKey(date = new Date()) {
@@ -3345,7 +2440,6 @@
       };
       return map[unit] || unit || "-";
     }
-
     function baseUnitForType(unitType) {
       if (unitType === "carton") return "piece";
       if (unitType === "kg") return "g";
@@ -3430,6 +2524,13 @@
         createdAt: emp.createdAt || Date.now(),
         updatedAt: emp.updatedAt || Date.now()
       };
+    }
+
+    function ensureAdminPassword() {
+      if (!state.settings) state.settings = { ...defaultSettings };
+      if (!state.settings.adminPasswordHash) {
+        state.settings.adminPasswordHash = simpleHash(DEFAULT_ADMIN_PIN);
+      }
     }
 
     function customerBalanceText(balance) {
@@ -3524,6 +2625,7 @@
         costTotal: unitCost * qty
       };
     }
+
     function makeLogoDataUrl(text) {
       const letter = String(text || "م").trim().charAt(0) || "م";
       const svg = `
@@ -3549,7 +2651,6 @@
         reader.readAsDataURL(file);
       });
     }
-
     function openDB() {
       return new Promise((resolve, reject) => {
         const req = indexedDB.open(DB_NAME, DB_VERSION);
@@ -3716,11 +2817,15 @@
       const queue = await idbGetAll("syncQueue");
       const count = queue.length;
 
-      $("syncCountBadge").textContent = count;
-      $("syncCountBadge").style.display = count ? "flex" : "none";
+      if ($("syncCountBadge")) {
+        $("syncCountBadge").textContent = count;
+        $("syncCountBadge").style.display = count ? "flex" : "none";
+      }
 
-      $("connectionText").textContent = navigator.onLine ? "متصل - المزامنة مفعلة" : "غير متصل - الحفظ محليًا";
-      $("connectionText").style.color = navigator.onLine ? "#16a34a" : "#dc2626";
+      if ($("connectionText")) {
+        $("connectionText").textContent = navigator.onLine ? "متصل - المزامنة مفعلة" : "غير متصل - الحفظ محليًا";
+        $("connectionText").style.color = navigator.onLine ? "#16a34a" : "#dc2626";
+      }
 
       return count;
     }
@@ -3803,6 +2908,10 @@
         }
       }
 
+      if (store === "employees") {
+        await validateCurrentEmployeeSession();
+      }
+
       if (typeof rebuildCustomerBalances === "function") {
         rebuildCustomerBalances(false);
       }
@@ -3814,12 +2923,12 @@
         setTimeout(() => syncNow(false), 250);
       }
     }
+
     function mapFirebaseObjectToArray(obj) {
       if (!obj) return [];
       if (Array.isArray(obj)) return obj.filter(Boolean);
       return Object.values(obj).filter(Boolean);
     }
-
     async function mergeStore(store, remoteItems, rootName = FIREBASE_ROOT) {
       if (!remoteItems || !remoteItems.length) return 0;
 
@@ -3850,7 +2959,7 @@
         const remoteTime = Number(remote.updatedAt || remote.createdAt || 0);
         const oldTime = Number(old?.updatedAt || old?.createdAt || 0);
 
-        if (!old || remoteTime > oldTime) {
+        if (!old || remoteTime >= oldTime) {
           await idbPut(store, remote);
           count++;
 
@@ -4133,6 +3242,7 @@
             });
 
             const remoteObj = snap.exists() ? (snap.val() || {}) : {};
+
             await applyRemoteSnapshot(store, remoteObj);
 
             if (typeof rebuildCustomerBalances === "function") {
@@ -4186,6 +3296,7 @@
 
           await idbPut("settings", remoteSettings);
           state.settings = remoteSettings;
+          ensureAdminPassword();
 
           renderAll();
 
@@ -4203,146 +3314,568 @@
         }
       });
     }
+    async function mergeStore(store, remoteItems, rootName = FIREBASE_ROOT) {
+      if (!remoteItems || !remoteItems.length) return 0;
 
-    async function syncNow(showPopover = false) {
-      if (state.syncing) return;
+      const local = await idbGetAll(store);
+      const map = new Map(local.map((x) => [x.id, x]));
+      let count = 0;
 
-      if (!navigator.onLine) {
-        await refreshPendingCount();
+      for (let remote of remoteItems) {
+        if (!remote || !remote.id) continue;
 
-        if (showPopover) {
-          updateSyncUi({
-            visible: true,
-            spin: false,
-            title: "لا يوجد اتصال",
-            status: "العمليات محفوظة محليًا وستُرفع عند عودة الإنترنت",
-            progress: 0
-          });
+        if (store === "products") remote = normalizeProduct(remote);
+        if (store === "customers") remote = normalizeCustomer(remote);
+        if (store === "paymentAccounts") remote = normalizePaymentAccount(remote);
+        if (store === "employees") remote = normalizeEmployee(remote);
+
+        if (store === "settings") {
+          const current = map.get(remote.id);
+          remote = {
+            ...defaultSettings,
+            ...remote,
+            adminPasswordHash: remote.adminPasswordHash || current?.adminPasswordHash || simpleHash(DEFAULT_ADMIN_PIN),
+            localLogo: current?.localLogo || "",
+            logoMode: current?.localLogo ? "local" : (remote.logo ? "url" : "default")
+          };
         }
 
-        return;
-      }
+        const old = map.get(remote.id);
+        const remoteTime = Number(remote.updatedAt || remote.createdAt || 0);
+        const oldTime = Number(old?.updatedAt || old?.createdAt || 0);
 
-      const queue = await idbGetAll("syncQueue");
-
-      if (!queue.length) {
-        await refreshPendingCount();
-
-        if (showPopover) {
-          updateSyncUi({
-            visible: true,
-            spin: false,
-            title: "المزامنة",
-            status: "كل البيانات مرفوعة ولا توجد عمليات معلقة",
-            progress: 100,
-            operations: []
-          });
-          hideSyncPopoverLater(900);
-        }
-
-        return;
-      }
-
-      state.syncing = true;
-
-      updateSyncUi({
-        visible: showPopover || state.syncUi.visible,
-        spin: true,
-        title: "جاري المزامنة",
-        status: `يوجد ${queue.length} عملية تنتظر الرفع`,
-        progress: 1,
-        operations: []
-      });
-
-      let done = 0;
-      const total = queue.length;
-
-      for (const q of queue) {
-        try {
-          const label = syncStoreLabel(q.store);
+        if (!old || remoteTime >= oldTime) {
+          await idbPut(store, remote);
+          count++;
 
           updateSyncUi({
-            spin: true,
-            status: `رفع ${label}... ${done + 1} من ${total}`,
-            progress: Math.max(2, (done / total) * 100),
             operation: {
-              store: label,
-              text: q.type === "remove" ? "حذف" : "رفع",
-              done: false
-            }
-          });
-
-          if (q.type === "set") {
-            const dataToSave = q.store === "settings" ? stripLocalOnlySettings(q.data) : q.data;
-            await set(ref(db, firebasePath(q.store, q.itemId)), dataToSave);
-          } else if (q.type === "remove") {
-            await remove(ref(db, firebasePath(q.store, q.itemId)));
-          }
-
-          await idbDelete("syncQueue", q.id);
-          done++;
-
-          updateSyncUi({
-            status: `تم رفع ${done} من ${total}`,
-            progress: (done / total) * 100,
-            operation: {
-              store: label,
-              text: q.type === "remove" ? "حذف" : "رفع",
+              store: syncStoreLabel(store),
+              text: `تنزيل من ${rootName}`,
               done: true
             }
           });
-
-          await refreshPendingCount();
-        } catch (e) {
-          q.tries = Number(q.tries || 0) + 1;
-          q.lastError = String(e?.message || e);
-          await idbPut("syncQueue", q);
-
-          console.error("Sync failed", e);
-
-          updateSyncUi({
-            status: "توقفت المزامنة مؤقتًا بسبب ضعف الاتصال، سيتم إعادة المحاولة تلقائيًا",
-            progress: Math.max(8, (done / total) * 100),
-            spin: false,
-            operation: {
-              store: syncStoreLabel(q.store),
-              text: "ينتظر اتصال أفضل",
-              done: false
-            }
-          });
-
-          break;
         }
       }
 
-      state.syncing = false;
-      const left = await refreshPendingCount();
+      return count;
+    }
 
-      if (left === 0) {
+    async function loadFirebaseRoot(rootName) {
+      if (!navigator.onLine) return 0;
+
+      try {
         updateSyncUi({
-          progress: 100,
-          status: "اكتملت المزامنة بنجاح",
-          spin: false
+          spin: true,
+          status: `فحص بيانات ${rootName}`,
+          progress: 5
         });
 
-        hideSyncPopoverLater(showPopover ? 1000 : 450);
-      } else {
-        updateSyncUi({
-          status: `بقي ${left} عمليات معلقة وستُرفع تلقائيًا`,
-          spin: false
-        });
+        const snap = await get(ref(db, rootName));
+        if (!snap.exists()) return 0;
 
-        setTimeout(() => syncNow(false), 6000);
+        const data = snap.val() || {};
+        let totalLoaded = 0;
+
+        const stores = [
+          "products",
+          "invoices",
+          "customers",
+          "expenses",
+          "purchases",
+          "supplierPayments",
+          "paymentAccounts",
+          "employees"
+        ];
+
+        for (let i = 0; i < stores.length; i++) {
+          const store = stores[i];
+
+          updateSyncUi({
+            spin: true,
+            status: `تنزيل ${syncStoreLabel(store)}...`,
+            progress: 8 + ((i + 1) / stores.length) * 45
+          });
+
+          totalLoaded += await mergeStore(store, mapFirebaseObjectToArray(data[store]), rootName);
+        }
+
+        if (data.settings?.main) {
+          totalLoaded += await mergeStore("settings", [{ ...defaultSettings, ...data.settings.main, id: "main" }], rootName);
+        }
+
+        if (totalLoaded > 0) {
+          await loadLocalData(true);
+        }
+
+        return totalLoaded;
+      } catch (e) {
+        console.warn("Firebase load error", e);
+        updateSyncUi({
+          status: "تعذر تنزيل بعض بيانات Firebase، سيتم المحاولة لاحقًا",
+          operation: {
+            store: "Firebase",
+            text: "فشل التنزيل",
+            done: false
+          }
+        });
+        return 0;
       }
     }
+
+    async function loadFirebaseOnce() {
+      if (!navigator.onLine) return;
+
+      updateSyncUi({
+        visible: state.syncUi.visible,
+        spin: true,
+        title: "تنزيل البيانات",
+        status: "تنزيل البيانات الجديدة فقط من Firebase",
+        progress: 5,
+        operations: []
+      });
+
+      await loadFirebaseRoot(FIREBASE_ROOT);
+
+      for (const root of FALLBACK_ROOTS) {
+        if (root && root !== FIREBASE_ROOT) {
+          await loadFirebaseRoot(root);
+        }
+      }
+
+      await refreshPendingCount();
+    }
+
+    async function syncLocalSnapshotToFirebase() {
+      if (!navigator.onLine) return;
+
+      const meta = await idbGet("localMeta", "snapshotUploaded");
+      if (meta?.root === FIREBASE_ROOT && meta?.done) return;
+
+      const stores = [
+        "products",
+        "invoices",
+        "customers",
+        "expenses",
+        "purchases",
+        "supplierPayments",
+        "paymentAccounts",
+        "employees"
+      ];
+
+      let totalItems = 0;
+      let sent = 0;
+
+      for (const store of stores) {
+        const rows = await idbGetAll(store);
+        totalItems += rows.length;
+      }
+
+      if (!totalItems) {
+        await idbPut("localMeta", {
+          id: "snapshotUploaded",
+          root: FIREBASE_ROOT,
+          done: true,
+          updatedAt: Date.now()
+        });
+        return;
+      }
+
+      updateSyncUi({
+        spin: true,
+        visible: state.syncUi.visible,
+        title: "تثبيت البيانات",
+        status: "رفع نسخة المحلي للمشروع الحالي عند الحاجة",
+        progress: 5
+      });
+
+      for (const store of stores) {
+        const rows = await idbGetAll(store);
+
+        for (const item of rows) {
+          try {
+            await set(ref(db, firebasePath(store, item.id)), item);
+            sent++;
+            updateSyncUi({
+              progress: Math.min(98, (sent / totalItems) * 100),
+              status: `تثبيت ${sent} من ${totalItems}`,
+              operation: {
+                store: syncStoreLabel(store),
+                text: "تثبيت محلي",
+                done: true
+              }
+            });
+          } catch (e) {
+            console.warn("snapshot upload failed", e);
+            return;
+          }
+        }
+      }
+
+      await set(ref(db, `${FIREBASE_ROOT}/settings/main`), stripLocalOnlySettings(state.settings));
+
+      await idbPut("localMeta", {
+        id: "snapshotUploaded",
+        root: FIREBASE_ROOT,
+        done: true,
+        updatedAt: Date.now()
+      });
+    }
+
+    function startRealtimeListeners() {
+      if (state.realtimeStarted) return;
+      state.realtimeStarted = true;
+
+      const stores = [
+        "products",
+        "invoices",
+        "customers",
+        "expenses",
+        "purchases",
+        "supplierPayments",
+        "paymentAccounts",
+        "employees"
+      ];
+
+      function stateKeyForStore(store) {
+        const map = {
+          products: "products",
+          invoices: "invoices",
+          customers: "customers",
+          expenses: "expenses",
+          purchases: "purchases",
+          supplierPayments: "supplierPayments",
+          paymentAccounts: "paymentAccounts",
+          employees: "employees"
+        };
+
+        return map[store] || store;
+      }
+
+      async function hasPendingLocalOperation(store, itemId) {
+        const queue = await idbGetAll("syncQueue");
+        return queue.some(q => q.store === store && q.itemId === itemId);
+      }
+
+      async function applyRemoteSnapshot(store, remoteObj) {
+        const remoteMap = remoteObj || {};
+        const remoteIds = new Set(Object.keys(remoteMap));
+        const localItems = await idbGetAll(store);
+        const stateKey = stateKeyForStore(store);
+
+        for (const local of localItems) {
+          if (!local || !local.id) continue;
+
+          const pending = await hasPendingLocalOperation(store, local.id);
+
+          if (!remoteIds.has(local.id) && !pending) {
+            await idbDelete(store, local.id);
+
+            if (Array.isArray(state[stateKey])) {
+              state[stateKey] = state[stateKey].filter(x => x.id !== local.id);
+            }
+
+            if (store === "products") {
+              state.cart = state.cart.filter(line => line.productId !== local.id);
+            }
+
+            if (store === "employees") {
+              await validateCurrentEmployeeSession();
+            }
+          }
+        }
+
+        for (let remote of Object.values(remoteMap)) {
+          if (!remote || !remote.id) continue;
+
+          const pending = await hasPendingLocalOperation(store, remote.id);
+          if (pending) continue;
+
+          if (store === "products") remote = normalizeProduct(remote);
+          if (store === "customers") remote = normalizeCustomer(remote);
+          if (store === "paymentAccounts") remote = normalizePaymentAccount(remote);
+          if (store === "employees") remote = normalizeEmployee(remote);
+
+          const localOld = localItems.find(x => x.id === remote.id);
+          const remoteTime = Number(remote.updatedAt || remote.createdAt || 0);
+          const localTime = Number(localOld?.updatedAt || localOld?.createdAt || 0);
+
+          if (!localOld || remoteTime >= localTime) {
+            await idbPut(store, remote);
+
+            if (Array.isArray(state[stateKey])) {
+              const i = state[stateKey].findIndex(x => x.id === remote.id);
+              if (i >= 0) state[stateKey][i] = remote;
+              else state[stateKey].push(remote);
+            }
+          }
+        }
+
+        if (store === "employees") {
+          await validateCurrentEmployeeSession();
+        }
+      }
+
+      stores.forEach((store) => {
+        onValue(ref(db, `${FIREBASE_ROOT}/${store}`), async (snap) => {
+          try {
+            updateSyncUi({
+              spin: true,
+              title: "تنزيل تحديثات",
+              status: `تحديث ${syncStoreLabel(store)}...`,
+              progress: 35
+            });
+
+            const remoteObj = snap.exists() ? (snap.val() || {}) : {};
+
+            await applyRemoteSnapshot(store, remoteObj);
+
+            if (typeof rebuildCustomerBalances === "function") {
+              rebuildCustomerBalances(false);
+            }
+
+            renderAll();
+
+            updateSyncUi({
+              progress: 100,
+              status: `تم تحديث ${syncStoreLabel(store)}`,
+              operation: {
+                store: syncStoreLabel(store),
+                text: "تحديث مباشر",
+                done: true
+              }
+            });
+
+            setTimeout(() => {
+              if (!state.syncing) updateSyncUi({ spin: false });
+            }, 700);
+          } catch (e) {
+            console.warn("Realtime sync error:", store, e);
+
+            updateSyncUi({
+              spin: false,
+              status: "تعذر تنزيل تحديث مباشر، سيتم المحاولة لاحقًا",
+              operation: {
+                store: syncStoreLabel(store),
+                text: "فشل تحديث مباشر",
+                done: false
+              }
+            });
+          }
+        });
+      });
+
+      onValue(ref(db, `${FIREBASE_ROOT}/settings/main`), async (snap) => {
+        if (!snap.exists()) return;
+
+        try {
+          const current = state.settings || (await idbGet("settings", "main")) || defaultSettings;
+          const remoteSettings = {
+            ...defaultSettings,
+            ...snap.val(),
+            id: "main",
+            adminPasswordHash: snap.val()?.adminPasswordHash || current.adminPasswordHash || simpleHash(DEFAULT_ADMIN_PIN),
+            localLogo: current.localLogo || "",
+            logoMode: current.localLogo ? "local" : (snap.val()?.logo ? "url" : "default")
+          };
+
+          await idbPut("settings", remoteSettings);
+          state.settings = remoteSettings;
+          ensureAdminPassword();
+
+          renderAll();
+
+          updateSyncUi({
+            progress: 100,
+            status: "تم تحديث إعدادات المحل",
+            operation: {
+              store: "الإعدادات",
+              text: "تحديث مباشر",
+              done: true
+            }
+          });
+        } catch (e) {
+          console.warn("settings realtime error", e);
+        }
+      });
+    }
+    function renderEmployees() {
+      const box = $("employeesList");
+      if (!box) return;
+
+      if (!isAdmin()) {
+        box.innerHTML = `<div class="muted">إدارة الموظفين تظهر للمدير فقط</div>`;
+        return;
+      }
+
+      box.innerHTML = state.employees.map(emp => {
+        const fullAdmin = (emp.permissions || []).includes(ADMIN_PERMISSION);
+        const labels = fullAdmin
+          ? "صلاحيات مدير كاملة"
+          : PAGES
+              .filter(p => (emp.permissions || []).includes(p.id))
+              .map(p => p.label)
+              .join("، ") || "بدون صلاحيات";
+
+        return `
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid #e5e7eb;border-radius:18px;margin-bottom:8px;background:#fff">
+            <div>
+              <b>${escapeHtml(emp.name)}</b>
+              <div class="muted" style="font-size:12px;line-height:1.8">${escapeHtml(labels)}</div>
+              <span class="badge ${emp.active === false ? "red" : "green"}">
+                ${emp.active === false ? "موقوف" : "فعال"}
+              </span>
+            </div>
+
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="ghost-btn" type="button" data-edit-employee="${emp.id}">
+                <i class="fa-solid fa-pen"></i>
+                تعديل
+              </button>
+
+              <button class="danger-btn" type="button" data-delete-employee="${emp.id}">
+                <i class="fa-solid fa-trash"></i>
+                حذف
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("") || `<div class="muted">لا يوجد موظفين بعد</div>`;
+    }
+
+    function openEmployeeForm(employeeId = "") {
+      if (!isAdmin()) {
+        toast("إضافة الموظفين للمدير فقط");
+        return;
+      }
+
+      const node = cloneTemplate("employeeFormTemplate");
+      openModal(employeeId ? "تعديل موظف" : "إضافة موظف", node, true);
+
+      const old = employeeId ? state.employees.find(e => e.id === employeeId) : null;
+
+      $("employeePermissionsBox").innerHTML = PAGES.map(p => `
+        <label style="display:flex;align-items:center;gap:8px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:15px;padding:10px;font-weight:900">
+          <input class="employee-page-permission" type="checkbox" value="${p.id}">
+          <i class="fa-solid ${p.icon}"></i>
+          ${escapeHtml(p.label)}
+        </label>
+      `).join("");
+
+      if (old) {
+        $("employeeId").value = old.id;
+        $("employeeFormName").value = old.name || "";
+        $("employeeFormActive").value = old.active === false ? "false" : "true";
+        $("employeeAdminPermission").checked = (old.permissions || []).includes(ADMIN_PERMISSION);
+
+        document.querySelectorAll(".employee-page-permission").forEach(ch => {
+          ch.checked = (old.permissions || []).includes(ch.value);
+        });
+      }
+
+      $("employeeAdminPermission").onchange = () => {
+        const checked = $("employeeAdminPermission").checked;
+        document.querySelectorAll(".employee-page-permission").forEach(ch => {
+          ch.checked = checked;
+          ch.disabled = checked;
+        });
+      };
+
+      $("employeeAdminPermission").dispatchEvent(new Event("change"));
+
+      $("employeeForm").onsubmit = async (e) => {
+        e.preventDefault();
+
+        const name = $("employeeFormName").value.trim();
+        const password = $("employeeFormPassword").value.trim();
+        const active = $("employeeFormActive").value === "true";
+
+        if (!name) {
+          toast("أدخل اسم الموظف");
+          return;
+        }
+
+        if (!old && !password) {
+          toast("أدخل كلمة مرور الموظف");
+          return;
+        }
+
+        if (password && password.length < 4) {
+          toast("كلمة مرور الموظف يجب أن تكون 4 خانات على الأقل");
+          return;
+        }
+
+        const duplicate = state.employees.find(e =>
+          e.id !== employeeId &&
+          String(e.name || "").trim().toLowerCase() === name.toLowerCase()
+        );
+
+        if (duplicate) {
+          toast("يوجد موظف بنفس الاسم");
+          return;
+        }
+
+        let permissions = [];
+
+        if ($("employeeAdminPermission").checked) {
+          permissions = [ADMIN_PERMISSION];
+        } else {
+          permissions = [...document.querySelectorAll(".employee-page-permission:checked")].map(ch => ch.value);
+        }
+
+        if (!permissions.length) {
+          toast("اختر صلاحية واحدة على الأقل");
+          return;
+        }
+
+        const emp = normalizeEmployee({
+          id: old?.id || uid("emp"),
+          name,
+          passwordHash: password ? simpleHash(password) : old.passwordHash,
+          permissions,
+          active,
+          createdAt: old?.createdAt || Date.now(),
+          updatedAt: Date.now()
+        });
+
+        await saveLocal("employees", emp, true);
+
+        const i = state.employees.findIndex(e => e.id === emp.id);
+        if (i >= 0) state.employees[i] = emp;
+        else state.employees.push(emp);
+
+        closeModal();
+        renderAll();
+        toast(old ? "تم تعديل الموظف" : "تم إضافة الموظف");
+      };
+    }
+
+    async function deleteEmployee(employeeId) {
+      if (!isAdmin()) {
+        toast("حذف الموظفين للمدير فقط");
+        return;
+      }
+
+      const emp = state.employees.find(e => e.id === employeeId);
+      if (!emp) return;
+
+      if (!confirm(`حذف الموظف ${emp.name}؟ سيتم تسجيل خروجه تلقائيًا من أجهزته.`)) return;
+
+      state.employees = state.employees.filter(e => e.id !== employeeId);
+      await removeLocal("employees", employeeId, true);
+
+      renderAll();
+      toast("تم حذف الموظف");
+    }
+
     function applySettingsToUI() {
       const s = state.settings || defaultSettings;
       const logo = s.localLogo || s.logo || makeLogoDataUrl(s.shopName || "المحل");
 
-      $("topShopName").textContent = s.shopName || "المحل الرئيسي";
-      $("sideShopName").textContent = s.shopName || "المحل الرئيسي";
-      $("topShopLogo").src = logo;
-      $("sideShopLogo").src = logo;
+      if ($("topShopName")) $("topShopName").textContent = s.shopName || "المحل الرئيسي";
+      if ($("sideShopName")) $("sideShopName").textContent = s.shopName || "المحل الرئيسي";
+      if ($("topShopLogo")) $("topShopLogo").src = logo;
+      if ($("sideShopLogo")) $("sideShopLogo").src = logo;
 
       if ($("settingShopName")) $("settingShopName").value = s.shopName || "";
       if ($("settingShopPhone")) $("settingShopPhone").value = s.shopPhone || "";
@@ -4362,25 +3895,12 @@
       state.employees = (await idbGetAll("employees")).map(normalizeEmployee);
 
       const settingsRows = await idbGetAll("settings");
-      const savedSettings = settingsRows.find(x => x.id === "main") || settingsRows[0] || null;
-
       state.settings = {
         ...defaultSettings,
-        ...(savedSettings || {}),
-        id: "main"
+        ...(settingsRows[0] || {})
       };
 
-      if (!state.settings.adminPasswordHash) {
-        state.settings.adminPasswordHash = simpleHash(DEFAULT_ADMIN_PIN);
-        state.settings.updatedAt = Date.now();
-        await idbPut("settings", state.settings);
-        await enqueueSync({
-          type: "set",
-          store: "settings",
-          itemId: "main",
-          data: stripLocalOnlySettings(state.settings)
-        });
-      }
+      ensureAdminPassword();
 
       if (!settingsRows.length) {
         await idbPut("settings", state.settings);
@@ -4408,487 +3928,6 @@
       await refreshPendingCount();
     }
 
-    function isAdminUser() {
-      const u = state.auth?.user;
-      if (!u) return false;
-      return u.role === "admin" || (Array.isArray(u.permissions) && u.permissions.includes(ADMIN_PERMISSION));
-    }
-
-    function hasPermission(page) {
-      const u = state.auth?.user;
-      if (!u) return false;
-      if (u.role === "admin") return true;
-      if (Array.isArray(u.permissions) && u.permissions.includes(ADMIN_PERMISSION)) return true;
-      return Array.isArray(u.permissions) && u.permissions.includes(page);
-    }
-
-    function firstAllowedPage() {
-      const found = PAGES.find(p => hasPermission(p.id));
-      return found?.id || "home";
-    }
-
-    function updateAuthUi() {
-      const u = state.auth?.user;
-      const locked = !u;
-
-      $("authLock").classList.toggle("hide", !locked);
-
-      const pill = $("authUserPill");
-      if (pill) {
-        if (u) {
-          pill.innerHTML = `
-            <i class="fa-solid ${isAdminUser() ? "fa-user-shield" : "fa-user"}"></i>
-            ${escapeHtml(u.name || "مستخدم")}
-          `;
-        } else {
-          pill.innerHTML = `<i class="fa-solid fa-lock"></i> غير مسجل`;
-        }
-      }
-
-      document.querySelectorAll("[data-permission]").forEach(el => {
-        const page = el.dataset.permission;
-        const allowed = !u ? false : hasPermission(page);
-        el.classList.toggle("auth-hidden", !allowed);
-      });
-
-      const settingsSecurityCards = [
-        $("changeAdminPasswordBtn")?.closest(".card"),
-        $("addEmployeeBtn")?.closest(".card")
-      ];
-
-      settingsSecurityCards.forEach(card => {
-        if (card) card.style.display = isAdminUser() ? "" : "none";
-      });
-
-      $("quickAddBtn").style.display = locked ? "none" : "flex";
-      $("logoutBtn").style.display = locked ? "none" : "inline-flex";
-    }
-
-    async function saveAuthSession(user) {
-      const session = {
-        user,
-        savedAt: Date.now()
-      };
-
-      localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(session));
-    }
-
-    async function tryRestoreAuthSession() {
-      try {
-        const raw = localStorage.getItem(AUTH_SESSION_KEY);
-        if (!raw) {
-          state.auth.user = null;
-          updateAuthUi();
-          return false;
-        }
-
-        const session = JSON.parse(raw);
-        const user = session?.user;
-
-        if (!user) {
-          state.auth.user = null;
-          updateAuthUi();
-          return false;
-        }
-
-        if (user.role === "admin") {
-          state.auth.user = {
-            role: "admin",
-            id: "admin",
-            name: "المدير",
-            permissions: [ADMIN_PERMISSION]
-          };
-          updateAuthUi();
-          return true;
-        }
-
-        const fresh = state.employees.find(e => e.id === user.id);
-
-        if (!fresh || fresh.active === false) {
-          logout(false);
-          toast("تم إخراج الموظف لأن الحساب محذوف أو موقوف");
-          return false;
-        }
-
-        state.auth.user = {
-          role: "employee",
-          id: fresh.id,
-          name: fresh.name,
-          permissions: fresh.permissions || []
-        };
-
-        updateAuthUi();
-
-        if (!hasPermission(document.querySelector(".section.active")?.dataset.permission || "home")) {
-          switchPage(firstAllowedPage());
-        }
-
-        return true;
-      } catch {
-        state.auth.user = null;
-        updateAuthUi();
-        return false;
-      }
-    }
-
-    async function validateCurrentEmployeeSession() {
-      const u = state.auth?.user;
-      if (!u || u.role !== "employee") return true;
-
-      const fresh = state.employees.find(e => e.id === u.id);
-
-      if (!fresh || fresh.active === false) {
-        logout(false);
-        toast("تم تسجيل الخروج لأن المدير حذف الموظف أو أوقفه");
-        return false;
-      }
-
-      const oldPerms = JSON.stringify(u.permissions || []);
-      const newPerms = JSON.stringify(fresh.permissions || []);
-
-      if (oldPerms !== newPerms || u.name !== fresh.name) {
-        state.auth.user = {
-          role: "employee",
-          id: fresh.id,
-          name: fresh.name,
-          permissions: fresh.permissions || []
-        };
-
-        await saveAuthSession(state.auth.user);
-        updateAuthUi();
-
-        if (!hasPermission(document.querySelector(".section.active")?.dataset.permission || "home")) {
-          switchPage(firstAllowedPage());
-        }
-
-        toast("تم تحديث صلاحيات الموظف");
-      }
-
-      return true;
-    }
-
-    async function loginAdmin(password) {
-      const pass = String(password || "").trim();
-
-      if (!pass) {
-        toast("أدخل كلمة مرور المدير");
-        $("adminPasswordInput")?.focus();
-        return;
-      }
-
-      const currentHash = state.settings?.adminPasswordHash || simpleHash(DEFAULT_ADMIN_PIN);
-
-      if (simpleHash(pass) !== currentHash) {
-        toast("كلمة مرور المدير غير صحيحة");
-        $("adminPasswordInput")?.focus();
-        return;
-      }
-
-      state.auth.user = {
-        role: "admin",
-        id: "admin",
-        name: "المدير",
-        permissions: [ADMIN_PERMISSION]
-      };
-
-      await saveAuthSession(state.auth.user);
-      updateAuthUi();
-      switchPage("home");
-      toast("تم دخول المدير");
-    }
-
-    async function loginEmployee(name, password) {
-      const n = String(name || "").trim();
-      const p = String(password || "").trim();
-
-      if (!n) {
-        toast("أدخل اسم الموظف");
-        $("employeeNameInput")?.focus();
-        return;
-      }
-
-      if (!p) {
-        toast("أدخل كلمة مرور الموظف");
-        $("employeePasswordInput")?.focus();
-        return;
-      }
-
-      const emp = state.employees.find(e =>
-        String(e.name || "").trim().toLowerCase() === n.toLowerCase()
-      );
-
-      if (!emp) {
-        toast("لا يوجد موظف بهذا الاسم");
-        return;
-      }
-
-      if (emp.active === false) {
-        toast("هذا الموظف موقوف من المدير");
-        return;
-      }
-
-      if (emp.passwordHash !== simpleHash(p)) {
-        toast("كلمة مرور الموظف غير صحيحة");
-        return;
-      }
-
-      state.auth.user = {
-        role: "employee",
-        id: emp.id,
-        name: emp.name,
-        permissions: emp.permissions || []
-      };
-
-      await saveAuthSession(state.auth.user);
-      updateAuthUi();
-      switchPage(firstAllowedPage());
-      toast(`أهلاً ${emp.name}`);
-    }
-
-    function logout(showToast = true) {
-      localStorage.removeItem(AUTH_SESSION_KEY);
-
-      state.auth.user = null;
-
-      closeModal();
-      updateAuthUi();
-
-      $("authLock").classList.remove("hide");
-      $("authLock").style.display = "flex";
-
-      $("adminPasswordInput").value = "";
-      $("employeeNameInput").value = "";
-      $("employeePasswordInput").value = "";
-
-      setTimeout(() => $("adminPasswordInput")?.focus(), 100);
-
-      if (showToast) toast("تم تسجيل الخروج");
-    }
-
-    async function changeAdminPassword() {
-      if (!isAdminUser()) {
-        toast("تغيير كلمة مرور المدير للمدير فقط");
-        return;
-      }
-
-      const p1Input = $("settingAdminPassword");
-      const p2Input = $("settingAdminPassword2");
-
-      const p1 = String(p1Input?.value || "").trim();
-      const p2 = String(p2Input?.value || "").trim();
-
-      if (!p1) {
-        toast("أدخل كلمة مرور المدير الجديدة");
-        p1Input?.focus();
-        return;
-      }
-
-      if (!p2) {
-        toast("أعد كتابة كلمة مرور المدير للتأكيد");
-        p2Input?.focus();
-        return;
-      }
-
-      if (p1.length < 4) {
-        toast("كلمة مرور المدير يجب أن تكون 4 خانات على الأقل");
-        p1Input?.focus();
-        return;
-      }
-
-      if (p1 !== p2) {
-        toast("كلمتا المرور غير متطابقتين");
-        p2Input?.focus();
-        return;
-      }
-
-      state.settings = {
-        ...defaultSettings,
-        ...state.settings,
-        id: "main",
-        adminPasswordHash: simpleHash(p1),
-        updatedAt: Date.now()
-      };
-
-      await idbPut("settings", state.settings);
-
-      await enqueueSync({
-        type: "set",
-        store: "settings",
-        itemId: "main",
-        data: stripLocalOnlySettings(state.settings)
-      });
-
-      if (navigator.onLine) {
-        await set(ref(db, `${FIREBASE_ROOT}/settings/main`), stripLocalOnlySettings(state.settings));
-      }
-
-      p1Input.value = "";
-      p2Input.value = "";
-
-      toast("تم تغيير كلمة مرور المدير بنجاح");
-    }
-
-    function renderEmployees() {
-      const box = $("employeesList");
-      if (!box) return;
-
-      if (!isAdminUser()) {
-        box.innerHTML = `<div class="muted">إدارة الموظفين للمدير فقط</div>`;
-        return;
-      }
-
-      box.innerHTML = state.employees.map(emp => {
-        const admin = (emp.permissions || []).includes(ADMIN_PERMISSION);
-        const labels = admin
-          ? "صلاحيات مدير كاملة"
-          : PAGES
-            .filter(p => (emp.permissions || []).includes(p.id))
-            .map(p => p.label)
-            .join("، ") || "بدون صلاحيات";
-
-        return `
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid #e5e7eb;border-radius:18px;margin-bottom:8px;background:#fff">
-            <div>
-              <b>${escapeHtml(emp.name)}</b>
-              <div class="muted" style="font-size:12px;line-height:1.8">${escapeHtml(labels)}</div>
-              <span class="badge ${emp.active === false ? "red" : "green"}">
-                ${emp.active === false ? "موقوف" : "فعال"}
-              </span>
-            </div>
-
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="ghost-btn" type="button" data-edit-employee="${emp.id}">
-                <i class="fa-solid fa-pen"></i>
-                تعديل
-              </button>
-
-              <button class="danger-btn" type="button" data-delete-employee="${emp.id}">
-                <i class="fa-solid fa-trash"></i>
-                حذف
-              </button>
-            </div>
-          </div>
-        `;
-      }).join("") || `<div class="muted">لا يوجد موظفون بعد</div>`;
-    }
-
-    function openEmployeeForm(employeeId = "") {
-      if (!isAdminUser()) {
-        toast("إدارة الموظفين للمدير فقط");
-        return;
-      }
-
-      const node = cloneTemplate("employeeFormTemplate");
-      openModal(employeeId ? "تعديل موظف" : "إضافة موظف", node, true);
-
-      const old = employeeId ? state.employees.find(e => e.id === employeeId) : null;
-
-      const grid = $("employeePermissionsGrid");
-      grid.innerHTML = PAGES.map(p => `
-        <label class="perm-card">
-          <input type="checkbox" class="employee-perm-check" value="${p.id}">
-          <span><i class="fa-solid ${p.icon}"></i> ${escapeHtml(p.label)}</span>
-        </label>
-      `).join("");
-
-      if (old) {
-        $("employeeId").value = old.id;
-        $("employeeName").value = old.name || "";
-        $("employeeActive").value = old.active === false ? "false" : "true";
-        $("employeeIsAdmin").value = (old.permissions || []).includes(ADMIN_PERMISSION) ? "true" : "false";
-
-        document.querySelectorAll(".employee-perm-check").forEach(ch => {
-          ch.checked = (old.permissions || []).includes(ch.value);
-        });
-      }
-
-      function refreshPermDisabled() {
-        const isAdmin = $("employeeIsAdmin").value === "true";
-        document.querySelectorAll(".employee-perm-check").forEach(ch => {
-          ch.disabled = isAdmin;
-        });
-      }
-
-      $("employeeIsAdmin").onchange = refreshPermDisabled;
-      refreshPermDisabled();
-
-      $("employeeForm").onsubmit = async (e) => {
-        e.preventDefault();
-
-        const name = $("employeeName").value.trim();
-        const pass = $("employeePassword").value.trim();
-        const isAdmin = $("employeeIsAdmin").value === "true";
-
-        if (!name) {
-          toast("أدخل اسم الموظف");
-          return;
-        }
-
-        if (!old && !pass) {
-          toast("أدخل كلمة مرور الموظف");
-          return;
-        }
-
-        let permissions = [];
-
-        if (isAdmin) {
-          permissions = [ADMIN_PERMISSION];
-        } else {
-          permissions = Array.from(document.querySelectorAll(".employee-perm-check:checked")).map(x => x.value);
-
-          if (!permissions.length) {
-            toast("اختر صلاحية واحدة على الأقل للموظف");
-            return;
-          }
-        }
-
-        const duplicate = state.employees.find(e =>
-          e.id !== old?.id &&
-          String(e.name || "").trim().toLowerCase() === name.toLowerCase()
-        );
-
-        if (duplicate) {
-          toast("يوجد موظف بنفس الاسم");
-          return;
-        }
-
-        const emp = normalizeEmployee({
-          ...(old || {}),
-          id: old?.id || uid("emp"),
-          name,
-          passwordHash: pass ? simpleHash(pass) : old?.passwordHash,
-          permissions,
-          active: $("employeeActive").value === "true",
-          createdAt: old?.createdAt || Date.now(),
-          updatedAt: Date.now()
-        });
-
-        await saveLocal("employees", emp, true);
-
-        const i = state.employees.findIndex(e => e.id === emp.id);
-        if (i >= 0) state.employees[i] = emp;
-        else state.employees.push(emp);
-
-        closeModal();
-        renderAll();
-        toast(old ? "تم تعديل الموظف والصلاحيات" : "تم إضافة الموظف");
-      };
-    }
-
-    async function deleteEmployee(employeeId) {
-      if (!isAdminUser()) return toast("إدارة الموظفين للمدير فقط");
-
-      const emp = state.employees.find(e => e.id === employeeId);
-      if (!emp) return;
-
-      if (!confirm(`حذف الموظف ${emp.name}؟ سيتم إخراجه تلقائياً من الأجهزة عند المزامنة.`)) return;
-
-      state.employees = state.employees.filter(e => e.id !== employeeId);
-      await removeLocal("employees", employeeId, true);
-
-      renderAll();
-      toast("تم حذف الموظف");
-    }
     function periodFilter(items, period, dateField = "createdAt", customDate = "") {
       if (period === "all") return items;
 
@@ -4953,7 +3992,6 @@
       applySettingsToUI();
       updateAuthUi();
     }
-
     function renderHome() {
       const todayInvoices = periodFilter(state.invoices, "today");
       const todaySales = todayInvoices.reduce((s, x) => s + cleanNumber(x.total), 0);
@@ -5175,6 +4213,7 @@
 
       box.style.display = "block";
     }
+
     function addFreeLine(data = {}) {
       state.freeLines.push({
         id: uid("free"),
@@ -5228,15 +4267,13 @@
           </div>
 
           <button type="button" class="danger-btn remove-free-line" data-remove-free="${line.id}" style="width:100%;margin-top:10px">
-            <i class="fa-solid fa-trash"></i>
-            حذف الصنف
+            <i class="fa-solid fa-trash"></i> حذف الصنف
           </button>
         </div>
       `).join("");
 
       $("freeInvoiceTotal").textContent = money(getFreeInvoiceTotals().total);
     }
-
     function syncFreeLinesFromDom() {
       document.querySelectorAll("[data-free-line]").forEach(el => {
         const id = el.dataset.freeLine;
@@ -5329,18 +4366,15 @@
               </td>
               <td>
                 <button class="ghost-btn" type="button" data-show-barcode="${p.id}">
-                  <i class="fa-solid fa-barcode"></i>
-                  باركود
+                  <i class="fa-solid fa-barcode"></i> باركود
                 </button>
               </td>
               <td>
                 <button class="ghost-btn" type="button" data-edit-product="${p.id}">
-                  <i class="fa-solid fa-pen"></i>
-                  تعديل
+                  <i class="fa-solid fa-pen"></i> تعديل
                 </button>
                 <button class="danger-btn" type="button" data-delete-product="${p.id}">
-                  <i class="fa-solid fa-trash"></i>
-                  حذف
+                  <i class="fa-solid fa-trash"></i> حذف
                 </button>
               </td>
             </tr>
@@ -5447,18 +4481,13 @@
         </button>
       `;
     }
-
-    function renderInvoices() {
+    function getFilteredInvoicesForExport() {
       const q = ($("invoiceSearch")?.value || "").trim().toLowerCase();
       const period = $("invoicePeriod")?.value || "today";
       const custom = $("invoiceCustomDate")?.value || "";
       const status = $("invoiceStatusFilter")?.value || "all";
 
-      if ($("invoiceCustomDate")) {
-        $("invoiceCustomDate").style.display = period === "custom" ? "block" : "none";
-      }
-
-      const rows = periodFilter(state.invoices, period, "createdAt", custom)
+      return periodFilter(state.invoices, period, "createdAt", custom)
         .filter(inv => {
           const itemsText = (inv.items || [])
             .map(item => `${item.name || ""} ${item.qtyText || ""} ${item.unitLabel || ""}`)
@@ -5482,7 +4511,11 @@
 
           return searchOk && statusOk && folderOk;
         })
-        .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
+        .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
+    }
+
+    function renderInvoices() {
+      const rows = getFilteredInvoicesForExport()
         .map(inv => {
           return `
             <tr>
@@ -5499,26 +4532,28 @@
               <td class="money">${money(inv.total)}</td>
               <td>
                 <button class="ghost-btn" type="button" data-view-invoice="${inv.id}">
-                  <i class="fa-solid fa-eye"></i>
-                  عرض
+                  <i class="fa-solid fa-eye"></i> عرض
                 </button>
                 <button class="ghost-btn" type="button" data-edit-invoice="${inv.id}">
-                  <i class="fa-solid fa-pen"></i>
-                  تعديل
+                  <i class="fa-solid fa-pen"></i> تعديل
                 </button>
                 <button class="danger-btn" type="button" data-delete-invoice="${inv.id}">
-                  <i class="fa-solid fa-trash"></i>
-                  حذف
+                  <i class="fa-solid fa-trash"></i> حذف
                 </button>
               </td>
             </tr>
           `;
         }).join("");
 
+      if ($("invoiceCustomDate")) {
+        $("invoiceCustomDate").style.display = ($("invoicePeriod")?.value || "today") === "custom" ? "block" : "none";
+      }
+
       $("invoicesTable").innerHTML =
         rows ||
         `<tr><td colspan="12" class="muted" style="text-align:center">لا توجد فواتير</td></tr>`;
     }
+
     function getCustomerInvoices(customer) {
       return state.invoices
         .filter(inv =>
@@ -5704,7 +4739,6 @@
         rows ||
         `<tr><td colspan="12" class="muted" style="text-align:center">لا توجد مشتريات</td></tr>`;
     }
-
     function renderSupplierPayments() {
       const q = ($("supplierPaymentsSearch")?.value || "").trim().toLowerCase();
 
@@ -5775,7 +4809,8 @@
         rows ||
         `<tr><td colspan="5" class="muted" style="text-align:center">لا توجد مصروفات</td></tr>`;
     }
-function renderReports() {
+
+    function renderReports() {
       const period = $("reportsPeriod")?.value || "today";
       const custom = $("reportsCustomDate")?.value || "";
 
@@ -5880,13 +4915,11 @@ function renderReports() {
 
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <button class="ghost-btn" type="button" data-edit-account="${a.id}">
-                <i class="fa-solid fa-pen"></i>
-                تعديل
+                <i class="fa-solid fa-pen"></i> تعديل
               </button>
 
               <button class="danger-btn" type="button" data-delete-account="${a.id}">
-                <i class="fa-solid fa-trash"></i>
-                حذف
+                <i class="fa-solid fa-trash"></i> حذف
               </button>
             </div>
           </div>
@@ -5914,8 +4947,8 @@ function renderReports() {
     }
 
     function switchPage(page) {
-      if (!state.auth?.user) {
-        updateAuthUi();
+      if (!state.auth.user) {
+        logout(false);
         return;
       }
 
@@ -5960,7 +4993,6 @@ function renderReports() {
       $("piecePricePreview").value =
         `جملة: ${money(baseCost)} / بيع: ${money(baseSale)} لكل ${unitLabel(baseUnit, $("productCustomUnit").value.trim())}`;
     }
-
     function openProductForm(productId = "") {
       const node = cloneTemplate("productFormTemplate");
       openModal(productId ? "تعديل المنتج" : "إضافة منتج", node);
@@ -6057,6 +5089,11 @@ function renderReports() {
           updatedAt: Date.now()
         });
 
+        if (!product.name) {
+          toast("أدخل اسم المنتج");
+          return;
+        }
+
         await saveLocal("products", product, true);
 
         const i = state.products.findIndex(p => p.id === id);
@@ -6088,8 +5125,7 @@ function renderReports() {
           <div style="font-weight:900;margin-top:8px">${escapeHtml(p.barcode || p.code)}</div>
 
           <button id="printBarcodeBtn" class="primary-btn" type="button" style="margin-top:14px">
-            <i class="fa-solid fa-print"></i>
-            طباعة الباركود
+            <i class="fa-solid fa-print"></i> طباعة الباركود
           </button>
         </div>
       `);
@@ -6114,7 +5150,8 @@ function renderReports() {
         };
       }, 50);
     }
-function showSmartProductSuggestions(inputEl, onSelect) {
+
+    function showSmartProductSuggestions(inputEl, onSelect) {
       const q = String(inputEl.value || "").trim().toLowerCase();
       const box = $("smartSuggestBox");
 
@@ -6182,7 +5219,6 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         }
       }, 180);
     }
-
     function openPurchaseForm(purchaseId = "") {
       const node = cloneTemplate("purchaseFormTemplate");
       openModal(purchaseId ? "تعديل فاتورة مشتريات" : "فاتورة مشتريات", node);
@@ -6312,6 +5348,9 @@ function showSmartProductSuggestions(inputEl, onSelect) {
           updatedAt: Date.now()
         };
 
+        if (!purchase.supplier) return toast("أدخل اسم المورد");
+        if (qty <= 0) return toast("أدخل كمية صحيحة");
+
         product.stock = cleanNumber(product.stock) + qtyBase;
         product.costPrice = baseCost;
 
@@ -6412,6 +5451,9 @@ function showSmartProductSuggestions(inputEl, onSelect) {
           updatedAt: Date.now()
         };
 
+        if (!expense.type) return toast("أدخل نوع المصروف");
+        if (expense.amount <= 0) return toast("أدخل مبلغ صحيح");
+
         await saveLocal("expenses", expense, true);
 
         if (old) {
@@ -6451,6 +5493,8 @@ function showSmartProductSuggestions(inputEl, onSelect) {
           updatedAt: Date.now()
         });
 
+        if (!item.name) return toast("أدخل اسم الزبون");
+
         state.invoices.forEach(inv => {
           if (old.id && inv.customerId === old.id) {
             inv.customerName = item.name;
@@ -6472,7 +5516,6 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         toast("تم حفظ حساب الزبون وإعادة الحسابات");
       };
     }
-
     function openPaymentAccountForm(accountId = "") {
       const node = cloneTemplate("paymentAccountFormTemplate");
       openModal(accountId ? "تعديل حساب دفع" : "إضافة حساب دفع", node);
@@ -6488,10 +5531,18 @@ function showSmartProductSuggestions(inputEl, onSelect) {
       $("paymentAccountForm").onsubmit = async (e) => {
         e.preventDefault();
 
+        const name = $("paymentAccountName").value.trim();
+        const number = $("paymentAccountNumber").value.trim();
+
+        if (!name) {
+          toast("أدخل اسم حساب الدفع");
+          return;
+        }
+
         const account = normalizePaymentAccount({
           id: old?.id || uid("acc"),
-          name: $("paymentAccountName").value.trim(),
-          number: $("paymentAccountNumber").value.trim(),
+          name,
+          number,
           type: old?.type || "app",
           createdAt: old?.createdAt || Date.now(),
           updatedAt: Date.now()
@@ -6510,6 +5561,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         toast(old ? "تم تعديل حساب الدفع" : "تم حفظ حساب الدفع");
       };
     }
+
     function showCustomerSuggestions(inputEl, phoneEl = null, onSelect = null) {
       const q = String(inputEl.value || "").trim().toLowerCase();
       const box = $("customerSuggestBox");
@@ -6623,6 +5675,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
 
       customer.name = name || customer.name;
       customer.phone = phone || customer.phone;
+      customer.updatedAt = Date.now();
 
       return customer;
     }
@@ -6844,7 +5897,6 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         openDebtCustomerPicker(source, totals);
       }
     }
-
     function openDebtCustomerPicker(source, totals) {
       const list = state.customers
         .sort((a,b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0))
@@ -6924,10 +5976,24 @@ function showSmartProductSuggestions(inputEl, onSelect) {
       $("quickDebtCustomerForm").onsubmit = async (e) => {
         e.preventDefault();
 
+        const name = $("quickDebtCustomerName").value.trim();
+        const phone = $("quickDebtCustomerPhone").value.trim();
+
+        if (!name) {
+          toast("أدخل اسم الزبون");
+          return;
+        }
+
+        const existing = findCustomerByNameOrPhone(name, phone);
+        if (existing) {
+          confirmDebtCustomerSale(source, totals, existing);
+          return;
+        }
+
         const customer = normalizeCustomer({
           id: uid("cus"),
-          name: $("quickDebtCustomerName").value.trim(),
-          phone: $("quickDebtCustomerPhone").value.trim(),
+          name,
+          phone,
           balance: 0,
           totalSales: 0,
           totalPaid: 0,
@@ -6945,6 +6011,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         confirmDebtCustomerSale(source, totals, customer);
       };
     }
+
     function confirmDebtCustomerSale(source, totals, customer) {
       openModal("تأكيد البيع دين", `
         <div class="card" style="box-shadow:none">
@@ -6960,8 +6027,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
           <input id="debtDueDate" type="date" class="input">
 
           <button id="confirmDebtSaleBtn" class="gold-btn" type="button" style="width:100%;margin-top:16px">
-            <i class="fa-solid fa-check"></i>
-            حفظ على حساب الزبون
+            <i class="fa-solid fa-check"></i> حفظ على حساب الزبون
           </button>
         </div>
       `);
@@ -7041,8 +6107,6 @@ function showSmartProductSuggestions(inputEl, onSelect) {
 
       const items = buildSaleItems(source);
 
-      const currentUser = state.auth?.user || null;
-
       const invoice = {
         id: uid("inv"),
         number: invoiceNumber,
@@ -7050,10 +6114,6 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         source,
         createdAt: Date.now(),
         updatedAt: Date.now(),
-        createdById: currentUser?.id || "",
-        createdByRole: currentUser?.role || "",
-        createdByName: currentUser?.name || "",
-        employeeName: currentUser?.role === "employee" ? currentUser.name : "المدير",
         customerId: payment.customerId || "",
         customerName: payment.customerName || "",
         customerPhone: payment.customerPhone || "",
@@ -7062,6 +6122,9 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         dueDate: payment.dueDate || "",
         status: payment.status || "unpaid",
         notes: "",
+        employeeId: state.auth.user?.id || "",
+        employeeName: state.auth.user?.name || "",
+        createdByRole: state.auth.user?.role || "",
         items,
         subtotal: totals.subtotal,
         discount: totals.discount,
@@ -7152,7 +6215,6 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         openInvoiceView(invoice);
       }
     }
-
     async function restoreInvoiceStock(invoice) {
       if (!invoice || invoice.source !== "cart") return;
 
@@ -7321,7 +6383,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         toast("تم تعديل الفاتورة وإعادة الحسابات");
       };
     }
-    async function payCustomer(customerId) {
+async function payCustomer(customerId) {
       const customer = state.customers.find(c => c.id === customerId);
       if (!customer) return;
 
@@ -7352,8 +6414,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
           </div>
 
           <button class="success-btn" style="width:100%;margin-top:14px" type="submit">
-            <i class="fa-solid fa-floppy-disk"></i>
-            حفظ الدفعة
+            <i class="fa-solid fa-floppy-disk"></i> حفظ الدفعة
           </button>
         </form>
       `);
@@ -7419,8 +6480,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
           </div>
 
           <button class="gold-btn" style="width:100%;margin-top:14px" type="submit">
-            <i class="fa-solid fa-plus"></i>
-            إضافة الدين
+            <i class="fa-solid fa-plus"></i> إضافة الدين
           </button>
         </form>
       `);
@@ -7499,8 +6559,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
           </div>
 
           <button class="primary-btn" style="width:100%;margin-top:14px" type="submit">
-            <i class="fa-solid fa-floppy-disk"></i>
-            حفظ التعديل
+            <i class="fa-solid fa-floppy-disk"></i> حفظ التعديل
           </button>
         </form>
       `);
@@ -7533,7 +6592,6 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         toast("تم تعديل الدين وإعادة الحساب");
       };
     }
-
     async function deleteManualDebt(customerId, debtId) {
       const customer = state.customers.find(c => c.id === customerId);
       if (!customer) return;
@@ -7616,8 +6674,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
           </div>
 
           <button class="success-btn" style="width:100%;margin-top:14px" type="submit">
-            <i class="fa-solid fa-floppy-disk"></i>
-            حفظ التعديل
+            <i class="fa-solid fa-floppy-disk"></i> حفظ التعديل
           </button>
         </form>
       `);
@@ -7625,7 +6682,14 @@ function showSmartProductSuggestions(inputEl, onSelect) {
       $("editCustomerPaymentForm").onsubmit = async (e) => {
         e.preventDefault();
 
-        payment.amount = cleanNumber($("editCustomerPaymentAmount").value, 0);
+        const amount = cleanNumber($("editCustomerPaymentAmount").value, 0);
+
+        if (amount <= 0) {
+          toast("أدخل قيمة صحيحة");
+          return;
+        }
+
+        payment.amount = amount;
         payment.note = $("editCustomerPaymentNote").value.trim();
         payment.updatedAt = Date.now();
 
@@ -7720,8 +6784,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
           </div>
 
           <button id="markLaterPaidBtn" class="success-btn" type="button" style="width:100%;margin-bottom:10px">
-            <i class="fa-solid fa-circle-check"></i>
-            تحويل إلى مكتملة وإعادة الحساب
+            <i class="fa-solid fa-circle-check"></i> تحويل إلى مكتملة وإعادة الحساب
           </button>
 
           <button id="closeLaterStatusBtn" class="ghost-btn" type="button" style="width:100%">
@@ -7797,11 +6860,10 @@ function showSmartProductSuggestions(inputEl, onSelect) {
           _createdAt: d.createdAt,
           _htmlActions: d.status === "paid"
             ? `<span class="badge green">مكتملة</span>`
-            : `<span class="badge yellow">غير مكتملة</span>`,
+            : `<span class="badge yellow clickable" data-mark-manual-debt-paid="${customer.id}|${d.id}">غير مكتملة</span>`,
           _rowActions: `
             <button class="ghost-btn" type="button" data-edit-manual-debt="${customer.id}|${d.id}" style="padding:7px 9px"><i class="fa-solid fa-pen"></i></button>
             <button class="danger-btn" type="button" data-delete-manual-debt="${customer.id}|${d.id}" style="padding:7px 9px"><i class="fa-solid fa-trash"></i></button>
-            <button class="success-btn" type="button" data-mark-manual-debt-paid="${customer.id}|${d.id}" style="padding:7px 9px"><i class="fa-solid fa-check"></i></button>
           `
         });
       });
@@ -7871,7 +6933,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
             <i class="fa-solid fa-file-pdf"></i> PDF
           </button>
 
-          <button class="success-btn" type="button" data-excel-customer="${freshCustomer.id}">
+          <button class="ghost-btn" type="button" data-excel-customer="${freshCustomer.id}">
             <i class="fa-solid fa-file-excel"></i> Excel
           </button>
         </div>
@@ -7951,7 +7013,6 @@ function showSmartProductSuggestions(inputEl, onSelect) {
       renderAll();
       toast("تم حذف العميل وإعادة الحسابات");
     }
-
     function buildInvoiceHtml(invoice) {
       const s = state.settings || defaultSettings;
       const acc = state.paymentAccounts.find(a => a.id === invoice.paymentAccountId);
@@ -7966,7 +7027,6 @@ function showSmartProductSuggestions(inputEl, onSelect) {
                 <h2 class="invoice-shop-title">${escapeHtml(s.shopName || "المحل الرئيسي")}</h2>
                 <div style="color:#64748b;font-size:11px">${escapeHtml(s.shopPhone || "")}</div>
                 <div style="color:#64748b;font-size:11px">فاتورة مبيعات</div>
-                <div style="color:#64748b;font-size:11px">الموظف: ${escapeHtml(invoice.employeeName || invoice.createdByName || "-")}</div>
               </div>
             </div>
 
@@ -7992,6 +7052,14 @@ function showSmartProductSuggestions(inputEl, onSelect) {
 
             <div style="background:#f8fafc;border-radius:14px;padding:10px;font-size:12px">
               <b>مجلد الدفع:</b> ${escapeHtml(acc?.name || paymentFolderName(invoice))}
+            </div>
+
+            <div style="background:#f8fafc;border-radius:14px;padding:10px;font-size:12px">
+              <b>الموظف:</b> ${escapeHtml(invoice.employeeName || invoice.createdByName || "-")}
+            </div>
+
+            <div style="background:#f8fafc;border-radius:14px;padding:10px;font-size:12px">
+              <b>الحالة:</b> ${escapeHtml(invoice.status === "paid" ? "مكتملة" : "غير مكتملة")}
             </div>
           </div>
 
@@ -8044,34 +7112,26 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         </div>
       `;
     }
+
     function openInvoiceView(invoice) {
       openModal(`فاتورة رقم #${invoice.number}`, `
         <div id="invoiceViewBox">${buildInvoiceHtml(invoice)}</div>
 
         <div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
           <button id="printInvoiceBtn" class="ghost-btn" type="button">
-            <i class="fa-solid fa-print"></i>
-            طباعة
+            <i class="fa-solid fa-print"></i> طباعة
           </button>
 
           <button id="imageInvoiceBtn" class="success-btn" type="button">
-            <i class="fa-solid fa-image"></i>
-            تحميل صورة
+            <i class="fa-solid fa-image"></i> تحميل صورة
           </button>
 
           <button id="pdfInvoiceBtn" class="danger-btn" type="button">
-            <i class="fa-solid fa-file-pdf"></i>
-            PDF
-          </button>
-
-          <button id="excelSingleInvoiceBtn" class="success-btn" type="button">
-            <i class="fa-solid fa-file-excel"></i>
-            Excel
+            <i class="fa-solid fa-file-pdf"></i> PDF
           </button>
 
           <button id="editInvoiceInsideBtn" class="primary-btn" type="button">
-            <i class="fa-solid fa-pen"></i>
-            تعديل
+            <i class="fa-solid fa-pen"></i> تعديل
           </button>
         </div>
       `, true);
@@ -8089,38 +7149,22 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         $("printInvoiceBtn").onclick = () => printHtml($("invoiceViewBox").innerHTML);
         $("imageInvoiceBtn").onclick = () => downloadElementImage($("invoiceViewBox"), `invoice-${invoice.number}.png`);
         $("pdfInvoiceBtn").onclick = () => downloadElementPdf($("invoiceViewBox"), `invoice-${invoice.number}.pdf`);
-        $("excelSingleInvoiceBtn").onclick = () => excelSingleInvoice(invoice.id);
         $("editInvoiceInsideBtn").onclick = () => openEditInvoiceForm(invoice.id);
       }, 80);
     }
 
     function printHtml(html) {
       const area = $("printArea");
-      if (!area) return;
 
       area.style.display = "block";
-      area.innerHTML = `
-        <div class="print-shell">
-          ${html}
-        </div>
-      `;
+      area.innerHTML = `<div class="print-shell">${html}</div>`;
 
-      const afterPrint = () => {
+      window.print();
+
+      setTimeout(() => {
         area.innerHTML = "";
         area.style.display = "none";
-        window.removeEventListener("afterprint", afterPrint);
-      };
-
-      window.addEventListener("afterprint", afterPrint);
-
-      setTimeout(() => {
-        window.focus();
-        window.print();
-      }, 250);
-
-      setTimeout(() => {
-        if (area.innerHTML) afterPrint();
-      }, 2500);
+      }, 400);
     }
 
     async function downloadElementImage(element, filename) {
@@ -8170,7 +7214,6 @@ function showSmartProductSuggestions(inputEl, onSelect) {
 
       pdf.save(filename);
     }
-
     function reportShell(title, bodyHtml) {
       const s = state.settings || defaultSettings;
       const logo = s.localLogo || s.logo || makeLogoDataUrl(s.shopName);
@@ -8179,7 +7222,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         <div class="invoice-paper" style="direction:rtl;font-family:Cairo,Arial,sans-serif">
           <div class="invoice-header">
             <div style="display:flex;align-items:center;gap:10px">
-              <img class="invoice-logo" src="${logo}">
+              <img class="invoice-logo" src="${logo}" alt="">
               <div>
                 <h2 class="invoice-shop-title">${escapeHtml(s.shopName || "المحل الرئيسي")}</h2>
                 <div style="font-size:11px;color:#64748b">${escapeHtml(title)}</div>
@@ -8276,7 +7319,9 @@ function showSmartProductSuggestions(inputEl, onSelect) {
       const customer = state.customers.find(c => c.id === customerId);
       if (!customer) return;
 
-      const rows = getCustomerTableRows(customer, "all").map(r => ({
+      const rows = getCustomerTableRows(customer, "all");
+
+      exportExcel(`customer-${customer.name}-${todayKey()}.xlsx`, "كشف الحساب", rows.map(r => ({
         النوع: r.النوع,
         التاريخ: r.التاريخ,
         المدة: r.المدة,
@@ -8285,41 +7330,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         مدين: r.مدين,
         دائن: r.دائن,
         ملاحظات: r.ملاحظات
-      }));
-
-      exportExcel(`customer-${customer.name}-${todayKey()}.xlsx`, "كشف الحساب", rows);
-    }
-    function getFilteredInvoicesForExport() {
-      const q = ($("invoiceSearch")?.value || "").trim().toLowerCase();
-      const period = $("invoicePeriod")?.value || "today";
-      const custom = $("invoiceCustomDate")?.value || "";
-      const status = $("invoiceStatusFilter")?.value || "all";
-
-      return periodFilter(state.invoices, period, "createdAt", custom)
-        .filter(inv => {
-          const itemsText = (inv.items || [])
-            .map(item => `${item.name || ""} ${item.qtyText || ""} ${item.unitLabel || ""}`)
-            .join(" ")
-            .toLowerCase();
-
-          const searchOk =
-            !q ||
-            String(inv.number).includes(q) ||
-            String(inv.customerName || "").toLowerCase().includes(q) ||
-            String(inv.customerPhone || "").includes(q) ||
-            itemsText.includes(q);
-
-          const statusOk = status === "all" || inv.paymentMethod === status || inv.status === status;
-
-          const folder = state.activeInvoiceFolder || "all";
-          const folderOk =
-            folder === "all" ||
-            inv.paymentAccountId === folder ||
-            inv.paymentMethod === folder;
-
-          return searchOk && statusOk && folderOk;
-        })
-        .sort((a,b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
+      })));
     }
 
     function buildFullInvoicesReportHtml() {
@@ -8338,7 +7349,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
               <td>${escapeHtml(inv.customerPhone || "-")}</td>
               <td>${escapeHtml(paymentMethodLabel(inv.paymentMethod))}</td>
               <td>${escapeHtml(acc?.name || paymentFolderName(inv))}</td>
-              <td>${escapeHtml(inv.employeeName || inv.createdByName || "-")}</td>
+              <td>${escapeHtml(inv.employeeName || "-")}</td>
               <td>-</td>
               <td>-</td>
               <td>-</td>
@@ -8356,7 +7367,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
                 <td>${escapeHtml(inv.customerPhone || "-")}</td>
                 <td>${escapeHtml(paymentMethodLabel(inv.paymentMethod))}</td>
                 <td>${escapeHtml(acc?.name || paymentFolderName(inv))}</td>
-                <td>${escapeHtml(inv.employeeName || inv.createdByName || "-")}</td>
+                <td>${escapeHtml(inv.employeeName || "-")}</td>
                 <td>${escapeHtml(item.name || "-")}</td>
                 <td>${escapeHtml(item.qtyText || item.qty || "1")}</td>
                 <td>${escapeHtml(item.unitLabel || "-")}</td>
@@ -8409,7 +7420,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
           <td>${escapeHtml(inv.customerName || "زبون نقدي")}</td>
           <td>${escapeHtml(paymentMethodLabel(inv.paymentMethod))}</td>
           <td>${escapeHtml(paymentFolderName(inv))}</td>
-          <td>${escapeHtml(inv.employeeName || inv.createdByName || "-")}</td>
+          <td>${escapeHtml(inv.employeeName || "-")}</td>
           <td>${money(inv.total)}</td>
           <td>${money(inv.profit)}</td>
         </tr>
@@ -8512,7 +7523,6 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         </table>
       `);
     }
-
     function printCurrentInvoices() {
       printHtml(buildFullInvoicesReportHtml());
     }
@@ -8568,90 +7578,73 @@ function showSmartProductSuggestions(inputEl, onSelect) {
 
       downloadElementPdf(wrap, `reports-full-${todayKey()}.pdf`).finally(() => wrap.remove());
     }
+
     function exportExcel(filename, sheetName, rows) {
       if (!window.XLSX) {
         toast("مكتبة Excel لم تعمل. تأكد من الاتصال بالإنترنت أول مرة");
         return;
       }
 
-      const safeRows = Array.isArray(rows) && rows.length ? rows : [{ ملاحظة: "لا توجد بيانات" }];
-      const ws = XLSX.utils.json_to_sheet(safeRows);
+      const ws = XLSX.utils.json_to_sheet(rows);
       const wb = XLSX.utils.book_new();
-
       XLSX.utils.book_append_sheet(wb, ws, sheetName || "Sheet1");
       XLSX.writeFile(wb, filename);
     }
 
-    function excelSingleInvoice(invoiceId) {
-      const inv = state.invoices.find(i => i.id === invoiceId);
-      if (!inv) return;
+    function excelInventory() {
+      exportExcel(`inventory-${todayKey()}.xlsx`, "المخزون", state.products.map(p => {
+        p = normalizeProduct(p);
 
-      const rows = (inv.items || []).map(item => ({
-        رقم_الفاتورة: inv.number,
-        التاريخ: formatDate(inv.createdAt),
-        العميل: inv.customerName || "زبون نقدي",
-        الهاتف: inv.customerPhone || "-",
-        طريقة_الدفع: paymentMethodLabel(inv.paymentMethod),
-        مجلد_الدفع: paymentFolderName(inv),
-        الموظف: inv.employeeName || inv.createdByName || "-",
-        الصنف: item.name || "-",
-        الكمية: item.qtyText || item.qty || 1,
-        الوحدة: item.unitLabel || "-",
-        السعر: cleanNumber(item.price),
-        الإجمالي: cleanNumber(item.total),
-        الخصم: cleanNumber(inv.discount),
-        إجمالي_الفاتورة: cleanNumber(inv.total)
+        return {
+          الكود: p.barcode || p.code || "",
+          المنتج: p.name || "",
+          التصنيف: p.category || "",
+          نوع_الوحدة: unitLabel(p.unitType, p.customUnit),
+          الوحدة_الأساسية: unitLabel(p.baseUnit, p.customUnit),
+          المخزون: cleanNumber(p.stock),
+          سعر_الجملة_الأساسي: cleanNumber(p.costPrice),
+          سعر_البيع_الأساسي: cleanNumber(p.salePrice),
+          سعر_الوحدة_المعروض: cleanNumber(p.displaySalePrice),
+          حد_النقص: cleanNumber(p.lowStock)
+        };
       }));
-
-      exportExcel(`invoice-${inv.number}-${todayKey()}.xlsx`, "الفاتورة", rows);
     }
 
-    function excelCurrentInvoices() {
-      const invoices = getFilteredInvoicesForExport();
+    function excelInvoices() {
       const rows = [];
 
-      invoices.forEach(inv => {
-        if (Array.isArray(inv.items) && inv.items.length) {
-          inv.items.forEach(item => {
-            rows.push({
-              رقم_الفاتورة: inv.number,
-              التاريخ: formatDate(inv.createdAt),
-              العميل: inv.customerName || "زبون نقدي",
-              الهاتف: inv.customerPhone || "-",
-              طريقة_الدفع: paymentMethodLabel(inv.paymentMethod),
-              الحالة: inv.status === "paid" ? "مكتملة" : "غير مكتملة",
-              مجلد_الدفع: paymentFolderName(inv),
-              الموظف: inv.employeeName || inv.createdByName || "-",
-              الصنف: item.name || "-",
-              الكمية: item.qtyText || item.qty || 1,
-              الوحدة: item.unitLabel || "-",
-              السعر: cleanNumber(item.price),
-              إجمالي_الصنف: cleanNumber(item.total),
-              المجموع: cleanNumber(inv.subtotal),
-              الخصم: cleanNumber(inv.discount),
-              إجمالي_الفاتورة: cleanNumber(inv.total),
-              الربح: cleanNumber(inv.profit)
-            });
-          });
-        } else {
+      getFilteredInvoicesForExport().forEach(inv => {
+        if (!inv.items || !inv.items.length) {
           rows.push({
-            رقم_الفاتورة: inv.number,
+            رقم: inv.number,
             التاريخ: formatDate(inv.createdAt),
             العميل: inv.customerName || "زبون نقدي",
-            الهاتف: inv.customerPhone || "-",
-            طريقة_الدفع: paymentMethodLabel(inv.paymentMethod),
-            الحالة: inv.status === "paid" ? "مكتملة" : "غير مكتملة",
-            مجلد_الدفع: paymentFolderName(inv),
-            الموظف: inv.employeeName || inv.createdByName || "-",
-            الصنف: "-",
-            الكمية: "-",
-            الوحدة: "-",
+            الهاتف: inv.customerPhone || "",
+            الدفع: paymentMethodLabel(inv.paymentMethod),
+            المجلد: paymentFolderName(inv),
+            الموظف: inv.employeeName || "",
+            الصنف: "",
+            الكمية: "",
+            الوحدة: "",
             السعر: 0,
-            إجمالي_الصنف: 0,
-            المجموع: cleanNumber(inv.subtotal),
-            الخصم: cleanNumber(inv.discount),
-            إجمالي_الفاتورة: cleanNumber(inv.total),
-            الربح: cleanNumber(inv.profit)
+            الإجمالي: cleanNumber(inv.total)
+          });
+        } else {
+          inv.items.forEach(item => {
+            rows.push({
+              رقم: inv.number,
+              التاريخ: formatDate(inv.createdAt),
+              العميل: inv.customerName || "زبون نقدي",
+              الهاتف: inv.customerPhone || "",
+              الدفع: paymentMethodLabel(inv.paymentMethod),
+              المجلد: paymentFolderName(inv),
+              الموظف: inv.employeeName || "",
+              الصنف: item.name || "",
+              الكمية: item.qtyText || item.qty || "",
+              الوحدة: item.unitLabel || "",
+              السعر: cleanNumber(item.price),
+              الإجمالي: cleanNumber(item.total)
+            });
           });
         }
       });
@@ -8659,103 +7652,56 @@ function showSmartProductSuggestions(inputEl, onSelect) {
       exportExcel(`invoices-${todayKey()}.xlsx`, "الفواتير", rows);
     }
 
-    function excelInventory() {
-      const rows = state.products.map(p => {
-        p = normalizeProduct(p);
-
-        return {
-          الكود: p.barcode || p.code || "-",
-          المنتج: p.name || "-",
-          التصنيف: p.category || "-",
-          نوع_الوحدة: unitLabel(p.unitType, p.customUnit),
-          الوحدة_الأساسية: unitLabel(p.baseUnit, p.customUnit),
-          المخزون_الأساسي: cleanNumber(p.stock),
-          حد_التنبيه: cleanNumber(p.lowStock),
-          سعر_الجملة_الأساسي: cleanNumber(p.costPrice),
-          سعر_البيع_الأساسي: cleanNumber(p.salePrice),
-          سعر_الوحدة_المختارة: cleanNumber(p.displaySalePrice)
-        };
-      });
-
-      exportExcel(`inventory-${todayKey()}.xlsx`, "المخزون", rows);
-    }
-
     function excelDebts() {
-      rebuildCustomerBalances(false);
-
-      const rows = state.customers.map(c => ({
-        الاسم: c.name || "-",
-        الهاتف: c.phone || "-",
+      exportExcel(`debts-${todayKey()}.xlsx`, "الديون", state.customers.map(c => ({
+        الاسم: c.name,
+        الهاتف: c.phone,
         الرصيد: cleanNumber(c.balance),
         الحالة: customerBalanceText(c.balance).text,
         إجمالي_المبيعات: cleanNumber(c.totalSales),
         إجمالي_الدفعات: cleanNumber(c.totalPaid),
-        عدد_الفواتير: getCustomerInvoices(c).length,
-        آخر_حركة: getCustomerLastActivity(c.id) ? formatDate(getCustomerLastActivity(c.id)) : "-"
-      }));
-
-      exportExcel(`debts-${todayKey()}.xlsx`, "الديون", rows);
+        عدد_الفواتير: cleanNumber(c.invoicesCount),
+        آخر_تحديث: formatDate(c.updatedAt)
+      })));
     }
 
     function excelPurchases() {
-      const rows = state.purchases.map(p => ({
+      exportExcel(`purchases-${todayKey()}.xlsx`, "المشتريات", state.purchases.map(p => ({
         التاريخ: formatDate(p.createdAt),
-        المورد: p.supplier || "-",
-        الصنف: p.productName || "-",
+        المورد: p.supplier || "",
+        الصنف: p.productName || "",
         الكمية: cleanNumber(p.qty),
-        وحدة_الإدخال: p.inputUnitLabel || "-",
-        التحويل: p.conversionText || "-",
+        وحدة_الإدخال: p.inputUnitLabel || "",
+        التحويل: p.conversionText || "",
         المضاف_للمخزون: cleanNumber(p.qtyBase),
         الجملة: cleanNumber(p.cost),
         البيع: cleanNumber(p.salePrice),
         الإجمالي: cleanNumber(p.total),
-        ملاحظات: p.notes || "-"
-      }));
-
-      exportExcel(`purchases-${todayKey()}.xlsx`, "المشتريات", rows);
+        ملاحظات: p.notes || ""
+      })));
     }
 
     function excelSupplierPayments() {
-      const rows = state.supplierPayments.map(p => {
+      exportExcel(`supplier-payments-${todayKey()}.xlsx`, "دفعات التجار", state.supplierPayments.map(p => {
         const acc = state.paymentAccounts.find(a => a.id === p.accountId);
 
         return {
           التاريخ: formatDate(p.createdAt),
-          التاجر: p.supplierName || "-",
+          التاجر: p.supplierName || "",
           المبلغ: cleanNumber(p.amount),
-          الحساب: acc?.name || "-",
-          ملاحظات: p.notes || "-"
+          الحساب: acc?.name || "",
+          ملاحظات: p.notes || ""
         };
-      });
-
-      exportExcel(`supplier-payments-${todayKey()}.xlsx`, "دفعات التجار", rows);
+      }));
     }
 
     function excelExpenses() {
-      const rows = state.expenses.map(e => ({
+      exportExcel(`expenses-${todayKey()}.xlsx`, "المصروفات", state.expenses.map(e => ({
         التاريخ: formatDate(e.createdAt),
-        النوع: e.type || "-",
+        النوع: e.type || "",
         المبلغ: cleanNumber(e.amount),
-        ملاحظات: e.notes || "-"
-      }));
-
-      exportExcel(`expenses-${todayKey()}.xlsx`, "المصروفات", rows);
-    }
-
-    function excelLowStock() {
-      const rows = state.products
-        .map(normalizeProduct)
-        .filter(p => cleanNumber(p.stock) <= cleanNumber(p.lowStock || state.settings?.lowStock || 5))
-        .map(p => ({
-          الصنف: p.name || "-",
-          الكود: p.barcode || p.code || "-",
-          الكمية_الأساسية: cleanNumber(p.stock),
-          الوحدة_الأساسية: unitLabel(p.baseUnit, p.customUnit),
-          حد_التنبيه: cleanNumber(p.lowStock),
-          سعر_البيع_الأساسي: cleanNumber(p.salePrice)
-        }));
-
-      exportExcel(`low-stock-${todayKey()}.xlsx`, "البضاعة الناقصة", rows);
+        ملاحظات: e.notes || ""
+      })));
     }
 
     function excelReports() {
@@ -8767,73 +7713,68 @@ function showSmartProductSuggestions(inputEl, onSelect) {
       const purchases = periodFilter(state.purchases, period, "createdAt", custom);
       const supplierPayments = periodFilter(state.supplierPayments, period, "createdAt", custom);
 
-      const rows = [];
-
-      invoices.forEach(inv => {
-        rows.push({
-          القسم: "فاتورة",
+      const rows = [
+        ...invoices.map(inv => ({
+          النوع: "فاتورة",
           التاريخ: formatDate(inv.createdAt),
           البيان: `فاتورة #${inv.number}`,
-          الاسم: inv.customerName || "زبون نقدي",
+          الطرف: inv.customerName || "زبون نقدي",
           الدفع: paymentMethodLabel(inv.paymentMethod),
-          الموظف: inv.employeeName || inv.createdByName || "-",
-          مدخل: cleanNumber(inv.total),
-          مخرج: 0,
-          ربح: cleanNumber(inv.profit),
-          ملاحظات: paymentFolderName(inv)
-        });
-      });
-
-      expenses.forEach(e => {
-        rows.push({
-          القسم: "مصروف",
+          المبلغ: cleanNumber(inv.total),
+          الربح: cleanNumber(inv.profit),
+          ملاحظات: inv.employeeName || ""
+        })),
+        ...expenses.map(e => ({
+          النوع: "مصروف",
           التاريخ: formatDate(e.createdAt),
-          البيان: e.type || "-",
-          الاسم: "-",
-          الدفع: "-",
-          الموظف: "-",
-          مدخل: 0,
-          مخرج: cleanNumber(e.amount),
-          ربح: -cleanNumber(e.amount),
-          ملاحظات: e.notes || "-"
-        });
-      });
-
-      purchases.forEach(p => {
-        rows.push({
-          القسم: "مشتريات",
+          البيان: e.type || "",
+          الطرف: "",
+          الدفع: "",
+          المبلغ: cleanNumber(e.amount),
+          الربح: -cleanNumber(e.amount),
+          ملاحظات: e.notes || ""
+        })),
+        ...purchases.map(p => ({
+          النوع: "مشتريات",
           التاريخ: formatDate(p.createdAt),
-          البيان: p.productName || "-",
-          الاسم: p.supplier || "-",
-          الدفع: "-",
-          الموظف: "-",
-          مدخل: 0,
-          مخرج: cleanNumber(p.total),
-          ربح: 0,
-          ملاحظات: p.notes || "-"
-        });
-      });
-
-      supplierPayments.forEach(p => {
-        const acc = state.paymentAccounts.find(a => a.id === p.accountId);
-
-        rows.push({
-          القسم: "دفعة تاجر",
+          البيان: p.productName || "",
+          الطرف: p.supplier || "",
+          الدفع: "",
+          المبلغ: cleanNumber(p.total),
+          الربح: 0,
+          ملاحظات: p.notes || ""
+        })),
+        ...supplierPayments.map(p => ({
+          النوع: "دفعة تاجر",
           التاريخ: formatDate(p.createdAt),
-          البيان: p.supplierName || "-",
-          الاسم: p.supplierName || "-",
-          الدفع: acc?.name || "-",
-          الموظف: "-",
-          مدخل: 0,
-          مخرج: cleanNumber(p.amount),
-          ربح: 0,
-          ملاحظات: p.notes || "-"
-        });
-      });
+          البيان: p.supplierName || "",
+          الطرف: p.supplierName || "",
+          الدفع: state.paymentAccounts.find(a => a.id === p.accountId)?.name || "",
+          المبلغ: cleanNumber(p.amount),
+          الربح: 0,
+          ملاحظات: p.notes || ""
+        }))
+      ];
 
-      exportExcel(`reports-${todayKey()}.xlsx`, "التقارير", rows);
+      exportExcel(`reports-${todayKey()}.xlsx`, "التقرير", rows);
     }
 
+    function excelLowStock() {
+      exportExcel(`low-stock-${todayKey()}.xlsx`, "البضاعة الناقصة", state.products
+        .filter(p => cleanNumber(p.stock) <= cleanNumber(p.lowStock || state.settings?.lowStock || 5))
+        .map(p => {
+          p = normalizeProduct(p);
+
+          return {
+            الصنف: p.name,
+            الكود: p.barcode || p.code || "",
+            الكمية: cleanNumber(p.stock),
+            الوحدة: unitLabel(p.baseUnit, p.customUnit),
+            سعر_البيع: cleanNumber(p.salePrice),
+            حد_النقص: cleanNumber(p.lowStock)
+          };
+        }));
+    }
     async function saveSettings() {
       const logoUrl = $("settingLogoUrl")?.value.trim() || "";
       const file = $("settingLogoFile")?.files?.[0] || null;
@@ -8855,6 +7796,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         logo: logoUrl,
         localLogo,
         logoMode: localLogo ? "local" : (logoUrl ? "url" : "default"),
+        adminPasswordHash: state.settings?.adminPasswordHash || simpleHash(DEFAULT_ADMIN_PIN),
         updatedAt: Date.now()
       };
 
@@ -8871,6 +7813,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
       renderAll();
       toast("تم حفظ الإعدادات");
     }
+
     function exportBackup() {
       const data = {
         version: DB_VERSION,
@@ -8916,6 +7859,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         if (Array.isArray(data.supplierPayments)) await idbBulkPut("supplierPayments", data.supplierPayments);
         if (Array.isArray(data.paymentAccounts)) await idbBulkPut("paymentAccounts", data.paymentAccounts.map(normalizePaymentAccount));
         if (Array.isArray(data.employees)) await idbBulkPut("employees", data.employees.map(normalizeEmployee));
+
         if (data.settings) {
           await idbPut("settings", {
             ...defaultSettings,
@@ -8955,7 +7899,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         });
 
         renderAll();
-        toast("تم استيراد النسخة الاحتياطية لهذا المشروع");
+        toast("تم استيراد النسخة الاحتياطية");
       } catch (e) {
         console.error(e);
         toast("فشل استيراد النسخة");
@@ -8969,32 +7913,28 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         await idbClear(store);
       }
 
-      localStorage.removeItem(AUTH_SESSION_KEY);
-
       state.products = [];
       state.invoices = [];
       state.customers = [];
       state.expenses = [];
       state.purchases = [];
       state.supplierPayments = [];
-      state.employees = [];
       state.paymentAccounts = defaultAccounts.map(normalizePaymentAccount);
+      state.employees = [];
       state.cart = [];
       state.freeLines = [{ id: uid("free"), name: "", qty: 1, cost: 0, price: 0 }];
       state.settings = {
         ...defaultSettings,
-        adminPasswordHash: simpleHash(DEFAULT_ADMIN_PIN),
-        updatedAt: Date.now()
+        adminPasswordHash: simpleHash(DEFAULT_ADMIN_PIN)
       };
-      state.auth.user = null;
 
       await idbPut("settings", state.settings);
       await idbBulkPut("paymentAccounts", state.paymentAccounts);
 
+      logout(false);
       renderAll();
       await refreshPendingCount();
-      logout(false);
-      toast("تم مسح بيانات هذا المشروع محليًا، كلمة مرور المدير رجعت 0000");
+      toast("تم مسح بيانات هذا المشروع محليًا");
     }
 
     async function deleteProduct(productId) {
@@ -9026,7 +7966,6 @@ function showSmartProductSuggestions(inputEl, onSelect) {
       if (product) {
         product.stock = cleanNumber(product.stock) - cleanNumber(purchase.qtyBase);
         product.updatedAt = Date.now();
-
         await saveLocal("products", normalizeProduct(product), true);
 
         state.products = state.products.map(p =>
@@ -9070,7 +8009,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
       const used = state.invoices.some(inv => inv.paymentAccountId === accountId);
 
       if (used) {
-        if (!confirm("هذا الحساب مستخدم في فواتير. سيتم حذف الحساب وتبقى الفواتير مرتبطة باسمه القديم فقط. متابعة؟")) return;
+        if (!confirm("هذا الحساب مستخدم في فواتير. سيتم حذف الحساب وتبقى الفواتير كما هي. متابعة؟")) return;
       } else {
         if (!confirm("حذف حساب الدفع؟")) return;
       }
@@ -9131,7 +8070,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
         <div class="card" style="box-shadow:none">
           <h3 style="margin:0 0 10px;font-weight:900">ديون يدوية غير مكتملة</h3>
           ${
-            manualUnpaid.map(d => `<div class="debt-card" data-open-customer="${d.customerId}">
+            manualUnpaid.map(d => `<div class="debt-card" data-mark-manual-debt-paid="${d.customerId}|${d.id}">
               <div>
                 <div class="debt-name">${escapeHtml(d.customerName)}</div>
                 <div class="debt-sub">${escapeHtml(d.note || "دين يدوي")} · ${formatAge(d.createdAt)}</div>
@@ -9286,6 +8225,11 @@ function showSmartProductSuggestions(inputEl, onSelect) {
     }
 
     function openQuickAddMenu() {
+      if (!state.auth.user) {
+        toast("سجّل الدخول أولاً");
+        return;
+      }
+
       openModal("إضافة سريعة", `
         <div class="payment-choice-grid">
           <button class="payment-choice" data-quick-action="product" type="button">
@@ -9680,17 +8624,38 @@ function showSmartProductSuggestions(inputEl, onSelect) {
 
       $("quickAddBtn").onclick = openQuickAddMenu;
 
+      $("authAdminTab").onclick = () => {
+        $("authAdminTab").classList.add("active");
+        $("authEmployeeTab").classList.remove("active");
+        $("authAdminPanel").classList.add("active");
+        $("authEmployeePanel").classList.remove("active");
+      };
+
+      $("authEmployeeTab").onclick = () => {
+        $("authEmployeeTab").classList.add("active");
+        $("authAdminTab").classList.remove("active");
+        $("authEmployeePanel").classList.add("active");
+        $("authAdminPanel").classList.remove("active");
+      };
+
       $("logoutBtn").onclick = () => logout(true);
 
-      $("adminLoginBtn").onclick = () => loginAdmin($("adminPasswordInput").value);
-      $("employeeLoginBtn").onclick = () => loginEmployee($("employeeNameInput").value, $("employeePasswordInput").value);
+      $("adminLoginBtn").onclick = () => loginAdmin($("adminPasswordInput")?.value || "");
+
+      $("employeeLoginBtn").onclick = () => loginEmployee(
+        $("employeeNameInput")?.value || "",
+        $("employeePasswordInput")?.value || ""
+      );
 
       $("adminPasswordInput").addEventListener("keydown", e => {
-        if (e.key === "Enter") loginAdmin($("adminPasswordInput").value);
+        if (e.key === "Enter") loginAdmin($("adminPasswordInput")?.value || "");
       });
 
       $("employeePasswordInput").addEventListener("keydown", e => {
-        if (e.key === "Enter") loginEmployee($("employeeNameInput").value, $("employeePasswordInput").value);
+        if (e.key === "Enter") loginEmployee(
+          $("employeeNameInput")?.value || "",
+          $("employeePasswordInput")?.value || ""
+        );
       });
 
       $("syncNowBtn").onclick = async (e) => {
@@ -9800,7 +8765,7 @@ function showSmartProductSuggestions(inputEl, onSelect) {
       $("printInvoicesBtn").onclick = printCurrentInvoices;
       $("imageInvoicesBtn").onclick = imageCurrentInvoices;
       $("pdfInvoicesBtn").onclick = pdfCurrentInvoices;
-      $("excelInvoicesBtn").onclick = excelCurrentInvoices;
+      $("excelInvoicesBtn").onclick = excelInvoices;
 
       $("excelInventoryBtn").onclick = excelInventory;
       $("excelDebtsBtn").onclick = excelDebts;
@@ -9875,9 +8840,9 @@ function showSmartProductSuggestions(inputEl, onSelect) {
 
       renderAll();
 
-      await tryRestoreAuthSession();
+      const restored = await tryRestoreAuthSession();
 
-      if (!state.auth.user) {
+      if (!restored || !state.auth.user) {
         logout(false);
       } else {
         updateAuthUi();
@@ -10010,8 +8975,5 @@ function showSmartProductSuggestions(inputEl, onSelect) {
       });
     });
   </script>
-
-  <script src="./cashier-barcode-patch.js"></script/>
-  
 </body>
 </html>
