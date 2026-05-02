@@ -1,18 +1,18 @@
 window.CASHIER_FIREBASE_CONFIG = {
   firebaseConfig: {
-    apiKey: "AIzaSyCnLAY7zQyBy7gUuL9wszt9aEhiJgvRmxI",
-    authDomain: "shop-d52dc.firebaseapp.com",
-    databaseURL: "https://shop-d52dc-default-rtdb.firebaseio.com",
-    projectId: "shop-d52dc",
-    storageBucket: "shop-d52dc.appspot.com",
-    messagingSenderId: "97580537866",
-    appId: "1:97580537866:web:abc46e5a2f527b6300a7f3",
-    measurementId: "G-956RQMBP42"
+    apiKey: "AIzaSyC9EMd_cnW3RofcYgfiZaVJZgMw5tHAFeE",
+    authDomain: "gvxzzz.firebaseapp.com",
+    databaseURL: "https://gvxzzz-default-rtdb.firebaseio.com",
+    projectId: "gvxzzz",
+    storageBucket: "gvxzzz.firebasestorage.app",
+    messagingSenderId: "481333488988",
+    appId: "1:481333488988:web:f5923a15a2406312012599",
+    measurementId: "G-2867JFZWCW"
   },
 
-  firebaseRoot: "cashier_units_pro_shop_885766842",
+  firebaseRoot: "cashier_units_pro_gvxzzz_885766842",
 
   fallbackRoots: [
-    "cashier_units_pro_shop_885766842"
+    "cashier_units_pro_gvxzzz_885766842"
   ]
 };
